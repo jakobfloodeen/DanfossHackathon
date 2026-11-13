@@ -1,0 +1,491 @@
+{
+  "title": "PVG 32 vs. closest competitor matches",
+  "isSample": true,
+  "anchor": {
+    "key": "pvg32",
+    "name": "PVG 32",
+    "manufacturer": "Danfoss"
+  },
+  "matches": [
+    {
+      "key": "sample-cmp",
+      "name": "Competitor X",
+      "manufacturer": "Sample data",
+      "matchScore": 0.78,
+      "isSample": true
+    }
+  ],
+  "attributes": [
+    {
+      "id": "flowAB",
+      "factor": "flow",
+      "label": "Max. flow per work section (A/B)",
+      "unit": "l/min",
+      "values": {
+        "pvg32": {
+          "value": "125",
+          "status": "conflict",
+          "sources": [
+            3,
+            6,
+            1
+          ],
+          "note": "p.12: 100 l/min with pressure compensator, 125 without. p.54: compensated PVB rated 125 l/min (130 with turbo spool)."
+        },
+        "sample-cmp": {
+          "value": "120",
+          "status": "sample"
+        }
+      }
+    },
+    {
+      "id": "flowP",
+      "factor": "flow",
+      "label": "Max. inlet flow (port P)",
+      "unit": "l/min",
+      "values": {
+        "pvg32": {
+          "value": "140 (230 with PVPM/PVPVM mid inlet)",
+          "status": "ok",
+          "sources": [
+            3
+          ]
+        },
+        "sample-cmp": {
+          "value": null,
+          "status": "missing"
+        }
+      }
+    },
+    {
+      "id": "pressureCont",
+      "factor": "pressure",
+      "label": "Max. pressure P, A/B, continuous",
+      "unit": "bar",
+      "values": {
+        "pvg32": {
+          "value": "350 with PVSI end plate · 300 with PVS end plate",
+          "status": "ok",
+          "sources": [
+            3
+          ]
+        },
+        "sample-cmp": {
+          "value": "300",
+          "status": "sample"
+        }
+      }
+    },
+    {
+      "id": "pressureInt",
+      "factor": "pressure",
+      "label": "Max. pressure, intermittent",
+      "unit": "bar",
+      "values": {
+        "pvg32": {
+          "value": "P: 400 · A/B: 420",
+          "status": "ok",
+          "sources": [
+            3
+          ]
+        },
+        "sample-cmp": {
+          "value": null,
+          "status": "missing"
+        }
+      }
+    },
+    {
+      "id": "sections",
+      "factor": "options",
+      "label": "Max. work sections per valve group",
+      "unit": "",
+      "values": {
+        "pvg32": {
+          "value": "12",
+          "status": "ok",
+          "sources": [
+            1
+          ]
+        },
+        "sample-cmp": {
+          "value": "10",
+          "status": "sample"
+        }
+      }
+    },
+    {
+      "id": "compensation",
+      "factor": "options",
+      "label": "Work section types",
+      "unit": "",
+      "values": {
+        "pvg32": {
+          "value": "Compensated and uncompensated PVB, PVBZ with pilot-operated check",
+          "status": "ok",
+          "sources": [
+            4
+          ]
+        },
+        "sample-cmp": {
+          "value": null,
+          "status": "missing"
+        }
+      }
+    },
+    {
+      "id": "portsAB",
+      "factor": "ports",
+      "label": "Work port threads (A/B)",
+      "unit": "",
+      "values": {
+        "pvg32": {
+          "value": "G1/2 · 7/8-14 UNF · M22x1.5",
+          "status": "ok",
+          "sources": [
+            5
+          ]
+        },
+        "sample-cmp": {
+          "value": null,
+          "status": "missing"
+        }
+      }
+    },
+    {
+      "id": "portsP",
+      "factor": "ports",
+      "label": "Inlet port threads (P/T)",
+      "unit": "",
+      "values": {
+        "pvg32": {
+          "value": "G1/2 · G3/4 · 7/8-14 UNF · 1 1/16-12 UNF",
+          "status": "ok",
+          "sources": [
+            9
+          ]
+        },
+        "sample-cmp": {
+          "value": null,
+          "status": "missing"
+        }
+      }
+    },
+    {
+      "id": "actuation",
+      "factor": "electronics",
+      "label": "Actuation",
+      "unit": "",
+      "values": {
+        "pvg32": {
+          "value": "Manual, hydraulic, electro-hydraulic (ON/OFF, ratiometric, CAN bus, PWM)",
+          "status": "ok",
+          "sources": [
+            2
+          ]
+        },
+        "sample-cmp": {
+          "value": "Electro-hydraulic, CAN",
+          "status": "sample"
+        }
+      }
+    },
+    {
+      "id": "weight",
+      "factor": "size",
+      "label": "Weight",
+      "unit": "kg",
+      "values": {
+        "pvg32": {
+          "value": "PVB work section 3.05 · PVP inlet 3.1",
+          "status": "ok",
+          "sources": [
+            4,
+            8
+          ]
+        },
+        "sample-cmp": {
+          "value": "Sample: 3.4 kg per section",
+          "status": "sample"
+        }
+      }
+    },
+    {
+      "id": "pitch",
+      "factor": "size",
+      "label": "Section width (pitch)",
+      "unit": "mm",
+      "values": {
+        "pvg32": {
+          "value": "48",
+          "status": "inferred",
+          "sources": [
+            4,
+            7
+          ],
+          "note": "Read from the dimension drawing (p.46) and the 48 mm step in the stack-length table (p.222); not stated as a spec."
+        },
+        "sample-cmp": {
+          "value": null,
+          "status": "missing"
+        }
+      }
+    },
+    {
+      "id": "length",
+      "factor": "size",
+      "label": "Stack length",
+      "unit": "mm",
+      "values": {
+        "pvg32": {
+          "value": "119 (1 section) to 647 (12 sections)",
+          "status": "ok",
+          "sources": [
+            7
+          ]
+        },
+        "sample-cmp": {
+          "value": null,
+          "status": "missing"
+        }
+      }
+    },
+    {
+      "id": "temp",
+      "factor": "environment",
+      "label": "Oil temperature",
+      "unit": "°C",
+      "values": {
+        "pvg32": {
+          "value": "-30 to 90 (recommended 30 to 60)",
+          "status": "ok",
+          "sources": [
+            3
+          ]
+        },
+        "sample-cmp": {
+          "value": null,
+          "status": "missing"
+        }
+      }
+    },
+    {
+      "id": "filtration",
+      "factor": "environment",
+      "label": "Required oil cleanliness (ISO 4406)",
+      "unit": "",
+      "values": {
+        "pvg32": {
+          "value": "23/19/16 mechanical · 18/16/13 with PVE",
+          "status": "ok",
+          "sources": [
+            6
+          ]
+        },
+        "sample-cmp": {
+          "value": null,
+          "status": "missing"
+        }
+      }
+    },
+    {
+      "id": "price",
+      "factor": "price",
+      "label": "Price level",
+      "unit": "",
+      "values": {
+        "pvg32": {
+          "value": null,
+          "status": "missing",
+          "note": "Not in the datasheet; needs approved pricing."
+        },
+        "sample-cmp": {
+          "value": null,
+          "status": "missing"
+        }
+      }
+    },
+    {
+      "id": "lifetime",
+      "factor": "lifetime",
+      "label": "Service life",
+      "unit": "",
+      "values": {
+        "pvg32": {
+          "value": null,
+          "status": "missing",
+          "note": "Datasheet gives operating limits but no service-life figure."
+        },
+        "sample-cmp": {
+          "value": null,
+          "status": "missing"
+        }
+      }
+    },
+    {
+      "id": "availability",
+      "factor": "availability",
+      "label": "Availability / lead time",
+      "unit": "",
+      "values": {
+        "pvg32": {
+          "value": null,
+          "status": "missing"
+        },
+        "sample-cmp": {
+          "value": null,
+          "status": "missing"
+        }
+      }
+    }
+  ],
+  "insights": {
+    "differences": [
+      {
+        "text": "Flow to each function is independent of its own load pressure and of the other functions' load pressures (load-independent flow control).",
+        "sources": [
+          1
+        ]
+      },
+      {
+        "text": "Rated flow per section depends on configuration: 100 l/min with pressure compensator and 125 l/min without, per the technical data table.",
+        "sources": [
+          3
+        ]
+      }
+    ],
+    "benefits": [
+      {
+        "text": "For AGCO's tractor: up to 12 work sections in one PVG 32 group, and other PVG families can be added through an interface module, so all machine functions can run from a single valve stack.",
+        "sources": [
+          1
+        ]
+      },
+      {
+        "text": "Load-sense relief valves on the A and B ports reduce energy loss at the target pressure.",
+        "sources": [
+          1
+        ]
+      },
+      {
+        "text": "CAN bus, PWM, ratiometric and ON/OFF electro-hydraulic control are all available, which suits connected machines.",
+        "sources": [
+          2
+        ]
+      }
+    ],
+    "tradeoffs": [
+      {
+        "text": "Work ports come as G1/2, 7/8-14 UNF or M22x1.5, so existing hose ends can usually be matched; check against the valve in use today.",
+        "sources": [
+          5
+        ]
+      },
+      {
+        "text": "Electro-hydraulic (PVE) actuation needs cleaner oil (18/16/13) than mechanical actuation (23/19/16).",
+        "sources": [
+          6
+        ]
+      }
+    ]
+  },
+  "flags": [
+    {
+      "level": "conflict",
+      "text": "Rated flow for a compensated work section: 100 l/min in the technical data table (p.12), 125 l/min on the compensated PVB page (p.54). Confirm with the product team before quoting."
+    },
+    {
+      "level": "warning",
+      "text": "350 bar is converted as 5075 psi on p.12 and 5067 psi on p.54 (correct value ≈ 5076 psi)."
+    },
+    {
+      "level": "warning",
+      "text": "The file name says revision 001602, but the page footers and revision table show 001601 (July 2024). Check PowerSource for the latest revision."
+    },
+    {
+      "level": "inferred",
+      "text": "Section width (48 mm) is read from drawings, not stated as a specification."
+    },
+    {
+      "level": "missing",
+      "text": "Price, service life and lead time are not in the datasheet."
+    },
+    {
+      "level": "sample",
+      "text": "No competitor datasheet selected, so the competitor column shows sample placeholders. Upload one in the Competitors step."
+    },
+    {
+      "level": "unverified",
+      "text": "Competitor match was selected automatically. Confirm functional equivalence before showing it to the customer."
+    }
+  ],
+  "confidence": {
+    "level": "medium",
+    "reason": "Danfoss side sourced from the official datasheet; competitor side not yet extracted."
+  },
+  "sources": [
+    {
+      "id": 1,
+      "title": "PVG 32 Proportional Valve Group – Technical Information",
+      "doc": "BC152886483664en-001602.pdf",
+      "date": "July 2024",
+      "page": "7"
+    },
+    {
+      "id": 2,
+      "title": "PVG 32 Proportional Valve Group – Technical Information",
+      "doc": "BC152886483664en-001602.pdf",
+      "date": "July 2024",
+      "page": "8"
+    },
+    {
+      "id": 3,
+      "title": "PVG 32 Proportional Valve Group – Technical Information",
+      "doc": "BC152886483664en-001602.pdf",
+      "date": "July 2024",
+      "page": "12"
+    },
+    {
+      "id": 4,
+      "title": "PVG 32 Proportional Valve Group – Technical Information",
+      "doc": "BC152886483664en-001602.pdf",
+      "date": "July 2024",
+      "page": "46"
+    },
+    {
+      "id": 5,
+      "title": "PVG 32 Proportional Valve Group – Technical Information",
+      "doc": "BC152886483664en-001602.pdf",
+      "date": "July 2024",
+      "page": "48, 49, 56"
+    },
+    {
+      "id": 6,
+      "title": "PVG 32 Proportional Valve Group – Technical Information",
+      "doc": "BC152886483664en-001602.pdf",
+      "date": "July 2024",
+      "page": "54"
+    },
+    {
+      "id": 7,
+      "title": "PVG 32 Proportional Valve Group – Technical Information",
+      "doc": "BC152886483664en-001602.pdf",
+      "date": "July 2024",
+      "page": "222"
+    },
+    {
+      "id": 8,
+      "title": "PVG 32 Proportional Valve Group – Technical Information",
+      "doc": "BC152886483664en-001602.pdf",
+      "date": "July 2024",
+      "page": "14"
+    },
+    {
+      "id": 9,
+      "title": "PVG 32 Proportional Valve Group – Technical Information",
+      "doc": "BC152886483664en-001602.pdf",
+      "date": "July 2024",
+      "page": "16"
+    }
+  ]
+}
