@@ -1,0 +1,2 @@
+product_id,brand,product_name,family,attribute,value,unit,source_file,page,quote,status
+,CompetitorX,DEMO pump 71,pump,max_speed,2200,rpm,DEMO_webshop.txt,1,DEMO value 2200 rpm,ok

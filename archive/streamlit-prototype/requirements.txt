@@ -1,0 +1,10 @@
+streamlit
+pandas
+pymupdf
+pdfplumber
+anthropic
+python-dotenv
+fpdf2
+rapidfuzz
+pyyaml
+pytest
