@@ -244,9 +244,11 @@ def flag_conflicts(df):
     key = ["manufacturer", "product", "variant", "attribute", "condition"]
     for c in key:
         df[c] = df[c].fillna("").astype(str)
-    counts = df.groupby(key)["value"].nunique()
+    # only numeric facts can truly conflict; descriptive ones (features, claims, application lists) may have many values
+    numeric = df["fact_type"].isin(["spec", "dimension"]) & df["value"].astype(str).str.contains(r"\d")
+    counts = df[numeric].groupby(key)["value"].nunique()
     conflicted = set(counts[counts > 1].index)
-    df["conflict"] = [tuple(r) in conflicted for r in df[key].values]
+    df["conflict"] = [bool(n) and tuple(r) in conflicted for n, r in zip(numeric, df[key].values)]
     return df
 
 
