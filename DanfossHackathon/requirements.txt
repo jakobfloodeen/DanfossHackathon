@@ -16,3 +16,4 @@ rapidfuzz>=3.14            # fuzzy search
 # tests
 pytest>=9.2
 httpx>=0.28                # FastAPI test client
+playwright

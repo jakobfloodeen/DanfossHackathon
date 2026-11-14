@@ -84,3 +84,14 @@ In the repo folder: `git pull` – then start the app again (step 5). If `requir
 ## For developers
 - Tests (no key, no cost): `.venv/bin/pytest -q` (Windows: `.venv\Scripts\pytest -q`) in the app folder.
 - How everything fits together: `README.md`. Rules for working with Claude Code: `CLAUDE.md`.
+
+
+## One extra step for importing datasheets from manufacturer websites (e.g. Bosch Rexroth)
+
+Some manufacturer sites build their pages with JavaScript, so the importer opens them in a hidden browser.
+Install it once per computer, after `pip install -r requirements.txt`:
+
+    python -m playwright install chromium
+
+Without it, importing from JavaScript-based sites (like Bosch Rexroth) will not list the datasheets.
+Sites with plain links (like Kawasaki) work without it.
