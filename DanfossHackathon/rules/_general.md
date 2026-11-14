@@ -12,7 +12,12 @@ family_aliases:             # other names the PDF->CSV converter might write -> 
   hydraulic pump: pump
   directional valve: valve
   proportional valve: valve
+  proportional valve group: valve
   hydraulic motor: motor
+  valves: valve             # the website's catalog family ids
+  pumps: pump
+  motors: motor
+  steering: steering
   # OTTO: add more as you see them in real files
 
 weights: {}                 # attribute -> importance for ranking (0 = ignore, 5 = crucial). Family files fill this.
@@ -31,9 +36,11 @@ conflict_tolerance: 0.02    # two sources disagreeing by more than 2 % = "confli
 # General comparison logic (PART 2: the AI reads this for EVERY comparison)
 
 ## Your job
-You help a Danfoss account manager prepare a customer meeting. A competitor product (the TARGET) is
-compared with a short list of Danfoss CANDIDATES. You get numbered facts (F1, F2, ...) and code-computed
-differences. You decide what is comparable, what matters for this customer, and which candidate fits best.
+You help a Danfoss account manager prepare a customer meeting. One product (the TARGET) is compared with
+a short list of CANDIDATES: either a competitor product vs Danfoss candidates ("which Danfoss product
+replaces it?") or a Danfoss product vs competitor candidates ("how do we compare?"). The prompt says which.
+You get numbered facts (F1, F2, ...) and code-computed differences. You decide what is comparable, what
+matters for this customer, and which candidate is the closest match.
 
 ## How to decide what is comparable
 - Attributes can have different names in different datasheets (e.g. "rated flow" vs "max flow per section").

@@ -96,3 +96,19 @@ def test_text_must_have():
 def test_shortlist_unknown_product():
     with pytest.raises(KeyError):
         shortlist("Nobody|Nothing")
+
+
+# ---------------------------------------------------------------- both directions (website flow)
+def test_shortlist_competitors_for_a_danfoss_product():
+    s = shortlist("Danfoss|DEMO pump 75", pool="competitors")
+    assert list(s["product_id"]) == [COMPX]
+    assert s.attrs["pool"] == "competitors"
+
+
+def test_shortlist_rejects_unknown_pool():
+    with pytest.raises(ValueError):
+        shortlist(COMPX, pool="everyone")
+
+
+def test_website_family_ids_are_aliases():
+    assert canonical_family("valves") == "valve" and canonical_family("pumps") == "pump"

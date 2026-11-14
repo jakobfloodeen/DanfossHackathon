@@ -2,7 +2,7 @@
 Settings for the comparison engine. Change things HERE, not inside the other modules.
 
 Environment variables (optional, e.g. in .env):
-    REPO_DIR     folder with the product CSVs (default: ./repository)
+    REPO_DIR     folder with the product CSVs (default: ./data/repository - the PDF->CSV tool writes here)
     RULES_DIR    folder with the LOGIC files (default: ./rules)
     LLM_MODEL    Claude model name (default: claude-sonnet-5-5)
     LLM_TIMEOUT  seconds before we give up on the AI (default: 90)
@@ -16,7 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 def repo_dir() -> Path:
     """Folder the website saves the CSVs into. Read every time, so tests can change the env var."""
-    return Path(os.getenv("REPO_DIR", PROJECT_ROOT / "repository"))
+    return Path(os.getenv("REPO_DIR", PROJECT_ROOT / "data" / "repository"))
 
 
 def rules_dir() -> Path:

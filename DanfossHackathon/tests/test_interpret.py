@@ -281,3 +281,13 @@ def test_analyse_full_flow_with_fake_llm():
 def test_analyse_without_ai():
     r = analyse(COMPX, use_ai=False)
     assert r.status == "no_ai" and "not requested" in r.message
+
+
+def test_reverse_direction_prompt_and_result():
+    ask = fake(GOOD)
+    r = interpret(P75, None, ask=ask, pool="competitors", use_cache=False)
+    assert [c["product_id"] for c in r.shortlist] == [COMPX]
+    assert "TARGET (the Danfoss product we start from): Danfoss|DEMO pump 75" in ask.calls[0]["prompt"]
+    assert r.meta["pool"] == "competitors"
+    # GOOD names pump 75 as best match, which is the target here -> code must reject it
+    assert r.status == "ok_with_problems" and any("not on the shortlist" in p for p in r.problems)

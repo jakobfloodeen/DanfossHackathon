@@ -25,7 +25,9 @@ CLEAR_WINNER_GAP = 5     # the top search hit must beat the next one by this man
 
 def analyse(query_or_product_id: str, user_question: str = "", customer_context: str = "",
             must_haves: dict | None = None, focus_attributes: list[str] | None = None,
-            use_ai: bool = True, ask: Callable | None = None) -> AnalysisResult:
+            use_ai: bool = True, ask: Callable | None = None, pool: str = "danfoss") -> AnalysisResult:
+    """pool = "danfoss": find Danfoss products for a competitor product (default);
+    pool = "competitors": find competitor products for a Danfoss product."""
     data = load_repository()
     query = (query_or_product_id or "").strip()
     if query in set(data["product_id"]):
@@ -43,6 +45,6 @@ def analyse(query_or_product_id: str, user_question: str = "", customer_context:
         target_id = found.iloc[0]["product_id"]
 
     result = interpret(target_id, None, user_question, customer_context, focus_attributes=focus_attributes,
-                       ask=ask, use_ai=use_ai, must_haves=must_haves, data=data)
+                       ask=ask, use_ai=use_ai, must_haves=must_haves, data=data, pool=pool)
     result.query, result.search_hits = query, hits
     return result

@@ -1,10 +1,12 @@
 """
-SHORTLIST - pick 5-10 plausible Danfoss candidates, so the AI never has to read the whole repository.
+SHORTLIST - pick 5-10 plausible candidates, so the AI never has to read the whole repository.
 
-    shortlist("CompetitorX|DEMO pump 71", must_haves={"rated_pressure": 250})
+    shortlist("CompetitorX|DEMO pump 71", must_haves={"rated_pressure": 250})   # Danfoss candidates
+    shortlist("pvg32", pool="competitors")                                       # competitor candidates
 
 Steps (all code, no AI):
-  1. same family as the target, brand = Danfoss (from the LOGIC file), not the target itself
+  1. same family as the target, not the target itself, and from the chosen side:
+     pool="danfoss" -> brand = Danfoss (from the LOGIC file); pool="competitors" -> every other brand
   2. customer MUST-HAVES are hard filters:
         {"rated_pressure": 250}                 -> at least 250 (in the base unit, here bar)
         {"rated_pressure": {"min": 250, "max": 300}}
@@ -27,6 +29,7 @@ from .repository import best_values, load_repository
 from .units import fmt
 
 COLUMNS = ["product_id", "product_name", "score", "compared_on", "in_size_window", "flags", "reason"]
+POOLS = ("danfoss", "competitors")
 MIN_IN_WINDOW = 5
 HINT_PENALTY = 0.8           # score multiplier per failed LOGIC hint
 UNCERTAIN = {"unverified", "conflict", "calculated"}
@@ -96,7 +99,12 @@ def closeness_score(t: pd.DataFrame, c: pd.DataFrame, weights: dict) -> tuple[fl
 
 
 def shortlist(target_id: str, must_haves: dict | None = None, max_size: int | None = None,
-              data: pd.DataFrame | None = None, weights: dict | None = None) -> pd.DataFrame:
+              data: pd.DataFrame | None = None, weights: dict | None = None,
+              pool: str = "danfoss") -> pd.DataFrame:
+    """pool = "danfoss": Danfoss candidates for a competitor product (default).
+       pool = "competitors": competitor candidates for a Danfoss product (the website's flow)."""
+    if pool not in POOLS:
+        raise ValueError(f"pool must be one of {POOLS}")
     data = load_repository() if data is None else data
     target_rows = data[data["product_id"] == target_id]
     if target_rows.empty:
@@ -112,9 +120,10 @@ def shortlist(target_id: str, must_haves: dict | None = None, max_size: int | No
     brand = str(logic.settings["danfoss_brand"]).lower()
 
     kept, excluded = [], []
-    pool = data[(data["family"] == family) & (data["brand"].str.lower() == brand)
-                & (data["product_id"] != target_id)]
-    for pid in pool["product_id"].unique():
+    is_danfoss = data["brand"].str.lower() == brand
+    same_side = is_danfoss if pool == "danfoss" else ~is_danfoss
+    candidates = data[(data["family"] == family) & same_side & (data["product_id"] != target_id)]
+    for pid in candidates["product_id"].unique():
         c = best_values(data, pid)
         failed, not_stated = check_must_haves(c, must_haves)
         if failed:
@@ -144,5 +153,5 @@ def shortlist(target_id: str, must_haves: dict | None = None, max_size: int | No
                  for p in outside["product_id"] if p not in set(inside["product_id"])]
     result = (inside.sort_values(["score", "compared_on"], ascending=False).head(max_size)
               .drop(columns="_size_gap").reset_index(drop=True))
-    result.attrs.update(target=target_id, family=family, excluded=excluded, logic_files=logic.files)
+    result.attrs.update(target=target_id, family=family, excluded=excluded, logic_files=logic.files, pool=pool)
     return result

@@ -57,10 +57,20 @@ def _fact_line(f: Fact) -> str:
             f"status: {f.status} | {f.source()} | \"{quote}\"{extra}")
 
 
+ROLES = {   # pool -> (what the TARGET is, what the CANDIDATES are, default question)
+    "danfoss": ("the competitor product the customer uses today", "Danfoss shortlist",
+                "Which Danfoss product is the best replacement, and why?"),
+    "competitors": ("the Danfoss product we start from", "competitor products",
+                    "How does the Danfoss product compare with these competitor products?"),
+}
+
+
 def build_prompts(target_id: str, short: list[dict], facts: list[Fact], diffs, logic: Logic,
-                  user_question: str, customer_context: str, focus: list[str] | None) -> tuple[str, str]:
+                  user_question: str, customer_context: str, focus: list[str] | None,
+                  pool: str = "danfoss") -> tuple[str, str]:
+    target_role, cand_role, default_question = ROLES[pool]
     better = ", ".join(f"{a}: {d} is better" for a, d in logic.settings["better"].items()) or "none given"
-    system = ("You compare a competitor product (the TARGET) with Danfoss CANDIDATES for a Danfoss "
+    system = (f"You compare a TARGET ({target_role}) with CANDIDATES ({cand_role}) for a Danfoss "
               "salesperson. Follow the LOGIC below, then the hard rules.\n\n=== LOGIC ===\n"
               + (logic.text or "(no logic file)") + "\n\n=== "
               + HARD_RULES.format(similar=float(logic.settings["similar_within"]),
@@ -70,11 +80,11 @@ def build_prompts(target_id: str, short: list[dict], facts: list[Fact], diffs, l
                   + (f" | flags: {'; '.join(c['flags'])}" if c.get("flags") else "") for c in short]
     prompt = "\n".join([
         f"CUSTOMER CONTEXT: {customer_context or 'none given'}",
-        f"QUESTION: {user_question or 'Which Danfoss product is the best replacement, and why?'}",
+        f"QUESTION: {user_question or default_question}",
         f"FOCUS ON: {', '.join(focus)}" if focus else "FOCUS ON: everything relevant",
         "",
-        f"TARGET (competitor product): {target_id}",
-        "CANDIDATES (Danfoss shortlist, pre-ranked by code - the score is only a hint):",
+        f"TARGET ({target_role}): {target_id}",
+        f"CANDIDATES ({cand_role}, pre-ranked by code - the score is only a hint):",
         *cand_lines,
         "",
         "FACTS (id | product | attribute | normalised value | original | status | source | quote):",
@@ -163,9 +173,9 @@ def _parse_and_check(text, check) -> tuple[dict | None, list[str]]:
 
 
 # ---------------------------------------------------------------- public function
-def _candidate_list(target_id, candidates, must_haves, data) -> tuple[list[dict], list[dict]]:
+def _candidate_list(target_id, candidates, must_haves, data, pool) -> tuple[list[dict], list[dict]]:
     if candidates is None:
-        s = make_shortlist(target_id, must_haves=must_haves, data=data)
+        s = make_shortlist(target_id, must_haves=must_haves, data=data, pool=pool)
         return s.to_dict("records"), s.attrs.get("excluded", [])
     if isinstance(candidates, pd.DataFrame):
         return candidates.to_dict("records"), candidates.attrs.get("excluded", [])
@@ -175,8 +185,10 @@ def _candidate_list(target_id, candidates, must_haves, data) -> tuple[list[dict]
 def interpret(target_id: str, candidates=None, user_question: str = "", customer_context: str = "",
               focus_attributes: list[str] | None = None, ask: Callable | None = None, use_ai: bool = True,
               must_haves: dict | None = None, data: pd.DataFrame | None = None,
-              use_cache: bool = True) -> AnalysisResult:
+              use_cache: bool = True, pool: str = "danfoss") -> AnalysisResult:
     """Compare the target with candidates (ids, a shortlist DataFrame, or None = make the shortlist).
+    pool = "danfoss": target is a competitor product, candidates are Danfoss products (default).
+    pool = "competitors": target is a Danfoss product, candidates are competitor products.
     Returns an AnalysisResult; never raises for AI problems (falls back to the code-only result)."""
     data = load_repository() if data is None else data
     target_rows = data[data["product_id"] == target_id]
@@ -184,7 +196,7 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
         return AnalysisResult(status="not_found", message=STATUS_MESSAGES["not_found"], query=target_id)
     first = target_rows.iloc[0]
     logic = load_logic(first["family"])
-    short, excluded = _candidate_list(target_id, candidates, must_haves, data)
+    short, excluded = _candidate_list(target_id, candidates, must_haves, data, pool)
     cand_ids = [c["product_id"] for c in short]
     facts = build_facts(target_id, cand_ids, data, logic)
     diffs = code_differences(facts, logic)
@@ -193,16 +205,17 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
                                             "product_name": first["product_name"], "family": first["family"]},
         shortlist=short, excluded=excluded, facts=facts, differences=diffs,
         meta={"model": config.llm_model(), "logic_files": logic.files, "cached": False, "attempts": 0,
-              "focus_attributes": focus_attributes or []})
+              "focus_attributes": focus_attributes or [], "pool": pool})
 
     if not cand_ids:
-        result.message = "No Danfoss candidate in the same family passed the customer's must-haves."
+        result.message = (f"No {ROLES[pool][1]} with data in the same family"
+                          + (" passed the customer's must-haves." if must_haves else " yet."))
     elif not use_ai:
         result.message = STATUS_MESSAGES["no_ai"] + " (AI not requested)"
     else:
         sent = _focus_facts(facts, focus_attributes)
         system, prompt = build_prompts(target_id, short, sent, diffs, logic, user_question,
-                                       customer_context, focus_attributes)
+                                       customer_context, focus_attributes, pool)
         check = lambda a: check_interpretation(a, facts, diffs, target_id, cand_ids, logic,
                                                f"{user_question} {customer_context}")
         key = _cache_key(system, prompt)
