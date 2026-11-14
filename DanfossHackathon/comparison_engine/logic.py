@@ -19,6 +19,7 @@ from . import config
 DEFAULTS = {
     "danfoss_brand": config.DANFOSS_BRAND,
     "family_aliases": {},
+    "attribute_aliases": {},     # datasheet name -> standard name (rules/<family>.md)
     "weights": {},
     "better": {},
     "hard_filters": {"within": {}, "at_least": {}},
@@ -94,7 +95,7 @@ def load_logic(family: str = "", rules_dir: Path | None = None) -> Logic:
         if text:
             texts.append(text)
     settings["hard_filters"] = _merge(DEFAULTS["hard_filters"], settings.get("hard_filters") or {})
-    for k in ("weights", "better", "family_aliases"):
+    for k in ("weights", "better", "family_aliases", "attribute_aliases"):
         settings[k] = settings.get(k) or {}
     logic = Logic(family=family, settings=settings, text="\n\n".join(texts), files=[p.name for p in paths])
     _CACHE[key] = logic

@@ -25,7 +25,7 @@ from .logic import canonical_family, load_logic
 from .units import is_empty, is_known_unit, normalize, parse_number
 
 OUR_COLUMNS = list(config.COLUMNS)
-EXTRA_COLUMNS = ["norm_value", "norm_unit", "csv_file", "csv_line", "note", "based_on"]
+EXTRA_COLUMNS = ["norm_value", "norm_unit", "csv_file", "csv_line", "note", "based_on", "attribute_original"]
 
 # Calculated values. Only computed when the source does NOT state the value itself,
 # and only from inputs that are not in conflict / missing / unknown unit.
@@ -175,6 +175,8 @@ def _clean(data: pd.DataFrame) -> pd.DataFrame:
     data["attribute"] = data["attribute"].fillna("").str.lower().str.replace(" ", "_")
     families = {f: canonical_family(f) for f in data["family"].dropna().unique()}
     data["family"] = data["family"].map(families).fillna("")
+    data["attribute_original"] = data["attribute"]
+    data["attribute"] = _standard_names(data)
     data["page"] = data["page"].map(lambda p: None if parse_number(p) is None else int(parse_number(p)))
     data["note"] = ""
     data["based_on"] = [[] for _ in range(len(data))]
@@ -197,6 +199,15 @@ def _clean(data: pd.DataFrame) -> pd.DataFrame:
     data = _add_calculated(data)
     data = _flag_conflicts(data)
     return data.reset_index(drop=True)
+
+
+def _standard_names(data: pd.DataFrame) -> pd.Series:
+    """'max_flow_per_section' -> 'rated_flow_per_section' etc. (attribute_aliases in the LOGIC files),
+    so the same quantity from two datasheets lands in ONE comparison row."""
+    aliases = {fam: {str(k).lower(): str(v).lower() for k, v in load_logic(fam).settings["attribute_aliases"].items()}
+               for fam in data["family"].unique()}
+    return pd.Series([aliases[fam].get(attr, attr) for fam, attr in zip(data["family"], data["attribute"])],
+                     index=data.index)
 
 
 def _usable(rows: pd.DataFrame) -> pd.DataFrame:
@@ -223,7 +234,7 @@ def _add_calculated(data: pd.DataFrame) -> pd.DataFrame:
                       for i in inputs]
             result = round(calc["compute"](*values), 1)
             row = g.iloc[0].to_dict()
-            row.update(attribute=calc["attribute"], value=str(result), unit=calc["unit"],
+            row.update(attribute=calc["attribute"], attribute_original=calc["attribute"], value=str(result), unit=calc["unit"],
                        norm_value=result, norm_unit=calc["unit"], source_file="calculated", page=None,
                        quote=calc["formula"], status="calculated", csv_line=None,
                        note="calculated by code", based_on=list(calc["inputs"]))

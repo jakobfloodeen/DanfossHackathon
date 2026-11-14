@@ -110,5 +110,18 @@ def test_shortlist_rejects_unknown_pool():
         shortlist(COMPX, pool="everyone")
 
 
+def test_attribute_aliases_give_one_standard_name(repo_copy):
+    from comparison_engine.repository import load_repository
+    (repo_copy / "valves.csv").write_text(
+        "brand,product_name,family,attribute,value,unit,source_file,page,quote,status\n"
+        "Danfoss,DEMO valve A,valves,max_flow_per_section,100,l/min,a.pdf,1,DEMO 100,ok\n"
+        "Rival,DEMO valve B,valves,Rated Flow,26,gpm,b.pdf,2,DEMO 26,ok\n")
+    data = load_repository(repo_copy)
+    v = data[data["product_name"].str.startswith("DEMO valve")]
+    assert set(v["attribute"]) == {"rated_flow_per_section"}                   # one row in the table
+    assert set(v["attribute_original"]) == {"max_flow_per_section", "rated_flow"}  # what the datasheets said
+    assert load_logic("valves").files == ["_general.md", "valve.md"]
+
+
 def test_website_family_ids_are_aliases():
     assert canonical_family("valves") == "valve" and canonical_family("pumps") == "pump"

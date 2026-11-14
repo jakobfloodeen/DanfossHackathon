@@ -72,9 +72,9 @@ def test_compare_chosen_competitor(client):
     assert keys == ["rexroth-sb23", "kawasaki-kmp"]
     sb23 = r["matches"][0]
     assert sb23["manufacturer"] == "Bosch Rexroth" and sb23["knownEquivalent"]
-    assert cell(r, "rated_pressure", "rexroth-sb23")["status"] == "converted"       # psi -> bar, by code
+    assert cell(r, "max_pressure_continuous", "rexroth-sb23")["status"] == "converted"   # psi -> bar, by code
     assert cell(r, "max_work_sections", "rexroth-sb23")["status"] == "missing"
-    assert cell(r, "rated_pressure", "kawasaki-kmp")["status"] == "pending"         # uploaded, no CSV yet
+    assert cell(r, "max_pressure_continuous", "kawasaki-kmp")["status"] == "pending"     # uploaded, no CSV yet
     assert r["confidence"]["level"] == "low"                                        # no AI in this test
     assert r["sources"][0]["url"] == "/files/pvg32/abc123_DEMO_pvg32.pdf#page=12"
 
@@ -112,9 +112,9 @@ def test_match_without_facts(client):
 def test_compare_with_checked_ai_answer(client, monkeypatch):
     answer = {"comparable": True, "not_comparable_reason": None,
               "best_match": {"product_id": "rexroth-sb23", "why": "Same job, lower rated pressure.",
-                             "fact_ids": ["F3", "F6"]},   # rated pressure of both (alphabetical order)
+                             "fact_ids": ["F2", "F5"]},   # continuous pressure of both (valve.md order)
               "alternatives": [], "points": [], "application_fit": {"text": "", "fact_ids": []},
-              "talking_points": [{"text": "Up to 12 work sections in one group.", "fact_ids": ["F2"]}],
+              "talking_points": [{"text": "Up to 12 work sections in one group.", "fact_ids": ["F3"]}],
               "tradeoffs": [], "verify": [], "overall_confidence": "medium"}
     calls = []
 

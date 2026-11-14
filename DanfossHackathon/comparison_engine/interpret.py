@@ -53,6 +53,7 @@ def _fact_line(f: Fact) -> str:
     original = f"{f.value} {f.unit or ''}".strip() if f.value is not None else "-"
     quote = (f.quote or "")[:140].replace("\n", " ")
     extra = f" | from {', '.join(f.based_on)}" if f.based_on else ""
+    extra += f" | datasheet calls it '{f.attribute_original}'" if f.attribute_original else ""
     return (f"{f.id} | {f.product_id} | {f.attribute} | {f.display()} | original: {original} | "
             f"status: {f.status} | {f.source()} | \"{quote}\"{extra}")
 
