@@ -1,8 +1,0 @@
-product_id,brand,product_name,family,attribute,value,unit,source_file,page,quote,status
-,CompetitorX,DEMO pump 71,pump,max_displacement,"4,33",in3/rev,DEMO_compx.pdf,4,DEMO value 4.33 in3/rev,ok
-,CompetitorX,DEMO pump 71,pump,rated_pressure,"4,060",psi,DEMO_compx.pdf,4,DEMO value 4060 psi,ok
-,CompetitorX,DEMO pump 71,pump,peak_pressure,350,bar,DEMO_compx.pdf,4,DEMO value 350 bar,ok
-,CompetitorX,DEMO pump 71,pump,max_speed,2550,rpm,DEMO_compx.pdf,4,DEMO value 2550 rpm,ok
-,CompetitorX,DEMO pump 71,pump,weight,,,DEMO_compx.pdf,,,missing
-,CompetitorX,DEMO pump 71,pump,control_options,"PC, LS",,DEMO_compx.pdf,9,DEMO value PC LS,ok
-,CompetitorX,DEMO pump 71,pump,model_code_example,A71VO-DEMO,,DEMO_compx.pdf,12,DEMO code,ok

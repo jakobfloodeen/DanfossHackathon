@@ -1,6 +1,0 @@
-.env
-.venv/
-__pycache__/
-# Review queue: runtime data, not source code
-DanfossHackathon/data/suggestions.json
-DanfossHackathon/data/pending/
