@@ -255,3 +255,29 @@ def test_extract_refuses_without_key_or_non_pdf(client, monkeypatch):
                      files={"files": ("pvg48.pdf", b"%PDF-1.4 demo", "application/pdf")}).json()
     r = client.post("/api/extract", json=up["datasets"][0]).json()               # conftest removed the key
     assert r["jobId"] is None and "ANTHROPIC_API_KEY" in r["issues"][0]["text"]
+
+
+def test_web_discover_and_import(client, tmp_path, monkeypatch):
+    from comparison_engine.documents import link
+    monkeypatch.setattr(backend, "web_discover", lambda url, topic="pumps": {
+        "documents": [{"url": "https://example.com/sb23.pdf", "name": "sb23.pdf", "product": "SB 23",
+                       "label": "PDF", "kind": "auto"}], "pageUrl": url, "pagesVisited": 2, "limited": False,
+        "cached": False, "warnings": []})
+    monkeypatch.setattr(backend, "web_download", lambda url: (b"%PDF-1.4 demo", "sb23.pdf",
+                                                              "https://cdn.example.com/docs/sb23.pdf", False))
+    found = client.post("/api/web/discover", json={"url": "https://example.com/valves", "topic": "valves"}).json()
+    assert found["documents"][0]["url"] == "https://example.com/sb23.pdf" and found["issues"] == []
+    r = client.post("/api/web/import", json={"url": "https://example.com/sb23.pdf", "source": "competitor",
+                                             "competitorId": "rexroth", "productName": "SB 23",
+                                             "categoryId": "proportional", "title": "SB 23 datasheet"}).json()
+    assert r["uploaded"] == ["sb23.pdf"] and r["datasets"][0]["ownerId"] == "rexroth-sb23"
+    assert link("sb23.pdf", 4)["url"] == "https://cdn.example.com/docs/sb23.pdf#page=4"      # footnotes open it online
+    assert link("sb23.pdf", 4)["title"] == "SB 23 datasheet"
+
+
+def test_web_errors_are_shown_not_raised(client, monkeypatch):
+    def boom(url, topic="pumps"):
+        raise ValueError("Local and private network addresses are blocked.")
+    monkeypatch.setattr(backend, "web_discover", boom)
+    r = client.post("/api/web/discover", json={"url": "http://localhost/x"}).json()
+    assert r["documents"] == [] and "blocked" in r["issues"][0]["text"]

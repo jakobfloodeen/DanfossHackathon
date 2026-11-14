@@ -645,6 +645,72 @@ def job_status(job_id: str):
 
 
 # =====================================================================
+# Web import with the teammates' scraper (scraper/ in the repo root; no AI, no API key)
+#   POST /api/web/discover {"url": "https://manufacturer.com/...", "topic": "valves"} -> candidate documents
+#   POST /api/web/import   {"url": "<chosen document>", "source": "danfoss"|"competitor", ...same target fields as
+#                           the upload...}  -> stored like an upload; its web address goes into data/documents.csv
+# =====================================================================
+import sys            # noqa: E402
+
+if str(BASE.parent) not in sys.path:
+    sys.path.append(str(BASE.parent))                    # the repo root, where scraper/ lives
+from comparison_engine.documents import save_document     # noqa: E402
+
+try:
+    from scraper import discover as web_discover, download_source as web_download   # noqa: E402
+except ImportError:                                      # scraper folder missing: the rest of the app still works
+    web_discover = web_download = None
+
+
+@app.post("/api/web/discover")
+def discover_documents(payload: dict):
+    if web_discover is None:
+        return {"documents": [], "issues": [issue("error", "The scraper module is not installed (scraper/ folder).")]}
+    url, topic = (payload.get("url") or "").strip(), (payload.get("topic") or "pumps").strip()
+    try:
+        result = web_discover(url, topic=topic)
+    except Exception as e:  # invalid / private URL, site unreachable, no HTML ...
+        return {"documents": [], "issues": [issue("error", f"Could not search {url}: {e}")]}
+    issues = [issue("warning", w) for w in result.get("warnings", [])]
+    if not result["documents"]:
+        issues.append(issue("missing", "No documents found there. Try a more specific product or download page."))
+    if result.get("limited"):
+        issues.append(issue("warning", "Search stopped early (page limit) - a more specific URL may find more."))
+    return {**result, "issues": issues}
+
+
+@app.post("/api/web/import")
+def import_from_web(payload: dict):
+    if web_download is None:
+        return {"uploaded": [], "issues": [issue("error", "The scraper module is not installed (scraper/ folder).")]}
+    cat = load_catalog()
+    found = resolve_target(cat, payload.get("source", "competitor"), payload.get("nodeId"), payload.get("competitorId"),
+                           payload.get("competitorName"), payload.get("productName"), payload.get("categoryId"),
+                           payload.get("equivalentOf"))
+    if "error" in found:
+        return {"uploaded": [], "issues": found["issues"]}
+    try:
+        content, filename, source_url, _ = web_download((payload.get("url") or "").strip())
+    except Exception as e:
+        return {"uploaded": [], "issues": [issue("error", f"Download failed: {e}")]}
+    issues = found["issues"]
+    ds = store_file(found, filename, content, issues)
+    finish_upload(cat, found, [ds] if ds else [], issues)
+    if not ds:
+        return {"uploaded": [], "issues": issues}
+    try:
+        save_document(filename, source_url, title=payload.get("title") or filename, found_by="scraper")
+        issues.append(issue("ok", f"Online link saved: footnotes for {filename} open {source_url}."))
+    except ValueError as e:
+        issues.append(issue("warning", f"Link not saved: {e}"))
+    if not filename.lower().endswith(".pdf"):
+        issues.append(issue("warning", "This is a web page, not a PDF: it is stored, but the facts converter "
+                                       "only reads PDFs so far."))
+    return {"uploaded": [filename], "issues": issues, "sourceUrl": source_url,
+            "datasets": [{"ownerId": found["owner_id"], "fileId": ds["fileId"], "name": ds["name"]}]}
+
+
+# =====================================================================
 # GET /api/products   (everything that has facts, for the system builder)
 # =====================================================================
 @app.get("/api/products")

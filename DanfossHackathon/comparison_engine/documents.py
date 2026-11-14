@@ -72,3 +72,27 @@ def link(source_file: str | None, page=None, path: Path | None = None) -> dict |
         url += f"#page={page}"
     return {"url": url, "title": doc.get("title") or source_file,
             "date": " · ".join(x for x in (doc.get("revision"), doc.get("date")) if x)}
+
+
+def save_document(source_file: str, url: str, title: str = "", found_by: str = "scraper",
+                  path: Path | None = None) -> None:
+    """Add or update one document's online link (e.g. after a web import). Other rows stay as they are."""
+    from datetime import date
+    path = Path(path) if path else documents_file()
+    df = pd.read_csv(path, dtype=str, keep_default_na=False) if path.exists() else pd.DataFrame(columns=COLUMNS)
+    for c in COLUMNS:
+        if c not in df.columns:
+            df[c] = ""
+    row = {"source_file": source_file, "url": url, "title": title or source_file, "found_by": found_by,
+           "checked_at": date.today().isoformat()}
+    hit = df["source_file"] == source_file
+    if hit.any():
+        for k, v in row.items():
+            df.loc[hit, k] = v
+    else:
+        df = pd.concat([df, pd.DataFrame([{c: row.get(c, "") for c in COLUMNS}])], ignore_index=True)
+    problems = validate_documents(df)
+    if problems:
+        raise ValueError("; ".join(problems))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    df[COLUMNS].to_csv(path, index=False)
