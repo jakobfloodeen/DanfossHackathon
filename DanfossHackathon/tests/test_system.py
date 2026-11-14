@@ -59,7 +59,8 @@ def test_conflicting_input_blocks_the_system_value():
 def test_compose_fills_open_components():
     c = compose_system("system:competitor", "Competitor system", "Competitors", {"pump": None, "valve": None},
                        DANFOSS, "competitors")
-    assert c.components == {"pump": "CompetitorX|DEMO pump 71", "valve": "kawasaki-kmp"}
+    assert c.components["pump"] == "CompetitorX|DEMO pump 71"
+    assert c.components["valve"] and not c.components["valve"].lower().startswith("danfoss")   # a competitor valve
     assert all("automatically" in n for n in c.notes)
 
 

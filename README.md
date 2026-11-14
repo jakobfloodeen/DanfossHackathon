@@ -4,7 +4,9 @@ One app: the website (HTML/JS) + FastAPI backend + the comparison engine.
 A Danfoss salesperson compares a Danfoss product with competitor products (or the other way round),
 and **every value links to its source page, uncertain data is flagged, and the AI's text is checked by code.**
 
-## Run it
+**New here? Start with [HOW_TO_RUN.md](HOW_TO_RUN.md)** – step-by-step setup for Mac and Windows.
+
+## Run it (short version)
 ```
 cd DanfossHackathon
 python3 -m venv .venv && source .venv/bin/activate
@@ -101,7 +103,8 @@ result then opens the document at its page; sources without a url say "no online
 | `DanfossHackathon/comparison_engine/` | comparison logic; each module starts with a plain-English explanation |
 | `DanfossHackathon/rules/` | LOGIC files (Otto): `_general.md` + `valve.md` / `pump.md` / `system.md` (YAML for code + text for the AI). `attribute_aliases` map datasheet names to standard names, e.g. `max_flow_per_section` → `rated_flow_per_section` |
 | `DanfossHackathon/data/` | `catalog.json`, uploads (`files/`), page text (`extracted/`), facts CSVs (`repository/`), document links (`documents.csv`), customer feedback (`customers/`, not committed) |
-| `DanfossHackathon/tests/` | 176 tests, fake AI, temporary data |
+| `DanfossHackathon/tests/` | 177 tests, fake AI, temporary data |
 | `scraper/` | teammates' datasheet discovery/download (unchanged; its own tests: `python -m unittest discover -s scraper/tests`) |
 | `pdf_to_csv_test.py` | teammates' PDF → facts converter (unchanged; called by `comparison_engine/bridge.py`) |
+| `customer_scraper/` | teammates' scraper variant for customer websites (not connected to the app yet) |
 | `archive/` | earlier versions kept for reference: Streamlit prototype, mock-only website copy, Streamlit library page |
