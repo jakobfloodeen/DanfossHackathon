@@ -1124,7 +1124,7 @@
       requestAnimationFrame(() => (chat.scrollTop = chat.scrollHeight));
       return;
     }
-    botMsg("Hi! I'll help you compare a Danfoss product with its competitors. Pick the options below, or type a question at any time.");
+    botMsg("Hi, I'm Dani! I'll help you compare a Danfoss product with its competitors. Pick the options below, or type a question at any time.");
     renderLog(0);
     segments().forEach((seg, i) => {
       doneRow(SHORT_LABEL[seg.key] || "Option", seg.answer, () => editSegment(i));

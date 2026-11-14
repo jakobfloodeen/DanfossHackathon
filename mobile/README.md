@@ -1,4 +1,4 @@
-# Android app (Capacitor)
+# Dani: Android app (Capacitor)
 
 The app is the normal website (`DanfossHackathon/frontend/`) packed into an Android app, plus
 🎤 **voice input**, 🔊 **read aloud** and a **Hands-free** mode. The website is *not* copied into git here: `npm run sync` copies it into

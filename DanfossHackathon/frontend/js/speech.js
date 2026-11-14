@@ -154,7 +154,7 @@ window.Speech = (() => {
       if (handsFree) { setHandsFree(false); stop(); return; }
       setHandsFree(true);
       // if no product is chosen yet, the backend answers "Pick a product above first", which is read aloud too
-      if (await speak("Hands-free is on. Ask your question.")) listenForQuestion();
+      if (await speak("Hi, Dani here. Hands-free is on. Ask your question.")) listenForQuestion();
     });
     actions.prepend(t);
     setHandsFree(handsFree);

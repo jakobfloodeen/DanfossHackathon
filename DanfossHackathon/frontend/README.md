@@ -1,4 +1,4 @@
-# Competitor Intelligence Assistant: front end
+# Dani (Competitor Intelligence Assistant): front end
 
 A static HTML/CSS/JS front end with no build step and no dependencies. It runs from mock data
 out of the box and switches to the real backend by changing one line.

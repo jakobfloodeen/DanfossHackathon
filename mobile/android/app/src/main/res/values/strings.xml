@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Competitor Intelligence</string>
-    <string name="title_activity_main">Competitor Intelligence</string>
+    <string name="app_name">Dani</string>
+    <string name="title_activity_main">Dani</string>
     <string name="package_name">com.danfosshackathon.ciassistant</string>
     <string name="custom_url_scheme">com.danfosshackathon.ciassistant</string>
 </resources>

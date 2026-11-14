@@ -2,7 +2,7 @@
 # website or the app, and on demand (Actions tab → "Build Android APK" → Run workflow).
 #
 # Where to get the APK afterwards:
-#   • Releases → "Android app (latest build)" → app-debug.apk   (easiest: open on the phone and install)
+#   • Releases → "Dani Android app (latest build)" → app-debug.apk   (easiest: open on the phone and install)
 #   • or the run's page → Artifacts → ci-assistant-apk (a zip, needs a GitHub login)
 #
 # Optional: Settings → Secrets and variables → Actions → Variables → BACKEND_URL
@@ -74,5 +74,5 @@ jobs:
           TAG=android-latest-${GITHUB_REF_NAME//\//-}
           gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
           gh release create "$TAG" "$APK" --prerelease --target "$GITHUB_SHA" \
-            --title "Android app (latest build, ${GITHUB_REF_NAME})" \
+            --title "Dani Android app (latest build, ${GITHUB_REF_NAME})" \
             --notes "Debug APK built from ${GITHUB_SHA::7} on ${GITHUB_REF_NAME}. On the phone: open this page, download app-debug.apk, allow 'install unknown apps' for your browser, install."

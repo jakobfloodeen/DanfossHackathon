@@ -1,4 +1,4 @@
-# Competitor Intelligence Assistant (Danfoss × SDU G.E.A.R., Case 5)
+# Dani: Competitor Intelligence Assistant (Danfoss × SDU G.E.A.R., Case 5)
 
 One app: the website (HTML/JS) + FastAPI backend + the comparison engine.
 A Danfoss salesperson compares a Danfoss product with competitor products (or the other way round),
