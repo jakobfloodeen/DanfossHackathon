@@ -122,7 +122,7 @@ def _allowed_numbers(fact_ids: list[str], by_id: dict[str, Fact], diffs: list[Di
     allowed: set[float] = set()
     cited = [by_id[i] for i in fact_ids if i in by_id]
     for f in cited:
-        if f.role == "customer":                         # a customer passage: every number in its text counts
+        if f.role in ("customer", "commercial"):         # a passage/note: every number in its text counts
             allowed |= {abs(v) for v in (parse_number(x) for x in numbers_in(f.value or "")) if v is not None}
             continue
         for f2 in [f] + [by_id[b] for b in f.based_on if b in by_id]:      # calculated: inputs count too
@@ -217,7 +217,8 @@ def check_interpretation(answer: dict, facts: list[Fact], diffs: list[Diff], tar
         for fid in ids:
             if fid not in by_id:
                 problems.append(f"{where}: cites unknown fact {fid}")
-            elif product and by_id[fid].role != "customer" and by_id[fid].product_id not in (product, target_id):
+            elif product and by_id[fid].role not in ("customer", "commercial") \
+                    and by_id[fid].product_id not in (product, target_id):
                 problems.append(f"{where}: {fid} belongs to {by_id[fid].product_id}, not {product} or the target")
         allowed = _allowed_numbers(ids, by_id, diffs) | user_numbers
         for raw in numbers_in(text, names):

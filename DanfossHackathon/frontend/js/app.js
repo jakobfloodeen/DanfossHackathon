@@ -826,6 +826,39 @@
     return `<span class="ai-cost" title="${esc(c.input)} tokens in, ${esc(c.output)} tokens out${c.factsSent ? `, ${esc(c.factsSent)} facts sent` : ""}">AI cost: $${c.usd < 0.01 ? c.usd.toFixed(4) : c.usd.toFixed(3)} · ${c.calls} call${c.calls > 1 ? "s" : ""}</span>`;
   }
 
+  const KIND_LABEL = { positioning: "Positioning", availability: "Availability", pricing: "Pricing",
+                       selling_point: "Selling point", transition: "Transition", warning: "Warning" };
+
+  /** Approved commercial notes (sales guidelines) + the review queue for pending ones. */
+  function commercialHtml(r) {
+    const approved = r.commercial || [];
+    const pending = r.commercialPending || [];
+    if (!approved.length && !pending.length) return "";
+    const note = (n, extra) => `<li class="com-note${extra ? " is-pending" : ""}">
+      <span class="badge badge-${n.kind === "warning" || n.kind === "transition" ? "warn" : "brand"}">${esc(KIND_LABEL[n.kind] || n.kind)}</span>
+      ${esc(n.text)} <span class="hint">· ${esc(n.product)}${n.regions && n.regions !== "all" ? " · " + esc(n.regions) : ""}
+      · ${esc(n.source)}${n.page ? ", slide " + esc(n.page) : ""}</span>${(n.sources || []).map(ref).join("")}${extra || ""}</li>`;
+    const canEdit = currentUser.role === "editor";
+    return `<section class="insight commercial"><h4>Commercial (approved sales-guideline notes, internal)</h4>
+      <ul>${approved.map((n) => note(n)).join("")}
+      ${pending.map((n) => note({ ...n, product: n.product_id, source: n.source_file },
+        canEdit ? ` <span class="pending-tools" data-id="${esc(n.id)}">· pending ·
+            <button class="link-btn" type="button" data-decide="approve">Approve</button>
+            <button class="link-btn" type="button" data-decide="reject">Reject</button></span>`
+                : ' <span class="badge badge-muted">pending editor approval</span>')).join("")}</ul>
+      <button class="link-btn" type="button" data-act="suggest-note">+ Suggest a note</button>
+      <div class="suggest-note" hidden>
+        <div class="form-grid tight">
+          <label class="field"><span>Type</span><select name="nKind">${Object.entries(KIND_LABEL).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select></label>
+          <label class="field"><span>Source <span class="opt">(guideline + slide)</span></span><input name="nSource" placeholder="e.g. Q1 2026 guidelines, slide 6"></label>
+          <label class="field span-2"><span>Note</span><input name="nText" placeholder="e.g. Standard all regions from Q3"></label>
+        </div>
+        <div class="actions"><span class="hint">${canEdit ? "You are an editor: the note goes live at once." : "Sent to an editor for approval first."}</span>
+        <button class="btn btn-ghost btn-sm" type="button" data-act="send-note">Add</button></div>
+      </div>
+    </section>`;
+  }
+
   function insightList(title, items) {
     if (!items || !items.length) return "";
     return `<section class="insight"><h4>${esc(title)}</h4><ul>${items.map((it) =>
@@ -869,6 +902,7 @@
         ${insightList("Switching trade-offs", r.insights?.tradeoffs)}
       </div>
       ${r.flags?.length ? `<section class="insight"><h4>Open points</h4>${r.flags.map(flagHtml).join("")}</section>` : ""}
+      ${commercialHtml(r)}
       ${!r.sources.length ? "" : `<details class="sources"><summary>Sources (${r.sources.length})</summary><ol>${r.sources.map((s) =>
         `<li id="src-${s.id}">${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title)}${s.page ? `, p. ${esc(s.page)}` : ""}${s.date ? ` <span class="hint">(${esc(s.date)})</span>` : ""}${s.url || s.kind === "customer" ? "" : ' <span class="hint">· no online link yet</span>'}${s.doc ? `<div class="hint">${esc(s.doc)}</div>` : ""}</li>`).join("")}</ol></details>`}
       <div class="actions">
@@ -877,6 +911,29 @@
         <button class="btn btn-ghost" type="button" data-act="edit">Adjust priorities</button>
       </div>`;
     card.querySelector('[data-act="print"]').addEventListener("click", () => window.print());
+    card.querySelector('[data-act="suggest-note"]')?.addEventListener("click", () => {
+      const box = card.querySelector(".suggest-note");
+      box.hidden = !box.hidden;
+    });
+    card.querySelector('[data-act="send-note"]')?.addEventListener("click", async (ev) => {
+      const box = card.querySelector(".suggest-note");
+      const payload = { productId: r.anchor?.key || "", kind: box.querySelector("[name=nKind]").value,
+                        text: box.querySelector("[name=nText]").value, source: box.querySelector("[name=nSource]").value };
+      ev.target.disabled = true;
+      try {
+        const res = await Api.addCommercial(payload);
+        box.innerHTML = (res.issues || []).map(flagHtml).join("");
+      } catch (err) { box.innerHTML = flagHtml({ level: "error", text: err.message }); ev.target.disabled = false; }
+    });
+    card.querySelectorAll(".pending-tools button").forEach((b) => b.addEventListener("click", async () => {
+      const id = b.closest(".pending-tools").dataset.id;
+      b.disabled = true;
+      try {
+        await Api.decideCommercial(id, b.dataset.decide);
+        b.closest(".com-note").style.opacity = "0.4";
+        b.closest(".pending-tools").textContent = b.dataset.decide === "approve" ? "approved - rerun the comparison to use it" : "rejected";
+      } catch (err) { b.disabled = false; alert(err.message); }
+    }));
     // "All other facts" can be thousands of rows: drawn only when opened, filterable, first 150 matches
     const moreBox = card.querySelector(".more-facts");
     if (moreBox) {
@@ -1169,6 +1226,23 @@
   $("#btn-system").addEventListener("click", () => catalog && openSystemDialog());
 
   window.addEventListener("beforeprint", () => document.querySelectorAll("details.sources").forEach((d) => (d.open = true)));
+
+  // ---------- demo login (viewer suggests, editor approves) ----------
+  let currentUser = { id: localStorage.getItem("dani-user") || "senior", role: "editor", users: [] };
+
+  async function initUser() {
+    const sel = $("#user-select");
+    try { currentUser = { ...currentUser, ...(await Api.user()) }; } catch { /* mock mode */ }
+    const users = currentUser.users?.length ? currentUser.users
+      : [{ id: "senior", name: "Senior (demo)", role: "editor" }, { id: "junior", name: "Junior (demo)", role: "viewer" }];
+    sel.innerHTML = users.map((u) => `<option value="${esc(u.id)}" ${u.id === currentUser.id ? "selected" : ""}>${esc(u.name)} · ${u.role}</option>`).join("");
+    sel.addEventListener("change", async () => {
+      localStorage.setItem("dani-user", sel.value);
+      currentUser = { ...currentUser, ...(await Api.user().catch(() => ({}))) };
+      render();
+    });
+  }
+  initUser();
 
   // ---------- boot ----------
   Api.getCatalog()

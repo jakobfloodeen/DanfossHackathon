@@ -12,8 +12,9 @@ const Api = (() => {
 
   async function call(path, options = {}) {
     const isForm = options.body instanceof FormData;
+    const user = localStorage.getItem("dani-user") || "senior";   // demo login: senior (editor) / junior (viewer)
     const res = await fetch(cfg.API_BASE + path, {
-      headers: isForm ? {} : { "Content-Type": "application/json" },
+      headers: { "X-User": user, ...(isForm ? {} : { "Content-Type": "application/json" }) },
       ...options,
     });
     if (!res.ok) throw new Error(`API ${path} failed with status ${res.status}`);
@@ -90,6 +91,16 @@ const Api = (() => {
     },
 
     /** Free-text question typed into the chat box, with the current brief as context. */
+    async user() {
+      if (cfg.USE_MOCK) return { id: "senior", name: "Senior (demo)", role: "editor", users: [] };
+      return call("/user");
+    },
+    async addCommercial(payload) {
+      return call("/commercial", { method: "POST", body: JSON.stringify(payload) });
+    },
+    async decideCommercial(id, action) {
+      return call("/commercial/decide", { method: "POST", body: JSON.stringify({ id, action }) });
+    },
     async usage() {
       if (cfg.USE_MOCK) return null;
       return call("/usage");

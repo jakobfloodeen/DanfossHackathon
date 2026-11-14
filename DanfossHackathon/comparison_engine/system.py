@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 
 import pandas as pd
 
-from . import config
+from . import commercial, config
 from .interpret import interpret
 from .logic import load_logic
 from .repository import load_repository
@@ -155,9 +155,11 @@ def compare_systems(anchor: System, other: System, user_question: str = "", cust
     """One comparison of two systems with the normal engine (facts, one AI call, guardrails)."""
     data = build_system_data([anchor, other])
     candidates = [other.id] if (data["product_id"] == other.id).any() else []
+    component_ids = [pid for s in (anchor, other) for pid in s.components.values() if pid]
+    notes = commercial.commercial_facts(component_ids, "system")
     result = interpret(anchor.id, candidates, user_question, customer_context, ask=ask, use_ai=use_ai,
                        data=data, pool="system" if pool == "competitors" else "system_reverse",
-                       customer_facts=customer_facts)
+                       customer_facts=customer_facts, commercial_notes=notes)
     result.meta["systems"] = {s.id: {"name": s.name, "components": s.components, "notes": s.notes}
                               for s in (anchor, other)}
     return result

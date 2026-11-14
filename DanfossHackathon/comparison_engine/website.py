@@ -85,6 +85,8 @@ class _Sources:
             info = found if isinstance(found, dict) else {"url": found}
             if f.role == "customer":                              # the customer's own file: never online
                 info = {"title": f"Customer file: {f.source_file}", "url": None, "kind": "customer"}
+            elif f.role == "commercial":                          # internal sales guidelines: never online
+                info = {"title": f"Sales guideline: {f.source_file}", "url": None, "kind": "commercial"}
             self.items.append({"id": self.index[key], "title": info.get("title") or f.source_file, "doc": "",
                                "quotes": [], "page": str(f.page) if f.page else "", "date": info.get("date", ""),
                                "file": f.source_file, "url": info.get("url"), "kind": info.get("kind", "document")})
@@ -262,7 +264,11 @@ def to_website(result: AnalysisResult, names: dict[str, dict] | None = None,
     attributes = paired + attributes
 
     insights = _insights(result, by_id, sources, names, match_ids)
-    source_list = _number_cited_sources(attributes, insights, sources.finish())
+    commercial_block = [{"id": f.id, "product": f.product_id, "kind": f.attribute, "text": f.value,
+                         "regions": f.note, "source": f.source_file,
+                         "page": str(f.page) if f.page else "", "sources": sources.ref(f, by_id)}
+                        for f in result.facts if f.role == "commercial"]
+    source_list = _number_cited_sources(attributes, insights, sources.finish(), commercial_block)
     flags = _flags(result, by_id, names, pending) + list(extra_flags or [])
     anchor = column(target) if target else {"key": "none", "name": "?", "manufacturer": ""}
     matches = [column(p) for p in match_ids]
@@ -276,18 +282,21 @@ def to_website(result: AnalysisResult, names: dict[str, dict] | None = None,
         "flags": flags,
         "confidence": _confidence(result),
         "sources": source_list,
+        "commercial": commercial_block,
         "engine": {"status": result.status, "message": result.message, "best_match": result.best_match_id,
                    "problems": result.problems, "meta": result.meta},
     }
 
 
-def _number_cited_sources(attributes: list[dict], insights: dict, items: list[dict]) -> list[dict]:
+def _number_cited_sources(attributes: list[dict], insights: dict, items: list[dict],
+                          commercial: list[dict] | None = None) -> list[dict]:
     """The numbered source list holds only what the short table and the AI text cite (a handful), not every page
     of every row under "All facts" (that was 200+ sources). Cells in "All facts" get direct page links instead
     ("links": [{"url", "page", "title"}]), so every value stays traceable."""
     by_old = {it["id"]: it for it in items}
     cited = [n for a in attributes if a["core"] for v in a["values"].values() for n in v.get("sources", [])]
     cited += [n for part in insights.values() for it in part for n in it.get("sources", [])]
+    cited += [n for it in (commercial or []) for n in it.get("sources", [])]
     new_id = {old: i + 1 for i, old in enumerate(dict.fromkeys(cited))}
     for a in attributes:
         for v in a["values"].values():
@@ -299,6 +308,8 @@ def _number_cited_sources(attributes: list[dict], insights: dict, items: list[di
     for part in insights.values():
         for it in part:
             it["sources"] = sorted(new_id[n] for n in it.get("sources", []))
+    for it in commercial or []:
+        it["sources"] = sorted(new_id[n] for n in it.get("sources", []))
     return [{**by_old[old], "id": new} for old, new in new_id.items()]
 
 
@@ -382,6 +393,10 @@ def _flags(result, by_id, names, pending) -> list[dict]:
     if customer:
         files = ", ".join(sorted({f.source_file for f in customer}))
         flags.append({"level": "ok", "text": f"Customer feedback considered: {len(customer)} passage(s) from {files}."})
+    commercial = [f for f in result.facts if f.role == "commercial"]
+    if commercial:
+        flags.append({"level": "ok", "text": f"Approved commercial notes considered: {len(commercial)} "
+                                             f"(internal sales guidelines; approved statements only)."})
     if (result.onepager or {}).get("demo_data"):
         flags.append({"level": "sample", "text": "Contains DEMO data (made up for testing) - not for customers."})
     return flags

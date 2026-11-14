@@ -19,7 +19,7 @@ from typing import Optional
 
 import pdfplumber
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, Form, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -377,6 +377,7 @@ from comparison_engine.documents import link as document_link  # noqa: E402
 from comparison_engine.customer import customer_facts, list_customers, save_customer_file  # noqa: E402
 from comparison_engine.system import System, compare_systems, compose_system  # noqa: E402
 from comparison_engine import usage                                              # noqa: E402
+from comparison_engine import commercial                                          # noqa: E402
 
 
 async def upload_customer_files(customer_name: Optional[str], files: list[UploadFile]) -> dict:
@@ -476,6 +477,60 @@ def customer_passages(payload: dict, question: str, context: str):
     return customer_facts((payload.get("buyer") or {}).get("company", ""), words)
 
 
+# =====================================================================
+# Users and roles (demo). Design from the main branch's review queue (hrub98), scoped here to
+# commercial notes: viewers SUGGEST notes, editors APPROVE them; only approved notes reach the AI.
+# Swap for company single sign-on later - the rest of the code only uses current_user().
+USERS = {
+    "junior": {"id": "junior", "name": "Junior (demo)", "title": "Sales assistant", "role": "viewer"},
+    "senior": {"id": "senior", "name": "Senior (demo)", "title": "Product manager", "role": "editor"},
+}
+
+
+def current_user(request: Request) -> dict:
+    return USERS.get((request.headers.get("x-user") or "").strip().lower(), USERS["senior"])
+
+
+@app.get("/api/user")
+def get_user(request: Request):
+    return {**current_user(request), "users": list(USERS.values())}
+
+
+@app.get("/api/commercial")
+def list_commercial(product: str = "", family: str = ""):
+    """Approved + pending commercial notes for a product and its family (for the result block)."""
+    ids = [product] if product else []
+    return {"approved": commercial.for_products(ids, family),
+            "pending": commercial.for_products(ids, family, status="pending")}
+
+
+@app.post("/api/commercial")
+def add_commercial(payload: dict, request: Request):
+    user = current_user(request)
+    try:
+        row = commercial.add(payload.get("productId", ""), payload.get("kind", ""), payload.get("text", ""),
+                             user, payload.get("source", ""), payload.get("page", ""), payload.get("regions", ""))
+    except ValueError as e:
+        return {"note": None, "issues": [issue("error", str(e))]}
+    what = ("Approved and live (you are an editor)." if row["status"] == "approved"
+            else "Sent for review: an editor must approve it before it is shown or used.")
+    return {"note": row, "issues": [issue("ok", what)]}
+
+
+@app.post("/api/commercial/decide")
+def decide_commercial(payload: dict, request: Request):
+    user = current_user(request)
+    try:
+        row = commercial.decide(payload.get("id", ""), payload.get("action", ""), user)
+    except PermissionError as e:
+        raise HTTPException(status_code=403, detail=str(e))
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e.args[0]))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return {"note": row}
+
+
 def run_engine(target_id: str, candidates, pool: str, payload: dict, names: dict, pending: dict,
                extra_flags: list) -> dict:
     question, context = brief_text(payload)
@@ -488,6 +543,8 @@ def run_engine(target_id: str, candidates, pool: str, payload: dict, names: dict
             target_id, {}).get("equivalentOf", [])
     out = to_website(result, names=names, doc_url=doc_url, pending=pending, extra_flags=extra_flags)
     out["aiCost"] = ai_cost(calls, result)
+    out["commercialPending"] = commercial.for_products([target_id], result.target.get("family", ""),
+                                                       status="pending")
     return out
 
 
