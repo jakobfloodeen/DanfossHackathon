@@ -214,7 +214,11 @@
       if (m.role === "user") userMsg(m.text);
       else if (m.role === "typing") botMsg('<span class="typing"><i></i><i></i><i></i></span>');
       else if (m.role === "issues") botMsg(`<p><strong>${esc(m.title)}</strong></p>${m.issues.map(flagHtml).join("")}`).classList.add("bubble-wide");
-      else botMsg(esc(m.text));
+      else {
+        const bubble = botMsg(esc(m.text));
+        const speak = window.Speech?.button(m.text, "Read this answer aloud");  // js/speech.js
+        if (speak) bubble.appendChild(speak);
+      }
     });
   }
 
@@ -741,6 +745,7 @@
     state.loading = true; state.error = null; render();
     try {
       state.result = await Api.compare(buildPayload());
+      window.Speech?.onResult(state.result, state.buyer.company);
     } catch (err) {
       state.error = err.message;
     } finally {
@@ -869,6 +874,8 @@
         <button class="btn btn-ghost" type="button" data-act="edit">Adjust priorities</button>
       </div>`;
     card.querySelector('[data-act="print"]').addEventListener("click", () => window.print());
+    const speak = window.Speech?.button(() => Speech.resultText(r, state.buyer.company), "Read the summary aloud");
+    if (speak) { speak.classList.add("btn", "btn-ghost"); speak.insertAdjacentText("beforeend", " Read summary"); card.querySelector(".actions").prepend(speak); }
     // a footnote without an online link jumps to the source list: open it first
     card.querySelectorAll('a.ref[href^="#src-"]').forEach((a) => a.addEventListener("click", () => {
       card.querySelector("details.sources").open = true;
@@ -979,6 +986,7 @@
     try {
       state.result = await Api.match({ competitorProductId: state.matchProduct.id, buyer: { ...state.buyer },
                                        factors: {}, customFactors: [], chatNotes: [] });
+      window.Speech?.onResult(state.result, state.buyer.company);
     } catch (err) {
       state.error = err.message;
     } finally {
@@ -1058,6 +1066,7 @@
     state.loading = true; state.error = null; state.result = null; render();
     try {
       state.result = await Api.compareSystem({ ...state.system.payload, buyer: { ...state.buyer }, factors: {}, chatNotes: [] });
+      window.Speech?.onResult(state.result, state.buyer.company);
     } catch (err) {
       state.error = err.message;
     } finally {
@@ -1135,6 +1144,7 @@
     state.log = state.log.filter((m) => m !== typing);
     state.log.push({ stage, role: "bot", text: answer });
     render();
+    window.Speech?.onAnswer(answer);   // hands-free: read it aloud (js/speech.js)
   });
 
   $("#btn-restart").addEventListener("click", () => { state = freshState(); render(); });

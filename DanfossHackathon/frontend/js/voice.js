@@ -15,7 +15,7 @@
 // The spoken text is only typed into the field. Nothing is sent
 // until the user presses Send, exactly like typed text.
 // ---------------------------------------------------------------
-const Voice = (() => {
+window.Voice = (() => {
   "use strict";
 
   const cfg = window.APP_CONFIG || {};
@@ -38,6 +38,8 @@ const Voice = (() => {
     const before = field.value.trimEnd();
     field.value = before ? before + " " + text : text;
     field.dispatchEvent(new Event("input", { bubbles: true }));
+    // hands-free (js/speech.js): a spoken chat question is sent without tapping Send
+    if (window.Speech?.handsFree && field.id === "composer-input") { field.form.requestSubmit(); return; }
     field.focus();
   }
 
@@ -91,6 +93,7 @@ const Voice = (() => {
 
   async function toggle(field, button) {
     if (active) { const wasMe = active.button === button; active.stop(); if (wasMe) return; }
+    window.Speech?.stop();  // don't let the microphone hear the phone reading aloud
     try {
       if (nativePlugin) await listenNative(field, button);
       else await listenWeb(field, button);

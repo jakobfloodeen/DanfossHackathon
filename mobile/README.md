@@ -1,7 +1,7 @@
 # Android app (Capacitor)
 
-The app is the normal website (`DanfossHackathon/frontend/`) packed into an Android app, plus a
-🎤 **voice input** button. The website is *not* copied into git here: `npm run sync` copies it into
+The app is the normal website (`DanfossHackathon/frontend/`) packed into an Android app, plus
+🎤 **voice input**, 🔊 **read aloud** and a **Hands-free** mode. The website is *not* copied into git here: `npm run sync` copies it into
 `www/` at build time, so every change to the website is automatically in the next APK.
 
 ```
@@ -42,6 +42,19 @@ To use another address, edit that file and push; a repository variable `BACKEND_
 (plugin `@capacitor-community/speech-recognition`, free, no key); in Chrome/Edge on a computer it uses
 the browser's Web Speech API. The words are only typed into the field. Nothing is sent before **Send**.
 
+## Read aloud and Hands-free
+`DanfossHackathon/frontend/js/speech.js`:
+- 🔊 under every assistant answer and **Read summary** on every comparison result read them aloud
+  (citations like "(datasheet, p. 12)" are skipped, "l/min" is said as "litres per minute").
+- **Hands-free** (top bar), for when you can't look at or touch the phone, e.g. driving:
+  the mic starts → the spoken question is sent automatically → the answer is read aloud → the mic
+  starts again. Say nothing and the loop stops; tap Hands-free again to switch it off.
+  New comparison results are read aloud automatically while it is on.
+  Choosing the product still needs taps (the chat questions are about the chosen product).
+- Engines: the phone's own text-to-speech in the app (`@capacitor-community/text-to-speech`),
+  `speechSynthesis` in Chrome/Edge. Language = the voice language under **Server**.
+- It only reads what is already on screen; nothing extra is sent to the backend.
+
 ## Build it yourself (optional)
 Needs Node 22+, JDK 21 and the Android SDK (easiest: install Android Studio).
 ```
@@ -56,5 +69,5 @@ npx cap open android  # or open it in Android Studio and press Run with a phone 
 |---|---|
 | `capacitor.config.json` | app id/name, allows `http://` backends on the local network |
 | `copy-web.mjs` | copies the website into `www/`, writes the default backend address |
-| `android/` | generated Android project; `AndroidManifest.xml` has the microphone permission |
+| `android/` | generated Android project; `AndroidManifest.xml` has the microphone permission and finds the speech engines |
 | `../DanfossHackathon/frontend/js/mobile.js` | app-only glue: backend address, opening source PDFs |

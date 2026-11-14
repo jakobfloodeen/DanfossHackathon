@@ -32,6 +32,7 @@ If the backend runs on a different port than the page, enable CORS on it
 | `js/api.js` | The only place that calls the backend (3 functions) | rarely |
 | `js/app.js` | Chat flow and rendering | UI |
 | `js/voice.js` | 🎤 voice input on fields marked `data-voice` (phone recognizer in the app, Web Speech API in Chrome/Edge) | UI |
+| `js/speech.js` | 🔊 read answers/results aloud + Hands-free mode (speak → auto-send → answer read aloud) | UI |
 | `js/mobile.js` | Android app only: backend address + voice language settings (see `mobile/README.md`) | rarely |
 | `js/mock-data.js` | Mock catalog + mock responses (stand-in for the backend) | anyone |
 | `examples/*.json` | Exact JSON shapes the backend must return/accept | backend |

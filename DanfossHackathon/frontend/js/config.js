@@ -10,7 +10,7 @@ window.APP_CONFIG = {
   // false = call the real backend at API_BASE
   USE_MOCK: false,
 
-  // Voice input (🎤 button): language the speech recognizer listens for.
+  // Voice input (🎤) and read aloud (🔊 / Hands-free): language to listen and speak in.
   // In the Android app it can be changed under "Server" in the top bar.
   VOICE_LANG: "en-US",
   VOICE_LANGS: { "en-US": "English", "en-GB": "English (UK)", "da-DK": "Dansk", "de-DE": "Deutsch" },

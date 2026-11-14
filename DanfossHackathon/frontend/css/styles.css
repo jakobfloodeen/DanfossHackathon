@@ -318,3 +318,16 @@ dialog#server-dialog { border: 0; border-radius: var(--radius); padding: 0; widt
   .modes { order: 2; }
   .top-actions { margin-left: auto; }
 }
+
+/* ---------- read aloud + hands-free (js/speech.js) ---------- */
+.speak-btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); border-radius: var(--radius-sm); padding: 4px 8px; margin-top: 8px; cursor: pointer; vertical-align: middle; }
+.msg-bot .bubble > .speak-btn { display: flex; margin-left: auto; }
+.speak-btn:hover { border-color: var(--ink-3); }
+.speak-btn.is-speaking { background: var(--tint); color: var(--ink); border-color: var(--ink-3); }
+.result .actions .speak-btn { margin-top: 0; padding: 9px 18px; font-weight: 600; }
+.handsfree-btn[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.is-handsfree .composer .mic-btn { min-width: 64px; }
+@media (max-width: 640px) {
+  .actions { flex-wrap: wrap; }
+  .actions .btn { white-space: nowrap; }
+}
