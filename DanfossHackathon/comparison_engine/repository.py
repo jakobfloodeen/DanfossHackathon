@@ -232,16 +232,17 @@ def _add_calculated(data: pd.DataFrame) -> pd.DataFrame:
 
 
 def _flag_conflicts(data: pd.DataFrame) -> pd.DataFrame:
-    """Same product + attribute, 2+ different source files, values differ by more than the tolerance."""
+    """Same product + attribute, 2+ different sources (another file, or another page of the same file),
+    values differ by more than the tolerance."""
     numeric = data[data["norm_value"].notna() & (data["source_file"] != "calculated")]
     for (pid, attr), g in numeric.groupby(["product_id", "attribute"]):
-        if g["source_file"].nunique() < 2:
+        if len(set(zip(g["source_file"], g["page"].fillna(-1)))) < 2:
             continue
         tolerance = load_logic(g["family"].iloc[0]).settings["conflict_tolerance"]
         lo, hi = g["norm_value"].min(), g["norm_value"].max()
         if (hi - lo) / max(abs(hi), 1e-9) > tolerance:
             data.loc[g.index, "status"] = "conflict"
-            data.loc[g.index, "note"] = f"{g['source_file'].nunique()} sources disagree"
+            data.loc[g.index, "note"] = f"{len(g)} sources disagree"
     return data
 
 

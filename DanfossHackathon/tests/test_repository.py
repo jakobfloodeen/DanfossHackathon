@@ -122,3 +122,12 @@ def test_semicolon_csv_is_read(repo_copy):
         "Danfoss;DEMO pump 60;pump;max_speed;2500;rpm;x.pdf;1;DEMO 2500;ok\n")
     report = repository_report(repo_copy)
     assert report[report["file"] == "excel.csv"].iloc[0]["loaded"]
+
+
+def test_two_pages_of_one_file_can_conflict(repo_copy):
+    (repo_copy / "pages.csv").write_text(
+        "brand,product_name,family,attribute,value,unit,source_file,page,quote,status\n"
+        "Danfoss,DEMO valve,valves,rated_flow,100,l/min,doc.pdf,12,DEMO 100,ok\n"
+        "Danfoss,DEMO valve,valves,rated_flow,125,l/min,doc.pdf,54,DEMO 125,ok\n")
+    data = load_repository(repo_copy)
+    assert set(rows(data, "Danfoss|DEMO valve", "rated_flow")["status"]) == {"conflict"}
