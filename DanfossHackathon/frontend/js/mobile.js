@@ -27,10 +27,10 @@
   cfg.EXTRA_HEADERS = { "ngrok-skip-browser-warning": "1" };
   document.documentElement.classList.add("is-app");
 
-  // Source links from the backend can be relative ("/files/<owner>/<file>.pdf#page=3"):
+  // Links from the backend can be relative ("/files/<owner>/<file>.pdf#page=3", "/api/web/open?url=…"):
   // they live on the server, not in the app, so open them on the server in the phone's browser.
   document.addEventListener("click", (e) => {
-    const a = e.target.closest?.('a[href^="/files/"]');
+    const a = e.target.closest?.('a[href^="/files/"], a[href^="/api/"]');
     if (!a || !server) return;
     e.preventDefault();
     window.open(server + a.getAttribute("href"), "_blank");
