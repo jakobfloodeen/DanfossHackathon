@@ -291,3 +291,18 @@ def test_reverse_direction_prompt_and_result():
     assert r.meta["pool"] == "competitors"
     # GOOD names pump 75 as best match, which is the target here -> code must reject it
     assert r.status == "ok_with_problems" and any("not on the shortlist" in p for p in r.problems)
+
+
+def test_too_long_answers_are_caught(setup):
+    long_text = " ".join(["word"] * 60)
+    p = check(bad(talking_points=[{"text": long_text, "fact_ids": ["F15"]}]), setup)
+    assert any("60 words" in x for x in p)
+    many = [{"text": "Adds EP control option.", "fact_ids": ["F15"]}] * 4
+    assert any("4 items, at most 3" in x for x in check(bad(talking_points=many), setup))
+
+
+def test_prompt_asks_for_short_paired_answers():
+    ask = fake(GOOD)
+    interpret(COMPX, None, ask=ask)
+    system = ask.calls[0]["system"]
+    assert "at most 30 words" in system and "DIFFERENT attribute names" in system

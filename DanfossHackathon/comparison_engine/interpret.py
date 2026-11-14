@@ -30,7 +30,7 @@ from .repository import load_repository
 from .results import STATUS_MESSAGES, AnalysisResult, comparison_rows, onepager_data
 from .shortlist import shortlist as make_shortlist
 
-PROMPT_VERSION = "1"            # change when the prompt text changes -> old cache entries are not reused
+PROMPT_VERSION = "2"            # change when the prompt text changes -> old cache entries are not reused
 _MEMORY_CACHE: dict = {}
 
 HARD_RULES = """HARD RULES (code checks every one of them; breaking one makes the answer fail):
@@ -44,7 +44,13 @@ HARD_RULES = """HARD RULES (code checks every one of them; breaking one makes th
 7. Facts with status missing / unverified / conflict / unknown unit go into 'verify'. Missing is not worse.
 8. If no candidate does the same job as the target: comparable=false, best_match=null, give the reason.
 9. Product ids must be copied exactly from the lists below.
-10. Answer with ONE JSON object in exactly this format, nothing else:
+10. Keep it SHORT - this becomes a one-page brief: best_match.why at most 40 words; every other "why"/"text"
+    at most 30 words; at most 3 talking_points, 2 tradeoffs and 8 points. Order points by importance for this
+    customer (most important first). Do not repeat the same fact in several places.
+11. If the same quantity has DIFFERENT attribute names in the two products (e.g. "max_pressure" vs
+    "max_pressure_continuous"), make a point that pairs them (target_facts + candidate_facts) and say in
+    "why" if the definitions may differ. Never pair continuous with intermittent values.
+12. Answer with ONE JSON object in exactly this format, nothing else:
 {schema}"""
 
 

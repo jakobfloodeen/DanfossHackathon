@@ -12,8 +12,14 @@ How engine statuses become website statuses (one cell = one product + one attrib
     conflict               -> conflict          (ALL source values are shown in the cell note)
     calculated             -> inferred          (formula + input facts in the note)
     unknown unit           -> unverified        (original value shown, not compared)
-    missing / no fact      -> missing           (value null - never guessed)
+    missing                -> missing           (the datasheet does not state it - never guessed)
+    no matching value      -> na                ("–": this product has no value under this name;
+                                                 not counted as missing)
     uploaded, no CSV yet   -> pending           ("Awaiting extraction")
+
+Short output (one-pager): rows where the anchor product AND at least one match have a value, and rows the AI
+paired across different names, are "core" (shown in the table); all other rows go to a collapsed "All facts" list that is not printed.
+AI text is capped at 3 key differences, 3 benefits and 2 trade-offs.
 """
 from collections import Counter
 from typing import Callable
@@ -23,6 +29,8 @@ from .results import AnalysisResult
 from .units import UNITS, fmt, unit_key
 
 MAX_MATCHES = 3
+MAX_DIFFERENCES, MAX_BENEFITS, MAX_TRADEOFFS = 3, 3, 2
+SHOWN = {"ok", "converted", "unverified", "conflict", "inferred"}     # a cell that actually has a value
 
 # attribute name contains ... -> the website's priority chip ("factor")
 FACTOR_WORDS = [
@@ -104,9 +112,11 @@ def _cell(facts: list[Fact], row_unit: str, by_id: dict[str, Fact], sources: _So
         return {"value": None, "status": "missing", "sources": [],
                 "note": f"Not stated in {where}" if where else "Not in the extracted data"}
     if any(f.status == "conflict" for f in stated):
+        one_file = len({f.source_file for f in stated}) == 1
+        where = lambda f: (f"p.{f.page}" if f.page else "?") if one_file else f.source()  # noqa: E731
         return {"value": " / ".join(dict.fromkeys(_value_text(f, row_unit) for f in stated)),
                 "status": "conflict", "sources": sources.refs(stated, by_id),
-                "note": "Sources disagree: " + "; ".join(f"{_value_text(f, row_unit)} ({f.source()})" for f in stated)}
+                "note": " vs ".join(f"{_value_text(f, row_unit)} ({where(f)})" for f in stated)}
     f = stated[0]
     cell = {"value": _value_text(f, row_unit), "status": "ok", "sources": sources.refs([f], by_id)}
     if f.status == "calculated":
@@ -120,6 +130,37 @@ def _cell(facts: list[Fact], row_unit: str, by_id: dict[str, Fact], sources: _So
     elif f.status == "manual":
         cell["note"] = "Corrected / confirmed by a person"
     return cell
+
+
+def _paired_rows(result: AnalysisResult, keys: list[str], by_id: dict, sources: "_Sources", empty) -> tuple[list, set]:
+    """Rows for attributes the AI paired although the datasheets name them differently
+    (e.g. Kawasaki 'max pressure' vs PVG 'max pressure continuous'). Returns (rows, used (product, attribute))."""
+    rows, used = [], set()
+    for i, p in enumerate((result.interpretation or {}).get("points", [])):
+        side = {pid: [by_id[x] for x in ids if x in by_id] for pid, ids in
+                ((result.target["product_id"], p.get("target_facts", [])), (p.get("candidate"), p.get("candidate_facts", [])))}
+        facts = [f for fs in side.values() for f in fs]
+        if p.get("candidate") not in keys or not all(side.values()) or len({f.attribute for f in facts}) < 2:
+            continue                                   # same name on both sides: the normal row shows it
+        unit = _row_unit(facts) if len({f.norm_unit for f in facts if f.is_number()}) == 1 else ""
+        values = {pid: (_paired_cell(side[pid], unit, by_id, sources) if side.get(pid) else empty(pid)) for pid in keys}
+        names = " / ".join(dict.fromkeys(label_for(f.attribute_original or f.attribute) for f in facts))
+        rows.append({"id": f"pair-{i + 1}", "factor": factor_for(facts[0].attribute), "label": p.get("topic") or names,
+                     "unit": unit, "values": values, "core": True, "paired": True,
+                     "note": f"Paired by AI, checked by code: {names}"})
+        used |= {(f.product_id, f.attribute) for f in facts}
+    return rows, used
+
+
+def _paired_cell(facts: list[Fact], unit: str, by_id: dict, sources: "_Sources") -> dict:
+    """One product's side of a paired row; several values are labelled with the datasheet's own names."""
+    if len(facts) == 1:
+        return _cell(facts, unit, by_id, sources)
+    cells = [(_cell([f], unit, by_id, sources), f) for f in facts]
+    worst = next((c["status"] for c, _ in cells if c["status"] in ("conflict", "unverified", "inferred")), "ok")
+    return {"value": " · ".join(f"{c['value']} ({label_for(f.attribute_original or f.attribute).lower()})"
+                                for c, f in cells if c["value"] is not None),
+            "status": worst, "sources": sorted({n for c, _ in cells for n in c.get("sources", [])})}
 
 
 def _columns(result: AnalysisResult) -> list[str]:
@@ -164,21 +205,28 @@ def to_website(result: AnalysisResult, names: dict[str, dict] | None = None,
     match_ids += waiting
     keys = ([target] if target else []) + match_ids
 
+    def empty(pid):
+        if pid in pending:
+            return {"value": None, "status": "pending", "note": pending[pid]}
+        return {"value": None, "status": "na", "note": "No matching value for this product"}
+
+    paired, used = _paired_rows(result, keys, by_id, sources, empty)
     attributes = []
     for attr in dict.fromkeys(f.attribute for f in facts if f.product_id in keys):
-        row_facts = [f for f in facts if f.attribute == attr and f.product_id in keys]
+        row_facts = [f for f in facts if f.attribute == attr and f.product_id in keys
+                     and (f.product_id, f.attribute) not in used]          # already in an AI-paired row
+        if not row_facts:
+            continue
         unit = _row_unit(row_facts)
         values = {}
         for pid in keys:
             mine = [f for f in row_facts if f.product_id == pid]
-            if mine:
-                values[pid] = _cell(mine, unit, by_id, sources)
-            elif pid in pending:
-                values[pid] = {"value": None, "status": "pending", "note": pending[pid]}
-            else:
-                values[pid] = {"value": None, "status": "missing", "sources": [], "note": "Not in the extracted data"}
-        attributes.append({"id": attr, "factor": factor_for(attr), "label": label_for(attr),
-                           "unit": unit, "values": values})
+            values[pid] = _cell(mine, unit, by_id, sources) if mine else empty(pid)
+        attributes.append({"id": attr, "factor": factor_for(attr), "label": label_for(attr), "unit": unit,
+                           "values": values,
+                           "core": bool(target) and values[target]["status"] in SHOWN
+                                   and any(values[m]["status"] in SHOWN for m in match_ids)})
+    attributes = paired + attributes
 
     insights = _insights(result, by_id, sources, names, match_ids)
     flags = _flags(result, by_id, names, pending) + list(extra_flags or [])
@@ -215,11 +263,12 @@ def _insights(result, by_id, sources, names, match_ids) -> dict:
             differences.append({"text": f"Not comparable: {interp['not_comparable_reason']}", "sources": []})
         differences += [item(f"{p['topic']}: {p['why']}", p["target_facts"] + p["candidate_facts"])
                         for p in interp.get("points", [])]
-        benefits = [item(t["text"], t["fact_ids"]) for t in interp.get("talking_points", [])]
+        differences = differences[:MAX_DIFFERENCES]
+        benefits = [item(t["text"], t["fact_ids"]) for t in interp.get("talking_points", [])][:MAX_BENEFITS]
         fit = interp.get("application_fit") or {}
-        if fit.get("text"):
+        if fit.get("text") and len(benefits) < MAX_BENEFITS:
             benefits.append(item(fit["text"], fit.get("fact_ids", [])))
-        tradeoffs = [item(t["text"], t["fact_ids"]) for t in interp.get("tradeoffs", [])]
+        tradeoffs = [item(t["text"], t["fact_ids"]) for t in interp.get("tradeoffs", [])][:MAX_TRADEOFFS]
         return {"differences": differences, "benefits": benefits, "tradeoffs": tradeoffs}
     # no AI: only differences that code computed itself
     first = match_ids[0] if match_ids else None
@@ -233,31 +282,38 @@ def _insights(result, by_id, sources, names, match_ids) -> dict:
                      f"{_name(t.product_id, names)} {fmt(d.target_value)} {d.unit} ({d.diff_pct:+.1f}%, "
                      f"{d.candidate_value_is})"),
             "sources": sources.refs([t, c], by_id)})
-    return {"differences": differences, "benefits": [], "tradeoffs": []}
+    differences.sort(key=lambda d: -abs(float(d["text"].rsplit("(", 1)[1].split("%")[0])))   # biggest first
+    return {"differences": differences[:MAX_DIFFERENCES], "benefits": [], "tradeoffs": []}
 
 
 def _flags(result, by_id, names, pending) -> list[dict]:
+    """Open points, written by CODE so they stay short: one line per conflict, and one line per product
+    for missing / unverified values."""
     flags = []
     if result.status == "no_ai":
         flags.append({"level": "warning", "text": result.message})
-    for p in result.problems:
-        flags.append({"level": "warning", "text": f"Code check of the AI answer: {p}"})
-    verify = (result.onepager or {}).get("verify") or []
-    seen, unverified = set(), {}
-    for v in verify:
-        f = by_id.get((v.get("fact") or {}).get("id"))
-        if not f or (f.product_id, f.attribute, f.status) in seen:     # a conflict has 2+ facts: flag it once
+    if result.problems:
+        flags.append({"level": "warning", "text": f"Code check: {len(result.problems)} problem(s) in the AI answer - "
+                                                  + "; ".join(result.problems[:2]) + (" …" if len(result.problems) > 2 else "")})
+    shown = {(result.target or {}).get("product_id"), result.best_match_id}
+    groups: dict[tuple, list[str]] = {}
+    conflicts: dict[tuple, list[Fact]] = {}
+    for f in result.facts:
+        if f.product_id not in shown:
             continue
-        seen.add((f.product_id, f.attribute, f.status))
-        if f.status in ("unverified", "unknown unit"):                 # many of these: one line per product
-            unverified.setdefault(f.product_id, []).append(label_for(f.attribute))
-            continue
-        flags.append({"level": STATUS_LEVEL.get(f.status, "warning"),
-                      "text": f"{_name(f.product_id, names)} · {label_for(f.attribute)}: {v.get('reason')}"})
-    for pid, labels in unverified.items():
-        flags.append({"level": "unverified",
-                      "text": f"{_name(pid, names)}: {len(labels)} value(s) not confirmed by a quote on the page - "
-                              f"check before quoting: {', '.join(labels)}."})
+        if f.status == "conflict":
+            conflicts.setdefault((f.product_id, f.attribute), []).append(f)
+        elif f.status in ("missing", "unverified", "unknown unit"):
+            level = "missing" if f.status == "missing" else "unverified"
+            label = label_for(f.attribute)
+            if label not in groups.setdefault((f.product_id, level), []):
+                groups[(f.product_id, level)].append(label)
+    for (pid, attr), fs in conflicts.items():
+        values = " vs ".join(f"{f.display()} ({'p.' + str(f.page) if f.page else f.source_file})" for f in fs)
+        flags.append({"level": "conflict", "text": f"{_name(pid, names)} · {label_for(attr)}: {values} - confirm before quoting."})
+    for (pid, level), labels in groups.items():
+        what = "not stated in the datasheet" if level == "missing" else "not confirmed by a quote on the page"
+        flags.append({"level": level, "text": f"{_name(pid, names)}: {len(labels)} value(s) {what}: {', '.join(labels)}."})
     for e in result.excluded:
         flags.append({"level": "warning", "text": f"{_name(e['product_id'], names)} left out: {e['reason']}"})
     for pid, note in pending.items():

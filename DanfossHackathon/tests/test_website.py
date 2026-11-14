@@ -8,7 +8,8 @@ from test_interpret import COMPX, GOOD, P75, fake
 
 EXAMPLE = json.loads((Path(__file__).parent.parent / "frontend" / "examples" / "compare_response.json")
                      .read_text(encoding="utf-8"))
-WEBSITE_STATUSES = {"ok", "conflict", "missing", "outdated", "unverified", "inferred", "converted", "pending", "sample"}
+WEBSITE_STATUSES = {"ok", "conflict", "missing", "outdated", "unverified", "inferred", "converted", "pending", "sample",
+                    "na"}   # na = "–": no matching value for this product (not counted as missing)
 
 
 def cells(w):
@@ -30,7 +31,7 @@ def test_statuses_are_mapped_honestly():
     w = to_website(interpret(P75, None, use_ai=False, pool="competitors"))
     c = cells(w)
     assert c[("max_speed", COMPX)]["status"] == "conflict"
-    assert "Sources disagree" in c[("max_speed", COMPX)]["note"]
+    assert c[("max_speed", COMPX)]["note"] == "2550 (DEMO_compx.pdf p.4) vs 2200 (DEMO_webshop.txt p.1)"
     assert c[("max_flow", P75)]["status"] == "inferred"                 # calculated by code
     assert c[("weight", COMPX)] == {"value": None, "status": "missing", "sources": [],
                                     "note": "Not stated in DEMO_compx.pdf"}
@@ -72,10 +73,47 @@ def test_no_ai_gives_code_differences_and_low_confidence():
     assert w["flags"][0]["level"] == "warning"
 
 
-def test_conflict_is_flagged_once():
+def test_conflict_is_flagged_once_with_its_values():
     w = to_website(interpret(COMPX, None, use_ai=False))
     speed_flags = [f for f in w["flags"] if "Max speed" in f["text"]]
-    assert len(speed_flags) == 1
+    assert len(speed_flags) == 1 and "2550 rpm" in speed_flags[0]["text"] and "2200 rpm" in speed_flags[0]["text"]
+
+
+def test_missing_and_na_are_different():
+    w = to_website(interpret(COMPX, None, use_ai=False))
+    c = cells(w)
+    assert c[("weight", COMPX)]["status"] == "missing"            # datasheet does not state it
+    assert c[("model_code_example", P75)]["status"] == "na"       # pump 75 simply has no such row
+
+
+def test_core_rows_have_values_on_both_sides():
+    w = to_website(interpret(COMPX, None, use_ai=False))
+    core = {a["id"] for a in w["attributes"] if a["core"]}
+    assert {"max_displacement", "rated_pressure", "peak_pressure", "control_options"} <= core
+    assert "model_code_example" not in core and "weight" not in core
+
+
+def test_ai_pairs_differently_named_attributes_into_one_row():
+    a = json.loads(json.dumps(GOOD))
+    # pair the competitor's peak pressure (F3) with pump 75's rated pressure (F10): different names
+    a["points"].append({"topic": "Pressure", "candidate": P75, "target_facts": ["F3"], "candidate_facts": ["F10"],
+                        "candidate_value_is": "lower", "verdict": "unclear", "why": "350 vs 260 bar, different ratings.",
+                        "confidence": "low"})
+    w = to_website(interpret(COMPX, None, ask=fake(a)))
+    pair = next(r for r in w["attributes"] if r.get("paired"))
+    assert pair["label"] == "Pressure" and pair["core"] and pair["unit"] == "bar"
+    assert pair["values"][COMPX]["value"] == "350" and pair["values"][P75]["value"] == "260"
+    # the paired facts are not shown a second time in their own rows
+    assert all(r["values"][COMPX]["value"] != "350" for r in w["attributes"] if r["id"] == "peak_pressure")
+
+
+def test_ai_text_is_capped():
+    a = json.loads(json.dumps(GOOD))
+    a["talking_points"] = [{"text": f"Point {i}.", "fact_ids": ["F15"]} for i in "abcde"]
+    a["tradeoffs"] = [{"text": f"Trade {i}.", "fact_ids": ["F10"]} for i in "abcd"]
+    w = to_website(interpret(COMPX, None, ask=fake(a)))
+    assert len(w["insights"]["benefits"]) <= 3 and len(w["insights"]["tradeoffs"]) <= 2
+    assert len(w["insights"]["differences"]) <= 3
 
 
 def test_names_from_the_catalog():

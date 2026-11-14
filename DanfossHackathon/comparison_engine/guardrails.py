@@ -13,6 +13,8 @@ Checks (each problem is one plain-English string):
   6. verdicts where code can compute the difference itself (one number each side, same unit), the AI's
               'candidate_value_is' must match, and 'similar' / better-or-worse must agree with code
   7. honesty  no best match -> comparable must be false and a reason must be given
+  8. length   one-page brief: at most 3 talking points, 2 trade-offs, 8 points; statements short
+              (limits are a bit above what the prompt asks for, so a 31-word sentence is not an error)
 add_missing_verify() is not a check: it adds every unverified/conflict/missing fact of the target and
 best match to the verify list if the AI forgot one (marked "added by code").
 """
@@ -219,6 +221,9 @@ def check_interpretation(answer: dict, facts: list[Fact], diffs: list[Diff], tar
             if n is not None and not _number_ok(abs(n), allowed):
                 problems.append(f"{where}: number {raw} is not in the cited facts {', '.join(ids)}")
 
+    # 8. length
+    problems += check_length(answer)
+
     # 3. facts on the right side of a point + 6. verdicts
     similar = float(logic.settings["similar_within"])
     for i, p in enumerate(answer["points"]):
@@ -229,6 +234,20 @@ def check_interpretation(answer: dict, facts: list[Fact], diffs: list[Diff], tar
             if fid in by_id and by_id[fid].product_id != p["candidate"]:
                 problems.append(f"points[{i}].candidate_facts: {fid} is not a fact of {p['candidate']}")
         problems += _check_verdict(i, p, by_id, logic, similar)
+    return problems
+
+
+MAX_COUNT = {"talking_points": 3, "tradeoffs": 2, "points": 8}
+MAX_WORDS, MAX_WORDS_BEST_MATCH = 45, 55
+
+
+def check_length(answer: dict) -> list[str]:
+    problems = [f"{key}: {len(answer[key])} items, at most {limit} allowed"
+                for key, limit in MAX_COUNT.items() if len(answer.get(key) or []) > limit]
+    for where, text, _, _ in _statements(answer):
+        limit = MAX_WORDS_BEST_MATCH if where == "best_match.why" else MAX_WORDS
+        if len((text or "").split()) > limit:
+            problems.append(f"{where}: {len(text.split())} words, keep it under {limit - 15}")
     return problems
 
 
