@@ -306,3 +306,33 @@ def test_extraction_with_zero_facts_says_why_and_stays_in_the_list(client, tmp_p
     assert "2 page(s) failed" in job["progress"] and "credit balance" in job["progress"]
     prod = next(p for p in client.get("/api/catalog").json()["competitorProducts"] if p["id"] == "rexroth-m4-12")
     assert not next(d for d in prod["datasets"] if d["fileId"] == ds["fileId"]).get("facts")   # can be retried
+
+
+def test_dani_knows_its_name_and_stays_grounded(client, monkeypatch):
+    r = client.post("/api/ask", json={"question": "Who are you?"}).json()
+    assert "Dani" in r["answer"] and "cite" in r["answer"]
+    r = client.post("/api/ask", json={"question": "Hey Dani!"}).json()
+    assert "Dani" in r["answer"]
+    # the name is stripped before keyword matching and the context hint still works
+    r = client.post("/api/ask", json={"question": "Dani, what is the max flow?"}).json()
+    assert "Pick a product" in r["answer"]
+
+
+def test_ask_prompt_carries_the_dani_persona(client, monkeypatch):
+    sent = {}
+
+    class FakeMsgs:
+        def create(self, **kw):
+            sent.update(kw)
+            from types import SimpleNamespace as NS
+            return NS(content=[NS(type="text", text="42 l/min (leaflet, p. 2)")],
+                      usage=NS(input_tokens=10, output_tokens=5))
+
+    monkeypatch.setattr(backend, "claude", lambda: type("C", (), {"messages": FakeMsgs()})())
+    up = client.post("/api/datasets", data={"source": "danfoss", "nodeId": "pvg32"},
+                     files={"files": ("x.pdf", b"%PDF-1.4", "application/pdf")}).json()
+    r = client.post("/api/ask", json={"question": "Dani, what is the max flow?",
+                                      "context": {"productId": "pvg32"}}).json()
+    assert "42 l/min" in r["answer"]
+    assert "You are Dani" in sent["system"] and "never fill the gap from memory" in sent["system"]
+    assert "dani" not in sent["messages"][0]["content"].split("Question:")[1].lower()

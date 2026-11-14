@@ -929,14 +929,25 @@ def match(payload: dict):
 # =====================================================================
 # POST /api/ask
 # =====================================================================
+DANI_INTRO = ("I'm Dani, the Danfoss competitor-intelligence assistant. I answer only from the datasheets "
+              "and sales guidelines loaded into this tool, and I cite the page for every value. Pick a product, "
+              "then ask me things like \"which competitor valve fits a tractor loader at 120 l/min?\"")
+_DANI = re.compile(r"^\s*(hi|hey|hello|ok)?[\s,]*dani[\s,:!.-]*", re.I)
+
+
 @app.post("/api/ask")
 def ask(payload: dict):
     question = (payload.get("question") or "").strip()
+    named = bool(_DANI.match(question))
+    question = _DANI.sub("", question).strip() or question      # "Dani, what is ..." -> "what is ..."
     ctx = payload.get("context") or {}
     cat = load_catalog()
     anchor = find_node(cat, ctx.get("productId")) if ctx.get("productId") else None
+    if re.fullmatch(r"(who are you|what are you|what can you do|help)\??", question.lower()) or (named and not question):
+        return {"answer": DANI_INTRO}
     if not anchor:
-        return {"answer": "Pick a product above first. I'll use your question as context for the comparison."}
+        return {"answer": ("Hi, I'm Dani. " if named else "") +
+                          "Pick a product above first. I'll use your question as context for the comparison."}
 
     groups = ancestors(cat, anchor["id"])
     chosen = ctx.get("competitorProductIds") or []
@@ -952,8 +963,15 @@ def ask(payload: dict):
     try:
         resp = claude().messages.create(
             model=MODEL, max_tokens=800,
-            system=RULES + "\nAnswer briefly in plain text (no markdown). Cite as (document, p. N). "
-                           "If the pages don't contain the answer, say so.",
+            system="You are Dani, the Danfoss competitor-intelligence assistant for sales teams. "
+                   "If asked who you are: you are Dani; you answer only from the loaded documents and cite pages.\n"
+                   + RULES +
+                   "\nAnswer briefly in plain text (no markdown). Cite as (document, p. N). "
+                   "If the pages don't contain the answer, say exactly what is missing and which datasheet "
+                   "to upload - never fill the gap from memory. No prices or delivery promises: commercial "
+                   "statements only come from approved notes in the comparison itself. If the question is "
+                   "not about these products or this tool, say in one line that you only cover the loaded "
+                   "product data.",
             messages=[{"role": "user", "content": "\n".join(blocks) + f"\n\nQuestion: {question}"}],
         )
         return {"answer": "".join(b.text for b in resp.content if b.type == "text")}
