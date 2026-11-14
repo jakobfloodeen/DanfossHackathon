@@ -679,6 +679,20 @@ def discover_documents(payload: dict):
     return {**result, "issues": issues}
 
 
+@app.get("/api/web/open")
+def open_web_document(url: str):
+    """The 'open' link in the web list: resolve the entry to the real file and show it (PDF) instead of its web page."""
+    from fastapi.responses import Response
+    if web_download is None:
+        return Response("The scraper module is not installed.", status_code=503, media_type="text/plain")
+    try:
+        content, filename, _source, _ = web_download(url.strip())
+    except Exception as e:
+        return Response(f"Could not open this document: {e}", status_code=502, media_type="text/plain")
+    media = "application/pdf" if content.startswith(b"%PDF-") else "text/plain; charset=utf-8"
+    return Response(content, media_type=media, headers={"Content-Disposition": f'inline; filename="{filename}"'})
+
+
 @app.post("/api/web/import")
 def import_from_web(payload: dict):
     if web_download is None:

@@ -16,6 +16,75 @@ MAX_DEPTH = 2
 CACHE_TTL = 900
 _CACHE = OrderedDict()
 _LOCK = RLock()
+# Websites are often not in English (e.g. boschrexroth.com/da/dk/). The topic word and the
+# generic "this looks useful" words therefore also match common Danish/German/French/Spanish terms.
+TOPIC_WORDS = {
+    'valve': ('valve', 'styreblok', 'ventil', 'ventile', 'ventiler', 'valvula', 'vanne', 'valvola', 'directional', 'proportional'),
+    'pump': ('pump', 'pumpe', 'pumpen', 'pompe', 'bomba', 'pompa'),
+    'motor': ('motor', 'moteur', 'motore'),
+    'cylinder': ('cylinder', 'zylinder', 'cylindre', 'cilindro'),
+    'hydraulic': ('hydraulic', 'hydraulik', 'hydraulique', 'hidraulic', 'idraulic'),
+}
+USEFUL_WORDS = ('product', 'produkt', 'produit', 'producto', 'prodott', 'catalog', 'katalog', 'catalogue',
+                'download', 'hent', 'technical', 'teknisk', 'technisch', 'datasheet', 'data-sheet', 'datablad',
+                'datenblatt', 'brochure', 'documentation', 'dokument', 'media', 'hydraulic', 'hydraulik')
+# Many manufacturer sites (e.g. boschrexroth.com) build their menus and product lists with JavaScript,
+# so the raw page the server sends holds almost no links. If Playwright is installed, such pages are
+# opened in a real (headless) browser and the finished page is read instead. Without Playwright
+# nothing changes: the scraper behaves as before.
+RENDER_IF_LINKS_BELOW = 15
+RENDER_IF_BYTES_ABOVE = 20000
+MEDIA_LINK = re.compile(r'/media/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}', re.I)
+
+
+DEEP_LINKS_JS = """() => { const out = []; const walk = (root) => { root.querySelectorAll('*').forEach(el => {
+  if (el.tagName === 'A' && el.href) out.push([(el.innerText || el.textContent || '').trim().slice(0, 80), el.href]);
+  if (el.shadowRoot) walk(el.shadowRoot); }); }; walk(document); return out; }"""
+
+
+def browser_available():
+    try:
+        import playwright.sync_api  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+def render_page(url, timeout_ms=30000):
+    """Open the page in a headless browser and return the finished HTML as bytes."""
+    from playwright.sync_api import sync_playwright
+    url = validate_url(url)
+
+    def only_public(route):                     # same public-address rule as the normal downloads
+        try:
+            validate_url(route.request.url)
+            route.continue_()
+        except ValueError:
+            route.abort()
+
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch()
+        try:
+            page = browser.new_page(user_agent='DanfossHackathon-DatasheetImporter/2.0')
+            page.route('**/*', only_public)
+            page.goto(url, wait_until='networkidle', timeout=timeout_ms)
+            for _ in range(3):                  # scroll so lazy-loaded lists appear
+                page.mouse.wheel(0, 4000)
+                page.wait_for_timeout(500)
+            html = page.content()
+            # Links inside web components (shadow DOM) are not part of the page HTML, so add them as plain links.
+            deep = page.evaluate(DEEP_LINKS_JS)
+            seen_href, extra = set(), []
+            for label, href in deep[:4000]:
+                if href not in seen_href and href.startswith(('http://', 'https://')):
+                    seen_href.add(href)
+                    extra.append('<a href="%s">%s</a>' % (href.replace('"', '%22'),
+                                                          label.replace('<', ' ').replace('>', ' ')))
+            return (html + '<div>' + ' '.join(extra) + '</div>').encode('utf-8')
+        finally:
+            browser.close()
+
+
 PUMPS_URL = "https://www.kawasakihydraulics.com/type/axial-piston-pumps/"
 
 
@@ -165,8 +234,11 @@ def discover(url: str, topic: str = 'pumps') -> dict:
     documents, warnings = [], []
     start, all_cached = monotonic(), True
     root_host = None
-    terms = re.findall(r'[\w-]{2,}', topic.lower())
-    while queue and len(visited) < MAX_PAGES and monotonic() - start < 60:
+    terms = []
+    for word in re.findall(r'[\w-]{2,}', topic.lower()):
+        stem = word[:-1] if word.endswith('s') and len(word) > 3 else word
+        terms.extend(TOPIC_WORDS.get(stem, (word,)))
+    while queue and len(visited) < MAX_PAGES and monotonic() - start < 120:
         queue.sort(key=lambda item: -item[0])
         _, depth, current = queue.pop(0)
         if current in visited:
@@ -189,6 +261,12 @@ def discover(url: str, topic: str = 'pumps') -> dict:
                 warnings.append('A page did not contain HTML or a PDF.')
                 continue
             page = parse_html(data)
+            if len(page.links) < RENDER_IF_LINKS_BELOW and len(data) > RENDER_IF_BYTES_ABOVE and browser_available():
+                try:
+                    data = render_page(final)
+                    page = parse_html(data)
+                except Exception as exc:
+                    warnings.append(f'Could not render {current} in a browser: {exc}')
             found_pdf = False
             candidates = []
             for link in page.links:
@@ -199,7 +277,7 @@ def discover(url: str, topic: str = 'pumps') -> dict:
                 text = unquote(link['label'] + ' ' + target).lower()
                 if any(t in text for t in ('privacy', 'slavery', 'gender-pay', 'cookie', 'terms-and-conditions', 'careers', 'login', 'logout')):
                     continue
-                pdf = urlsplit(target).path.lower().endswith('.pdf') or bool(re.search(r'\b(pdf|datasheet|data sheet)\b', link['label'].lower()))
+                pdf = urlsplit(target).path.lower().endswith('.pdf') or bool(MEDIA_LINK.search(target)) or bool(re.search(r'\b(pdf|datasheet|data sheet|datablad|datenblatt)\b', link['label'].lower()))
                 if pdf and not link['layout']:
                     found_pdf = True
                     if target not in seen:
@@ -208,7 +286,7 @@ def discover(url: str, topic: str = 'pumps') -> dict:
                                           'product': link['product'], 'label': 'Document link', 'kind': 'auto'})
                     continue
                 score = sum(10 for term in terms if term in text)
-                score += sum(2 for term in ('product', 'catalog', 'download', 'technical') if term in text)
+                score += sum(2 for term in USEFUL_WORDS if term in text)
                 if score and depth < MAX_DEPTH and urlsplit(target).hostname == root_host and target not in visited:
                     candidates.append((score, depth + 1, target))
             # Let users explicitly import readable HTML where no PDF is exposed.
@@ -223,11 +301,59 @@ def discover(url: str, topic: str = 'pumps') -> dict:
             if len(visited) == 1:
                 raise
             warnings.append(f'Could not read {current}: {exc}')
-    return {'documents': documents[:40], 'pageUrl': url, 'cached': all_cached,
+    documents = resolve_documents(documents[:40])
+    return {'documents': documents, 'pageUrl': url, 'cached': all_cached,
             'pagesVisited': len(visited), 'limited': bool(queue), 'warnings': warnings[:5]}
 
 
-def download_source(url: str) -> tuple[bytes, str, str, bool]:
+def find_document_in_browser(url, timeout_ms=30000):
+    """Open a JavaScript 'download' page in the headless browser and return the address of the real file
+    (a PDF response, a started download, or a /media/<id> or .pdf link), or '' if none is found."""
+    from playwright.sync_api import sync_playwright
+    url = validate_url(url)
+    files = []
+
+    def only_public(route):
+        try:
+            validate_url(route.request.url)
+            route.continue_()
+        except ValueError:
+            route.abort()
+
+    def on_response(response):
+        try:
+            kind = response.headers.get('content-type', '').lower()
+            if 'pdf' in kind or MEDIA_LINK.search(response.url):
+                if 'html' not in kind and response.url not in files:
+                    files.append(response.url)
+        except Exception:
+            pass
+
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch()
+        try:
+            page = browser.new_page(user_agent='DanfossHackathon-DatasheetImporter/2.0', accept_downloads=True)
+            page.route('**/*', only_public)
+            page.on('response', on_response)
+            page.on('download', lambda d: files.append(d.url))
+            try:
+                page.goto(url, wait_until='networkidle', timeout=timeout_ms)
+            except Exception:
+                pass                              # a page that starts a file download aborts the normal load
+            page.wait_for_timeout(3000)
+            if len(files) < 12:
+                try:
+                    for label, href in page.evaluate(DEEP_LINKS_JS):
+                        if (MEDIA_LINK.search(href) or urlsplit(href).path.lower().endswith('.pdf')) and href not in files:
+                            files.append(href)
+                except Exception:
+                    pass
+        finally:
+            browser.close()
+    return files[:12]
+
+
+def download_source(url: str, _depth: int = 0) -> tuple[bytes, str, str, bool]:
     """Return (content, filename, final_url, cached): original PDF or UTF-8 text."""
     data, final, content_type, cached = fetch(url)
     name = PurePosixPath(urlsplit(final).path).name
@@ -236,7 +362,86 @@ def download_source(url: str) -> tuple[bytes, str, str, bool]:
     if 'html' in content_type.lower():
         text = parse_html(data).readable_text()
         if len(text) < 200:
+            if _depth == 0 and browser_available():
+                candidates = []
+                for t in find_document_in_browser(final):
+                    for option in (t.split('?')[0], t):    # thumbnails (?derivative=...) -> try the original file first
+                        if option != final and option not in candidates:
+                            candidates.append(option)
+                for target in candidates:          # use the first candidate that really is a PDF
+                    try:
+                        if fetch(target)[0].startswith(b'%PDF-'):
+                            return download_source(target, _depth + 1)
+                    except Exception:
+                        continue
+                if candidates:
+                    raise ValueError('The page lists %d file(s) but none is a PDF: %s' % (len(candidates), '; '.join(candidates[:4])))
             raise ValueError('Too little readable text. This page may need JavaScript or login; upload its PDF instead.')
         safe_name = re.sub(r'[^\w.-]', '_', name)[:100] or 'web-page'
         return text.encode('utf-8'), safe_name + '.txt', final, cached
     raise ValueError('This link returned neither a PDF nor a readable HTML page.')
+
+
+_RESOLVED = {}
+
+
+def _is_pdf_address(address):
+    """True when the address really serves a PDF (only the first bytes are read)."""
+    try:
+        validate_url(address)
+        with httpx.stream('GET', address, follow_redirects=True, timeout=25,
+                          headers={'User-Agent': 'DanfossHackathon-DatasheetImporter/2.0'}) as response:
+            validate_url(str(response.url))
+            for chunk in response.iter_bytes():
+                return chunk.startswith(b'%PDF-')
+    except Exception:
+        pass
+    return False
+
+
+def _real_pdf_address(page_url):
+    """Find the direct PDF address behind a JavaScript download page ('' when not found)."""
+    if page_url in _RESOLVED:
+        return _RESOLVED[page_url]
+    found = ''
+    try:
+        for target in find_document_in_browser(page_url):
+            for option in (target.split('?')[0], target):
+                if _is_pdf_address(option):
+                    found = option
+                    break
+            if found:
+                break
+    except Exception:
+        found = ''
+    if found:
+        _RESOLVED[page_url] = found
+    return found
+
+
+def resolve_documents(documents, budget=150, workers=4):
+    """Replace download-page entries with the direct PDF address, so the list links straight to the PDFs."""
+    from concurrent.futures import ThreadPoolExecutor, wait
+    todo = [d for d in documents if d.get('kind') == 'auto']
+    if not todo or not browser_available():
+        return documents
+    pool = ThreadPoolExecutor(max_workers=workers)
+    jobs = {pool.submit(_real_pdf_address, d['url']): d for d in todo}
+    done, _pending = wait(jobs, timeout=budget)
+    pool.shutdown(wait=False, cancel_futures=True)
+    for job in done:
+        document = jobs[job]
+        try:
+            address = job.result()
+        except Exception:
+            address = ''
+        if address:
+            document['url'] = address
+            document['kind'] = 'pdf'
+    seen, result = set(), []
+    for document in documents:
+        if document['url'] in seen:
+            continue
+        seen.add(document['url'])
+        result.append(document)
+    return result

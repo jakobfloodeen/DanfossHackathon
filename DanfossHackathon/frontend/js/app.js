@@ -446,7 +446,7 @@
         webBox.innerHTML = (res.issues || []).map(flagHtml).join("") + (res.documents.length ? `
           <div class="web-list">${res.documents.map((d, i) => `<label class="web-doc"><input type="radio" name="webPick" value="${esc(d.url)}" data-name="${esc(d.name)}" ${i === 0 ? "checked" : ""}>
             <span><strong>${esc(d.name)}</strong>${d.product ? ` · ${esc(d.product)}` : ""} <span class="hint">${esc(d.kind === "html" ? "web page text" : "PDF")}</span>
-            <a href="${esc(d.url)}" target="_blank" rel="noopener" class="hint">open</a></span></label>`).join("")}</div>
+            <a href="${esc(d.kind === "auto" ? "/api/web/open?url=" + encodeURIComponent(d.url) : d.url)}" target="_blank" rel="noopener" class="hint">open</a></span></label>`).join("")}</div>
           <div class="actions"><button class="btn btn-primary" type="button" data-act="web-import">Import selected for the product chosen above</button></div>` : "");
         webBox.querySelector('[data-act="web-import"]')?.addEventListener("click", importPicked);
       } catch (err) {
