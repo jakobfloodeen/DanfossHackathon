@@ -28,13 +28,13 @@ from .results import AnalysisResult
 from .shortlist import shortlist
 from .units import fmt
 
-OPS = {
-    "min": lambda a, b: min(a, b),
-    "max": lambda a, b: max(a, b),
-    "sum": lambda a, b: a + b,
-    "difference": lambda a, b: a - b,
-    "ratio": lambda a, b: a / b if b else None,
-}
+# min / max / sum take 2 OR MORE inputs and use the components the system actually has
+# (a pressure chain over pump + valve + motor still works when the system has no motor).
+# difference / ratio take exactly 2. A rule may also set:
+#   scale: multiply the result (e.g. flow / displacement needs x1000 to become rpm)
+#   unit:  the unit of the result when it is not the inputs' unit (e.g. rpm)
+NARY_OPS = {"min": min, "max": max, "sum": sum}
+PAIR_OPS = {"difference": lambda a, b: a - b, "ratio": lambda a, b: a / b if b else None}
 SEP = "__"
 
 
@@ -76,18 +76,27 @@ def _best(rows: pd.DataFrame, attribute: str) -> tuple[pd.Series | None, str]:
 
 
 def system_values(system: System, rows: pd.DataFrame, rules: list[dict]) -> pd.DataFrame:
-    """Rows for the system values (calculated, or 'cannot calculate' with the reason)."""
+    """Rows for the system values (calculated, or 'cannot calculate' with the reason).
+    A rule that names a component the system does not have is skipped silently: min/max/sum drop the
+    absent components and go on when at least two remain, difference/ratio need both."""
+    present = {role for role, pid in system.components.items() if pid}
     out = []
     for rule in rules:
         op, inputs = rule.get("op"), [str(i).replace(".", SEP, 1) for i in rule.get("inputs", [])]
-        if op not in OPS or len(inputs) != 2:
+        if (op not in NARY_OPS and op not in PAIR_OPS) or len(inputs) < 2:
             continue                                            # a broken rule is skipped, never guessed
+        inputs = [a for a in inputs if a.split(SEP, 1)[0] in present]
+        if (op in PAIR_OPS and len(inputs) != len(rule.get("inputs", []))) or len(inputs) < 2:
+            continue                                            # the system does not have these components
+        if op in PAIR_OPS and len(inputs) != 2:
+            continue
         picked = [_best(rows, a) for a in inputs]
         reasons = [why for value, why in picked if value is None]
         units = {v["norm_unit"] for v, _ in picked if v is not None}
+        scale = float(rule.get("scale", 1) or 1)
         if not reasons and op != "ratio" and len(units) > 1:
             reasons.append(f"units differ ({', '.join(sorted(units))})")
-        formula = f"{op}({', '.join(i.replace(SEP, '.') for i in inputs)})"
+        formula = f"{op}({', '.join(i.replace(SEP, '.') for i in inputs)})" + (f" x {fmt(scale)}" if scale != 1 else "")
         base = {"product_id": system.id, "brand": system.brand, "product_name": system.name, "family": "system",
                 "attribute": "system" + SEP + rule["name"], "attribute_original": "", "source_file": "calculated",
                 "page": None, "csv_file": None, "csv_line": None, "based_on": inputs,
@@ -96,12 +105,13 @@ def system_values(system: System, rows: pd.DataFrame, rules: list[dict]) -> pd.D
             out.append({**base, "value": None, "unit": None, "norm_value": None, "norm_unit": None,
                         "quote": f"{formula} - cannot calculate: {'; '.join(reasons)}", "status": "missing"})
             continue
-        a, b = (float(v["norm_value"]) for v, _ in picked)
-        value = OPS[op](a, b)
+        values = [float(v["norm_value"]) for v, _ in picked]
+        value = NARY_OPS[op](values) if op in NARY_OPS else PAIR_OPS[op](*values)
         if value is None:
             continue
-        unit = "" if op == "ratio" else next(iter(units))
-        value = round(value, 2 if op == "ratio" else 1)
+        value *= scale
+        unit = str(rule.get("unit", "" if op == "ratio" else next(iter(units))))
+        value = round(value, 2 if op == "ratio" and scale == 1 else 1)
         out.append({**base, "value": fmt(value), "unit": unit, "norm_value": value, "norm_unit": unit,
                     "quote": f"{formula} = {fmt(value)} {unit}".strip(), "status": "calculated"})
     return pd.DataFrame(out)

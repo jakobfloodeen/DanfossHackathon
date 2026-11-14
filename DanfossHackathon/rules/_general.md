@@ -1,7 +1,7 @@
 ---
-# ===== GENERAL LOGIC – used for EVERY product family (pumps, valves, motors, systems, ...) =====
+# ===== GENERAL LOGIC – used for EVERY product family (pumps, valves, motors, steering, systems) =====
 # PART 1: settings the CODE reads. A family file (rules/<family>.md) overrides any key it repeats.
-# OTTO: change the numbers, keep the names. Everything here is a HINT for ranking, never a final verdict.
+# Everything here is a HINT for ranking, never a final verdict.
 
 danfoss_brand: Danfoss
 
@@ -10,15 +10,29 @@ family_aliases:             # other names the PDF->CSV converter might write -> 
   axial piston pump: pump
   open circuit pump: pump
   hydraulic pump: pump
+  gear pump: pump
   directional valve: valve
+  directional control valve: valve
   proportional valve: valve
   proportional valve group: valve
+  proportional valve groups: valve
+  control block: valve
+  load sensing control block: valve
+  monoblock valve: valve
+  mono block valve: valve
+  sectional valve: valve
+  valve group: valve
   hydraulic motor: motor
+  orbital motor: motor
+  axial piston motor: motor
+  piston motor: motor
+  steering unit: steering
+  hydraulic steering unit: steering
+  steering valve: steering
   valves: valve             # the website's catalog family ids
   pumps: pump
   motors: motor
   steering: steering
-  # OTTO: add more as you see them in real files
 
 weights: {}                 # attribute -> importance for ranking (0 = ignore, 5 = crucial). Family files fill this.
 better: {}                  # attribute -> higher / lower (which direction is better). Family files fill this.
@@ -47,11 +61,17 @@ matters for this customer, and which candidate is the closest match.
   Pair them only if they really mean the same physical quantity under the same conditions.
 - Never pair a continuous/rated value with a peak/intermittent value.
 - If the products do different jobs (e.g. a pump vs a valve) say clearly that they are NOT comparable.
-- OTTO: add general rules from the sales guidelines here (e.g. what makes two products "drop-in" replacements).
+- A "drop-in" replacement needs more than matching performance: mounting, ports/threads, envelope and
+  control interface must fit too. When the facts do not cover those, say the fit must be verified -
+  never assume it.
 
 ## What matters to customers
-- OTTO: general priorities across product families (performance first? size/mounting? efficiency? service?)
-- Use the customer context: application, must-haves, what they complain about today.
+- First performance fit (can it drive the machine: flow/displacement, pressure class, sections), then
+  physical fit (mounting, ports, size, weight), then controls (load sensing, proportional/CAN actuation),
+  then efficiency and service. The customer's own priorities override this order - use the buyer context:
+  application, must-haves, what they complain about today.
+- Danfoss sells the system as well as the component: when the facts show components that fit together
+  (shared platform, matching LS, matching pressure class) this is worth a talking point.
 
 ## Honesty rules
 - "Not stated in source" is NOT the same as "worse". Say what is missing and that it must be checked.

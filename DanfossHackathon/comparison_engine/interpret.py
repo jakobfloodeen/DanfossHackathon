@@ -252,6 +252,17 @@ def _parse_and_check(text, check) -> tuple[dict | None, list[str]]:
 
 
 # ---------------------------------------------------------------- public function
+def _other_family_hint(family: str, data: pd.DataFrame, pool: str) -> str:
+    """Gap management: when a family has no candidates, say where data DOES exist instead of a dead end."""
+    side = data[data["brand"].str.contains("danfoss", case=False, na=False)] if pool == "danfoss" \
+        else data[~data["brand"].str.contains("danfoss", case=False, na=False)]
+    others = sorted(set(side["family"].dropna()) - {family, "system"})
+    if not others:
+        return ""
+    return (f" {ROLES[pool][1].capitalize()} data exists for: {', '.join(others)} - upload a datasheet of "
+            f"this family (Upload data) or compare at system level, where families combine.")
+
+
 def _candidate_list(target_id, candidates, must_haves, data, pool) -> tuple[list[dict], list[dict]]:
     if candidates is None:
         s = make_shortlist(target_id, must_haves=must_haves, data=data, pool=pool)
@@ -292,7 +303,8 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
 
     if not cand_ids:
         result.message = (f"No {ROLES[pool][1]} with data in the same family"
-                          + (" passed the customer's must-haves." if must_haves else " yet."))
+                          + (" passed the customer's must-haves." if must_haves else " yet.")
+                          + _other_family_hint(first["family"], data, pool))
     elif not use_ai:
         result.message = STATUS_MESSAGES["no_ai"] + " (AI not requested)"
     else:

@@ -80,3 +80,60 @@ def test_system_comparison_end_to_end_without_ai():
 def test_labels_for_component_facts():
     assert label_for("pump__max_flow") == "Pump · Max flow"
     assert label_for("system__pump_to_valve_flow_ratio") == "System · Pump to valve flow ratio"
+
+
+def _sys_fact(pid, attr, value, unit="bar"):
+    import pandas as pd
+    return {"product_id": pid, "brand": "B", "product_name": pid, "family": "x", "attribute": attr,
+            "attribute_original": "", "value": str(value), "unit": unit, "norm_value": float(value),
+            "norm_unit": unit, "source_file": "x.pdf", "page": 1, "csv_file": "x.csv", "csv_line": 1,
+            "quote": "q", "status": "ok", "condition": "", "note": "", "based_on": [], "role": ""}
+
+
+def test_nary_pressure_chain_uses_only_the_components_the_system_has():
+    import pandas as pd
+    from comparison_engine.system import System, system_values
+    rules = [{"name": "max_pressure_continuous", "op": "min",
+              "inputs": ["pump.rated_pressure", "valve.max_pressure_continuous", "motor.rated_pressure"]}]
+    s = System("system:x", "X", "B", {"pump": "p1", "valve": "v1"})          # no motor in this system
+    rows = pd.DataFrame([_sys_fact("system:x", "pump__rated_pressure", 310),
+                         _sys_fact("system:x", "valve__max_pressure_continuous", 350)])
+    out = system_values(s, rows, rules)
+    assert out.iloc[0]["norm_value"] == 310                                  # min over the two present
+    assert "motor" not in out.iloc[0]["quote"]                              # absent component not in formula
+
+    s3 = System("system:y", "Y", "B", {"pump": "p1", "valve": "v1", "motor": "m1"})
+    rows3 = pd.DataFrame([_sys_fact("system:y", "pump__rated_pressure", 310),
+                          _sys_fact("system:y", "valve__max_pressure_continuous", 350),
+                          _sys_fact("system:y", "motor__rated_pressure", 250)])
+    assert system_values(s3, rows3, rules).iloc[0]["norm_value"] == 250
+
+
+def test_scaled_ratio_gives_motor_speed_in_rpm():
+    import pandas as pd
+    from comparison_engine.system import System, system_values
+    rules = [{"name": "motor_speed_at_full_flow", "op": "ratio", "scale": 1000, "unit": "rpm",
+              "inputs": ["pump.max_flow", "motor.max_displacement"]}]
+    s = System("system:x", "X", "B", {"pump": "p1", "motor": "m1"})
+    rows = pd.DataFrame([_sys_fact("system:x", "pump__max_flow", 120, "l/min"),
+                         _sys_fact("system:x", "motor__max_displacement", 50, "cm3")])
+    out = system_values(s, rows, rules)
+    assert out.iloc[0]["norm_value"] == 2400.0 and out.iloc[0]["norm_unit"] == "rpm"
+
+
+def test_rule_for_an_absent_component_is_skipped_not_reported_missing():
+    import pandas as pd
+    from comparison_engine.system import System, system_values
+    rules = [{"name": "steering_share_of_pump_flow", "op": "ratio",
+              "inputs": ["steering.max_flow", "pump.max_flow"]}]
+    s = System("system:x", "X", "B", {"pump": "p1", "valve": "v1"})          # no steering
+    rows = pd.DataFrame([_sys_fact("system:x", "pump__max_flow", 120, "l/min")])
+    assert system_values(s, rows, rules).empty                               # no 'cannot calculate' noise
+
+
+def test_all_family_rule_files_load():
+    from comparison_engine.logic import load_logic
+    for family in ("valve", "pump", "motor", "steering", "system"):
+        logic = load_logic(family)
+        assert logic.settings.get("weights"), family
+    assert len(load_logic("system").settings["system_rules"]) >= 5

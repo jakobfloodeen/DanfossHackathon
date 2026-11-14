@@ -327,3 +327,20 @@ def test_cached_answer_failing_new_checks_is_asked_again(monkeypatch):
     monkeypatch.setattr(g, "MAX_WORDS", 3)                    # checks get stricter
     interpret(COMPX, None, "q", "c", ask=ask)
     assert len(ask.calls) >= 2                                # not served from the cache
+
+
+def test_empty_family_points_at_families_that_do_have_data():
+    import pandas as pd
+    from comparison_engine.interpret import interpret
+    rows = []
+    for pid, brand, family in (("pvg32", "Danfoss", "valve"), ("d1p", "Danfoss", "pump"),
+                               ("m4-12", "Bosch Rexroth", "valve")):
+        rows.append({"product_id": pid, "brand": brand, "product_name": pid, "family": family,
+                     "attribute": "rated_pressure", "attribute_original": "", "value": "350", "unit": "bar",
+                     "norm_value": 350.0, "norm_unit": "bar", "source_file": "x.pdf", "page": 1,
+                     "csv_file": "x.csv", "csv_line": 1, "quote": "350 bar", "status": "ok",
+                     "condition": "", "note": "", "based_on": [], "role": ""})
+    data = pd.DataFrame(rows)
+    r = interpret("d1p", None, use_ai=False, data=data, pool="competitors", use_cache=False)
+    assert "No competitor products with data in the same family" in r.message
+    assert "valve" in r.message and "system level" in r.message       # gap hint: where data DOES exist
