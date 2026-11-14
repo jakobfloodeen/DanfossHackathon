@@ -1,0 +1,257 @@
+{
+  "version": "1.0",
+  "rootPrompt": "Which product family do you want to compare?",
+  "tree": [
+    {
+      "id": "valves",
+      "label": "Valves",
+      "desc": "Spool, cartridge and directional valves",
+      "status": "active",
+      "prompt": "Which type of valve?",
+      "children": [
+        {
+          "id": "proportional",
+          "label": "Proportional valve groups (PVG)",
+          "desc": "Load-sensing proportional valve groups",
+          "status": "active",
+          "prompt": "Which Danfoss valve is the starting point?",
+          "children": [
+            {
+              "id": "pvg16",
+              "type": "product",
+              "label": "PVG 16",
+              "desc": "No datasheet uploaded yet",
+              "status": "data-pending"
+            },
+            {
+              "id": "pvg32",
+              "type": "product",
+              "label": "PVG 32",
+              "desc": "No datasheet uploaded yet",
+              "status": "data-pending"
+            },
+            {
+              "id": "pvg48",
+              "type": "product",
+              "label": "PVG 48",
+              "desc": "No datasheet uploaded yet",
+              "status": "data-pending"
+            },
+            {
+              "id": "pvg128",
+              "type": "product",
+              "label": "PVG 128",
+              "desc": "No datasheet uploaded yet",
+              "status": "data-pending"
+            },
+            {
+              "id": "pvg256",
+              "type": "product",
+              "label": "PVG 256",
+              "desc": "No datasheet uploaded yet",
+              "status": "data-pending"
+            }
+          ]
+        },
+        {
+          "id": "cartridge",
+          "label": "Cartridge valves",
+          "desc": "Screw-in cartridge valves",
+          "status": "coming-soon"
+        },
+        {
+          "id": "noncomp",
+          "label": "Non-compensated valves",
+          "desc": "Directional valves",
+          "status": "coming-soon"
+        }
+      ]
+    },
+    {
+      "id": "pumps",
+      "label": "Pumps",
+      "desc": "Open circuit pumps",
+      "status": "coming-soon"
+    },
+    {
+      "id": "motors",
+      "label": "Motors",
+      "desc": "Hydraulic motors",
+      "status": "coming-soon"
+    },
+    {
+      "id": "steering",
+      "label": "Steering",
+      "desc": "Steering units & systems",
+      "status": "coming-soon"
+    }
+  ],
+  "competitors": [
+    {
+      "id": "rexroth",
+      "name": "Bosch Rexroth",
+      "hasData": true
+    },
+    {
+      "id": "bucher",
+      "name": "Bucher Hydraulics",
+      "hasData": false
+    },
+    {
+      "id": "walvoil",
+      "name": "Walvoil",
+      "hasData": false
+    },
+    {
+      "id": "hawe",
+      "name": "HAWE Hydraulik",
+      "hasData": false
+    },
+    {
+      "id": "parker",
+      "name": "Parker",
+      "hasData": false
+    },
+    {
+      "id": "husco",
+      "name": "HUSCO",
+      "hasData": false
+    },
+    {
+      "id": "hydac",
+      "name": "HYDAC",
+      "hasData": false
+    },
+    {
+      "id": "kawasaki",
+      "name": "Kawasaki Hydraulics",
+      "hasData": false
+    },
+    {
+      "id": "kyb",
+      "name": "KYB",
+      "hasData": false
+    },
+    {
+      "id": "linde",
+      "name": "Linde Hydraulics",
+      "hasData": false
+    },
+    {
+      "id": "hengli",
+      "name": "Hengli",
+      "hasData": false
+    },
+    {
+      "id": "kawasaki",
+      "name": "Kawasaki",
+      "hasData": true
+    }
+  ],
+  "competitorProducts": [
+    {
+      "id": "kawasaki-k3vl",
+      "competitorId": "kawasaki",
+      "name": "K3VL",
+      "categoryId": "proportional",
+      "equivalentOf": [],
+      "datasets": [
+        {
+          "name": "MYK6500-K3VL-Datasheet-2023.pdf",
+          "fileId": "370808edceabeab4",
+          "source": "competitor",
+          "sourceUrl": "https://www.kawasakihydraulics.com/app/uploads/2019/10/MYK6500-K3VL-Datasheet-2023.pdf",
+          "competitorId": "kawasaki",
+          "pages": 76,
+          "uploadedAt": "2026-11-14T10:06:07+00:00"
+        }
+      ],
+      "status": "active"
+    },
+    {
+      "id": "rexroth-k3vg",
+      "competitorId": "rexroth",
+      "name": "K3VG",
+      "categoryId": "proportional",
+      "equivalentOf": [],
+      "datasets": [
+        {
+          "name": "K3VG-datasheet_letter_cc19_201127-1.pdf",
+          "fileId": "f8e761d1cd22bc84",
+          "source": "competitor",
+          "sourceUrl": "https://www.kawasakihydraulics.com/app/uploads/2019/10/K3VG-datasheet_letter_cc19_201127-1.pdf",
+          "competitorId": "rexroth",
+          "pages": 40,
+          "uploadedAt": "2026-11-14T10:17:32+00:00"
+        }
+      ],
+      "status": "active"
+    }
+  ],
+  "factors": [
+    {
+      "id": "price",
+      "label": "Price",
+      "group": "Commercial"
+    },
+    {
+      "id": "availability",
+      "label": "Availability / lead time",
+      "group": "Commercial"
+    },
+    {
+      "id": "support",
+      "label": "Service & distributor network",
+      "group": "Commercial"
+    },
+    {
+      "id": "lifetime",
+      "label": "Longevity / durability",
+      "group": "Commercial"
+    },
+    {
+      "id": "flow",
+      "label": "Flow capacity",
+      "group": "Technical"
+    },
+    {
+      "id": "pressure",
+      "label": "Pressure rating",
+      "group": "Technical"
+    },
+    {
+      "id": "size",
+      "label": "Size & weight",
+      "group": "Technical"
+    },
+    {
+      "id": "ports",
+      "label": "Ports & interfaces",
+      "group": "Technical"
+    },
+    {
+      "id": "electronics",
+      "label": "Electronic control / CAN",
+      "group": "Technical"
+    },
+    {
+      "id": "options",
+      "label": "Configuration options",
+      "group": "Technical"
+    },
+    {
+      "id": "environment",
+      "label": "Operating conditions",
+      "group": "Technical"
+    }
+  ],
+  "applications": [
+    "Tractor",
+    "Crane",
+    "Forestry",
+    "Material handling",
+    "Construction",
+    "Mining",
+    "Other"
+  ]
+}

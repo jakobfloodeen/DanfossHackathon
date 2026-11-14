@@ -1,0 +1,16 @@
+Danfoss URL importer demo
+
+This complete copy of the FastAPI app starts with an empty document catalog.
+No credentials or previously uploaded documents are included.
+
+On macOS, open Terminal in this folder and run:
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-web.txt
+python -m uvicorn backend:app --reload
+
+Python 3.11 or newer is required. Open http://localhost:8000.
+Select Upload data > Competitor > Kawasaki URL. Paste https://www.kawasakihydraulics.com/, find datasheets, select a PDF and the Pumps category, then import.
+
+Importing needs no AI key. Generating comparisons requires an Anthropic API key and an available model configured through ANTHROPIC_API_KEY and CLAUDE_MODEL. See frontend/README.md.
+Stop the server with Control-C.
