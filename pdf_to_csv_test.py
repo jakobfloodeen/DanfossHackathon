@@ -83,7 +83,7 @@ Rules:
 - Facts about OTHER products mentioned in passing: product = that product, uncertain=true.
 - Ordering-code tables: one item per code position, attribute 'ordering_code_<field>',
   value = the options with their meaning joined by ';' (keep it short).
-- Dimension drawings: only values that are clearly labelled. Ignore loose numbers.
+- Dimension drawings: ONLY extract a dimension if the page text itself names what it measures (e.g. 'Length L = 152 mm'). Loose numbers around a drawing with no label in the text: do NOT extract them at all. Never use a pair like '127.5 5.02' as a quote.
 - Ignore chart and graph axis numbers, legends, and port or symbol letters in circuit diagrams.
   Only use values stated in running text or in tables.
 - quote: copied exactly from the page text, at most about 20 words.
@@ -118,6 +118,11 @@ def quote_ok(quote, page_text):
     if not q:
         return False
     if q in body:
+        return True
+    # some PDFs draw bold text twice, so the text layer reads 'lliiffttiinngg': compare with doubled letters collapsed
+    # only runs of 3+ doubled letters are collapsed, so normal words like 'Walvoil' are left alone
+    body2 = re.sub(r"((?:(.)\2){3,})", lambda m: m.group(1)[::2], body)
+    if q in body2:
         return True
     # numbers are compared on the text WITH its spaces (squashing would glue numbers together)
     nums = re.findall(r"\d+(?:\.\d+)?", str(quote))
