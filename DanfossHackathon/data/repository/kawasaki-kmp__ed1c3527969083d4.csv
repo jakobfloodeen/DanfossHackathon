@@ -1,0 +1,15 @@
+product_id,brand,product_name,family,attribute,value,unit,source_file,page,quote,status,condition,fact_type
+kawasaki-kmp,Kawasaki Hydraulics,KMP,valves,product_type,multiple control valve with pressure compensator,,KMP_leaflet_E_08.pdf,1,MULTIPLE CONTROL VALVE WITH PRESSURE COMPENSATOR,ok,,feature
+kawasaki-kmp,Kawasaki Hydraulics,KMP,valves,control_type,electro-proportional control valve,,KMP_leaflet_E_08.pdf,1,The KMP series offers electro-proportional control valve,ok,,feature
+kawasaki-kmp,Kawasaki Hydraulics,KMP,valves,pressure_compensator,integrated pressure compensator,,KMP_leaflet_E_08.pdf,1,with integrated pressure compensator and internal pilot supply,ok,,feature
+kawasaki-kmp,Kawasaki Hydraulics,KMP,valves,pilot_supply,internal pilot supply,,KMP_leaflet_E_08.pdf,1,integrated pressure compensator and internal pilot supply,ok,,feature
+kawasaki-kmp,Kawasaki Hydraulics,KMP,valves,typical_applications,electro-hydraulic control of various mobile vehicles,,KMP_leaflet_E_08.pdf,1,for electro-hydraulic control of various mobile vehicles.,ok,,feature
+kawasaki-kmp,Kawasaki Hydraulics,KMP,valves,max_pressure,30.9,MPa,KMP_leaflet_E_08.pdf,2,Max Pressure [MPa] 30.9,ok,,spec
+kawasaki-kmp,Kawasaki Hydraulics,KMP,valves,rated_flow_port_p,70,l/min,KMP_leaflet_E_08.pdf,2,P port 70,ok,P port,spec
+kawasaki-kmp,Kawasaki Hydraulics,KMP,valves,rated_flow_lowering_lifting,10,l/min,KMP_leaflet_E_08.pdf,2,Lowering & Lifting 10,ok,Lowering & Lifting,spec
+kawasaki-kmp,Kawasaki Hydraulics,KMP,valves,solenoid_rated_current,"0.7, 1.6",A,KMP_leaflet_E_08.pdf,2,Rated Current [A] 0.7 1.6,unverified,two solenoid versions; column assignment not labelled,spec
+kawasaki-kmp,Kawasaki Hydraulics,KMP,valves,solenoid_coil_resistance_20c,"17.5, 3.2",ohm,KMP_leaflet_E_08.pdf,2,Coil Resistance at 20 °C [Ω] 17.5 3.2,unverified,at 20 °C; two solenoid versions; column assignment not labelled,spec
+kawasaki-kmp,Kawasaki Hydraulics,KMP,valves,controllability,High controllability enables precise inching operations,,KMP_leaflet_E_08.pdf,2,High controllability enables precise inching operations.,ok,,feature
+kawasaki-kmp,Kawasaki Hydraulics,KMP,valves,integrated_pressure_compensator,Integrated pressure compensator ensures stable operation control in low flow ranges,,KMP_leaflet_E_08.pdf,2,Integrated pressure compensator ensures stable operation control in low flow ranges.,ok,,feature
+kawasaki-kmp,Kawasaki Hydraulics,KMP,valves,emergency_operation,Manual control lever allows manual operation in case of emergency,,KMP_leaflet_E_08.pdf,2,"Equipped with a manual control lever, manual operation is available in case of emergency.",ok,,feature
+kawasaki-kmp,Kawasaki Hydraulics,KMP,valves,compact_design,"Internal pilot system eliminates external pilot pressure source requirements, enabling compact design",,KMP_leaflet_E_08.pdf,2,The internal pilot system which eliminates external pilot pressure source requirements enables compact design.,ok,,feature

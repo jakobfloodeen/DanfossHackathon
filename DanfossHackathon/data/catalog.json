@@ -158,6 +158,22 @@
           "competitorId": "kawasaki",
           "pages": 1,
           "uploadedAt": "2026-11-13T22:54:21+00:00"
+        },
+        {
+          "name": "KMP_leaflet_E_08.pdf",
+          "fileId": "ed1c3527969083d4",
+          "source": "competitor",
+          "competitorId": "kawasaki",
+          "pages": 2,
+          "uploadedAt": "2026-11-14T11:49:47+00:00",
+          "facts": {
+            "status": "done",
+            "csv": "kawasaki-kmp__ed1c3527969083d4.csv",
+            "facts": 14,
+            "ok": 12,
+            "unverified": 2,
+            "at": "2026-11-14T11:50:06+00:00"
+          }
         }
       ],
       "status": "active"
