@@ -15,11 +15,21 @@ uvicorn backend:app --port 8000
 Open http://localhost:8000. Without a key everything still works, minus the AI interpretation.
 Tests (no key, no cost): `pytest -q` inside `DanfossHackathon/`.
 
-## Two ways to compare
+## Three ways to compare
 | Flow | Where in the website | API |
 |---|---|---|
 | Danfoss product → competitor products | the normal chat steps (Product → Competitors → Priorities → Buyer → Results) | `POST /api/compare` |
-| Competitor product the customer uses → closest Danfoss products | header button **Find Danfoss match** | `POST /api/match` |
+| Competitor product the customer uses → closest Danfoss products | header button **Match** | `POST /api/match` |
+| **System** (e.g. pump + valve) → the other side's system, as a whole and per component | header button **System** | `POST /api/compare-system` |
+
+**Customer feedback:** "Upload data" → *Customer feedback* (PDF, Excel, CSV, TXT). Only the text is kept
+(`data/customers/<customer>/<file>.csv`, never committed). It is used automatically whenever that customer is the
+buyer, and the AI cites it as C1, C2 … (code checks every customer number against the cited passage).
+
+**System comparison:** each system becomes one virtual product (`pump__max_flow`, `valve__max_inlet_flow`, …).
+Code calculates system values from `rules/system.md` (e.g. system flow = min(pump flow, valve inlet flow),
+pump/valve flow ratio); missing inputs give "cannot calculate: <reason>", never a guess. Components left open
+are matched automatically (best shortlist match).
 
 ## How a comparison is made
 1. **Upload** (website, `/api/datasets`): the file is stored in `data/files/`, its page text in `data/extracted/`.
@@ -52,15 +62,30 @@ Until the converter is ready, two seed files are in `data/repository/`:
 `kawasaki-kmp_KPES_leaflet.csv` (quotes verified by code against the uploaded leaflet) and
 `pvg32_from_website_mockdata.csv` (values from the official PVG 32 Technical Information as transcribed in
 `frontend/js/mock-data.js`; status `unverified` because the PDF is not in the repo to check quotes).
-Delete them when the converter produces real files for these products.
+Delete them when the converter produces real files for these products. The `DEMO_*.csv` pump files are made-up
+demo data (clearly marked in the app) so the system comparison can be shown before real pump datasheets exist.
+
+## Contract for the datasheet crawler: `data/documents.csv`
+We keep only CSVs, so every source links to the ORIGINAL document online, opened at the cited page.
+One row per document; `source_file` exactly as in the facts CSVs:
+
+| column | meaning |
+|---|---|
+| `source_file` | e.g. `BC152886483664en-001602.pdf` |
+| `url` | direct link to the document (for a PDF the app adds `#page=N`); empty = no link yet |
+| `title`, `revision`, `date` | shown in the source list |
+| `found_by`, `checked_at` | e.g. `crawler`, `2026-11-14` |
+
+Check with `comparison_engine.documents.validate_documents(df)` before saving. Every footnote [n] in the
+result then opens the document at its page; sources without a url say "no online link yet".
 
 ## Folders
 | Path | What |
 |---|---|
-| `DanfossHackathon/backend.py` | FastAPI: catalog, uploads, `/api/compare`, `/api/match`, `/api/ask`, serves the website and `/files` |
+| `DanfossHackathon/backend.py` | FastAPI: catalog, uploads (incl. customer feedback), `/api/compare`, `/api/match`, `/api/compare-system`, `/api/products`, `/api/ask`, serves the website and `/files` |
 | `DanfossHackathon/frontend/` | the website (no build step) |
 | `DanfossHackathon/comparison_engine/` | comparison logic; each module starts with a plain-English explanation |
-| `DanfossHackathon/rules/` | LOGIC files (Otto): `_general.md` + `valve.md` / `pump.md` (YAML for code + text for the AI). `attribute_aliases` map datasheet names to standard names, e.g. `max_flow_per_section` → `rated_flow_per_section` |
-| `DanfossHackathon/data/` | `catalog.json`, uploads (`files/`), page text (`extracted/`), facts CSVs (`repository/`) |
-| `DanfossHackathon/tests/` | 138 tests, fake AI, temporary data |
+| `DanfossHackathon/rules/` | LOGIC files (Otto): `_general.md` + `valve.md` / `pump.md` / `system.md` (YAML for code + text for the AI). `attribute_aliases` map datasheet names to standard names, e.g. `max_flow_per_section` → `rated_flow_per_section` |
+| `DanfossHackathon/data/` | `catalog.json`, uploads (`files/`), page text (`extracted/`), facts CSVs (`repository/`), document links (`documents.csv`), customer feedback (`customers/`, not committed) |
+| `DanfossHackathon/tests/` | 166 tests, fake AI, temporary data |
 | `archive/` | earlier versions kept for reference: Streamlit prototype, mock-only website copy, Streamlit library page |

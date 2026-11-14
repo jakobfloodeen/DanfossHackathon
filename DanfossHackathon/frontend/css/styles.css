@@ -265,3 +265,8 @@ fieldset.seg input { accent-color: var(--brand); }
 .more-facts { margin-top: 10px; }
 .more-facts summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-2); padding: 6px 0; }
 dialog#match-dialog, dialog#system-dialog { border: 0; border-radius: var(--radius); padding: 0; width: min(560px, 94vw); box-shadow: 0 20px 50px rgba(16, 24, 40, .25); }
+
+/* header with 5 actions: wrap to a second line instead of overflowing */
+.topbar { flex-wrap: wrap; row-gap: 8px; }
+.top-actions { flex-wrap: wrap; margin-left: auto; }
+@media (max-width: 1300px) { .top-actions .btn { padding: 6px 12px; font-size: 13px; } }
