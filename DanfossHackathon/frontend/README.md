@@ -93,6 +93,15 @@ Response (`examples/compare_response.json`), key parts:
 - `confidence`: `{ level: "high" | "medium" | "low", reason }`
 - `sources[]`: `{ id, title, doc, page, url, date }`; `[n]` markers in the table link here
 
+### `POST /api/match`: reverse flow (competitor product → closest Danfoss products)
+Request: `{ "competitorProductId": "kawasaki-kmp", "buyer": {...}, "factors": {...}, "chatNotes": [] }`
+Response: same shape as `/api/compare`, with the competitor product as `anchor` and Danfoss products in
+`matches[]`. Opened from the header button **Find Danfoss match**.
+
+Both `/api/compare` and `/api/match` are answered by `comparison_engine/` from the facts CSVs in
+`data/repository/` (see the root README). A product with an upload but no facts CSV yet shows
+`status: "pending"` cells ("Awaiting extraction").
+
 ### `POST /api/ask`
 Request: `{ "question": "...", "context": <same object as /compare request> }`
 Response: `{ "answer": "..." }`
