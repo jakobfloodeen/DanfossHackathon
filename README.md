@@ -31,9 +31,22 @@ Code calculates system values from `rules/system.md` (e.g. system flow = min(pum
 pump/valve flow ratio); missing inputs give "cannot calculate: <reason>", never a guess. Components left open
 are matched automatically (best shortlist match).
 
+## Getting data in
+| Step | In the website | What happens |
+|---|---|---|
+| Upload a datasheet | **Upload data** → Danfoss / Competitor → drop the PDF | stored in `data/files/`, page text in `data/extracted/` |
+| …or import it from the web | **Upload data** → "…or import a datasheet from a manufacturer's website" → Search website → pick → Import | the teammates' `scraper/` finds and downloads it; its web address goes into `data/documents.csv`, so footnotes open the online PDF at the cited page |
+| Turn it into facts | **Extract facts** (shown after an upload; also lists every PDF without facts) – optionally only some pages, e.g. `1-12` | the teammates' converter `pdf_to_csv_test.py` (one AI call per page, ~cents/page) runs in the background; `comparison_engine/bridge.py` translates its rows into `data/repository/<product>__<file>.csv`; page text goes to `data/pages/` |
+| Customer feedback | **Upload data** → Customer feedback | text only, `data/customers/` (not committed) |
+
+The converter and scraper are used **unchanged**; `bridge.py` maps the converter's columns (manufacturer, product,
+variant, condition, quote_verified, uncertain …) to the app's facts format: the uploaded product gets its catalog id,
+sizes/versions get their own rows, values under different conditions are not conflicts, ordering-code tables are
+skipped, and a fact is `ok` only if its quote was found on the page and the converter was not unsure.
+
 ## How a comparison is made
-1. **Upload** (website, `/api/datasets`): the file is stored in `data/files/`, its page text in `data/extracted/`.
-2. **PDF → facts CSV** (teammate's converter, in progress): one CSV per upload into `data/repository/` (contract below).
+1. **Upload / web import** (see above).
+2. **PDF → facts CSV** with the converter via `bridge.py` (contract below, for anyone writing facts CSVs by hand).
 3. **Engine** (`comparison_engine/`): loads all CSVs, converts units in code, flags conflicts, picks a shortlist,
    numbers every fact (F1, F2 …) and asks Claude ONE question with the LOGIC files (`rules/`).
 4. **Guardrails** (code): every fact id, number, product and verdict in the AI answer is checked; one retry;
@@ -62,10 +75,11 @@ Until the converter is ready, two seed files are in `data/repository/`:
 `kawasaki-kmp_KPES_leaflet.csv` (quotes verified by code against the uploaded leaflet) and
 `pvg32_from_website_mockdata.csv` (values from the official PVG 32 Technical Information as transcribed in
 `frontend/js/mock-data.js`; status `unverified` because the PDF is not in the repo to check quotes).
-Delete them when the converter produces real files for these products. The `DEMO_*.csv` pump files are made-up
+Delete them when the converter produces real files for these products (the KPES seed was removed after the real KMP
+leaflet was imported and extracted). The `DEMO_*.csv` pump files are made-up
 demo data (clearly marked in the app) so the system comparison can be shown before real pump datasheets exist.
 
-## Contract for the datasheet crawler: `data/documents.csv`
+## `data/documents.csv` (online links, filled automatically by the web import)
 We keep only CSVs, so every source links to the ORIGINAL document online, opened at the cited page.
 One row per document; `source_file` exactly as in the facts CSVs:
 
@@ -82,10 +96,12 @@ result then opens the document at its page; sources without a url say "no online
 ## Folders
 | Path | What |
 |---|---|
-| `DanfossHackathon/backend.py` | FastAPI: catalog, uploads (incl. customer feedback), `/api/compare`, `/api/match`, `/api/compare-system`, `/api/products`, `/api/ask`, serves the website and `/files` |
+| `DanfossHackathon/backend.py` | FastAPI: catalog, uploads (incl. customer feedback), `/api/web/discover`, `/api/web/import`, `/api/extract` + `/api/jobs/<id>`, `/api/compare`, `/api/match`, `/api/compare-system`, `/api/products`, `/api/ask`, serves the website and `/files` |
 | `DanfossHackathon/frontend/` | the website (no build step) |
 | `DanfossHackathon/comparison_engine/` | comparison logic; each module starts with a plain-English explanation |
 | `DanfossHackathon/rules/` | LOGIC files (Otto): `_general.md` + `valve.md` / `pump.md` / `system.md` (YAML for code + text for the AI). `attribute_aliases` map datasheet names to standard names, e.g. `max_flow_per_section` → `rated_flow_per_section` |
 | `DanfossHackathon/data/` | `catalog.json`, uploads (`files/`), page text (`extracted/`), facts CSVs (`repository/`), document links (`documents.csv`), customer feedback (`customers/`, not committed) |
-| `DanfossHackathon/tests/` | 166 tests, fake AI, temporary data |
+| `DanfossHackathon/tests/` | 176 tests, fake AI, temporary data |
+| `scraper/` | teammates' datasheet discovery/download (unchanged; its own tests: `python -m unittest discover -s scraper/tests`) |
+| `pdf_to_csv_test.py` | teammates' PDF → facts converter (unchanged; called by `comparison_engine/bridge.py`) |
 | `archive/` | earlier versions kept for reference: Streamlit prototype, mock-only website copy, Streamlit library page |

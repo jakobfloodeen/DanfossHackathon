@@ -22,6 +22,10 @@ pytest -q                                # all tests, fake AI, no key needed
 python -m comparison_engine data/repository "question" --product pvg32   # engine in the terminal
 ```
 
+## Teammates' tools (use them unchanged)
+- `pdf_to_csv_test.py` (repo root): PDF → facts; called through `comparison_engine/bridge.py` (`POST /api/extract`).
+- `scraper/` (repo root): datasheet discovery/download; called by `/api/web/discover` and `/api/web/import`.
+
 ## Shared contracts (tell the team before changing)
 - Facts CSV columns (`comparison_engine/config.py` → `COLUMNS`) and `product_id` = website catalog id.
 - Website JSON shapes: `frontend/README.md` and `frontend/examples/*.json`.
