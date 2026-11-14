@@ -328,39 +328,7 @@ def claude():
     return anthropic.Anthropic()
 
 
-COMPARE_TOOL = {
-    "name": "submit_comparison",
-    "description": "Return the structured, source-linked comparison.",
-    "input_schema": {
-        "type": "object",
-        "properties": {
-            "attributes": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "id": {"type": "string"},
-                        "factor": {"type": "string", "description": "One of the factor ids, or 'custom'"},
-                        "label": {"type": "string"},
-                        "unit": {"type": "string"},
-                        "values": {
-                            "type": "object",
-                            "description": "Keyed by product key. Each: {value: string|null, status, note?, sources: [{file_id, page}]}",
-                        },
-                    },
-                    "required": ["id", "factor", "label", "unit", "values"],
-                },
-            },
-            "insights": {
-                "type": "object",
-                "description": "{differences:[{text,sources:[{file_id,page}]}], benefits:[...], tradeoffs:[...]}",
-            },
-            "flags": {"type": "array", "items": {"type": "object"}, "description": "[{level, text}]"},
-            "confidence": {"type": "object", "description": "{level: high|medium|low, reason}"},
-        },
-        "required": ["attributes", "insights", "flags", "confidence"],
-    },
-}
+
 
 RULES = """You compare hydraulic products for Danfoss sales teams.
 Rules:
@@ -374,144 +342,155 @@ Rules:
 - Do not invent prices, lead times or service life. Mark them missing unless a page states them."""
 
 
-def build_sources(result: dict, valid: dict) -> list:
-    """Turn {file_id, page} citations into the numbered sources[] list the UI expects.
-    Citations that don't match a page we actually sent are dropped and the value is flagged."""
-    numbered, sources = {}, []
-    dropped = 0
+# =====================================================================
+# Comparison engine (comparison_engine/): sourced facts in, checked AI interpretation out
+# =====================================================================
+from comparison_engine import interpret, load_repository      # noqa: E402
+from comparison_engine.website import to_website              # noqa: E402
 
-    def ref(cits):
-        nonlocal dropped
-        out = []
-        for c in cits or []:
-            if not isinstance(c, dict):
-                continue
-            try:
-                key = (str(c.get("file_id")), int(c.get("page", 0) or 0))
-            except (TypeError, ValueError):
-                key = None
-            if key not in valid:
-                dropped += 1
-                continue
-            if key not in numbered:
-                numbered[key] = len(sources) + 1
-                doc = valid[key]
-                sources.append({"id": numbered[key], "title": doc["title"], "doc": doc["doc"],
-                                "page": str(key[1]), "date": doc.get("date", "")})
-            if numbered[key] not in out:
-                out.append(numbered[key])
-        return out
-
-    for a in result.get("attributes", []):
-        for v in (a.get("values") or {}).values():
-            if isinstance(v, dict):
-                v["sources"] = ref(v.get("sources"))
-                if v.get("value") is not None and not v["sources"] and v.get("status") in (None, "ok"):
-                    v["status"] = "unverified"
-    for group in ("differences", "benefits", "tradeoffs"):
-        for it in (result.get("insights") or {}).get(group, []) or []:
-            it["sources"] = ref(it.get("sources"))
-    if dropped:
-        result.setdefault("flags", []).append(
-            issue("unverified", f"{dropped} citation(s) pointed to pages that weren't in the provided sources and were removed."))
-    return sources
+ENGINE_ASK = None   # None = the real Claude API. Tests put a fake function here (no key, no cost).
+WAITING = "Datasheet uploaded - values not extracted to the facts CSV yet."
 
 
-def pick_competitors(cat, payload, anchor_id, category_id):
-    prods = cat.get("competitorProducts", [])
-    if payload.get("competitorProductIds"):
-        return [p for p in prods if p["id"] in payload["competitorProductIds"]], False
-    in_cat = [p for p in prods if p["categoryId"] == category_id and p.get("datasets")]
-    if payload.get("competitors"):
-        in_cat = [p for p in in_cat if p["competitorId"] in payload["competitors"]]
-    # Confirmed equivalents first, then the rest (max 3 columns)
-    in_cat.sort(key=lambda p: anchor_id not in p.get("equivalentOf", []))
-    return in_cat[:3], True
+def products_with_facts() -> set[str]:
+    """Product ids that have at least one row in the facts CSVs (data/repository/)."""
+    data = load_repository()
+    return set(data["product_id"]) if not data.empty else set()
+
+
+def catalog_names(cat) -> dict:
+    """product_id -> name / manufacturer for the table header (product_id = catalog id)."""
+    comp_name = {c["id"]: c["name"] for c in cat["competitors"]}
+    names = {n["id"]: {"name": n["label"], "manufacturer": "Danfoss"}
+             for n in walk(cat["tree"]) if n.get("type") == "product"}
+    for p in cat.get("competitorProducts", []):
+        names[p["id"]] = {"name": p["name"], "manufacturer": comp_name.get(p["competitorId"], ""),
+                          "equivalentOf": p.get("equivalentOf", [])}
+    return names
+
+
+def doc_url(source_file: str, page) -> Optional[str]:
+    """Link to the stored upload at the cited page: /files/<owner>/<fileId>_<name>#page=N."""
+    for path in FILES_DIR.glob(f"*/*_{source_file}"):
+        return f"/files/{path.parent.name}/{path.name}" + (f"#page={page}" if page else "")
+    return None
+
+
+def brief_text(payload: dict) -> tuple[str, str]:
+    """The website's brief -> (question, customer context) for the AI."""
+    buyer = payload.get("buyer") or {}
+    factors = payload.get("factors") or {}
+    must = [k for k, v in factors.items() if v == "must"]
+    nice = [k for k, v in factors.items() if v == "nice"]
+    context = "; ".join(x for x in [
+        f"customer: {buyer.get('company')}" if buyer.get("company") else "",
+        f"application: {buyer.get('application')}" if buyer.get("application") else "",
+        f"uses today: {buyer.get('currentSupplier')}" if buyer.get("currentSupplier") else "",
+        f"notes: {buyer.get('notes')}" if buyer.get("notes") else "",
+        f"must-have topics: {', '.join(must)}" if must else "",
+        f"nice-to-have topics: {', '.join(nice)}" if nice else "",
+        f"own factors: {', '.join(payload.get('customFactors') or [])}" if payload.get("customFactors") else "",
+    ] if x)
+    question = " ".join(payload.get("chatNotes") or []) or ""
+    return question, context
+
+
+def ancestors(cat, node_id) -> set[str]:
+    """All groups above a product: pvg32 -> {"proportional", "valves"}."""
+    out, parent = set(), find_parent(cat, node_id)
+    while parent:
+        out.add(parent["id"])
+        parent = find_parent(cat, parent["id"])
+    return out
+
+
+def empty_response(title, anchor, flags):
+    return {"title": title, "isSample": False, "anchor": anchor, "matches": [], "attributes": [],
+            "insights": {}, "sources": [], "flags": flags,
+            "confidence": {"level": "low", "reason": "No extracted facts to compare yet."}}
+
+
+def run_engine(target_id: str, candidates, pool: str, payload: dict, names: dict, pending: dict,
+               extra_flags: list) -> dict:
+    question, context = brief_text(payload)
+    result = interpret(target_id, candidates, question, context, ask=ENGINE_ASK, use_ai=True, pool=pool)
+    for pid, info in names.items():                     # confirmed equivalent pairs from the uploads
+        info["knownEquivalent"] = target_id in info.get("equivalentOf", []) or pid in names.get(
+            target_id, {}).get("equivalentOf", [])
+    return to_website(result, names=names, doc_url=doc_url, pending=pending, extra_flags=extra_flags)
 
 
 # =====================================================================
-# POST /api/compare
+# POST /api/compare   (website flow: Danfoss product -> competitor products)
 # =====================================================================
 @app.post("/api/compare")
 def compare(payload: dict):
     cat = load_catalog()
     anchor = find_node(cat, payload.get("productId"))
     if not anchor:
-        return {"title": "Unknown product", "anchor": {"key": "x", "name": "?", "manufacturer": "Danfoss"},
-                "matches": [], "attributes": [], "insights": {}, "sources": [],
-                "flags": [issue("error", "Product not found in catalog.")],
-                "confidence": {"level": "low", "reason": "No product."}}
-    category = find_parent(cat, anchor["id"])
-    comps, auto = pick_competitors(cat, payload, anchor["id"], category["id"] if category else None)
-    comp_name = {c["id"]: c["name"] for c in cat["competitors"]}
+        return empty_response("Unknown product", {"key": "x", "name": "?", "manufacturer": "Danfoss"},
+                              [issue("error", "Product not found in catalog.")])
+    names = catalog_names(cat)
+    have = products_with_facts()
+    groups = ancestors(cat, anchor["id"])         # e.g. {"proportional", "valves"}
+    in_category = [p for p in cat.get("competitorProducts", []) if p["categoryId"] in groups]
 
-    anchor_info = {"key": anchor["id"], "name": anchor["label"], "manufacturer": "Danfoss"}
-    matches = [{"key": p["id"], "name": p["name"], "manufacturer": comp_name.get(p["competitorId"], ""),
-                "knownEquivalent": anchor["id"] in p.get("equivalentOf", []),
-                "matchScore": None} for p in comps]
+    chosen_ids = payload.get("competitorProductIds") or []
+    if not chosen_ids and payload.get("competitors"):
+        chosen_ids = [p["id"] for p in in_category if p["competitorId"] in payload["competitors"]]
+    chosen = [p for p in cat.get("competitorProducts", []) if p["id"] in chosen_ids]
+    auto = not chosen_ids
+    if auto:                                           # let the engine pick from the facts CSVs
+        candidates = None
+        pending = {p["id"]: WAITING for p in in_category if p.get("datasets") and p["id"] not in have}
+    else:
+        candidates = [p["id"] for p in chosen if p["id"] in have]
+        pending = {p["id"]: (WAITING if p.get("datasets") else "No datasheet uploaded yet.")
+                   for p in chosen if p["id"] not in have}
 
-    # Gather source pages per product
-    extra = list(payload.get("customFactors", [])) + [k for k in payload.get("factors", {})]
-    blocks, valid = [], {}
-    a_pages = select_pages(pages_for(anchor.get("datasets")), extra)
-    blocks.append(pages_as_prompt(f"{anchor['label']} (Danfoss, key={anchor['id']})", a_pages))
-    for p in comps:
-        cp = select_pages(pages_for(p.get("datasets")), extra)
-        blocks.append(pages_as_prompt(f"{comp_name.get(p['competitorId'])} {p['name']} (key={p['id']})", cp))
-        for pg in cp:
-            valid[(pg["fileId"], pg["page"])] = {"doc": pg["doc"], "title": f"{comp_name.get(p['competitorId'])} {p['name']}"}
-    for pg in a_pages:
-        valid[(pg["fileId"], pg["page"])] = {"doc": pg["doc"], "title": f"Danfoss {anchor['label']}"}
+    flags = []
+    if auto:
+        flags.append(issue("unverified", "Competitor products were selected automatically from the facts "
+                                         "database. Confirm functional equivalence before showing them to the customer."))
+    if anchor["id"] not in have:
+        flags.insert(0, issue("pending" if anchor.get("datasets") else "missing",
+                              f"No extracted facts for {anchor['label']} yet. "
+                              + ("Its datasheet is uploaded; the PDF→CSV step has not produced its facts CSV."
+                                 if anchor.get("datasets") else "Upload its datasheet via 'Upload data'.")))
+        return empty_response(f"{anchor['label']} vs. competitors",
+                              {"key": anchor["id"], "name": anchor["label"], "manufacturer": "Danfoss"},
+                              flags + [issue("pending", f"{names.get(p, {}).get('name', p)}: {n}") for p, n in pending.items()])
+    if candidates == [] and not pending:
+        return empty_response(f"{anchor['label']} vs. competitors",
+                              {"key": anchor["id"], "name": anchor["label"], "manufacturer": "Danfoss"},
+                              [issue("missing", "None of the chosen competitor products has data yet.")])
+    return run_engine(anchor["id"], candidates, "competitors", payload, names, pending, flags)
 
-    base = {"title": f"{anchor['label']} vs. " + (", ".join(m["name"] for m in matches) or "no competitor data yet"),
-            "isSample": False, "anchor": anchor_info, "matches": matches}
 
-    pre_flags = []
-    if not a_pages:
-        pre_flags.append(issue("missing", f"No extracted datasheet for {anchor['label']}. Upload one via 'Upload data'."))
-    if not comps:
-        pre_flags.append(issue("missing", "No competitor datasheets uploaded for this category yet. "
-                                          "Upload one in the Competitors step."))
-    if auto and any(not m["knownEquivalent"] for m in matches):
-        pre_flags.append(issue("unverified", "Competitor products were selected automatically. "
-                                             "Confirm functional equivalence before showing them to the customer."))
-    if not a_pages and not comps:
-        return {**base, "attributes": [], "insights": {}, "sources": [], "flags": pre_flags,
-                "confidence": {"level": "low", "reason": "No source documents available."}}
-
-    factors = ", ".join(f"{f['id']} ({f['label']})" for f in cat["factors"])
-    prompt = f"""{chr(10).join(blocks)}
-
-Product keys: {json.dumps([anchor['id']] + [p['id'] for p in comps])}
-Factor ids: {factors}
-User priorities: {json.dumps(payload.get('factors', {}))}  (must = must-have, nice = nice-to-have)
-Custom factors to include as rows (factor "custom"): {json.dumps(payload.get('customFactors', []))}
-Buyer: {json.dumps(payload.get('buyer', {}), ensure_ascii=False)}
-Questions/notes from the salesperson: {json.dumps(payload.get('chatNotes', []), ensure_ascii=False)}
-
-Build a comparison of the most important technical attributes (flow, pressure, sections, ports, actuation,
-dimensions/weight, operating conditions, plus every must-have and custom factor). Include a values entry
-for EVERY product key in every row. Call submit_comparison."""
-
-    try:
-        resp = claude().messages.create(
-            model=MODEL, max_tokens=8000, system=RULES,
-            tools=[COMPARE_TOOL], tool_choice={"type": "tool", "name": "submit_comparison"},
-            messages=[{"role": "user", "content": prompt}],
-        )
-        result = next(b.input for b in resp.content if b.type == "tool_use")
-    except Exception as e:
-        return {**base, "attributes": [], "insights": {}, "sources": [],
-                "flags": pre_flags + [issue("error", f"AI comparison failed: {e}")],
-                "confidence": {"level": "low", "reason": "The AI step failed."}}
-
-    sources = build_sources(result, valid)
-    for a in result.get("attributes", []):  # make sure every column has a cell
-        for key in [anchor["id"]] + [p["id"] for p in comps]:
-            a.setdefault("values", {}).setdefault(key, {"value": None, "status": "missing"})
-    return {**base, "attributes": result.get("attributes", []), "insights": result.get("insights", {}),
-            "flags": pre_flags + result.get("flags", []), "confidence": result.get("confidence", {}),
-            "sources": sources}
+# =====================================================================
+# POST /api/match   (reverse flow: competitor product the customer uses -> best Danfoss products)
+# Request: { "competitorProductId": "kawasaki-kmp", "buyer": {...}, "factors": {...}, "chatNotes": [...] }
+# Response: same shape as /api/compare, with the competitor product as the anchor column.
+# =====================================================================
+@app.post("/api/match")
+def match(payload: dict):
+    cat = load_catalog()
+    names = catalog_names(cat)
+    pid = payload.get("competitorProductId")
+    product = next((p for p in cat.get("competitorProducts", []) if p["id"] == pid), None)
+    if not product:
+        return empty_response("Unknown competitor product", {"key": "x", "name": "?", "manufacturer": ""},
+                              [issue("error", "Competitor product not found in catalog.")])
+    anchor = {"key": pid, "name": product["name"], "manufacturer": names[pid]["manufacturer"]}
+    if pid not in products_with_facts():
+        return empty_response(f"{product['name']} vs. Danfoss", anchor, [issue(
+            "pending" if product.get("datasets") else "missing",
+            f"No extracted facts for {product['name']} yet. "
+            + ("Its datasheet is uploaded; the PDF→CSV step has not produced its facts CSV."
+               if product.get("datasets") else "Upload its datasheet in the Competitors step."))])
+    flags = [issue("unverified", "Danfoss products were selected automatically from the facts database. "
+                                 "Confirm functional equivalence before showing them to the customer.")]
+    return run_engine(pid, None, "danfoss", payload, names, {}, flags)
 
 
 # =====================================================================
@@ -526,8 +505,11 @@ def ask(payload: dict):
     if not anchor:
         return {"answer": "Pick a product above first. I'll use your question as context for the comparison."}
 
-    category = find_parent(cat, anchor["id"])
-    comps, _ = pick_competitors(cat, ctx, anchor["id"], category["id"] if category else None)
+    groups = ancestors(cat, anchor["id"])
+    chosen = ctx.get("competitorProductIds") or []
+    comps = [p for p in cat.get("competitorProducts", []) if p.get("datasets") and (
+        p["id"] in chosen if chosen else p["categoryId"] in groups
+        and (not ctx.get("competitors") or p["competitorId"] in ctx["competitors"]))][:3]
     words = [w for w in re.findall(r"[a-zA-Z/°]{3,}", question.lower())]
     blocks = [pages_as_prompt(f"Danfoss {anchor['label']}", select_pages(pages_for(anchor.get("datasets")), words, limit=8, max_chars=25000))]
     for p in comps:
@@ -548,4 +530,6 @@ def ask(payload: dict):
 # =====================================================================
 # Serve the front end on the same address (mount LAST so /api wins)
 # =====================================================================
+# Stored uploads, so every source link opens the original file at the cited page
+app.mount("/files", StaticFiles(directory=FILES_DIR), name="files")
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
