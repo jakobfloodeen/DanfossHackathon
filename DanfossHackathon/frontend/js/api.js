@@ -57,6 +57,26 @@ const Api = (() => {
       return call("/match", { method: "POST", body: JSON.stringify(payload) });
     },
 
+    /** Scraper: find datasheets on a manufacturer website. */
+    async webDiscover(url, topic) {
+      return call("/web/discover", { method: "POST", body: JSON.stringify({ url, topic }) });
+    },
+
+    /** Scraper: download one found document and store it like an upload (its web link is kept for footnotes). */
+    async webImport(payload) {
+      return call("/web/import", { method: "POST", body: JSON.stringify(payload) });
+    },
+
+    /** Start turning a stored PDF into facts (teammates' converter, one AI call per page). */
+    async extract(ownerId, fileId, pages) {
+      return call("/extract", { method: "POST", body: JSON.stringify({ ownerId, fileId, pages }) });
+    },
+
+    /** Progress of a background job. */
+    async job(id) {
+      return call("/jobs/" + encodeURIComponent(id));
+    },
+
     /** All products that have extracted facts (for the system builder). */
     async products() {
       if (cfg.USE_MOCK) return { products: [] };

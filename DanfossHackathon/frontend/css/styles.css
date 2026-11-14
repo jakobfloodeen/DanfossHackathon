@@ -270,3 +270,16 @@ dialog#match-dialog, dialog#system-dialog { border: 0; border-radius: var(--radi
 .topbar { flex-wrap: wrap; row-gap: 8px; }
 .top-actions { flex-wrap: wrap; margin-left: auto; }
 @media (max-width: 1300px) { .top-actions .btn { padding: 6px 12px; font-size: 13px; } }
+
+/* ---------- web import + extract facts ---------- */
+.web-import summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.web-import[open] { padding-bottom: 6px; }
+.web-list { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow: auto; margin: 8px 0; }
+.web-doc { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; font-weight: 400; }
+.web-doc a { margin-left: 6px; }
+.extract-box:empty { display: none; }
+.extract-box h4 { margin: 4px 0; font-size: 14px; }
+.extract-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 6px 0; border-top: 1px solid var(--line); }
+.extract-name { font-size: 13px; overflow-wrap: anywhere; }
+.extract-status { grid-column: 1 / -1; font-size: 12px; }
+.extract-status:empty { display: none; }

@@ -34,8 +34,11 @@ UNITS = {
     # temperature (°C only - °F would need an offset, not a factor) and viscosity
     "°c": ("temperature", 1), "degc": ("temperature", 1), "degreesc": ("temperature", 1), "celsius": ("temperature", 1),
     "mm2/s": ("viscosity", 1), "cst": ("viscosity", 1),
+    # electrical (solenoids, sensors)
+    "a": ("current", 1), "ma": ("current", 0.001), "v": ("voltage", 1), "vdc": ("voltage", 1),
+    "ohm": ("resistance", 1), "ω": ("resistance", 1), "Ω": ("resistance", 1),
 }
-BASE_UNIT = {"temperature": "°C", "viscosity": "mm2/s",
+BASE_UNIT = {"temperature": "°C", "viscosity": "mm2/s", "current": "A", "voltage": "V", "resistance": "ohm",
              "pressure": "bar", "flow": "l/min", "displacement": "cc/rev", "speed": "rpm",
              "mass": "kg", "length": "mm", "count": ""}
 

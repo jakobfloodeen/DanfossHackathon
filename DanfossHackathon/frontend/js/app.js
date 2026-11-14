@@ -110,6 +110,16 @@
     if (nice.length) parts.push("Nice-to-have: " + nice.join(", "));
     return parts.join(" · ") || "No specific priorities";
   }
+  /** Uploaded PDF datasheets that have not been turned into facts yet (for the Extract panel). */
+  function datasetsWithoutFacts() {
+    const out = [];
+    const add = (owner, label, d) => { if (!d.facts && d.name?.toLowerCase().endsWith(".pdf")) out.push({ ownerId: owner, fileId: d.fileId, name: d.name, label }); };
+    const walkTree = (nodes) => nodes.forEach((n) => { (n.datasets || []).forEach((d) => add(n.id, n.label, d)); walkTree(n.children || []); });
+    walkTree(catalog?.tree || []);
+    (catalog?.competitorProducts || []).forEach((p) => (p.datasets || []).forEach((d) => add(p.id, `${competitorName(p.competitorId)} ${p.name}`, d)));
+    return out;
+  }
+
   /** Customer feedback files on record for this company (matched like the backend: case and spaces ignored). */
   function customerFilesFor(company) {
     const key = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
@@ -364,7 +374,19 @@
           <span class="hint">PDF, CSV, Excel, JSON, HTML, Word · max 50 MB each</span>
           <span class="dz-list"></span>
         </label>
+        <details class="web-import">
+          <summary>…or import a datasheet from a manufacturer's website</summary>
+          <div class="form-grid tight">
+            <label class="field span-2"><span>Website or product page</span>
+              <input name="webUrl" type="url" placeholder="https://www.kawasakihydraulics.com/"></label>
+            <label class="field"><span>Look for</span>
+              <select name="webTopic"><option>valves</option><option>pumps</option><option>motors</option><option>steering</option></select></label>
+            <div class="field"><span>&nbsp;</span><button class="btn btn-ghost" type="button" data-act="web-search">Search website</button></div>
+          </div>
+          <div class="web-results"></div>
+        </details>
         <div class="form-issues"></div>
+        <div class="extract-box"></div>
         <div class="actions">
           <button class="btn btn-ghost" value="cancel" type="submit">Cancel</button>
           <button class="btn btn-primary" type="button" data-act="upload">Upload</button>
@@ -398,12 +420,11 @@
     dz.addEventListener("drop", (e) => { e.preventDefault(); dz.classList.remove("is-over"); fileInput.files = e.dataTransfer.files; showFiles(); });
     syncSource(); syncEquivalents();
 
-    f.querySelector('[data-act="upload"]').addEventListener("click", async (e) => {
-      const btn = e.currentTarget;
-      const issueBox = f.querySelector(".form-issues");
+    // which catalog item the files belong to (same fields for file upload and web import)
+    const targetMeta = () => {
       const isComp = f.source.value === "competitor";
-      const isCustomer = f.source.value === "customer";
-      const meta = isCustomer ? { source: "customer", customerName: f.customerName.value.trim() } : isComp ? {
+      if (f.source.value === "customer") return { source: "customer", customerName: f.customerName.value.trim() };
+      return isComp ? {
         source: "competitor",
         competitorId: f.competitorId.value !== "__new" ? f.competitorId.value : null,
         competitorName: f.competitorId.value === "__new" ? f.competitorName.value.trim() : null,
@@ -411,6 +432,89 @@
         categoryId: f.categoryId.value,
         equivalentOf: f.equivalentOf.value || null,
       } : { source: "danfoss", nodeId: f.nodeId.value };
+    };
+
+    // ---- import from a website (teammates' scraper) ----
+    const webBox = f.querySelector(".web-results");
+    f.querySelector('[data-act="web-search"]').addEventListener("click", async (e) => {
+      const btn = e.currentTarget;
+      if (!f.webUrl.value.trim()) { webBox.innerHTML = flagHtml({ level: "error", text: "Enter a website address." }); return; }
+      btn.disabled = true;
+      webBox.innerHTML = '<p class="hint">Searching the website (up to a minute)…</p>';
+      try {
+        const res = await Api.webDiscover(f.webUrl.value.trim(), f.webTopic.value);
+        webBox.innerHTML = (res.issues || []).map(flagHtml).join("") + (res.documents.length ? `
+          <div class="web-list">${res.documents.map((d, i) => `<label class="web-doc"><input type="radio" name="webPick" value="${esc(d.url)}" data-name="${esc(d.name)}" ${i === 0 ? "checked" : ""}>
+            <span><strong>${esc(d.name)}</strong>${d.product ? ` · ${esc(d.product)}` : ""} <span class="hint">${esc(d.kind === "html" ? "web page text" : "PDF")}</span>
+            <a href="${esc(d.url)}" target="_blank" rel="noopener" class="hint">open</a></span></label>`).join("")}</div>
+          <div class="actions"><button class="btn btn-primary" type="button" data-act="web-import">Import selected for the product chosen above</button></div>` : "");
+        webBox.querySelector('[data-act="web-import"]')?.addEventListener("click", importPicked);
+      } catch (err) {
+        webBox.innerHTML = flagHtml({ level: "error", text: err.message });
+      } finally {
+        btn.disabled = false;
+      }
+    });
+    async function importPicked(e) {
+      const pick = f.querySelector('input[name="webPick"]:checked');
+      const meta = targetMeta();
+      if (!pick || meta.source === "customer") return;
+      const btn = e.currentTarget;                     // currentTarget is gone after an await
+      btn.disabled = true;
+      const issueBox = f.querySelector(".form-issues");
+      issueBox.innerHTML = '<p class="hint">Downloading…</p>';
+      try {
+        const res = await Api.webImport({ ...meta, url: pick.value, title: pick.dataset.name });
+        issueBox.innerHTML = res.issues.map(flagHtml).join("");
+        if (res.uploaded?.length) { await reloadCatalog(); showExtract(res.datasets); }
+      } catch (err) {
+        issueBox.innerHTML = flagHtml({ level: "error", text: err.message });
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // ---- extract facts (teammates' converter): from new uploads, or datasheets that have no facts yet ----
+    const extractBox = f.querySelector(".extract-box");
+    function showExtract(datasets) {
+      const pdfs = (datasets || []).filter((d) => d.name.toLowerCase().endsWith(".pdf"));
+      if (!pdfs.length) { extractBox.innerHTML = ""; return; }
+      extractBox.innerHTML = `<h4>Turn datasheets into comparable facts</h4>
+        <p class="hint">The AI reads each page (about a few cents per page, a few seconds each). For long datasheets
+          enter the pages with the technical data, e.g. 1-12.</p>
+        ${pdfs.map((d) => `<div class="extract-row" data-owner="${esc(d.ownerId)}" data-file="${esc(d.fileId)}">
+          <span class="extract-name">${esc(d.label ? d.label + " · " : "")}${esc(d.name)}</span>
+          <input class="extract-pages" placeholder="all pages" size="8" aria-label="Pages">
+          <button class="btn btn-ghost" type="button">Extract facts</button>
+          <div class="extract-status hint"></div></div>`).join("")}`;
+      extractBox.querySelectorAll(".extract-row").forEach((row) => row.querySelector("button").addEventListener("click", async (e) => {
+        const btn = e.currentTarget, status = row.querySelector(".extract-status");
+        btn.disabled = true;
+        try {
+          const res = await Api.extract(row.dataset.owner, row.dataset.file, row.querySelector(".extract-pages").value.trim());
+          if (!res.jobId) { status.innerHTML = res.issues.map(flagHtml).join(""); btn.disabled = false; return; }
+          for (;;) {                                         // poll the background job
+            const job = await Api.job(res.jobId);
+            status.textContent = job.progress || job.status;
+            if (job.status === "done" || job.status === "failed" || job.status === "unknown") break;
+            await new Promise((r) => setTimeout(r, 2000));
+          }
+          await reloadCatalog();
+        } catch (err) {
+          status.innerHTML = flagHtml({ level: "error", text: err.message });
+        } finally {
+          btn.disabled = false;
+        }
+      }));
+    }
+    showExtract(datasetsWithoutFacts());
+
+    f.querySelector('[data-act="upload"]').addEventListener("click", async (e) => {
+      const btn = e.currentTarget;
+      const issueBox = f.querySelector(".form-issues");
+      const isComp = f.source.value === "competitor";
+      const isCustomer = f.source.value === "customer";
+      const meta = targetMeta();
       btn.disabled = true;
       try {
         const res = await Api.uploadDatasets(meta, fileInput.files);
@@ -421,6 +525,7 @@
           state.log.push({ stage: segments().length, role: "issues", title, issues: res.issues });
           render();
           fileInput.value = ""; list.textContent = "";
+          if (!isCustomer) showExtract(res.datasets);
         }
       } catch (err) {
         issueBox.innerHTML = flagHtml({ level: "error", text: err.message });
