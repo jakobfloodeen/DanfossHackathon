@@ -203,5 +203,48 @@ class GeneralSourcesTests(unittest.TestCase):
         self.assertEqual(w.site_key('www.maker.co.uk'), 'maker.co.uk')
         self.assertNotEqual(w.site_key('maker.example'), w.site_key('other.example'))
 
+
+    # ---- headless-browser merge (branch mattias-scraper-fixes) ----
+    def test_sparse_javascript_page_is_rendered_in_browser(self):
+        sparse = b'<div id="app"></div>' + b'<script>x</script>' * 2000        # big page, almost no links
+        rendered = b'<h1>Valves</h1><a href="/docs/m4-valve.pdf">M4 valve datasheet</a>'
+        with self.site({'https://maker.example/valves': sparse}), \
+                patch.object(w, 'browser_available', return_value=True), \
+                patch.object(w, 'render_page', return_value=rendered) as render:
+            result = w.discover('https://maker.example/valves', 'valves')
+        render.assert_called_once()
+        self.assertEqual(result['documents'][0]['name'], 'm4-valve.pdf')
+
+    def test_download_page_entries_resolve_to_direct_pdf_addresses(self):
+        pages = {'https://maker.example/': b'<h2>M4-12 valve</h2><a href="https://maker.example/media/dl1">Download</a>'
+                                           b'<a href="https://maker.example/media/dl2">Download</a>'}
+        resolved = {'https://maker.example/media/dl1': 'https://maker.example/files/re64276-m4-12.pdf',
+                    'https://maker.example/media/dl2': 'https://maker.example/files/re64276-m4-12.pdf'}
+        with self.site(pages), patch.object(w, 'browser_available', return_value=True), \
+                patch.object(w, '_real_pdf_address', side_effect=resolved.get):
+            docs = w.discover('https://maker.example/', 'valves')['documents']
+        self.assertEqual(len(docs), 1)                                          # same file found twice -> one entry
+        self.assertEqual((docs[0]['kind'], docs[0]['name']), ('pdf', 're64276-m4-12.pdf'))
+
+    def test_unresolvable_download_page_keeps_its_entry(self):
+        pages = {'https://maker.example/': b'<h2>M4-12 valve</h2><a href="https://maker.example/media/dl1">Download</a>'}
+        with self.site(pages), patch.object(w, 'browser_available', return_value=True), \
+                patch.object(w, '_real_pdf_address', return_value=''):
+            docs = w.discover('https://maker.example/', 'valves')['documents']
+        self.assertEqual(docs[0]['kind'], 'auto')                               # still importable via the backend
+
+    def test_download_source_finds_the_file_behind_a_javascript_page(self):
+        def fetch(url):
+            if url.endswith('.pdf'):
+                return b'%PDF-1.4 real file', url, 'application/pdf', False
+            return b'<div id="app"></div>', url, 'text/html', False
+        with patch.object(w, 'fetch', side_effect=fetch), \
+                patch.object(w, 'browser_available', return_value=True), \
+                patch.object(w, 'find_document_in_browser',
+                             return_value=['https://maker.example/files/re64276.pdf?derivative=thumb']):
+            content, filename, _, _ = w.download_source('https://maker.example/download-page')
+        self.assertTrue(content.startswith(b'%PDF-'))
+        self.assertEqual(filename, 're64276.pdf')                               # thumbnail query stripped first
+
 if __name__ == '__main__':
     unittest.main()
