@@ -30,8 +30,11 @@ The app asks for the **backend address**. Options:
 | Hosted backend | its URL, e.g. `https://ci-assistant.onrender.com` |
 
 Change it later with the **Server** button (top bar), which also sets the voice language.
-To ship the APK with an address already filled in, set the repository variable `BACKEND_URL`
-(Settings → Secrets and variables → Actions → Variables).
+The APK comes with the address in `mobile/backend-url.txt` already filled in (currently the team's
+permanent ngrok domain), so new installs connect straight away. Start the tunnel on the laptop with
+`ngrok http 8000 --url https://saturate-petal-oxidizing.ngrok-free.dev`.
+To use another address, edit that file and push; a repository variable `BACKEND_URL`
+(Settings → Secrets and variables → Actions → Variables) overrides it.
 
 ## Voice input
 `DanfossHackathon/frontend/js/voice.js` adds a 🎤 button to every field with `data-voice`

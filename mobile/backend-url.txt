@@ -1,0 +1,3 @@
+# Backend address baked into the APK (first non-# line). Change it here and push to rebuild the app.
+# Start it on the laptop with:  ngrok http 8000 --url https://saturate-petal-oxidizing.ngrok-free.dev
+https://saturate-petal-oxidizing.ngrok-free.dev
