@@ -26,6 +26,7 @@ from collections import Counter
 from typing import Callable
 
 from .facts import Fact
+from .interpret import NOISE
 from .results import AnalysisResult
 from .units import UNITS, fmt, unit_key
 
@@ -153,19 +154,30 @@ def _cell(facts: list[Fact], row_unit: str, by_id: dict[str, Fact], sources: _So
 
 def _paired_rows(result: AnalysisResult, keys: list[str], by_id: dict, sources: "_Sources", empty) -> tuple[list, set]:
     """Rows for attributes the AI paired although the datasheets name them differently
-    (e.g. Kawasaki 'max pressure' vs PVG 'max pressure continuous'). Returns (rows, used (product, attribute))."""
-    rows, used = [], set()
-    for i, p in enumerate((result.interpretation or {}).get("points", [])):
-        side = {pid: [by_id[x] for x in ids if x in by_id] for pid, ids in
-                ((result.target["product_id"], p.get("target_facts", [])), (p.get("candidate"), p.get("candidate_facts", [])))}
-        facts = [f for fs in side.values() for f in fs]
-        if p.get("candidate") not in keys or not all(side.values()) or len({f.attribute for f in facts}) < 2:
+    (e.g. Kawasaki 'max pressure' vs PVG 'max pressure continuous'). Returns (rows, used (product, attribute)).
+    The AI pairs one candidate at a time, so points that pair the SAME target facts are merged into one row
+    with a cell per candidate (otherwise 'Flow at P port' shows up once per competitor)."""
+    target = result.target["product_id"]
+    groups: dict[tuple, dict] = {}                               # target fact ids -> {topic, candidate -> facts}
+    for p in (result.interpretation or {}).get("points", []):
+        t_facts = [by_id[x] for x in p.get("target_facts", []) if x in by_id]
+        c_facts = [by_id[x] for x in p.get("candidate_facts", []) if x in by_id]
+        cand = p.get("candidate")
+        if cand not in keys or not t_facts or not c_facts or len({f.attribute for f in t_facts + c_facts}) < 2:
             continue                                   # same name on both sides: the normal row shows it
+        g = groups.setdefault(tuple(sorted(f.id for f in t_facts)), {"topic": p.get("topic"), "target": t_facts,
+                                                                      "cands": {}})
+        bucket = g["cands"].setdefault(cand, [])
+        bucket += [f for f in c_facts if f not in bucket]
+    rows, used = [], set()
+    for i, g in enumerate(groups.values()):
+        side = {target: g["target"], **g["cands"]}
+        facts = [f for fs in side.values() for f in fs]
         unit = _row_unit(facts) if len({f.norm_unit for f in facts if f.is_number()}) == 1 else ""
         values = {pid: (_paired_cell(side[pid], unit, by_id, sources) if side.get(pid) else empty(pid)) for pid in keys}
         names = " / ".join(dict.fromkeys(label_for(f.attribute_original or f.attribute) for f in facts))
-        rows.append({"id": f"pair-{i + 1}", "factor": factor_for(facts[0].attribute), "label": p.get("topic") or names,
-                     "unit": unit, "values": values, "core": True, "paired": True,
+        rows.append({"id": f"pair-{i + 1}", "factor": factor_for(g["target"][0].attribute),
+                     "label": g["topic"] or names, "unit": unit, "values": values, "core": True, "paired": True,
                      "note": f"Paired by AI, checked by code: {names}"})
         used |= {(f.product_id, f.attribute) for f in facts}
     return rows, used
@@ -232,7 +244,7 @@ def to_website(result: AnalysisResult, names: dict[str, dict] | None = None,
 
     paired, used = _paired_rows(result, keys, by_id, sources, empty)
     attributes = []
-    for attr in dict.fromkeys(f.attribute for f in facts if f.product_id in keys):
+    for attr in dict.fromkeys(f.attribute for f in facts if f.product_id in keys and not f.attribute.startswith(NOISE)):
         row_facts = [f for f in facts if f.attribute == attr and f.product_id in keys
                      and (f.product_id, f.attribute) not in used]          # already in an AI-paired row
         if not row_facts:
@@ -250,6 +262,7 @@ def to_website(result: AnalysisResult, names: dict[str, dict] | None = None,
     attributes = paired + attributes
 
     insights = _insights(result, by_id, sources, names, match_ids)
+    source_list = _number_cited_sources(attributes, insights, sources.finish())
     flags = _flags(result, by_id, names, pending) + list(extra_flags or [])
     anchor = column(target) if target else {"key": "none", "name": "?", "manufacturer": ""}
     matches = [column(p) for p in match_ids]
@@ -262,10 +275,31 @@ def to_website(result: AnalysisResult, names: dict[str, dict] | None = None,
         "insights": insights,
         "flags": flags,
         "confidence": _confidence(result),
-        "sources": sources.finish(),
+        "sources": source_list,
         "engine": {"status": result.status, "message": result.message, "best_match": result.best_match_id,
                    "problems": result.problems, "meta": result.meta},
     }
+
+
+def _number_cited_sources(attributes: list[dict], insights: dict, items: list[dict]) -> list[dict]:
+    """The numbered source list holds only what the short table and the AI text cite (a handful), not every page
+    of every row under "All facts" (that was 200+ sources). Cells in "All facts" get direct page links instead
+    ("links": [{"url", "page", "title"}]), so every value stays traceable."""
+    by_old = {it["id"]: it for it in items}
+    cited = [n for a in attributes if a["core"] for v in a["values"].values() for n in v.get("sources", [])]
+    cited += [n for part in insights.values() for it in part for n in it.get("sources", [])]
+    new_id = {old: i + 1 for i, old in enumerate(dict.fromkeys(cited))}
+    for a in attributes:
+        for v in a["values"].values():
+            if a["core"]:
+                v["sources"] = sorted(new_id[n] for n in v.get("sources", []))
+            elif v.get("sources"):
+                v["links"] = [{"url": by_old[n]["url"], "page": by_old[n]["page"], "title": by_old[n]["title"]}
+                              for n in v.pop("sources")]
+    for part in insights.values():
+        for it in part:
+            it["sources"] = sorted(new_id[n] for n in it.get("sources", []))
+    return [{**by_old[old], "id": new} for old, new in new_id.items()]
 
 
 def _name(pid: str, names: dict) -> str:

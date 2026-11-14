@@ -494,7 +494,15 @@ def run_engine(target_id: str, candidates, pool: str, payload: dict, names: dict
 def ai_cost(calls: list, result) -> dict:
     """What this answer cost: shown under the result, so the price per comparison is visible in the demo."""
     t = usage.total(calls)
-    return {**t, "cached": bool(result.meta.get("cached")), "factsSent": result.meta.get("facts_sent")}
+    cached = bool(result.meta.get("cached"))
+    if cached:
+        reason = "already compared - the stored answer was reused"
+    elif not t["calls"]:                                  # why no AI: nothing to compare, no key, API error ...
+        msg = result.message or ""
+        reason = (msg.split("Reason:", 1)[1].strip().rstrip(".") if "Reason:" in msg else msg.rstrip(".")) or "not needed"
+    else:
+        reason = ""
+    return {**t, "cached": cached, "reason": reason, "factsSent": result.meta.get("facts_sent")}
 
 
 @app.get("/api/usage")
@@ -610,13 +618,31 @@ def run_extraction(job: dict) -> None:
             cat = load_catalog()
             owner, ds, name, brand, family = find_dataset(cat, job["ownerId"], job["fileId"])
             stored = FILES_DIR / job["ownerId"] / f"{ds['fileId']}_{ds['name']}"
-            with tempfile.TemporaryDirectory() as tmp:          # the converter cites the file by its own name
-                pdf = Path(tmp) / ds["name"]
-                pdf.write_bytes(stored.read_bytes())
+            if ds["name"].lower().endswith(".txt"):             # web page text from the web import
                 with contextlib.redirect_stdout(_JobLog(job)):
-                    report = bridge.extract_pdf(pdf, job["ownerId"], name, family, brand, ds["fileId"],
-                                                pages=job.get("pages", ""), client=EXTRACT_CLIENT,
-                                                converter=CONVERTER or bridge.load_converter())
+                    report = bridge.extract_text(stored.read_text(encoding="utf-8", errors="ignore"), ds["name"],
+                                                 job["ownerId"], name, family, brand, ds["fileId"],
+                                                 pages=job.get("pages", ""), client=EXTRACT_CLIENT,
+                                                 converter=CONVERTER or bridge.load_converter())
+            else:
+                with tempfile.TemporaryDirectory() as tmp:      # the converter cites the file by its own name
+                    pdf = Path(tmp) / ds["name"]
+                    pdf.write_bytes(stored.read_bytes())
+                    with contextlib.redirect_stdout(_JobLog(job)):
+                        report = bridge.extract_pdf(pdf, job["ownerId"], name, family, brand, ds["fileId"],
+                                                    pages=job.get("pages", ""), client=EXTRACT_CLIENT,
+                                                    converter=CONVERTER or bridge.load_converter())
+            # what the converter said along the way: how many pages it sent, and every page that failed
+            lines = job["log"]
+            sent = next((l for l in lines if "to send to the AI" in l), "")
+            errors = [l.strip() for l in lines if "failed" in l.lower()]
+            first_error = errors[0][:240] if errors else ""
+            if not report["facts"]:                            # nothing saved: say WHY, keep it in the list
+                why = (f"{len(errors)} page(s) failed, e.g. {first_error}" if errors else
+                       f"the AI found no values ({sent.strip() or 'no pages with text'}). "
+                       "If the PDF is a scan (pictures of text) it can't be read.")
+                job.update(status="failed", report=report, progress=f"No facts extracted: {why}")
+                return
             cat = load_catalog()                               # re-read: the catalog may have changed meanwhile
             found = find_dataset(cat, job["ownerId"], job["fileId"])
             if found:
@@ -624,10 +650,19 @@ def run_extraction(job: dict) -> None:
                                      "ok": report["ok"], "unverified": report["unverified"],
                                      "at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
                 save_catalog(cat)
+            notes = []
+            if not report.get("owner_facts"):
+                notes.append(f"none are filed under {name} - the file names other products: "
+                             f"{', '.join(report.get('other_products', [])[:4]) or '?'}")
+            elif report.get("owner_products") and name not in report["owner_products"]:
+                notes.append(f"filed under {name} (the file calls it {', '.join(report['owner_products'][:2])})")
+            if errors:
+                notes.append(f"{len(errors)} page(s) failed, e.g. {first_error}")
             job.update(status="done", report=report,
                        progress=f"{report['facts']} facts saved ({report['ok']} verified by quote, "
                                 f"{report['unverified']} unverified, {report['skipped_ordering_code']} ordering-code rows skipped)"
-                                + (f" · AI cost ${report['cost']['usd']:.3f}" if report.get("cost") else ""))
+                                + (f" · AI cost ${report['cost']['usd']:.3f}" if report.get("cost") else "")
+                                + "".join(f" · {n}" for n in notes))
         except Exception as e:  # noqa: BLE001 - shown to the user, never crashes the server
             job.update(status="failed", progress=f"Extraction failed: {e}")
 
@@ -639,9 +674,9 @@ def start_extraction(payload: dict):
     found = find_dataset(cat, owner_id, file_id)
     if not found:
         return {"jobId": None, "issues": [issue("error", "Dataset not found.")]}
-    if not found[1]["name"].lower().endswith(".pdf"):
-        return {"jobId": None, "issues": [issue("error", "Only PDF datasheets can be converted to facts so far "
-                                                         "(web pages need a different converter).")]}
+    if not found[1]["name"].lower().endswith((".pdf", ".txt")):
+        return {"jobId": None, "issues": [issue("error", "Only PDF datasheets and imported web pages (.txt) "
+                                                         "can be converted to facts so far.")]}
     if EXTRACT_CLIENT is None and not has_api_key():
         return {"jobId": None, "issues": [issue("error", "No ANTHROPIC_API_KEY in .env - the converter needs the AI.")]}
     pages = str(payload.get("pages") or "").strip()
@@ -724,8 +759,8 @@ def import_from_web(payload: dict):
     except ValueError as e:
         issues.append(issue("warning", f"Link not saved: {e}"))
     if not filename.lower().endswith(".pdf"):
-        issues.append(issue("warning", "This is a web page, not a PDF: it is stored, but the facts converter "
-                                       "only reads PDFs so far."))
+        issues.append(issue("ok", "This is a web page, not a PDF: its text was saved and can be turned into facts "
+                                  "below (each ~4000 characters count as one 'page')."))
     return {"uploaded": [filename], "issues": issues, "sourceUrl": source_url,
             "datasets": [{"ownerId": found["owner_id"], "fileId": ds["fileId"], "name": ds["name"]}]}
 

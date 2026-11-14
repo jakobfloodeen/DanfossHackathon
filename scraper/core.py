@@ -11,12 +11,39 @@ import socket
 import httpx
 
 MAX_BYTES = 50 * 1024 * 1024
-MAX_PAGES = 6
-MAX_DEPTH = 2
+MAX_PAGES = 12            # HTML pages crawled per search
+MAX_DEPTH = 3
+MAX_SECONDS = 60
+MAX_SITEMAP_FETCHES = 3   # robots.txt / sitemap files read when crawling finds nothing relevant
+ENOUGH_DOCUMENTS = 15     # stop early once this many relevant documents were found
 CACHE_TTL = 900
+CACHE_ITEMS = 32
+CACHE_MAX_ITEM = 5 * 1024 * 1024   # big downloads are not kept in memory
 _CACHE = OrderedDict()
 _LOCK = RLock()
-PUMPS_URL = "https://www.kawasakihydraulics.com/type/axial-piston-pumps/"
+
+# What each choice in the website's "Look for" menu means. Links that mention the chosen component are
+# followed first; links that ONLY mention another component (e.g. "Pumps" when looking for valves) are skipped.
+TOPICS = {
+    'valves': ('valve', 'directional', 'proportional', 'control block', 'control-block', 'spool', 'cartridge',
+               'sectional', 'monoblock', 'mono block', 'load sensing', 'load-sensing', 'flow control',
+               'pressure relief'),
+    'pumps': ('pump', 'piston pump', 'gear pump', 'axial piston', 'axial-piston', 'variable displacement',
+              'open circuit', 'open-circuit', 'closed circuit', 'closed-circuit'),
+    'motors': ('motor', 'orbital', 'geroler', 'gerotor', 'radial piston', 'radial-piston', 'travel motor',
+               'swing motor', 'wheel motor'),
+    'steering': ('steering', 'orbitrol', 'steering unit', 'priority valve', 'steer-by-wire'),
+}
+GENERIC_WORDS = ('product', 'catalog', 'catalogue', 'download', 'technical', 'documents', 'documentation',
+                 'literature', 'media', 'datasheet', 'data sheet', 'series', 'mobile', 'hydraulic')
+SKIP_WORDS = ('privacy', 'slavery', 'gender-pay', 'cookie', 'terms-and-conditions', 'careers', 'login', 'logout',
+              'imprint', 'legal', 'press', 'news', 'event', 'investor', 'jobs', 'contact', 'linkedin', 'facebook',
+              'youtube', 'twitter', 'instagram', 'mailto:', 'tel:')
+DOC_LABEL = re.compile(r'\b(pdf|datasheet|data sheet|download|brochure|catalog(ue)?|leaflet|technical information|'
+                       r'product information|technical data|manual|specification)\b')
+DOC_PATH = re.compile(r'(\.pdf$|/media/|/download|/documents?/|/files?/|/assets?/|/dam/|mediadirectory|getdocument|'
+                      r'/literature/)')
+SPEC_VALUE = re.compile(r'\d[\d.,]*\s?(bar|psi|mpa|l/min|gpm|cm3|cm³|cc/rev|rpm|min-1|mm|kg|°c|kw)\b', re.I)
 
 
 def validate_url(url):
@@ -83,11 +110,12 @@ def fetch(url):
                         raise ValueError('Download took too long. Try a direct document URL.')
                     chunks.append(chunk)
                 result = (b''.join(chunks), current, response.headers.get('content-type', ''))
-                with _LOCK:
-                    _CACHE[url] = (monotonic(), result)
-                    _CACHE.move_to_end(url)
-                    while len(_CACHE) > 4:
-                        _CACHE.popitem(last=False)
+                if len(result[0]) <= CACHE_MAX_ITEM:
+                    with _LOCK:
+                        _CACHE[url] = (monotonic(), result)
+                        _CACHE.move_to_end(url)
+                        while len(_CACHE) > CACHE_ITEMS:
+                            _CACHE.popitem(last=False)
                 return (*result, False)
     raise ValueError('Too many redirects.')
 
@@ -140,6 +168,8 @@ class PageLinks(HTMLParser):
             self.layout_depth = max(0, self.layout_depth - 1)
         if tag in ('h1', 'h2', 'h3') and self.heading_parts is not None:
             self.heading = ' '.join(' '.join(self.heading_parts).split())
+            if tag == 'h1' and not getattr(self, 'title', ''):
+                self.title = self.heading
             self.heading_parts = None
         if tag == 'a' and self.anchor is not None:
             self.anchor['label'] = ' '.join(' '.join(self.anchor.pop('parts')).split())
@@ -156,75 +186,181 @@ def parse_html(data):
     return page
 
 
-def discover(url: str, topic: str = 'pumps') -> dict:
-    """Return candidate sources and crawl diagnostics; do not persist anything."""
-    url = validate_url(url)
-    if urlsplit(url).hostname in ('kawasakihydraulics.com', 'www.kawasakihydraulics.com') and urlsplit(url).path == '/':
-        url = PUMPS_URL
-    queue, visited, seen = [(100, 0, url)], set(), set()
-    documents, warnings = [], []
-    start, all_cached = monotonic(), True
-    root_host = None
-    terms = re.findall(r'[\w-]{2,}', topic.lower())
-    while queue and len(visited) < MAX_PAGES and monotonic() - start < 60:
-        queue.sort(key=lambda item: -item[0])
-        _, depth, current = queue.pop(0)
-        if current in visited:
+def topic_words(topic: str) -> tuple:
+    """The words for one menu choice ('valves' -> valve, directional, ...). Unknown topics use their own words."""
+    key = (topic or '').strip().lower()
+    return TOPICS.get(key) or TOPICS.get(key + 's') or tuple(re.findall(r'[\w-]{3,}', key))
+
+
+def relevance(text: str, topic: str) -> int:
+    """> 0: about the chosen component; 0: neutral (e.g. 'Products', 'Downloads'); < 0: only about another one."""
+    text = text.lower()
+    own = topic_words(topic)
+    score = sum(10 for w in own if w in text)
+    if not score:
+        others = [w for t, words in TOPICS.items() if words != own for w in words if w in text]
+        # 'priority valve' is steering, 'valve' is valves: a word of the chosen topic inside another topic's word
+        if others:
+            return -10
+    return score + sum(2 for w in GENERIC_WORDS if w in text)
+
+
+def site_key(host: str) -> str:
+    """'apps.boschrexroth.com' and 'www.boschrexroth.com' -> 'boschrexroth.com' (same company website).
+    Handles two-part country endings like 'example.co.uk'."""
+    parts = (host or '').lower().rstrip('.').split('.')
+    if len(parts) >= 3 and len(parts[-1]) == 2 and parts[-2] in ('co', 'com', 'ac', 'org', 'net', 'gov', 'or', 'ne'):
+        return '.'.join(parts[-3:])
+    return '.'.join(parts[-2:])
+
+
+def _is_document_link(link: dict, target: str) -> bool:
+    path = urlsplit(target).path.lower()
+    return not link['layout'] and (bool(DOC_PATH.search(path)) or bool(DOC_LABEL.search(link['label'].lower())))
+
+
+def _document(target: str, link: dict, score: int) -> dict:
+    path = urlsplit(target).path
+    is_pdf = path.lower().endswith('.pdf')
+    name = PurePosixPath(path).name if is_pdf else (link['label'] or PurePosixPath(path).name or 'document')
+    return {'url': target, 'name': name, 'product': link['product'], 'label': 'PDF' if is_pdf else 'Document link',
+            'kind': 'pdf' if is_pdf else 'auto', 'relevance': score}
+
+
+def _sitemap_urls(root: str, budget: list) -> list:
+    """URLs listed in the site's sitemap (robots.txt 'Sitemap:' lines, else /sitemap.xml). Never raises."""
+    found, queue = [], []
+    base = urlunsplit((urlsplit(root).scheme, urlsplit(root).netloc, '/', '', ''))
+    try:
+        budget[0] -= 1
+        robots, _, _, _ = fetch(urljoin(base, '/robots.txt'))
+        queue = re.findall(r'(?im)^\s*sitemap:\s*(\S+)', robots.decode('utf-8', errors='replace'))
+    except Exception:
+        pass
+    queue = queue or [urljoin(base, '/sitemap.xml')]
+    while queue and budget[0] > 0:
+        url = queue.pop(0)
+        if url.lower().endswith('.gz'):
             continue
-        visited.add(current)
         try:
-            data, final, content_type, cached = fetch(current)
-            all_cached &= cached
-            if root_host is None:
-                root_host = urlsplit(final).hostname
-            if depth and urlsplit(final).hostname != root_host:
-                warnings.append('A page redirected outside the starting website; traversal stopped for that link.')
+            budget[0] -= 1
+            data, _, _, _ = fetch(url)
+        except Exception:
+            continue
+        locs = re.findall(r'<loc>\s*([^<\s]+)\s*</loc>', data.decode('utf-8', errors='replace'))
+        if b'<sitemapindex' in data[:2000]:
+            queue += [u for u in locs if not u.lower().endswith('.gz')][:5]   # a list of sitemaps: open a few
+        else:
+            found += locs
+    return found
+
+
+def discover(url: str, topic: str = 'pumps') -> dict:
+    """Return candidate sources and crawl diagnostics; do not persist anything.
+    Works for any manufacturer website: follows links about the chosen component (`topic`: valves, pumps,
+    motors, steering) on the same company's websites, collects document links (PDFs, downloads, media links),
+    and, when the crawled pages had nothing relevant, reads the site's sitemap and crawls the pages it lists
+    for that component."""
+    url = validate_url(url)
+    visited, seen = set(), set()
+    documents, warnings = [], []
+    state = {'start': monotonic(), 'cached': True, 'site': None, 'limited': False}
+
+    def add_document(doc):
+        if doc['url'] not in seen and doc['relevance'] >= 0:
+            seen.add(doc['url'])
+            documents.append(doc)
+
+    def relevant_count():
+        return sum(1 for d in documents if d['relevance'] > 0)
+
+    def crawl(queue, max_pages):
+        pages = 0
+        while queue and pages < max_pages and monotonic() - state['start'] < MAX_SECONDS \
+                and relevant_count() < ENOUGH_DOCUMENTS:
+            queue.sort(key=lambda item: -item[0])
+            _, depth, current = queue.pop(0)
+            if current in visited:
                 continue
-            if data.startswith(b'%PDF-'):
-                if final not in seen:
-                    seen.add(final)
-                    documents.append({'url': final, 'name': PurePosixPath(urlsplit(final).path).name or 'datasheet.pdf', 'product': '', 'label': 'PDF', 'kind': 'pdf'})
+            visited.add(current)
+            pages += 1
+            try:
+                visit(current, depth, queue)
+            except Exception as exc:
+                if len(visited) == 1:
+                    raise
+                warnings.append(f'Could not read {current}: {exc}')
+        state['limited'] |= bool(queue)
+
+    def visit(current, depth, queue):
+        data, final, content_type, cached = fetch(current)
+        state['cached'] &= cached
+        if state['site'] is None:
+            state['site'] = site_key(urlsplit(final).hostname)
+        if depth and site_key(urlsplit(final).hostname) != state['site']:
+            warnings.append('A page redirected outside the starting website; traversal stopped for that link.')
+            return
+        if data.startswith(b'%PDF-'):                           # the URL itself is a document
+            name = PurePosixPath(urlsplit(final).path).name or 'datasheet.pdf'
+            add_document({'url': final, 'name': name, 'product': '', 'label': 'PDF', 'kind': 'pdf',
+                          'relevance': max(relevance(final, topic), 1 if depth == 0 else 0)})
+            return
+        if 'html' not in content_type.lower():
+            warnings.append('A page did not contain HTML or a PDF.')
+            return
+        page = parse_html(data)
+        title = getattr(page, 'title', '')
+        page_score = relevance(final + ' ' + title, topic)
+        for link in page.links:
+            try:
+                target = validate_url(urljoin(final, link['href']))
+            except ValueError:
                 continue
-            if 'html' not in content_type.lower():
-                warnings.append('A page did not contain HTML or a PDF.')
+            text = unquote(link['label'] + ' ' + target).lower()
+            if any(t in text for t in SKIP_WORDS):
                 continue
-            page = parse_html(data)
-            found_pdf = False
-            candidates = []
-            for link in page.links:
-                try:
-                    target = validate_url(urljoin(final, link['href']))
-                except ValueError:
-                    continue
-                text = unquote(link['label'] + ' ' + target).lower()
-                if any(t in text for t in ('privacy', 'slavery', 'gender-pay', 'cookie', 'terms-and-conditions', 'careers', 'login', 'logout')):
-                    continue
-                pdf = urlsplit(target).path.lower().endswith('.pdf') or bool(re.search(r'\b(pdf|datasheet|data sheet)\b', link['label'].lower()))
-                if pdf and not link['layout']:
-                    found_pdf = True
-                    if target not in seen:
-                        seen.add(target)
-                        documents.append({'url': target, 'name': PurePosixPath(urlsplit(target).path).name if urlsplit(target).path.lower().endswith('.pdf') else link['label'],
-                                          'product': link['product'], 'label': 'Document link', 'kind': 'auto'})
-                    continue
-                score = sum(10 for term in terms if term in text)
-                score += sum(2 for term in ('product', 'catalog', 'download', 'technical') if term in text)
-                if score and depth < MAX_DEPTH and urlsplit(target).hostname == root_host and target not in visited:
-                    candidates.append((score, depth + 1, target))
-            # Let users explicitly import readable HTML where no PDF is exposed.
-            if not found_pdf and len(page.readable_text()) >= 200 and final not in seen:
-                seen.add(final)
-                documents.append({'url': final, 'name': 'Web page text (review relevance)',
-                                  'product': '', 'label': 'HTML', 'kind': 'html'})
-            # Stop here when documents are already available on this page.
-            if not found_pdf:
-                queue.extend(sorted(candidates, reverse=True)[:10])
-        except Exception as exc:
-            if len(visited) == 1:
-                raise
-            warnings.append(f'Could not read {current}: {exc}')
-    return {'documents': documents[:40], 'pageUrl': url, 'cached': all_cached,
-            'pagesVisited': len(visited), 'limited': bool(queue), 'warnings': warnings[:5]}
+            if _is_document_link(link, target):
+                # a document on a page about the chosen component counts as relevant even if its own link
+                # just says "Download"
+                doc_score = relevance(f"{text} {link['product']}", topic)
+                add_document(_document(target, link, doc_score if doc_score else (1 if page_score > 0 else 0)))
+                continue
+            score = relevance(text, topic)
+            if score > 0 and depth < MAX_DEPTH and site_key(urlsplit(target).hostname) == state['site'] \
+                    and target not in visited:
+                queue.append((score, depth + 1, target))
+        # page text only when the page itself states values (a spec table), not for marketing pages
+        text = page.readable_text()
+        if (len(text) >= 200 and SPEC_VALUE.search(text) and (page_score > 0 or depth == 0)
+                and final not in seen):
+            seen.add(final)
+            documents.append({'url': final, 'name': f"Web page: {title or final}"[:120], 'product': title,
+                              'label': 'HTML', 'kind': 'html', 'relevance': max(page_score, 1)})
+
+    crawl([(1000, 0, url)], MAX_PAGES)
+
+    if not relevant_count() and state['site'] and monotonic() - state['start'] < MAX_SECONDS:
+        budget = [MAX_SITEMAP_FETCHES]
+        pages = []
+        for loc in _sitemap_urls(url, budget):
+            try:
+                target = validate_url(loc)
+            except ValueError:
+                continue
+            score = relevance(unquote(target), topic)
+            if score <= 0 or site_key(urlsplit(target).hostname) != state['site'] or target in visited:
+                continue
+            if DOC_PATH.search(urlsplit(target).path.lower()):
+                add_document(_document(target, {'label': '', 'product': '', 'layout': False}, score))
+            else:
+                pages.append((score, MAX_DEPTH, target))          # crawl these, but no deeper
+        if budget[0] < MAX_SITEMAP_FETCHES:
+            warnings.append('No relevant documents on the crawled pages; the site map was searched as well.')
+        crawl(sorted(pages, reverse=True)[:30], MAX_PAGES // 2)
+
+    documents.sort(key=lambda d: -d['relevance'])
+    return {'documents': documents[:40], 'pageUrl': url, 'cached': state['cached'], 'topic': topic,
+            'pagesVisited': len(visited), 'limited': state['limited'], 'warnings': warnings[:5]}
 
 
 def download_source(url: str) -> tuple[bytes, str, str, bool]:

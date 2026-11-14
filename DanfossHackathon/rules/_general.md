@@ -55,7 +55,8 @@ matters for this customer, and which candidate is the closest match.
 
 ## Honesty rules
 - "Not stated in source" is NOT the same as "worse". Say what is missing and that it must be checked.
-- Facts with status unverified, conflict, missing or unknown unit go into "verify".
+- "verify": at most 3 doubtful facts (unverified, conflict, missing, unknown unit) - the ones that matter most for
+  this customer. Code adds all other doubtful facts itself.
 - A difference of a few percent is rarely a selling point - focus on the big differences.
 - Calculated facts are our own calculation - say so.
 
