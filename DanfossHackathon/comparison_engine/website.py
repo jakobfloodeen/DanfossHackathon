@@ -153,10 +153,11 @@ def _paired_rows(result: AnalysisResult, keys: list[str], by_id: dict, sources: 
 
 
 def _paired_cell(facts: list[Fact], unit: str, by_id: dict, sources: "_Sources") -> dict:
-    """One product's side of a paired row; several values are labelled with the datasheet's own names."""
-    if len(facts) == 1:
-        return _cell(facts, unit, by_id, sources)
+    """One product's side of a paired row. Every value is labelled with the datasheet's own name,
+    so the reader can see exactly WHAT the AI paired."""
     cells = [(_cell([f], unit, by_id, sources), f) for f in facts]
+    if all(c["value"] is None for c, _ in cells):
+        return cells[0][0]                                      # 'not stated' cell
     worst = next((c["status"] for c, _ in cells if c["status"] in ("conflict", "unverified", "inferred")), "ok")
     return {"value": " · ".join(f"{c['value']} ({label_for(f.attribute_original or f.attribute).lower()})"
                                 for c, f in cells if c["value"] is not None),
@@ -313,7 +314,8 @@ def _flags(result, by_id, names, pending) -> list[dict]:
         flags.append({"level": "conflict", "text": f"{_name(pid, names)} · {label_for(attr)}: {values} - confirm before quoting."})
     for (pid, level), labels in groups.items():
         what = "not stated in the datasheet" if level == "missing" else "not confirmed by a quote on the page"
-        flags.append({"level": level, "text": f"{_name(pid, names)}: {len(labels)} value(s) {what}: {', '.join(labels)}."})
+        listed = ", ".join(labels[:5]) + (f" (+{len(labels) - 5} more, see the table)" if len(labels) > 5 else "")
+        flags.append({"level": level, "text": f"{_name(pid, names)}: {len(labels)} value(s) {what}: {listed}."})
     for e in result.excluded:
         flags.append({"level": "warning", "text": f"{_name(e['product_id'], names)} left out: {e['reason']}"})
     for pid, note in pending.items():

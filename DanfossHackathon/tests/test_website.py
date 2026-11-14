@@ -102,7 +102,7 @@ def test_ai_pairs_differently_named_attributes_into_one_row():
     w = to_website(interpret(COMPX, None, ask=fake(a)))
     pair = next(r for r in w["attributes"] if r.get("paired"))
     assert pair["label"] == "Pressure" and pair["core"] and pair["unit"] == "bar"
-    assert pair["values"][COMPX]["value"] == "350" and pair["values"][P75]["value"] == "260"
+    assert pair["values"][COMPX]["value"] == "350 (peak pressure)" and pair["values"][P75]["value"] == "260 (rated pressure)"
     # the paired facts are not shown a second time in their own rows
     assert all(r["values"][COMPX]["value"] != "350" for r in w["attributes"] if r["id"] == "peak_pressure")
 

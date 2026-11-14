@@ -306,3 +306,24 @@ def test_prompt_asks_for_short_paired_answers():
     interpret(COMPX, None, ask=ask)
     system = ask.calls[0]["system"]
     assert "at most 30 words" in system and "DIFFERENT attribute names" in system
+
+
+def test_pairing_a_number_with_text_is_caught(setup):
+    # F10 = pump 75 rated pressure (bar), F7 = competitor control options (text)
+    a = bad()
+    a["points"].append({"topic": "Controls", "candidate": P75, "target_facts": ["F7"], "candidate_facts": ["F10"],
+                        "candidate_value_is": "n/a", "verdict": "unclear", "why": "Not comparable.", "confidence": "low"})
+    assert any("compare like with like" in x for x in check(a, setup))
+    b = bad()
+    b["points"].append({"topic": "Mixed", "candidate": P75, "target_facts": ["F2"], "candidate_facts": ["F9"],
+                        "candidate_value_is": "n/a", "verdict": "unclear", "why": "Different.", "confidence": "low"})
+    assert any("bar" in x and "cc/rev" in x for x in check(b, setup))      # pressure vs displacement
+
+
+def test_cached_answer_failing_new_checks_is_asked_again(monkeypatch):
+    ask = fake(GOOD)
+    interpret(COMPX, None, "q", "c", ask=ask)                 # cached as ok
+    import comparison_engine.guardrails as g
+    monkeypatch.setattr(g, "MAX_WORDS", 3)                    # checks get stricter
+    interpret(COMPX, None, "q", "c", ask=ask)
+    assert len(ask.calls) >= 2                                # not served from the cache

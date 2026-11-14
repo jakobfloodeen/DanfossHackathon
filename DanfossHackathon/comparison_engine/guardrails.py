@@ -13,6 +13,7 @@ Checks (each problem is one plain-English string):
   6. verdicts where code can compute the difference itself (one number each side, same unit), the AI's
               'candidate_value_is' must match, and 'similar' / better-or-worse must agree with code
   7. honesty  no best match -> comparable must be false and a reason must be given
+  6b. pairing a point may not pair a number with a text value, or numbers of different kinds (bar vs l/min)
   8. length   one-page brief: at most 3 talking points, 2 trade-offs, 8 points; statements short
               (limits are a bit above what the prompt asks for, so a 31-word sentence is not an error)
 add_missing_verify() is not a check: it adds every unverified/conflict/missing fact of the target and
@@ -233,6 +234,7 @@ def check_interpretation(answer: dict, facts: list[Fact], diffs: list[Diff], tar
         for fid in p["candidate_facts"]:
             if fid in by_id and by_id[fid].product_id != p["candidate"]:
                 problems.append(f"points[{i}].candidate_facts: {fid} is not a fact of {p['candidate']}")
+        problems += _check_pairing(i, p, by_id)
         problems += _check_verdict(i, p, by_id, logic, similar)
     return problems
 
@@ -249,6 +251,19 @@ def check_length(answer: dict) -> list[str]:
         if len((text or "").split()) > limit:
             problems.append(f"{where}: {len(text.split())} words, keep it under {limit - 15}")
     return problems
+
+
+def _check_pairing(i: int, p: dict, by_id: dict[str, Fact]) -> list[str]:
+    """Like with like: numbers with numbers of the same kind, text with text (missing facts are ignored)."""
+    t = [by_id[x] for x in p["target_facts"] if x in by_id and by_id[x].status != "missing"]
+    c = [by_id[x] for x in p["candidate_facts"] if x in by_id and by_id[x].status != "missing"]
+    if not t or not c:
+        return []
+    kinds = lambda fs: {(f.norm_unit or "number") if f.is_number() else "text" for f in fs}  # noqa: E731
+    if not kinds(t) & kinds(c):
+        return [f"points[{i}]: pairs {', '.join(sorted(kinds(t)))} ({', '.join(f.attribute for f in t)}) with "
+                f"{', '.join(sorted(kinds(c)))} ({', '.join(f.attribute for f in c)}) - compare like with like"]
+    return []
 
 
 def _check_verdict(i: int, p: dict, by_id: dict[str, Fact], logic: Logic, similar: float) -> list[str]:

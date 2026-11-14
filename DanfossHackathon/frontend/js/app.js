@@ -636,13 +636,17 @@
     if (v && v.value == null && v.status === "pending") {
       return `<td class="cell-pending">Awaiting extraction${v.note ? `<div class="cell-note">${esc(v.note)}</div>` : ""}</td>`;
     }
-    if (!v || v.value == null) {
-      return `<td class="cell-missing" title="${esc(v?.note || "Not found in sources")}">Not found${v?.note ? `<div class="cell-note">${esc(v.note)}</div>` : ""}</td>`;
+    if (v && v.status === "na") {                 // this product has no value under this name: not "missing"
+      return `<td class="cell-na" title="${esc(v.note || "No matching value")}">–</td>`;
+    }
+    if (!v || v.value == null) {                  // the datasheet does not state it (detail in the tooltip)
+      return `<td class="cell-missing" title="${esc(v?.note || "Not found in sources")}">Not stated</td>`;
     }
     const refs = (v.sources || []).map((s) => `<a href="#src-${s}" class="ref">[${s}]</a>`).join("");
     const st = CELL_STATUS[v.status];
-    const tag = st ? `<span class="badge ${st[1]}">${st[0]}</span>` : "";
-    const note = v.note ? `<div class="cell-note">${esc(v.note)}</div>` : "";
+    const tag = st ? `<span class="badge ${st[1]}" title="${esc(v.note || "")}">${st[0]}</span>` : "";
+    // short notes that change the meaning stay visible; the rest is a tooltip on the badge
+    const note = v.note && ["conflict", "converted", "inferred"].includes(v.status) ? `<div class="cell-note">${esc(v.note)}</div>` : "";
     return `<td class="cell-${v.status || "ok"}">${esc(v.value)}${refs}${tag}${note}</td>`;
   }
 
@@ -650,8 +654,8 @@
   function issueSummary(r) {
     const counts = {};
     r.attributes.forEach((a) => Object.values(a.values).forEach((v) => {
-      const s = v?.status === "pending" ? "pending" : !v || v.value == null ? "missing" : v.status;
-      if (s && s !== "ok") counts[s] = (counts[s] || 0) + 1;
+      const s = v?.status === "pending" || v?.status === "na" ? v.status : !v || v.value == null ? "missing" : v.status;
+      if (s && s !== "ok" && s !== "na") counts[s] = (counts[s] || 0) + 1;
     }));
     (r.flags || []).forEach((f) => { if (!(f.level in counts) && f.level !== "missing") counts[f.level] = 1; });
     const parts = Object.entries(counts).map(([k, n]) =>
@@ -667,7 +671,16 @@
 
   function resultWidget(r) {
     const cols = [r.anchor, ...r.matches];
-    const rows = [...r.attributes].sort((a, b) => priorityRank(a.factor) - priorityRank(b.factor));
+    const sorted = [...r.attributes].sort((a, b) => priorityRank(a.factor) - priorityRank(b.factor));
+    // short table = rows comparable across products ("core"); everything else is collapsed and not printed
+    const rows = sorted.filter((a) => a.core !== false);
+    const more = sorted.filter((a) => a.core === false);
+    const rowHtml = (a) => {
+      const pr = state.factors[a.factor];
+      return `<tr class="${pr ? "is-" + pr : ""}${a.paired ? " is-paired" : ""}"><th scope="row">${pr ? `<span class="prio prio-${pr}" title="${pr === "must" ? "Must-have" : "Nice-to-have"}"></span>` : ""}${esc(a.label)}${a.unit ? ` <span class="unit">(${esc(a.unit)})</span>` : ""}${a.paired ? `<div class="cell-note" title="${esc(a.note || "")}">paired by AI</div>` : ""}</th>${cols.map((c) => cell(a.values[c.key])).join("")}</tr>`;
+    };
+    const head = `<thead><tr><th>Attribute</th>${cols.map((c) =>
+          `<th><div class="col-name">${esc(c.name)}</div><div class="col-sub">${esc(c.manufacturer)}${c.knownEquivalent ? " · confirmed equivalent" : c.matchScore ? ` · match ${Math.round(c.matchScore * 100)}%` : ""}</div></th>`).join("")}</tr></thead>`;
     const card = el("div", { class: "result" });
     card.innerHTML = `
       <div class="result-head">
@@ -680,14 +693,10 @@
       <div class="issue-summary">${issueSummary(r)}
       </div>
       ${r.isSample ? '<div class="flag flag-sample">Prototype view: competitor values are sample data until the competitor dataset is loaded.</div>' : ""}
-      <div class="table-wrap"><table class="cmp">
-        <thead><tr><th>Attribute</th>${cols.map((c) =>
-          `<th><div class="col-name">${esc(c.name)}</div><div class="col-sub">${esc(c.manufacturer)}${c.knownEquivalent ? " · confirmed equivalent" : c.matchScore ? ` · match ${Math.round(c.matchScore * 100)}%` : ""}</div></th>`).join("")}</tr></thead>
-        <tbody>${rows.map((a) => {
-          const pr = state.factors[a.factor];
-          return `<tr class="${pr ? "is-" + pr : ""}"><th scope="row">${pr ? `<span class="prio prio-${pr}" title="${pr === "must" ? "Must-have" : "Nice-to-have"}"></span>` : ""}${esc(a.label)}${a.unit ? ` <span class="unit">(${esc(a.unit)})</span>` : ""}</th>${cols.map((c) => cell(a.values[c.key])).join("")}</tr>`;
-        }).join("")}</tbody>
-      </table></div>
+      ${rows.length ? `<div class="table-wrap"><table class="cmp">${head}<tbody>${rows.map(rowHtml).join("")}</tbody></table></div>`
+        : '<p class="hint">No attribute could be compared directly between these products - see the notes below.</p>'}
+      ${more.length ? `<details class="more-facts"><summary>All facts (${more.length} more rows, only one product has a value)</summary>
+        <div class="table-wrap"><table class="cmp">${head}<tbody>${more.map(rowHtml).join("")}</tbody></table></div></details>` : ""}
       <div class="insights">
         ${insightList("Key differences", r.insights?.differences)}
         ${insightList(`Benefits for ${state.buyer.company || "the customer"}`, r.insights?.benefits)}

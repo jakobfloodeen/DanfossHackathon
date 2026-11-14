@@ -228,9 +228,10 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
         key = _cache_key(system, prompt)
         cached = _cache_get(key) if use_cache else None
         try:
-            if cached:                          # re-check with today's code: checks may have improved
-                answer, attempts = cached["answer"], cached["attempts"]
-                problems = check(answer) if answer is not None else cached["problems"]
+            if cached and cached.get("answer") is not None and check(cached["answer"]):
+                cached = None                   # fails today's (stricter) checks -> ask the AI again
+            if cached:
+                answer, attempts, problems = cached["answer"], cached["attempts"], cached["problems"]
                 result.meta["cached"] = True
             else:
                 answer, problems, attempts = _ask_and_check(ask or ask_claude, system, prompt, check)
