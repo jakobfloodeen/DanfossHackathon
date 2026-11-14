@@ -72,6 +72,10 @@ ROLES = {   # pool -> (what the TARGET is, what the CANDIDATES are, default ques
                 "Which Danfoss product is the best replacement, and why?"),
     "competitors": ("the Danfoss product we start from", "competitor products",
                     "How does the Danfoss product compare with these competitor products?"),
+    "system": ("the Danfoss system of components", "competitor system",
+               "How does the Danfoss system compare with the competitor system, as a whole and per component?"),
+    "system_reverse": ("the competitor system the customer uses today", "Danfoss system",
+                       "Which Danfoss system replaces it, and how do they compare as a whole and per component?"),
 }
 
 

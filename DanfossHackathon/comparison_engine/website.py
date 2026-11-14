@@ -56,6 +56,10 @@ def factor_for(attribute: str) -> str:
 
 
 def label_for(attribute: str) -> str:
+    """'rated_pressure' -> 'Rated pressure';  system facts 'pump__max_flow' -> 'Pump · Max flow'."""
+    if "__" in attribute:
+        part, rest = attribute.split("__", 1)
+        return f"{part.capitalize()} · {label_for(rest)}"
     return attribute.replace("_", " ").strip().capitalize()
 
 
@@ -112,6 +116,10 @@ def _cell(facts: list[Fact], row_unit: str, by_id: dict[str, Fact], sources: _So
     """One table cell from all facts of one product + attribute."""
     stated = [f for f in facts if f.status != "missing"]
     if not stated:
+        calc = next((f for f in facts if f.source_file == "calculated"), None)
+        if calc:                                                # a system value code could not calculate
+            return {"value": None, "status": "missing", "sources": sources.refs(
+                [by_id[b] for b in calc.based_on if b in by_id], by_id), "note": calc.quote or "Cannot calculate"}
         where = ", ".join(sorted({f.source_file for f in facts if f.source_file}))
         return {"value": None, "status": "missing", "sources": [],
                 "note": f"Not stated in {where}" if where else "Not in the extracted data"}
@@ -229,8 +237,9 @@ def to_website(result: AnalysisResult, names: dict[str, dict] | None = None,
             values[pid] = _cell(mine, unit, by_id, sources) if mine else empty(pid)
         attributes.append({"id": attr, "factor": factor_for(attr), "label": label_for(attr), "unit": unit,
                            "values": values,
-                           "core": bool(target) and values[target]["status"] in SHOWN
-                                   and any(values[m]["status"] in SHOWN for m in match_ids)})
+                           "core": attr.startswith("system__")      # system values: the point of a system comparison
+                                   or (bool(target) and values[target]["status"] in SHOWN
+                                       and any(values[m]["status"] in SHOWN for m in match_ids))})
     attributes = paired + attributes
 
     insights = _insights(result, by_id, sources, names, match_ids)
@@ -308,6 +317,9 @@ def _flags(result, by_id, names, pending) -> list[dict]:
             continue
         if f.status == "conflict":
             conflicts.setdefault((f.product_id, f.attribute), []).append(f)
+        elif f.status == "missing" and f.source_file == "calculated":
+            flags.append({"level": "missing", "text": f"{_name(f.product_id, names)} · {label_for(f.attribute)}: "
+                                                      f"{(f.quote or '').split(' - ', 1)[-1]}."})
         elif f.status in ("missing", "unverified", "unknown unit"):
             level = "missing" if f.status == "missing" else "unverified"
             label = label_for(f.attribute)
