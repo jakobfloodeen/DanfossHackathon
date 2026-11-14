@@ -27,8 +27,18 @@
               "id": "pvg32",
               "type": "product",
               "label": "PVG 32",
-              "desc": "No datasheet uploaded yet",
-              "status": "data-pending"
+              "desc": "1 dataset(s) loaded",
+              "status": "active",
+              "datasets": [
+                {
+                  "name": "BC152886483664en-001602.pdf",
+                  "fileId": "5da6ac546351fc1b",
+                  "source": "danfoss",
+                  "competitorId": null,
+                  "pages": 240,
+                  "uploadedAt": "2026-11-14T12:15:09+00:00"
+                }
+              ]
             },
             {
               "id": "pvg48",
@@ -157,7 +167,15 @@
           "source": "competitor",
           "competitorId": "kawasaki",
           "pages": 1,
-          "uploadedAt": "2026-11-13T22:54:21+00:00"
+          "uploadedAt": "2026-11-13T22:54:21+00:00",
+          "facts": {
+            "status": "done",
+            "csv": "kawasaki-kmp__2d2a494f45cba591.csv",
+            "facts": 10,
+            "ok": 10,
+            "unverified": 0,
+            "at": "2026-11-14T12:15:17+00:00"
+          }
         },
         {
           "name": "KMP_leaflet_E_08.pdf",

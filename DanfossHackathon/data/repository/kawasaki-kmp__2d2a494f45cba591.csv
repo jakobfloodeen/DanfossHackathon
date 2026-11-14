@@ -1,0 +1,11 @@
+product_id,brand,product_name,family,attribute,value,unit,source_file,page,quote,status,condition,fact_type
+Kawasaki Hydraulics|KPES6,Kawasaki Hydraulics,KPES6,valves,max_pressure,172,bar,KPES_leaflet_e_08_1.pdf,1,Max Pressure [MPa] 17.2,ok,Max Pressure 17.2 MPa converted to bar,spec
+Kawasaki Hydraulics|KPES6,Kawasaki Hydraulics,KPES6,valves,rated_flow_port_p,70,l/min,KPES_leaflet_e_08_1.pdf,1,P port 70,ok,"Rated Flow, P port",spec
+Kawasaki Hydraulics|KPES6,Kawasaki Hydraulics,KPES6,valves,rated_flow_lowering_and_lifting,10,l/min,KPES_leaflet_e_08_1.pdf,1,Lowering & Lifting 10,ok,"Rated Flow, Lowering & Lifting",spec
+Kawasaki Hydraulics|KPES,Kawasaki Hydraulics,KPES,valves,control_option,Electronic Proportional Control,,KPES_leaflet_e_08_1.pdf,1,Electronic Proportional Control,ok,,feature
+Kawasaki Hydraulics|KPES,Kawasaki Hydraulics,KPES,valves,rated_current,1.6,A,KPES_leaflet_e_08_1.pdf,1,Rated Current: 1.6 A,ok,Electronic Proportional Control,spec
+Kawasaki Hydraulics|KPES,Kawasaki Hydraulics,KPES,valves,coil_resistance,3.3,ohm,KPES_leaflet_e_08_1.pdf,1,Coil Resistance: 3.3 Ω (at 20 °C),ok,at 20 °C,spec
+Kawasaki Hydraulics|KPES,Kawasaki Hydraulics,KPES,valves,controllability,Controls implement inclination and keeps a farm implement level by proportional solenoid control with integrated pressure compensating function,,KPES_leaflet_e_08_1.pdf,1,KPES valve controls implement inclination and keeps a farm implement level by means of proportional solenoid control,ok,,claim
+Kawasaki Hydraulics|KPES,Kawasaki Hydraulics,KPES,valves,counter_balance_valve,Integrated counter balance valve with minimal oil leakage keeps implement in position,,KPES_leaflet_e_08_1.pdf,1,The integrated counter balance valve with minimal oil leakage enables to keep an implement in position.,ok,,claim
+Kawasaki Hydraulics|KPES,Kawasaki Hydraulics,KPES,valves,compact_design,Direct solenoid-operated spool valve realizes size and weight reduction,,KPES_leaflet_e_08_1.pdf,1,Direct solenoid-operated spool valve realizes size and weight reduction.,ok,,claim
+Kawasaki Hydraulics|KPES,Kawasaki Hydraulics,KPES,valves,application,"Farm implement levelling (lifting/lowering implement, levelling cylinder)",,KPES_leaflet_e_08_1.pdf,1,keeps a farm implement level,ok,,feature
