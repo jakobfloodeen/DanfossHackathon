@@ -126,7 +126,8 @@ def save_facts(df: pd.DataFrame, owner_id: str, file_id: str, repo_dir: Path | N
     """Write data/repository/<owner_id>__<file_id>.csv. Returns (path, row warnings from validate_csv)."""
     folder = Path(repo_dir) if repo_dir else config.repo_dir()
     folder.mkdir(parents=True, exist_ok=True)
-    path = folder / f"{_slug(owner_id) or 'product'}__{file_id}.csv"
+    safe = re.sub(r"[^a-z0-9-]+", "_", str(owner_id).lower()).strip("_") or "product"   # keep catalog ids readable
+    path = folder / f"{safe}__{file_id}.csv"
     df.to_csv(path, index=False)
     return path, validate_csv(df)
 

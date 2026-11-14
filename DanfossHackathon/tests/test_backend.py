@@ -190,3 +190,68 @@ def test_compare_system_needs_two_components_with_data(client):
     assert r["flags"][0]["level"] == "missing" and "at least two" in r["flags"][0]["text"]
     r = client.post("/api/compare-system", json={"components": {"valve": "pvg32", "pump": "nope"}}).json()
     assert "No extracted facts yet for: nope" in r["flags"][0]["text"]
+
+
+class FakeConverter:
+    """Stands in for the teammates' pdf_to_csv_test.py: no AI, fixed rows."""
+    calls = []
+
+    @staticmethod
+    def parse_pages(spec):
+        return {1}
+
+    @classmethod
+    def process_pdf(cls, path, page_filter, client, provider, company, dry_run):
+        cls.calls.append({"name": Path(path).name, "pages": page_filter, "company": company})
+        print("  page 1: asking the AI (waits up to 90s)...")
+        name = Path(path).name
+        rows = [{"manufacturer": company, "product": "SB 23", "attribute": "max_pressure_port_P", "value": "300",
+                 "unit": "bar", "page": 1, "quote": "300 bar", "quote_verified": True, "uncertain": False,
+                 "fact_type": "spec", "source_file": name},
+                {"manufacturer": company, "product": "SB 23", "attribute": "ordering_code_spool", "value": "A;B",
+                 "fact_type": "ordering_code", "page": 1, "source_file": name}]
+        return rows, [{"source_file": name, "page": 1, "text": "Max pressure 300 bar"}]
+
+
+def wait_for(client, job_id, seconds=5):
+    import time
+    for _ in range(int(seconds * 20)):
+        job = client.get(f"/api/jobs/{job_id}").json()
+        if job["status"] in ("done", "failed"):
+            return job
+        time.sleep(0.05)
+    return job
+
+
+def test_upload_then_extract_facts(client, tmp_path, monkeypatch):
+    import os
+    monkeypatch.setattr(backend, "CONVERTER", FakeConverter)
+    monkeypatch.setattr(backend, "EXTRACT_CLIENT", object())
+    monkeypatch.setenv("PAGES_DIR", str(tmp_path / "pages"))
+    up = client.post("/api/datasets", data={"source": "competitor", "competitorId": "rexroth", "productName": "SB 23",
+                                            "categoryId": "proportional"},
+                     files={"files": ("SB23_datasheet.pdf", b"%PDF-1.4 demo", "application/pdf")}).json()
+    ds = up["datasets"][0]
+    assert ds["ownerId"] == "rexroth-sb23" and ds["name"] == "SB23_datasheet.pdf"
+    start = client.post("/api/extract", json={**ds, "pages": "1"}).json()
+    job = wait_for(client, start["jobId"])
+    assert job["status"] == "done", job
+    assert "1 facts saved" in job["progress"] and "1 ordering-code rows skipped" in job["progress"]
+    assert FakeConverter.calls[-1] == {"name": "SB23_datasheet.pdf", "pages": {1}, "company": "Bosch Rexroth"}
+    csv = Path(os.environ["REPO_DIR"]) / f"rexroth-sb23__{ds['fileId']}.csv"
+    assert csv.exists() and "max_pressure_port_p" in csv.read_text()
+    assert (tmp_path / "pages" / f"{ds['fileId']}.csv").exists()
+    cat = client.get("/api/catalog").json()
+    prod = next(p for p in cat["competitorProducts"] if p["id"] == "rexroth-sb23")
+    assert next(d for d in prod["datasets"] if d["fileId"] == ds["fileId"])["facts"]["facts"] == 1
+
+
+def test_extract_refuses_without_key_or_non_pdf(client, monkeypatch):
+    up = client.post("/api/datasets", data={"source": "danfoss", "nodeId": "pvg48"},
+                     files={"files": ("notes.txt", b"some text " * 30, "text/plain")}).json()
+    r = client.post("/api/extract", json=up["datasets"][0]).json()
+    assert r["jobId"] is None and "Only PDF" in r["issues"][0]["text"]
+    up = client.post("/api/datasets", data={"source": "danfoss", "nodeId": "pvg48"},
+                     files={"files": ("pvg48.pdf", b"%PDF-1.4 demo", "application/pdf")}).json()
+    r = client.post("/api/extract", json=up["datasets"][0]).json()               # conftest removed the key
+    assert r["jobId"] is None and "ANTHROPIC_API_KEY" in r["issues"][0]["text"]

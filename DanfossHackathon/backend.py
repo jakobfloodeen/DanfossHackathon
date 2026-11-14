@@ -230,8 +230,24 @@ async def upload_datasets(
     if source == "customer":                     # customer feedback: only the extracted text is kept (as CSV)
         return await upload_customer_files(customerName, files)
     cat = load_catalog()
-    issues = []
+    found = resolve_target(cat, source, nodeId, competitorId, competitorName, productName, categoryId, equivalentOf)
+    if "error" in found:
+        return {"uploaded": [], "issues": found["issues"]}
+    issues, stored = found["issues"], []
+    for f in files:
+        ds = store_file(found, Path(f.filename).name, await f.read(), issues)
+        if ds:
+            stored.append(ds)
+    finish_upload(cat, found, stored, issues)
+    return {"uploaded": [d["name"] for d in stored], "issues": issues,
+            "datasets": [{"ownerId": found["owner_id"], "fileId": d["fileId"], "name": d["name"]} for d in stored]}
 
+
+def resolve_target(cat, source, nodeId=None, competitorId=None, competitorName=None, productName=None,
+                   categoryId=None, equivalentOf=None) -> dict:
+    """Which catalog item the files belong to (creates a competitor / competitor product if needed).
+    Returns {target, comp, label, owner_id, source, issues} or {error, issues}."""
+    issues = []
     if source == "competitor":
         comp = next((c for c in cat["competitors"] if c["id"] == competitorId), None)
         new_name = (competitorName or "").strip()
@@ -244,13 +260,13 @@ async def upload_datasets(
                 cat["competitors"].append(comp)
                 issues.append(issue("ok", f'Added competitor "{new_name}".'))
         if not comp:
-            return {"uploaded": [], "issues": [issue("error", "Choose or name a competitor.")]}
+            return {"error": True, "issues": [issue("error", "Choose or name a competitor.")]}
         pname = (productName or "").strip()
         if not pname:
-            return {"uploaded": [], "issues": [issue("error", "Name the competitor product or series.")]}
+            return {"error": True, "issues": [issue("error", "Name the competitor product or series.")]}
         category = find_node(cat, categoryId)
         if not category or category.get("type") == "product":
-            return {"uploaded": [], "issues": [issue("error", "Choose the product category it competes in.")]}
+            return {"error": True, "issues": [issue("error", "Choose the product category it competes in.")]}
 
         target = next((p for p in cat["competitorProducts"]
                        if p["competitorId"] == comp["id"] and p["name"].lower() == pname.lower()), None)
@@ -268,59 +284,61 @@ async def upload_datasets(
     else:
         target = find_node(cat, nodeId)
         if not target:
-            return {"uploaded": [], "issues": [issue("error", "Target product or group not found.")]}
+            return {"error": True, "issues": [issue("error", "Target product or group not found.")]}
         label, owner_id, comp = target["label"], target["id"], None
-
     target.setdefault("datasets", [])
-    uploaded = []
-    for f in files:
-        name = Path(f.filename).name
-        ext = name.rsplit(".", 1)[-1].lower() if "." in name else ""
-        data = await f.read()
-        if ext not in ALLOWED_EXT:
-            issues.append(issue("error", f"{name}: unsupported file type (.{ext}).")); continue
-        if not data:
-            issues.append(issue("error", f"{name}: file is empty.")); continue
-        if len(data) > MAX_MB * 1024 * 1024:
-            issues.append(issue("error", f"{name}: larger than {MAX_MB} MB.")); continue
+    return {"target": target, "comp": comp, "label": label, "owner_id": owner_id, "source": source, "issues": issues}
 
-        file_id = hashlib.sha256(data).hexdigest()[:16]
-        folder = FILES_DIR / owner_id
-        folder.mkdir(parents=True, exist_ok=True)
-        path = folder / f"{file_id}_{name}"
-        path.write_bytes(data)
 
-        try:
-            pages = extract_pages(path, ext)
-        except Exception as e:  # broken file, missing openpyxl, ...
-            pages = []
-            issues.append(issue("warning", f"{name}: stored, but text extraction failed ({e})."))
-        (EXTRACT_DIR / f"{file_id}.json").write_text(json.dumps(pages, ensure_ascii=False), encoding="utf-8")
+def store_file(found: dict, name: str, data: bytes, issues: list) -> Optional[dict]:
+    """Check, store and text-extract ONE file for the resolved target. Returns the dataset entry or None."""
+    ext = name.rsplit(".", 1)[-1].lower() if "." in name else ""
+    if ext not in ALLOWED_EXT:
+        issues.append(issue("error", f"{name}: unsupported file type (.{ext}).")); return None
+    if not data:
+        issues.append(issue("error", f"{name}: file is empty.")); return None
+    if len(data) > MAX_MB * 1024 * 1024:
+        issues.append(issue("error", f"{name}: larger than {MAX_MB} MB.")); return None
 
-        chars = sum(len(p["text"].strip()) for p in pages)
-        if ext == "pdf" and chars < 200:
-            issues.append(issue("warning", f"{name}: almost no text found; it may be a scanned PDF."))
-        elif not pages:
-            issues.append(issue("warning", f"{name}: stored, but this file type isn't extracted yet."))
+    file_id = hashlib.sha256(data).hexdigest()[:16]
+    folder = FILES_DIR / found["owner_id"]
+    folder.mkdir(parents=True, exist_ok=True)
+    path = folder / f"{file_id}_{name}"
+    path.write_bytes(data)
 
-        target["datasets"] = [d for d in target["datasets"] if d["name"] != name]
-        target["datasets"].append({
-            "name": name, "fileId": file_id, "source": source,
-            "competitorId": comp["id"] if comp else None,
-            "pages": len(pages), "uploadedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        })
-        uploaded.append(name)
+    try:
+        pages = extract_pages(path, ext)
+    except Exception as e:  # broken file, missing openpyxl, ...
+        pages = []
+        issues.append(issue("warning", f"{name}: stored, but text extraction failed ({e})."))
+    (EXTRACT_DIR / f"{file_id}.json").write_text(json.dumps(pages, ensure_ascii=False), encoding="utf-8")
 
-    if uploaded:
+    chars = sum(len(p["text"].strip()) for p in pages)
+    if ext == "pdf" and chars < 200:
+        issues.append(issue("warning", f"{name}: almost no text found; it may be a scanned PDF."))
+    elif not pages:
+        issues.append(issue("warning", f"{name}: stored, but this file type isn't extracted yet."))
+
+    target, comp = found["target"], found["comp"]
+    target["datasets"] = [d for d in target["datasets"] if d["name"] != name]
+    ds = {"name": name, "fileId": file_id, "source": found["source"],
+          "competitorId": comp["id"] if comp else None,
+          "pages": len(pages), "uploadedAt": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+    target["datasets"].append(ds)
+    return ds
+
+
+def finish_upload(cat, found: dict, stored: list, issues: list) -> None:
+    target, comp = found["target"], found["comp"]
+    if stored:
         target["status"] = "active"
-        if source == "danfoss" and target.get("desc", "").startswith("No datasheet"):
+        if found["source"] == "danfoss" and target.get("desc", "").startswith("No datasheet"):
             target["desc"] = f"{len(target['datasets'])} dataset(s) loaded"
         if comp:
             comp["hasData"] = True
-        issues.append(issue("ok", f"{len(uploaded)} file(s) for {label} stored and text extracted. "
-                                  "Values are extracted when you generate a comparison."))
+        issues.append(issue("ok", f"{len(stored)} file(s) for {found['label']} stored and text extracted. "
+                                  "Click 'Extract facts' to turn a PDF into comparable facts."))
     save_catalog(cat)
-    return {"uploaded": uploaded, "issues": issues}
 
 
 # =====================================================================
@@ -511,6 +529,119 @@ def compare(payload: dict):
                               {"key": anchor["id"], "name": anchor["label"], "manufacturer": "Danfoss"},
                               [issue("missing", "None of the chosen competitor products has data yet.")])
     return run_engine(anchor["id"], candidates, "competitors", payload, names, pending, flags)
+
+
+# =====================================================================
+# POST /api/extract   (PDF -> facts with the teammates' converter; one AI call per page, so only on a click)
+# Request: {"ownerId": "pvg32", "fileId": "abc123...", "pages": "1-20"}   (pages optional: empty = all)
+# Response: {"jobId": "..."}; progress at GET /api/jobs/<jobId>. One extraction runs at a time.
+# =====================================================================
+import contextlib     # noqa: E402
+import tempfile       # noqa: E402
+import threading      # noqa: E402
+import uuid           # noqa: E402
+
+from comparison_engine import bridge                     # noqa: E402
+from comparison_engine.llm import has_api_key            # noqa: E402
+
+JOBS: dict[str, dict] = {}
+EXTRACT_LOCK = threading.Lock()
+EXTRACT_CLIENT = None      # tests put a fake Anthropic client here
+CONVERTER = None           # tests put a fake converter here; None = the teammates' pdf_to_csv_test.py
+
+
+def find_dataset(cat, owner_id: str, file_id: str):
+    """-> (owner dict, dataset dict, owner name, brand, family) or None."""
+    comp_name = {c["id"]: c["name"] for c in cat["competitors"]}
+    owners = [(n, n["label"], "Danfoss") for n in walk(cat["tree"]) if n.get("type") == "product"]
+    owners += [(p, p["name"], comp_name.get(p["competitorId"], "")) for p in cat.get("competitorProducts", [])]
+    for owner, name, brand in owners:
+        if owner["id"] != owner_id:
+            continue
+        ds = next((d for d in owner.get("datasets", []) if d.get("fileId") == file_id), None)
+        if not ds:
+            return None
+        start = owner["categoryId"] if "categoryId" in owner else owner["id"]
+        groups = [start] + sorted(ancestors(cat, start), key=lambda g: len(ancestors(cat, g)))
+        family = next((g for g in groups if not find_parent(cat, g)), start)     # top level, e.g. "valves"
+        return owner, ds, name, brand, family
+    return None
+
+
+class _JobLog:
+    """Captures the converter's printed progress ('page 3: asking the AI ...') into the job."""
+    def __init__(self, job):
+        self.job = job
+
+    def write(self, text):
+        for line in text.splitlines():
+            if line.strip():
+                self.job["log"].append(line.strip())
+                self.job["progress"] = line.strip()
+        return len(text)
+
+    def flush(self):
+        pass
+
+
+def run_extraction(job: dict) -> None:
+    with EXTRACT_LOCK:
+        job["status"] = "running"
+        try:
+            cat = load_catalog()
+            owner, ds, name, brand, family = find_dataset(cat, job["ownerId"], job["fileId"])
+            stored = FILES_DIR / job["ownerId"] / f"{ds['fileId']}_{ds['name']}"
+            with tempfile.TemporaryDirectory() as tmp:          # the converter cites the file by its own name
+                pdf = Path(tmp) / ds["name"]
+                pdf.write_bytes(stored.read_bytes())
+                with contextlib.redirect_stdout(_JobLog(job)):
+                    report = bridge.extract_pdf(pdf, job["ownerId"], name, family, brand, ds["fileId"],
+                                                pages=job.get("pages", ""), client=EXTRACT_CLIENT,
+                                                converter=CONVERTER or bridge.load_converter())
+            cat = load_catalog()                               # re-read: the catalog may have changed meanwhile
+            found = find_dataset(cat, job["ownerId"], job["fileId"])
+            if found:
+                found[1]["facts"] = {"status": "done", "csv": report["csv"], "facts": report["facts"],
+                                     "ok": report["ok"], "unverified": report["unverified"],
+                                     "at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+                save_catalog(cat)
+            job.update(status="done", report=report,
+                       progress=f"{report['facts']} facts saved ({report['ok']} verified by quote, "
+                                f"{report['unverified']} unverified, {report['skipped_ordering_code']} ordering-code rows skipped)")
+        except Exception as e:  # noqa: BLE001 - shown to the user, never crashes the server
+            job.update(status="failed", progress=f"Extraction failed: {e}")
+
+
+@app.post("/api/extract")
+def start_extraction(payload: dict):
+    cat = load_catalog()
+    owner_id, file_id = payload.get("ownerId"), payload.get("fileId")
+    found = find_dataset(cat, owner_id, file_id)
+    if not found:
+        return {"jobId": None, "issues": [issue("error", "Dataset not found.")]}
+    if not found[1]["name"].lower().endswith(".pdf"):
+        return {"jobId": None, "issues": [issue("error", "Only PDF datasheets can be converted to facts so far "
+                                                         "(web pages need a different converter).")]}
+    if EXTRACT_CLIENT is None and not has_api_key():
+        return {"jobId": None, "issues": [issue("error", "No ANTHROPIC_API_KEY in .env - the converter needs the AI.")]}
+    pages = str(payload.get("pages") or "").strip()
+    if pages and not re.fullmatch(r"[\d,\-\s]+", pages):
+        return {"jobId": None, "issues": [issue("error", "Pages must look like 1,3-5,8.")]}
+    job = {"id": uuid.uuid4().hex[:12], "ownerId": owner_id, "fileId": file_id, "name": found[1]["name"],
+           "pages": pages, "status": "queued", "progress": "Waiting for the previous extraction to finish…"
+           if EXTRACT_LOCK.locked() else "Starting…", "log": []}
+    JOBS[job["id"]] = job
+    threading.Thread(target=run_extraction, args=(job,), daemon=True).start()
+    return {"jobId": job["id"], "issues": [issue("pending", f"Extracting facts from {job['name']} - this takes "
+                                                              "a few seconds per page.")]}
+
+
+@app.get("/api/jobs/{job_id}")
+def job_status(job_id: str):
+    job = JOBS.get(job_id)
+    if not job:
+        return {"status": "unknown", "progress": "Job not found (the server may have restarted)."}
+    return {k: v for k, v in job.items() if k != "log"} | {"log": job["log"][-8:]}
 
 
 # =====================================================================
