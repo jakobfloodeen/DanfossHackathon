@@ -133,3 +133,25 @@ def test_compare_with_checked_ai_answer(client, monkeypatch):
 def test_source_link_serves_the_stored_file(client):
     # the /files mount points at the real data/files folder; a missing file must simply 404
     assert client.get("/files/does-not-exist.pdf").status_code == 404
+
+
+def test_customer_feedback_upload_and_use(client, tmp_path, monkeypatch):
+    monkeypatch.setenv("CUSTOMER_DIR", str(tmp_path / "customers"))
+    files = {"files": ("needs.txt", b"AGCO needs at least 90 l/min per section.\nCab noise is a problem.", "text/plain")}
+    r = client.post("/api/datasets", data={"source": "customer", "customerName": "AGCO"}, files=files).json()
+    assert r["uploaded"] == ["needs.txt"] and "original file not stored" in r["issues"][0]["text"]
+    assert client.get("/api/catalog").json()["customers"] == [{"name": "AGCO", "files": ["needs"]}]
+    calls = []
+
+    def fake(system, prompt, schema=None):
+        calls.append(prompt)
+        raise LLMUnavailable("no key")
+    monkeypatch.setattr(backend, "ENGINE_ASK", fake)
+    resp = client.post("/api/compare", json=brief(competitorProductIds=["rexroth-sb23"])).json()
+    assert "C1 | needs.txt p.1" in calls[0]
+    assert any(f["level"] == "ok" and "Customer feedback considered" in f["text"] for f in resp["flags"])
+
+
+def test_customer_upload_needs_a_name(client):
+    r = client.post("/api/datasets", data={"source": "customer"}, files={"files": ("a.txt", b"x", "text/plain")}).json()
+    assert r["uploaded"] == [] and r["issues"][0]["level"] == "error"

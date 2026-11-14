@@ -109,6 +109,12 @@
     if (nice.length) parts.push("Nice-to-have: " + nice.join(", "));
     return parts.join(" · ") || "No specific priorities";
   }
+  /** Customer feedback files on record for this company (matched like the backend: case and spaces ignored). */
+  function customerFilesFor(company) {
+    const key = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+    const c = (catalog?.customers || []).find((x) => key(x.name) === key(company) && key(company));
+    return c ? `${c.files.length} file(s): ${c.files.join(", ")}` : "";
+  }
   function buyerSummary() {
     const b = state.buyer;
     return [b.company, b.application, b.currentSupplier && "uses " + b.currentSupplier].filter(Boolean).join(" · ");
@@ -315,7 +321,16 @@
           <legend>Whose data is it?</legend>
           <label><input type="radio" name="source" value="danfoss" ${source0 === "danfoss" ? "checked" : ""}> Danfoss</label>
           <label><input type="radio" name="source" value="competitor" ${source0 === "competitor" ? "checked" : ""}> Competitor</label>
+          <label><input type="radio" name="source" value="customer" ${source0 === "customer" ? "checked" : ""}> Customer feedback</label>
         </fieldset>
+
+        <div class="customer-fields">
+          <label class="field"><span>Customer <span class="req">*</span></span>
+            <input name="customerName" list="customer-names" placeholder="e.g. AGCO" value="${esc(state.buyer.company || "")}">
+            <datalist id="customer-names">${(catalog.customers || []).map((c) => `<option value="${esc(c.name)}">`).join("")}</datalist></label>
+          <p class="hint">Requirements, complaints or specs the customer sent (PDF, Excel, CSV, TXT). Only the text is kept,
+            not the file. It is used automatically when this customer is the buyer in a comparison, and cited as C1, C2 …</p>
+        </div>
 
         <div class="danfoss-fields">
           <label class="field">Attach to
@@ -358,9 +373,12 @@
     const fileInput = f.querySelector('input[type="file"]');
     const list = f.querySelector(".dz-list");
     const syncSource = () => {
-      const comp = f.source.value === "competitor";
-      f.querySelector(".competitor-fields").hidden = !comp;
-      f.querySelector(".danfoss-fields").hidden = comp;
+      const src = f.source.value;
+      f.querySelector(".competitor-fields").hidden = src !== "competitor";
+      f.querySelector(".danfoss-fields").hidden = src !== "danfoss";
+      f.querySelector(".customer-fields").hidden = src !== "customer";
+      fileInput.accept = src === "customer" ? ".pdf,.xlsx,.xls,.csv,.txt" : ACCEPT;
+      f.querySelector(".dz-title").textContent = src === "customer" ? "Drop the customer's files here or click to choose" : "Drop datasheets here or click to choose";
     };
     const syncEquivalents = () => {
       const prods = productsIn(f.categoryId.value);
@@ -383,7 +401,8 @@
       const btn = e.currentTarget;
       const issueBox = f.querySelector(".form-issues");
       const isComp = f.source.value === "competitor";
-      const meta = isComp ? {
+      const isCustomer = f.source.value === "customer";
+      const meta = isCustomer ? { source: "customer", customerName: f.customerName.value.trim() } : isComp ? {
         source: "competitor",
         competitorId: f.competitorId.value !== "__new" ? f.competitorId.value : null,
         competitorName: f.competitorId.value === "__new" ? f.competitorName.value.trim() : null,
@@ -397,7 +416,7 @@
         issueBox.innerHTML = res.issues.map(flagHtml).join("");
         if (res.uploaded?.length) {
           await reloadCatalog();
-          const title = isComp ? `Competitor upload: ${meta.productName}` : `Upload to ${findNode(catalog.tree, meta.nodeId)?.label || meta.nodeId}`;
+          const title = isCustomer ? `Customer feedback: ${meta.customerName}` : isComp ? `Competitor upload: ${meta.productName}` : `Upload to ${findNode(catalog.tree, meta.nodeId)?.label || meta.nodeId}`;
           state.log.push({ stage: segments().length, role: "issues", title, issues: res.issues });
           render();
           fileInput.value = ""; list.textContent = "";
@@ -752,6 +771,7 @@
       ${item("Priorities", state.done.factors ? factorSummary() : "", "factors")}
       ${item("Buyer", state.done.buyer ? buyerSummary() : "", "buyer")}
       ${state.done.buyer && state.buyer.notes ? item("Notes", state.buyer.notes, "buyer") : ""}
+      ${customerFilesFor(state.buyer.company) ? `<div class="brief-item"><div class="brief-label">Customer feedback</div><div class="brief-value">${esc(customerFilesFor(state.buyer.company))}</div></div>` : ""}
       <p class="hint brief-foot">Every fact in the result links to its source. Missing or conflicting data is flagged, never guessed.</p>`;
     briefEl.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => editSegment(+b.dataset.edit)));
   }

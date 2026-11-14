@@ -30,7 +30,7 @@ from .repository import load_repository
 from .results import STATUS_MESSAGES, AnalysisResult, comparison_rows, onepager_data
 from .shortlist import shortlist as make_shortlist
 
-PROMPT_VERSION = "2"            # change when the prompt text changes -> old cache entries are not reused
+PROMPT_VERSION = "3"            # change when the prompt text changes -> old cache entries are not reused
 _MEMORY_CACHE: dict = {}
 
 HARD_RULES = """HARD RULES (code checks every one of them; breaking one makes the answer fail):
@@ -50,7 +50,10 @@ HARD_RULES = """HARD RULES (code checks every one of them; breaking one makes th
 11. If the same quantity has DIFFERENT attribute names in the two products (e.g. "max_pressure" vs
     "max_pressure_continuous"), make a point that pairs them (target_facts + candidate_facts) and say in
     "why" if the definitions may differ. Never pair continuous with intermittent values.
-12. Answer with ONE JSON object in exactly this format, nothing else:
+12. CUSTOMER passages (C1, C2 ...) are what the customer told us. Cite them in best_match, talking_points,
+    tradeoffs and application_fit when you use them - never in target_facts / candidate_facts. They are not
+    product data. Numbers from a customer passage only when you cite that passage.
+13. Answer with ONE JSON object in exactly this format, nothing else:
 {schema}"""
 
 
@@ -74,7 +77,7 @@ ROLES = {   # pool -> (what the TARGET is, what the CANDIDATES are, default ques
 
 def build_prompts(target_id: str, short: list[dict], facts: list[Fact], diffs, logic: Logic,
                   user_question: str, customer_context: str, focus: list[str] | None,
-                  pool: str = "danfoss") -> tuple[str, str]:
+                  pool: str = "danfoss", customer: list[Fact] | None = None) -> tuple[str, str]:
     target_role, cand_role, default_question = ROLES[pool]
     better = ", ".join(f"{a}: {d} is better" for a, d in logic.settings["better"].items()) or "none given"
     system = (f"You compare a TARGET ({target_role}) with CANDIDATES ({cand_role}) for a Danfoss "
@@ -99,6 +102,10 @@ def build_prompts(target_id: str, short: list[dict], facts: list[Fact], diffs, l
         "",
         "DIFFERENCES computed by code (candidate vs target, same attribute and unit):",
         *([f"- {d.candidate}: {d.text()} [{d.target_fact} vs {d.candidate_fact}]" for d in diffs] or ["- none"]),
+        "",
+        "CUSTOMER FILES (what the customer told us - cite as C1, C2 ...):",
+        *([f"{c.id} | {c.source_file}" + (f" p.{c.page}" if c.page else "") + f' | "{c.value}"' for c in customer or []]
+          or ["- none uploaded"]),
     ])
     return system, prompt
 
@@ -192,7 +199,8 @@ def _candidate_list(target_id, candidates, must_haves, data, pool) -> tuple[list
 def interpret(target_id: str, candidates=None, user_question: str = "", customer_context: str = "",
               focus_attributes: list[str] | None = None, ask: Callable | None = None, use_ai: bool = True,
               must_haves: dict | None = None, data: pd.DataFrame | None = None,
-              use_cache: bool = True, pool: str = "danfoss") -> AnalysisResult:
+              use_cache: bool = True, pool: str = "danfoss",
+              customer_facts: list[Fact] | None = None) -> AnalysisResult:
     """Compare the target with candidates (ids, a shortlist DataFrame, or None = make the shortlist).
     pool = "danfoss": target is a competitor product, candidates are Danfoss products (default).
     pool = "competitors": target is a Danfoss product, candidates are competitor products.
@@ -207,12 +215,14 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
     cand_ids = [c["product_id"] for c in short]
     facts = build_facts(target_id, cand_ids, data, logic)
     diffs = code_differences(facts, logic)
+    customer = list(customer_facts or [])                 # C1, C2 ... from the customer's own files
+    facts = facts + customer
     result = AnalysisResult(
         status="no_ai", message="", target={"product_id": target_id, "brand": first["brand"],
                                             "product_name": first["product_name"], "family": first["family"]},
         shortlist=short, excluded=excluded, facts=facts, differences=diffs,
         meta={"model": config.llm_model(), "logic_files": logic.files, "cached": False, "attempts": 0,
-              "focus_attributes": focus_attributes or [], "pool": pool})
+              "focus_attributes": focus_attributes or [], "pool": pool, "customer_passages": len(customer)})
 
     if not cand_ids:
         result.message = (f"No {ROLES[pool][1]} with data in the same family"
@@ -220,9 +230,9 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
     elif not use_ai:
         result.message = STATUS_MESSAGES["no_ai"] + " (AI not requested)"
     else:
-        sent = _focus_facts(facts, focus_attributes)
+        sent = _focus_facts([f for f in facts if f.role != "customer"], focus_attributes)
         system, prompt = build_prompts(target_id, short, sent, diffs, logic, user_question,
-                                       customer_context, focus_attributes, pool)
+                                       customer_context, focus_attributes, pool, customer)
         check = lambda a: check_interpretation(a, facts, diffs, target_id, cand_ids, logic,
                                                f"{user_question} {customer_context}")
         key = _cache_key(system, prompt)

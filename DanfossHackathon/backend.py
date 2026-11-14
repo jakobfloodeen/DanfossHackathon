@@ -163,7 +163,9 @@ def pages_as_prompt(label, pages):
 # =====================================================================
 @app.get("/api/catalog")
 def get_catalog():
-    return load_catalog()
+    cat = load_catalog()
+    cat["customers"] = [{"name": n, "files": f} for n, f in list_customers().items()]   # customer feedback on file
+    return cat
 
 
 # =====================================================================
@@ -223,7 +225,10 @@ async def upload_datasets(
     productName: Optional[str] = Form(None),
     categoryId: Optional[str] = Form(None),
     equivalentOf: Optional[str] = Form(None),
+    customerName: Optional[str] = Form(None),
 ):
+    if source == "customer":                     # customer feedback: only the extracted text is kept (as CSV)
+        return await upload_customer_files(customerName, files)
     cat = load_catalog()
     issues = []
 
@@ -348,6 +353,32 @@ Rules:
 from comparison_engine import interpret, load_repository      # noqa: E402
 from comparison_engine.website import to_website              # noqa: E402
 from comparison_engine.documents import link as document_link  # noqa: E402
+from comparison_engine.customer import customer_facts, list_customers, save_customer_file  # noqa: E402
+
+
+async def upload_customer_files(customer_name: Optional[str], files: list[UploadFile]) -> dict:
+    """Customer feedback (PDF / Excel / CSV / TXT): text -> data/customers/<customer>/<file>.csv.
+    The original file is NOT stored. Used automatically when the brief's buyer company matches."""
+    name = (customer_name or "").strip()
+    if not name:
+        return {"uploaded": [], "issues": [issue("error", "Name the customer the feedback comes from.")]}
+    uploaded, issues = [], []
+    for f in files:
+        data = await f.read()
+        fname = Path(f.filename).name
+        if not data:
+            issues.append(issue("error", f"{fname}: file is empty.")); continue
+        if len(data) > MAX_MB * 1024 * 1024:
+            issues.append(issue("error", f"{fname}: larger than {MAX_MB} MB.")); continue
+        try:
+            _, rows = save_customer_file(name, fname, data)
+        except Exception as e:  # unsupported type, unreadable, scanned PDF ...
+            issues.append(issue("error", f"{fname}: {e}")); continue
+        uploaded.append(fname)
+        issues.append(issue("ok", f"{fname}: {rows} text passage(s) saved for {name} (original file not stored)."))
+    if uploaded:
+        issues.append(issue("ok", f"Used automatically when the buyer in a comparison is {name}."))
+    return {"uploaded": uploaded, "issues": issues}
 
 ENGINE_ASK = None   # None = the real Claude API. Tests put a fake function here (no key, no cost).
 WAITING = "Datasheet uploaded - values not extracted to the facts CSV yet."
@@ -419,7 +450,11 @@ def empty_response(title, anchor, flags):
 def run_engine(target_id: str, candidates, pool: str, payload: dict, names: dict, pending: dict,
                extra_flags: list) -> dict:
     question, context = brief_text(payload)
-    result = interpret(target_id, candidates, question, context, ask=ENGINE_ASK, use_ai=True, pool=pool)
+    buyer = payload.get("buyer") or {}
+    words = re.findall(r"[a-zA-Z]{3,}", " ".join([context, question] + list((payload.get("factors") or {}).keys())))
+    customer = customer_facts(buyer.get("company", ""), words)
+    result = interpret(target_id, candidates, question, context, ask=ENGINE_ASK, use_ai=True, pool=pool,
+                       customer_facts=customer)
     for pid, info in names.items():                     # confirmed equivalent pairs from the uploads
         info["knownEquivalent"] = target_id in info.get("equivalentOf", []) or pid in names.get(
             target_id, {}).get("equivalentOf", [])

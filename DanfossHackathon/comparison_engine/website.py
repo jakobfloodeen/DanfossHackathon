@@ -77,6 +77,8 @@ class _Sources:
             self.index[key] = len(self.items) + 1
             found = self.doc_url(f.source_file, f.page)        # str url, or {url, title, date}, or None
             info = found if isinstance(found, dict) else {"url": found}
+            if f.role == "customer":
+                info = {"title": f"Customer file: {f.source_file}", "url": None}
             self.items.append({"id": self.index[key], "title": info.get("title") or f.source_file, "doc": "",
                                "quotes": [], "page": str(f.page) if f.page else "", "date": info.get("date", ""),
                                "file": f.source_file, "url": info.get("url")})
@@ -322,6 +324,10 @@ def _flags(result, by_id, names, pending) -> list[dict]:
         flags.append({"level": "warning", "text": f"{_name(e['product_id'], names)} left out: {e['reason']}"})
     for pid, note in pending.items():
         flags.append({"level": "pending", "text": f"{_name(pid, names)}: {note}"})
+    customer = [f for f in result.facts if f.role == "customer"]
+    if customer:
+        files = ", ".join(sorted({f.source_file for f in customer}))
+        flags.append({"level": "ok", "text": f"Customer feedback considered: {len(customer)} passage(s) from {files}."})
     if (result.onepager or {}).get("demo_data"):
         flags.append({"level": "sample", "text": "Contains DEMO data (made up for testing) - not for customers."})
     return flags

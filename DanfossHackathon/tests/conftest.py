@@ -16,6 +16,8 @@ def _no_real_api(monkeypatch, tmp_path):
     monkeypatch.setattr("comparison_engine.llm._load_env", lambda: None)
     monkeypatch.setenv("CACHE_DIR", str(tmp_path / "cache"))
     monkeypatch.setenv("REPO_DIR", str(DEMO))
+    monkeypatch.setenv("CUSTOMER_DIR", str(tmp_path / "customers"))       # never the real customer files
+    monkeypatch.setenv("DOCUMENTS_FILE", str(tmp_path / "documents.csv"))  # no links unless a test writes some
 
 
 @pytest.fixture
