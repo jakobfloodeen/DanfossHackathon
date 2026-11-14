@@ -1,0 +1,10 @@
+# Website back end (backend.py) + front end
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+pdfplumber
+anthropic
+python-dotenv
+pandas
+openpyxl
