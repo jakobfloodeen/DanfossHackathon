@@ -208,7 +208,8 @@ table.cmp { border-collapse: collapse; width: 100%; font-size: 14px; }
 
 /* ---------- print (Print / save as PDF on results) ---------- */
 @media print {
-  .topbar .stepper, #btn-restart, .composer, .brief, .msg:not(:last-child), .avatar, .actions { display: none !important; }
+  .topbar .stepper, .top-actions, .composer, .brief, .msg:not(:last-child), .avatar, .actions, .more-facts { display: none !important; }
+  .cmp td, .cmp th { padding-top: 4px; padding-bottom: 4px; }
   body, .layout, .chat-scroll { display: block; overflow: visible; height: auto; background: #fff; }
   .bubble { box-shadow: none; border: 0; padding: 0; }
 }
@@ -257,3 +258,28 @@ fieldset.seg input { accent-color: var(--brand); }
 .btn-sm { padding: 6px 12px; font-size: 13px; margin-top: 4px; }
 .form-grid.tight { min-width: 0; gap: 10px 14px; }
 .cell-pending { color: var(--ink-3); font-style: italic; background: #f6f8fb; }
+
+/* ---------- short result: "–" cells, paired rows, collapsed extra facts ---------- */
+.cell-na { color: var(--ink-3); text-align: center; }
+.cmp tr.is-paired th .cell-note { color: var(--brand-strong); }
+.more-facts { margin-top: 10px; }
+.more-facts summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-2); padding: 6px 0; }
+dialog#match-dialog, dialog#system-dialog { border: 0; border-radius: var(--radius); padding: 0; width: min(560px, 94vw); box-shadow: 0 20px 50px rgba(16, 24, 40, .25); }
+
+/* header with 5 actions: wrap to a second line instead of overflowing */
+.topbar { flex-wrap: wrap; row-gap: 8px; }
+.top-actions { flex-wrap: wrap; margin-left: auto; }
+@media (max-width: 1300px) { .top-actions .btn { padding: 6px 12px; font-size: 13px; } }
+
+/* ---------- web import + extract facts ---------- */
+.web-import summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.web-import[open] { padding-bottom: 6px; }
+.web-list { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow: auto; margin: 8px 0; }
+.web-doc { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; font-weight: 400; }
+.web-doc a { margin-left: 6px; }
+.extract-box:empty { display: none; }
+.extract-box h4 { margin: 4px 0; font-size: 14px; }
+.extract-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 6px 0; border-top: 1px solid var(--line); }
+.extract-name { font-size: 13px; overflow-wrap: anywhere; }
+.extract-status { grid-column: 1 / -1; font-size: 12px; }
+.extract-status:empty { display: none; }

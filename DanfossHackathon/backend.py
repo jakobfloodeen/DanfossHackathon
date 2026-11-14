@@ -163,7 +163,9 @@ def pages_as_prompt(label, pages):
 # =====================================================================
 @app.get("/api/catalog")
 def get_catalog():
-    return load_catalog()
+    cat = load_catalog()
+    cat["customers"] = [{"name": n, "files": f} for n, f in list_customers().items()]   # customer feedback on file
+    return cat
 
 
 # =====================================================================
@@ -223,10 +225,29 @@ async def upload_datasets(
     productName: Optional[str] = Form(None),
     categoryId: Optional[str] = Form(None),
     equivalentOf: Optional[str] = Form(None),
+    customerName: Optional[str] = Form(None),
 ):
+    if source == "customer":                     # customer feedback: only the extracted text is kept (as CSV)
+        return await upload_customer_files(customerName, files)
     cat = load_catalog()
-    issues = []
+    found = resolve_target(cat, source, nodeId, competitorId, competitorName, productName, categoryId, equivalentOf)
+    if "error" in found:
+        return {"uploaded": [], "issues": found["issues"]}
+    issues, stored = found["issues"], []
+    for f in files:
+        ds = store_file(found, Path(f.filename).name, await f.read(), issues)
+        if ds:
+            stored.append(ds)
+    finish_upload(cat, found, stored, issues)
+    return {"uploaded": [d["name"] for d in stored], "issues": issues,
+            "datasets": [{"ownerId": found["owner_id"], "fileId": d["fileId"], "name": d["name"]} for d in stored]}
 
+
+def resolve_target(cat, source, nodeId=None, competitorId=None, competitorName=None, productName=None,
+                   categoryId=None, equivalentOf=None) -> dict:
+    """Which catalog item the files belong to (creates a competitor / competitor product if needed).
+    Returns {target, comp, label, owner_id, source, issues} or {error, issues}."""
+    issues = []
     if source == "competitor":
         comp = next((c for c in cat["competitors"] if c["id"] == competitorId), None)
         new_name = (competitorName or "").strip()
@@ -239,13 +260,13 @@ async def upload_datasets(
                 cat["competitors"].append(comp)
                 issues.append(issue("ok", f'Added competitor "{new_name}".'))
         if not comp:
-            return {"uploaded": [], "issues": [issue("error", "Choose or name a competitor.")]}
+            return {"error": True, "issues": [issue("error", "Choose or name a competitor.")]}
         pname = (productName or "").strip()
         if not pname:
-            return {"uploaded": [], "issues": [issue("error", "Name the competitor product or series.")]}
+            return {"error": True, "issues": [issue("error", "Name the competitor product or series.")]}
         category = find_node(cat, categoryId)
         if not category or category.get("type") == "product":
-            return {"uploaded": [], "issues": [issue("error", "Choose the product category it competes in.")]}
+            return {"error": True, "issues": [issue("error", "Choose the product category it competes in.")]}
 
         target = next((p for p in cat["competitorProducts"]
                        if p["competitorId"] == comp["id"] and p["name"].lower() == pname.lower()), None)
@@ -263,59 +284,61 @@ async def upload_datasets(
     else:
         target = find_node(cat, nodeId)
         if not target:
-            return {"uploaded": [], "issues": [issue("error", "Target product or group not found.")]}
+            return {"error": True, "issues": [issue("error", "Target product or group not found.")]}
         label, owner_id, comp = target["label"], target["id"], None
-
     target.setdefault("datasets", [])
-    uploaded = []
-    for f in files:
-        name = Path(f.filename).name
-        ext = name.rsplit(".", 1)[-1].lower() if "." in name else ""
-        data = await f.read()
-        if ext not in ALLOWED_EXT:
-            issues.append(issue("error", f"{name}: unsupported file type (.{ext}).")); continue
-        if not data:
-            issues.append(issue("error", f"{name}: file is empty.")); continue
-        if len(data) > MAX_MB * 1024 * 1024:
-            issues.append(issue("error", f"{name}: larger than {MAX_MB} MB.")); continue
+    return {"target": target, "comp": comp, "label": label, "owner_id": owner_id, "source": source, "issues": issues}
 
-        file_id = hashlib.sha256(data).hexdigest()[:16]
-        folder = FILES_DIR / owner_id
-        folder.mkdir(parents=True, exist_ok=True)
-        path = folder / f"{file_id}_{name}"
-        path.write_bytes(data)
 
-        try:
-            pages = extract_pages(path, ext)
-        except Exception as e:  # broken file, missing openpyxl, ...
-            pages = []
-            issues.append(issue("warning", f"{name}: stored, but text extraction failed ({e})."))
-        (EXTRACT_DIR / f"{file_id}.json").write_text(json.dumps(pages, ensure_ascii=False), encoding="utf-8")
+def store_file(found: dict, name: str, data: bytes, issues: list) -> Optional[dict]:
+    """Check, store and text-extract ONE file for the resolved target. Returns the dataset entry or None."""
+    ext = name.rsplit(".", 1)[-1].lower() if "." in name else ""
+    if ext not in ALLOWED_EXT:
+        issues.append(issue("error", f"{name}: unsupported file type (.{ext}).")); return None
+    if not data:
+        issues.append(issue("error", f"{name}: file is empty.")); return None
+    if len(data) > MAX_MB * 1024 * 1024:
+        issues.append(issue("error", f"{name}: larger than {MAX_MB} MB.")); return None
 
-        chars = sum(len(p["text"].strip()) for p in pages)
-        if ext == "pdf" and chars < 200:
-            issues.append(issue("warning", f"{name}: almost no text found; it may be a scanned PDF."))
-        elif not pages:
-            issues.append(issue("warning", f"{name}: stored, but this file type isn't extracted yet."))
+    file_id = hashlib.sha256(data).hexdigest()[:16]
+    folder = FILES_DIR / found["owner_id"]
+    folder.mkdir(parents=True, exist_ok=True)
+    path = folder / f"{file_id}_{name}"
+    path.write_bytes(data)
 
-        target["datasets"] = [d for d in target["datasets"] if d["name"] != name]
-        target["datasets"].append({
-            "name": name, "fileId": file_id, "source": source,
-            "competitorId": comp["id"] if comp else None,
-            "pages": len(pages), "uploadedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        })
-        uploaded.append(name)
+    try:
+        pages = extract_pages(path, ext)
+    except Exception as e:  # broken file, missing openpyxl, ...
+        pages = []
+        issues.append(issue("warning", f"{name}: stored, but text extraction failed ({e})."))
+    (EXTRACT_DIR / f"{file_id}.json").write_text(json.dumps(pages, ensure_ascii=False), encoding="utf-8")
 
-    if uploaded:
+    chars = sum(len(p["text"].strip()) for p in pages)
+    if ext == "pdf" and chars < 200:
+        issues.append(issue("warning", f"{name}: almost no text found; it may be a scanned PDF."))
+    elif not pages:
+        issues.append(issue("warning", f"{name}: stored, but this file type isn't extracted yet."))
+
+    target, comp = found["target"], found["comp"]
+    target["datasets"] = [d for d in target["datasets"] if d["name"] != name]
+    ds = {"name": name, "fileId": file_id, "source": found["source"],
+          "competitorId": comp["id"] if comp else None,
+          "pages": len(pages), "uploadedAt": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+    target["datasets"].append(ds)
+    return ds
+
+
+def finish_upload(cat, found: dict, stored: list, issues: list) -> None:
+    target, comp = found["target"], found["comp"]
+    if stored:
         target["status"] = "active"
-        if source == "danfoss" and target.get("desc", "").startswith("No datasheet"):
+        if found["source"] == "danfoss" and target.get("desc", "").startswith("No datasheet"):
             target["desc"] = f"{len(target['datasets'])} dataset(s) loaded"
         if comp:
             comp["hasData"] = True
-        issues.append(issue("ok", f"{len(uploaded)} file(s) for {label} stored and text extracted. "
-                                  "Values are extracted when you generate a comparison."))
+        issues.append(issue("ok", f"{len(stored)} file(s) for {found['label']} stored and text extracted. "
+                                  "Click 'Extract facts' to turn a PDF into comparable facts."))
     save_catalog(cat)
-    return {"uploaded": uploaded, "issues": issues}
 
 
 # =====================================================================
@@ -328,39 +351,7 @@ def claude():
     return anthropic.Anthropic()
 
 
-COMPARE_TOOL = {
-    "name": "submit_comparison",
-    "description": "Return the structured, source-linked comparison.",
-    "input_schema": {
-        "type": "object",
-        "properties": {
-            "attributes": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "id": {"type": "string"},
-                        "factor": {"type": "string", "description": "One of the factor ids, or 'custom'"},
-                        "label": {"type": "string"},
-                        "unit": {"type": "string"},
-                        "values": {
-                            "type": "object",
-                            "description": "Keyed by product key. Each: {value: string|null, status, note?, sources: [{file_id, page}]}",
-                        },
-                    },
-                    "required": ["id", "factor", "label", "unit", "values"],
-                },
-            },
-            "insights": {
-                "type": "object",
-                "description": "{differences:[{text,sources:[{file_id,page}]}], benefits:[...], tradeoffs:[...]}",
-            },
-            "flags": {"type": "array", "items": {"type": "object"}, "description": "[{level, text}]"},
-            "confidence": {"type": "object", "description": "{level: high|medium|low, reason}"},
-        },
-        "required": ["attributes", "insights", "flags", "confidence"],
-    },
-}
+
 
 RULES = """You compare hydraulic products for Danfoss sales teams.
 Rules:
@@ -374,144 +365,436 @@ Rules:
 - Do not invent prices, lead times or service life. Mark them missing unless a page states them."""
 
 
-def build_sources(result: dict, valid: dict) -> list:
-    """Turn {file_id, page} citations into the numbered sources[] list the UI expects.
-    Citations that don't match a page we actually sent are dropped and the value is flagged."""
-    numbered, sources = {}, []
-    dropped = 0
-
-    def ref(cits):
-        nonlocal dropped
-        out = []
-        for c in cits or []:
-            if not isinstance(c, dict):
-                continue
-            try:
-                key = (str(c.get("file_id")), int(c.get("page", 0) or 0))
-            except (TypeError, ValueError):
-                key = None
-            if key not in valid:
-                dropped += 1
-                continue
-            if key not in numbered:
-                numbered[key] = len(sources) + 1
-                doc = valid[key]
-                sources.append({"id": numbered[key], "title": doc["title"], "doc": doc["doc"],
-                                "page": str(key[1]), "date": doc.get("date", "")})
-            if numbered[key] not in out:
-                out.append(numbered[key])
-        return out
-
-    for a in result.get("attributes", []):
-        for v in (a.get("values") or {}).values():
-            if isinstance(v, dict):
-                v["sources"] = ref(v.get("sources"))
-                if v.get("value") is not None and not v["sources"] and v.get("status") in (None, "ok"):
-                    v["status"] = "unverified"
-    for group in ("differences", "benefits", "tradeoffs"):
-        for it in (result.get("insights") or {}).get(group, []) or []:
-            it["sources"] = ref(it.get("sources"))
-    if dropped:
-        result.setdefault("flags", []).append(
-            issue("unverified", f"{dropped} citation(s) pointed to pages that weren't in the provided sources and were removed."))
-    return sources
+# =====================================================================
+# Comparison engine (comparison_engine/): sourced facts in, checked AI interpretation out
+# =====================================================================
+from comparison_engine import interpret, load_repository      # noqa: E402
+from comparison_engine.website import to_website              # noqa: E402
+from comparison_engine.documents import link as document_link  # noqa: E402
+from comparison_engine.customer import customer_facts, list_customers, save_customer_file  # noqa: E402
+from comparison_engine.system import System, compare_systems, compose_system  # noqa: E402
 
 
-def pick_competitors(cat, payload, anchor_id, category_id):
-    prods = cat.get("competitorProducts", [])
-    if payload.get("competitorProductIds"):
-        return [p for p in prods if p["id"] in payload["competitorProductIds"]], False
-    in_cat = [p for p in prods if p["categoryId"] == category_id and p.get("datasets")]
-    if payload.get("competitors"):
-        in_cat = [p for p in in_cat if p["competitorId"] in payload["competitors"]]
-    # Confirmed equivalents first, then the rest (max 3 columns)
-    in_cat.sort(key=lambda p: anchor_id not in p.get("equivalentOf", []))
-    return in_cat[:3], True
+async def upload_customer_files(customer_name: Optional[str], files: list[UploadFile]) -> dict:
+    """Customer feedback (PDF / Excel / CSV / TXT): text -> data/customers/<customer>/<file>.csv.
+    The original file is NOT stored. Used automatically when the brief's buyer company matches."""
+    name = (customer_name or "").strip()
+    if not name:
+        return {"uploaded": [], "issues": [issue("error", "Name the customer the feedback comes from.")]}
+    uploaded, issues = [], []
+    for f in files:
+        data = await f.read()
+        fname = Path(f.filename).name
+        if not data:
+            issues.append(issue("error", f"{fname}: file is empty.")); continue
+        if len(data) > MAX_MB * 1024 * 1024:
+            issues.append(issue("error", f"{fname}: larger than {MAX_MB} MB.")); continue
+        try:
+            _, rows = save_customer_file(name, fname, data)
+        except Exception as e:  # unsupported type, unreadable, scanned PDF ...
+            issues.append(issue("error", f"{fname}: {e}")); continue
+        uploaded.append(fname)
+        issues.append(issue("ok", f"{fname}: {rows} text passage(s) saved for {name} (original file not stored)."))
+    if uploaded:
+        issues.append(issue("ok", f"Used automatically when the buyer in a comparison is {name}."))
+    return {"uploaded": uploaded, "issues": issues}
+
+ENGINE_ASK = None   # None = the real Claude API. Tests put a fake function here (no key, no cost).
+WAITING = "Datasheet uploaded - values not extracted to the facts CSV yet."
+
+
+def products_with_facts() -> set[str]:
+    """Product ids that have at least one row in the facts CSVs (data/repository/)."""
+    data = load_repository()
+    return set(data["product_id"]) if not data.empty else set()
+
+
+def catalog_names(cat) -> dict:
+    """product_id -> name / manufacturer for the table header (product_id = catalog id)."""
+    comp_name = {c["id"]: c["name"] for c in cat["competitors"]}
+    names = {n["id"]: {"name": n["label"], "manufacturer": "Danfoss"}
+             for n in walk(cat["tree"]) if n.get("type") == "product"}
+    for p in cat.get("competitorProducts", []):
+        names[p["id"]] = {"name": p["name"], "manufacturer": comp_name.get(p["competitorId"], ""),
+                          "equivalentOf": p.get("equivalentOf", [])}
+    return names
+
+
+def doc_url(source_file: str, page):
+    """Where the user can open a source at the cited page:
+    1. the manufacturer's own document online (data/documents.csv, filled by the datasheet crawler)
+    2. otherwise the uploaded copy, if it is still stored (/files/<owner>/<fileId>_<name>#page=N)"""
+    online = document_link(source_file, page)
+    if online:
+        return online
+    for path in FILES_DIR.glob(f"*/*_{source_file}"):
+        return f"/files/{path.parent.name}/{path.name}" + (f"#page={page}" if page else "")
+    return None
+
+
+def brief_text(payload: dict) -> tuple[str, str]:
+    """The website's brief -> (question, customer context) for the AI."""
+    buyer = payload.get("buyer") or {}
+    factors = payload.get("factors") or {}
+    must = [k for k, v in factors.items() if v == "must"]
+    nice = [k for k, v in factors.items() if v == "nice"]
+    context = "; ".join(x for x in [
+        f"customer: {buyer.get('company')}" if buyer.get("company") else "",
+        f"application: {buyer.get('application')}" if buyer.get("application") else "",
+        f"uses today: {buyer.get('currentSupplier')}" if buyer.get("currentSupplier") else "",
+        f"notes: {buyer.get('notes')}" if buyer.get("notes") else "",
+        f"must-have topics: {', '.join(must)}" if must else "",
+        f"nice-to-have topics: {', '.join(nice)}" if nice else "",
+        f"own factors: {', '.join(payload.get('customFactors') or [])}" if payload.get("customFactors") else "",
+    ] if x)
+    question = " ".join(payload.get("chatNotes") or []) or ""
+    return question, context
+
+
+def ancestors(cat, node_id) -> set[str]:
+    """All groups above a product: pvg32 -> {"proportional", "valves"}."""
+    out, parent = set(), find_parent(cat, node_id)
+    while parent:
+        out.add(parent["id"])
+        parent = find_parent(cat, parent["id"])
+    return out
+
+
+def empty_response(title, anchor, flags):
+    return {"title": title, "isSample": False, "anchor": anchor, "matches": [], "attributes": [],
+            "insights": {}, "sources": [], "flags": flags,
+            "confidence": {"level": "low", "reason": "No extracted facts to compare yet."}}
+
+
+def customer_passages(payload: dict, question: str, context: str):
+    """The buyer's own feedback files (if any were uploaded), as citable facts C1, C2 ..."""
+    words = re.findall(r"[a-zA-Z]{3,}", " ".join([context, question] + list((payload.get("factors") or {}).keys())))
+    return customer_facts((payload.get("buyer") or {}).get("company", ""), words)
+
+
+def run_engine(target_id: str, candidates, pool: str, payload: dict, names: dict, pending: dict,
+               extra_flags: list) -> dict:
+    question, context = brief_text(payload)
+    customer = customer_passages(payload, question, context)
+    result = interpret(target_id, candidates, question, context, ask=ENGINE_ASK, use_ai=True, pool=pool,
+                       customer_facts=customer)
+    for pid, info in names.items():                     # confirmed equivalent pairs from the uploads
+        info["knownEquivalent"] = target_id in info.get("equivalentOf", []) or pid in names.get(
+            target_id, {}).get("equivalentOf", [])
+    return to_website(result, names=names, doc_url=doc_url, pending=pending, extra_flags=extra_flags)
 
 
 # =====================================================================
-# POST /api/compare
+# POST /api/compare   (website flow: Danfoss product -> competitor products)
 # =====================================================================
 @app.post("/api/compare")
 def compare(payload: dict):
     cat = load_catalog()
     anchor = find_node(cat, payload.get("productId"))
     if not anchor:
-        return {"title": "Unknown product", "anchor": {"key": "x", "name": "?", "manufacturer": "Danfoss"},
-                "matches": [], "attributes": [], "insights": {}, "sources": [],
-                "flags": [issue("error", "Product not found in catalog.")],
-                "confidence": {"level": "low", "reason": "No product."}}
-    category = find_parent(cat, anchor["id"])
-    comps, auto = pick_competitors(cat, payload, anchor["id"], category["id"] if category else None)
+        return empty_response("Unknown product", {"key": "x", "name": "?", "manufacturer": "Danfoss"},
+                              [issue("error", "Product not found in catalog.")])
+    names = catalog_names(cat)
+    have = products_with_facts()
+    groups = ancestors(cat, anchor["id"])         # e.g. {"proportional", "valves"}
+    in_category = [p for p in cat.get("competitorProducts", []) if p["categoryId"] in groups]
+
+    chosen_ids = payload.get("competitorProductIds") or []
+    if not chosen_ids and payload.get("competitors"):
+        chosen_ids = [p["id"] for p in in_category if p["competitorId"] in payload["competitors"]]
+    chosen = [p for p in cat.get("competitorProducts", []) if p["id"] in chosen_ids]
+    auto = not chosen_ids
+    if auto:                                           # let the engine pick from the facts CSVs
+        candidates = None
+        pending = {p["id"]: WAITING for p in in_category if p.get("datasets") and p["id"] not in have}
+    else:
+        candidates = [p["id"] for p in chosen if p["id"] in have]
+        pending = {p["id"]: (WAITING if p.get("datasets") else "No datasheet uploaded yet.")
+                   for p in chosen if p["id"] not in have}
+
+    flags = []
+    if auto:
+        flags.append(issue("unverified", "Competitor products were selected automatically from the facts "
+                                         "database. Confirm functional equivalence before showing them to the customer."))
+    if anchor["id"] not in have:
+        flags.insert(0, issue("pending" if anchor.get("datasets") else "missing",
+                              f"No extracted facts for {anchor['label']} yet. "
+                              + ("Its datasheet is uploaded; the PDF→CSV step has not produced its facts CSV."
+                                 if anchor.get("datasets") else "Upload its datasheet via 'Upload data'.")))
+        return empty_response(f"{anchor['label']} vs. competitors",
+                              {"key": anchor["id"], "name": anchor["label"], "manufacturer": "Danfoss"},
+                              flags + [issue("pending", f"{names.get(p, {}).get('name', p)}: {n}") for p, n in pending.items()])
+    if candidates == [] and not pending:
+        return empty_response(f"{anchor['label']} vs. competitors",
+                              {"key": anchor["id"], "name": anchor["label"], "manufacturer": "Danfoss"},
+                              [issue("missing", "None of the chosen competitor products has data yet.")])
+    return run_engine(anchor["id"], candidates, "competitors", payload, names, pending, flags)
+
+
+# =====================================================================
+# POST /api/extract   (PDF -> facts with the teammates' converter; one AI call per page, so only on a click)
+# Request: {"ownerId": "pvg32", "fileId": "abc123...", "pages": "1-20"}   (pages optional: empty = all)
+# Response: {"jobId": "..."}; progress at GET /api/jobs/<jobId>. One extraction runs at a time.
+# =====================================================================
+import contextlib     # noqa: E402
+import tempfile       # noqa: E402
+import threading      # noqa: E402
+import uuid           # noqa: E402
+
+from comparison_engine import bridge                     # noqa: E402
+from comparison_engine.llm import has_api_key            # noqa: E402
+
+JOBS: dict[str, dict] = {}
+EXTRACT_LOCK = threading.Lock()
+EXTRACT_CLIENT = None      # tests put a fake Anthropic client here
+CONVERTER = None           # tests put a fake converter here; None = the teammates' pdf_to_csv_test.py
+
+
+def find_dataset(cat, owner_id: str, file_id: str):
+    """-> (owner dict, dataset dict, owner name, brand, family) or None."""
     comp_name = {c["id"]: c["name"] for c in cat["competitors"]}
+    owners = [(n, n["label"], "Danfoss") for n in walk(cat["tree"]) if n.get("type") == "product"]
+    owners += [(p, p["name"], comp_name.get(p["competitorId"], "")) for p in cat.get("competitorProducts", [])]
+    for owner, name, brand in owners:
+        if owner["id"] != owner_id:
+            continue
+        ds = next((d for d in owner.get("datasets", []) if d.get("fileId") == file_id), None)
+        if not ds:
+            return None
+        start = owner["categoryId"] if "categoryId" in owner else owner["id"]
+        groups = [start] + sorted(ancestors(cat, start), key=lambda g: len(ancestors(cat, g)))
+        family = next((g for g in groups if not find_parent(cat, g)), start)     # top level, e.g. "valves"
+        return owner, ds, name, brand, family
+    return None
 
-    anchor_info = {"key": anchor["id"], "name": anchor["label"], "manufacturer": "Danfoss"}
-    matches = [{"key": p["id"], "name": p["name"], "manufacturer": comp_name.get(p["competitorId"], ""),
-                "knownEquivalent": anchor["id"] in p.get("equivalentOf", []),
-                "matchScore": None} for p in comps]
 
-    # Gather source pages per product
-    extra = list(payload.get("customFactors", [])) + [k for k in payload.get("factors", {})]
-    blocks, valid = [], {}
-    a_pages = select_pages(pages_for(anchor.get("datasets")), extra)
-    blocks.append(pages_as_prompt(f"{anchor['label']} (Danfoss, key={anchor['id']})", a_pages))
-    for p in comps:
-        cp = select_pages(pages_for(p.get("datasets")), extra)
-        blocks.append(pages_as_prompt(f"{comp_name.get(p['competitorId'])} {p['name']} (key={p['id']})", cp))
-        for pg in cp:
-            valid[(pg["fileId"], pg["page"])] = {"doc": pg["doc"], "title": f"{comp_name.get(p['competitorId'])} {p['name']}"}
-    for pg in a_pages:
-        valid[(pg["fileId"], pg["page"])] = {"doc": pg["doc"], "title": f"Danfoss {anchor['label']}"}
+class _JobLog:
+    """Captures the converter's printed progress ('page 3: asking the AI ...') into the job."""
+    def __init__(self, job):
+        self.job = job
 
-    base = {"title": f"{anchor['label']} vs. " + (", ".join(m["name"] for m in matches) or "no competitor data yet"),
-            "isSample": False, "anchor": anchor_info, "matches": matches}
+    def write(self, text):
+        for line in text.splitlines():
+            if line.strip():
+                self.job["log"].append(line.strip())
+                self.job["progress"] = line.strip()
+        return len(text)
 
-    pre_flags = []
-    if not a_pages:
-        pre_flags.append(issue("missing", f"No extracted datasheet for {anchor['label']}. Upload one via 'Upload data'."))
-    if not comps:
-        pre_flags.append(issue("missing", "No competitor datasheets uploaded for this category yet. "
-                                          "Upload one in the Competitors step."))
-    if auto and any(not m["knownEquivalent"] for m in matches):
-        pre_flags.append(issue("unverified", "Competitor products were selected automatically. "
-                                             "Confirm functional equivalence before showing them to the customer."))
-    if not a_pages and not comps:
-        return {**base, "attributes": [], "insights": {}, "sources": [], "flags": pre_flags,
-                "confidence": {"level": "low", "reason": "No source documents available."}}
+    def flush(self):
+        pass
 
-    factors = ", ".join(f"{f['id']} ({f['label']})" for f in cat["factors"])
-    prompt = f"""{chr(10).join(blocks)}
 
-Product keys: {json.dumps([anchor['id']] + [p['id'] for p in comps])}
-Factor ids: {factors}
-User priorities: {json.dumps(payload.get('factors', {}))}  (must = must-have, nice = nice-to-have)
-Custom factors to include as rows (factor "custom"): {json.dumps(payload.get('customFactors', []))}
-Buyer: {json.dumps(payload.get('buyer', {}), ensure_ascii=False)}
-Questions/notes from the salesperson: {json.dumps(payload.get('chatNotes', []), ensure_ascii=False)}
+def run_extraction(job: dict) -> None:
+    with EXTRACT_LOCK:
+        job["status"] = "running"
+        try:
+            cat = load_catalog()
+            owner, ds, name, brand, family = find_dataset(cat, job["ownerId"], job["fileId"])
+            stored = FILES_DIR / job["ownerId"] / f"{ds['fileId']}_{ds['name']}"
+            with tempfile.TemporaryDirectory() as tmp:          # the converter cites the file by its own name
+                pdf = Path(tmp) / ds["name"]
+                pdf.write_bytes(stored.read_bytes())
+                with contextlib.redirect_stdout(_JobLog(job)):
+                    report = bridge.extract_pdf(pdf, job["ownerId"], name, family, brand, ds["fileId"],
+                                                pages=job.get("pages", ""), client=EXTRACT_CLIENT,
+                                                converter=CONVERTER or bridge.load_converter())
+            cat = load_catalog()                               # re-read: the catalog may have changed meanwhile
+            found = find_dataset(cat, job["ownerId"], job["fileId"])
+            if found:
+                found[1]["facts"] = {"status": "done", "csv": report["csv"], "facts": report["facts"],
+                                     "ok": report["ok"], "unverified": report["unverified"],
+                                     "at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+                save_catalog(cat)
+            job.update(status="done", report=report,
+                       progress=f"{report['facts']} facts saved ({report['ok']} verified by quote, "
+                                f"{report['unverified']} unverified, {report['skipped_ordering_code']} ordering-code rows skipped)")
+        except Exception as e:  # noqa: BLE001 - shown to the user, never crashes the server
+            job.update(status="failed", progress=f"Extraction failed: {e}")
 
-Build a comparison of the most important technical attributes (flow, pressure, sections, ports, actuation,
-dimensions/weight, operating conditions, plus every must-have and custom factor). Include a values entry
-for EVERY product key in every row. Call submit_comparison."""
 
+@app.post("/api/extract")
+def start_extraction(payload: dict):
+    cat = load_catalog()
+    owner_id, file_id = payload.get("ownerId"), payload.get("fileId")
+    found = find_dataset(cat, owner_id, file_id)
+    if not found:
+        return {"jobId": None, "issues": [issue("error", "Dataset not found.")]}
+    if not found[1]["name"].lower().endswith(".pdf"):
+        return {"jobId": None, "issues": [issue("error", "Only PDF datasheets can be converted to facts so far "
+                                                         "(web pages need a different converter).")]}
+    if EXTRACT_CLIENT is None and not has_api_key():
+        return {"jobId": None, "issues": [issue("error", "No ANTHROPIC_API_KEY in .env - the converter needs the AI.")]}
+    pages = str(payload.get("pages") or "").strip()
+    if pages and not re.fullmatch(r"[\d,\-\s]+", pages):
+        return {"jobId": None, "issues": [issue("error", "Pages must look like 1,3-5,8.")]}
+    job = {"id": uuid.uuid4().hex[:12], "ownerId": owner_id, "fileId": file_id, "name": found[1]["name"],
+           "pages": pages, "status": "queued", "progress": "Waiting for the previous extraction to finish…"
+           if EXTRACT_LOCK.locked() else "Starting…", "log": []}
+    JOBS[job["id"]] = job
+    threading.Thread(target=run_extraction, args=(job,), daemon=True).start()
+    return {"jobId": job["id"], "issues": [issue("pending", f"Extracting facts from {job['name']} - this takes "
+                                                              "a few seconds per page.")]}
+
+
+@app.get("/api/jobs/{job_id}")
+def job_status(job_id: str):
+    job = JOBS.get(job_id)
+    if not job:
+        return {"status": "unknown", "progress": "Job not found (the server may have restarted)."}
+    return {k: v for k, v in job.items() if k != "log"} | {"log": job["log"][-8:]}
+
+
+# =====================================================================
+# Web import with the teammates' scraper (scraper/ in the repo root; no AI, no API key)
+#   POST /api/web/discover {"url": "https://manufacturer.com/...", "topic": "valves"} -> candidate documents
+#   POST /api/web/import   {"url": "<chosen document>", "source": "danfoss"|"competitor", ...same target fields as
+#                           the upload...}  -> stored like an upload; its web address goes into data/documents.csv
+# =====================================================================
+import sys            # noqa: E402
+
+if str(BASE.parent) not in sys.path:
+    sys.path.append(str(BASE.parent))                    # the repo root, where scraper/ lives
+from comparison_engine.documents import save_document     # noqa: E402
+
+try:
+    from scraper import discover as web_discover, download_source as web_download   # noqa: E402
+except ImportError:                                      # scraper folder missing: the rest of the app still works
+    web_discover = web_download = None
+
+
+@app.post("/api/web/discover")
+def discover_documents(payload: dict):
+    if web_discover is None:
+        return {"documents": [], "issues": [issue("error", "The scraper module is not installed (scraper/ folder).")]}
+    url, topic = (payload.get("url") or "").strip(), (payload.get("topic") or "pumps").strip()
     try:
-        resp = claude().messages.create(
-            model=MODEL, max_tokens=8000, system=RULES,
-            tools=[COMPARE_TOOL], tool_choice={"type": "tool", "name": "submit_comparison"},
-            messages=[{"role": "user", "content": prompt}],
-        )
-        result = next(b.input for b in resp.content if b.type == "tool_use")
-    except Exception as e:
-        return {**base, "attributes": [], "insights": {}, "sources": [],
-                "flags": pre_flags + [issue("error", f"AI comparison failed: {e}")],
-                "confidence": {"level": "low", "reason": "The AI step failed."}}
+        result = web_discover(url, topic=topic)
+    except Exception as e:  # invalid / private URL, site unreachable, no HTML ...
+        return {"documents": [], "issues": [issue("error", f"Could not search {url}: {e}")]}
+    issues = [issue("warning", w) for w in result.get("warnings", [])]
+    if not result["documents"]:
+        issues.append(issue("missing", "No documents found there. Try a more specific product or download page."))
+    if result.get("limited"):
+        issues.append(issue("warning", "Search stopped early (page limit) - a more specific URL may find more."))
+    return {**result, "issues": issues}
 
-    sources = build_sources(result, valid)
-    for a in result.get("attributes", []):  # make sure every column has a cell
-        for key in [anchor["id"]] + [p["id"] for p in comps]:
-            a.setdefault("values", {}).setdefault(key, {"value": None, "status": "missing"})
-    return {**base, "attributes": result.get("attributes", []), "insights": result.get("insights", {}),
-            "flags": pre_flags + result.get("flags", []), "confidence": result.get("confidence", {}),
-            "sources": sources}
+
+@app.post("/api/web/import")
+def import_from_web(payload: dict):
+    if web_download is None:
+        return {"uploaded": [], "issues": [issue("error", "The scraper module is not installed (scraper/ folder).")]}
+    cat = load_catalog()
+    found = resolve_target(cat, payload.get("source", "competitor"), payload.get("nodeId"), payload.get("competitorId"),
+                           payload.get("competitorName"), payload.get("productName"), payload.get("categoryId"),
+                           payload.get("equivalentOf"))
+    if "error" in found:
+        return {"uploaded": [], "issues": found["issues"]}
+    try:
+        content, filename, source_url, _ = web_download((payload.get("url") or "").strip())
+    except Exception as e:
+        return {"uploaded": [], "issues": [issue("error", f"Download failed: {e}")]}
+    issues = found["issues"]
+    ds = store_file(found, filename, content, issues)
+    finish_upload(cat, found, [ds] if ds else [], issues)
+    if not ds:
+        return {"uploaded": [], "issues": issues}
+    try:
+        save_document(filename, source_url, title=payload.get("title") or filename, found_by="scraper")
+        issues.append(issue("ok", f"Online link saved: footnotes for {filename} open {source_url}."))
+    except ValueError as e:
+        issues.append(issue("warning", f"Link not saved: {e}"))
+    if not filename.lower().endswith(".pdf"):
+        issues.append(issue("warning", "This is a web page, not a PDF: it is stored, but the facts converter "
+                                       "only reads PDFs so far."))
+    return {"uploaded": [filename], "issues": issues, "sourceUrl": source_url,
+            "datasets": [{"ownerId": found["owner_id"], "fileId": ds["fileId"], "name": ds["name"]}]}
+
+
+# =====================================================================
+# GET /api/products   (everything that has facts, for the system builder)
+# =====================================================================
+@app.get("/api/products")
+def list_products():
+    data = load_repository()
+    if data.empty:
+        return {"products": []}
+    names = catalog_names(load_catalog())
+    out = []
+    for pid, g in data.groupby("product_id"):
+        brand = g["brand"].iloc[0]
+        out.append({"id": pid, "name": names.get(pid, {}).get("name") or g["product_name"].iloc[0],
+                    "brand": names.get(pid, {}).get("manufacturer") or brand, "family": g["family"].iloc[0],
+                    "side": "danfoss" if brand.lower() == "danfoss" else "competitor",
+                    "demo": bool("DEMO" in pid or g["source_file"].astype(str).str.contains("DEMO").any())})
+    return {"products": sorted(out, key=lambda p: (p["family"], p["side"], p["name"]))}
+
+
+# =====================================================================
+# POST /api/compare-system   (a set of components, e.g. pump + valve, against another set)
+# Request: { "start": "danfoss" | "competitor",            which side the user describes
+#            "components": {"pump": "<product id>", "valve": "<product id>"},
+#            "against":    {"pump": null, "valve": "<product id>"},   null = best match chosen automatically
+#            "buyer": {...}, "factors": {...}, "chatNotes": [...] }
+# Response: same shape as /api/compare; rows are "Pump · ...", "Valve · ..." and "System · ..." values.
+# =====================================================================
+@app.post("/api/compare-system")
+def compare_system_endpoint(payload: dict):
+    start = "competitor" if payload.get("start") == "competitor" else "danfoss"
+    have = products_with_facts()
+    components = {r: p for r, p in (payload.get("components") or {}).items() if p}
+    names = catalog_names(load_catalog())
+    side_name = {"danfoss": ("Danfoss system", "Danfoss"), "competitor": ("Competitor system", "Competitors")}
+    anchor_name, anchor_brand = side_name[start]
+    other_name, other_brand = side_name["competitor" if start == "danfoss" else "danfoss"]
+    no_data = [p for p in components.values() if p not in have]
+    if len(components) < 2 or no_data:
+        why = ("Choose at least two components (e.g. a pump and a valve)." if len(components) < 2 else
+               f"No extracted facts yet for: {', '.join(names.get(p, {}).get('name', p) for p in no_data)}.")
+        return empty_response(f"{anchor_name} vs. {other_name}", {"key": "system:anchor", "name": anchor_name,
+                                                                   "manufacturer": ""}, [issue("missing", why)])
+    anchor = System("system:anchor", anchor_name, anchor_brand, components)
+    fixed = {role: (payload.get("against") or {}).get(role) for role in components}
+    other = compose_system("system:other", other_name, other_brand, fixed, anchor,
+                           pool="competitors" if start == "danfoss" else "danfoss")
+    question, context = brief_text(payload)
+    result = compare_systems(anchor, other, question, context, ask=ENGINE_ASK,
+                             customer_facts=customer_passages(payload, question, context),
+                             pool="competitors" if start == "danfoss" else "danfoss")
+
+    def parts(system):
+        return " + ".join(f"{names.get(p, {}).get('name') or p.split('|')[-1]} ({r})"
+                          for r, p in system.components.items() if p) or "no components with data"
+    flags = [issue("unverified", f"{other_name} · {n}") for n in other.notes if "automatically" in n]
+    flags += [issue("missing", f"{other_name} · {n}") for n in other.notes if "automatically" not in n]
+    return to_website(result, names={anchor.id: {"name": anchor_name, "manufacturer": parts(anchor)},
+                                     other.id: {"name": other_name, "manufacturer": parts(other)}},
+                      doc_url=doc_url, extra_flags=flags)
+
+
+# =====================================================================
+# POST /api/match   (reverse flow: competitor product the customer uses -> best Danfoss products)
+# Request: { "competitorProductId": "kawasaki-kmp", "buyer": {...}, "factors": {...}, "chatNotes": [...] }
+# Response: same shape as /api/compare, with the competitor product as the anchor column.
+# =====================================================================
+@app.post("/api/match")
+def match(payload: dict):
+    cat = load_catalog()
+    names = catalog_names(cat)
+    pid = payload.get("competitorProductId")
+    product = next((p for p in cat.get("competitorProducts", []) if p["id"] == pid), None)
+    if not product:
+        return empty_response("Unknown competitor product", {"key": "x", "name": "?", "manufacturer": ""},
+                              [issue("error", "Competitor product not found in catalog.")])
+    anchor = {"key": pid, "name": product["name"], "manufacturer": names[pid]["manufacturer"]}
+    if pid not in products_with_facts():
+        return empty_response(f"{product['name']} vs. Danfoss", anchor, [issue(
+            "pending" if product.get("datasets") else "missing",
+            f"No extracted facts for {product['name']} yet. "
+            + ("Its datasheet is uploaded; the PDF→CSV step has not produced its facts CSV."
+               if product.get("datasets") else "Upload its datasheet in the Competitors step."))])
+    flags = [issue("unverified", "Danfoss products were selected automatically from the facts database. "
+                                 "Confirm functional equivalence before showing them to the customer.")]
+    return run_engine(pid, None, "danfoss", payload, names, {}, flags)
 
 
 # =====================================================================
@@ -526,8 +809,11 @@ def ask(payload: dict):
     if not anchor:
         return {"answer": "Pick a product above first. I'll use your question as context for the comparison."}
 
-    category = find_parent(cat, anchor["id"])
-    comps, _ = pick_competitors(cat, ctx, anchor["id"], category["id"] if category else None)
+    groups = ancestors(cat, anchor["id"])
+    chosen = ctx.get("competitorProductIds") or []
+    comps = [p for p in cat.get("competitorProducts", []) if p.get("datasets") and (
+        p["id"] in chosen if chosen else p["categoryId"] in groups
+        and (not ctx.get("competitors") or p["competitorId"] in ctx["competitors"]))][:3]
     words = [w for w in re.findall(r"[a-zA-Z/°]{3,}", question.lower())]
     blocks = [pages_as_prompt(f"Danfoss {anchor['label']}", select_pages(pages_for(anchor.get("datasets")), words, limit=8, max_chars=25000))]
     for p in comps:
@@ -548,4 +834,6 @@ def ask(payload: dict):
 # =====================================================================
 # Serve the front end on the same address (mount LAST so /api wins)
 # =====================================================================
+# Stored uploads, so every source link opens the original file at the cited page
+app.mount("/files", StaticFiles(directory=FILES_DIR), name="files")
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

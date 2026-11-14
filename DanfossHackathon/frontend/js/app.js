@@ -54,6 +54,9 @@
       loading: false,
       result: null,
       error: null,
+      mode: "compare",                            // "compare" (Danfoss first) | "match" (competitor first)
+      matchProduct: null,                         // { id, label } of the competitor product in match mode
+      system: null,                               // { label, payload } in system mode
     };
   }
 
@@ -106,6 +109,22 @@
     if (must.length) parts.push("Must-have: " + must.join(", "));
     if (nice.length) parts.push("Nice-to-have: " + nice.join(", "));
     return parts.join(" · ") || "No specific priorities";
+  }
+  /** Uploaded PDF datasheets that have not been turned into facts yet (for the Extract panel). */
+  function datasetsWithoutFacts() {
+    const out = [];
+    const add = (owner, label, d) => { if (!d.facts && d.name?.toLowerCase().endsWith(".pdf")) out.push({ ownerId: owner, fileId: d.fileId, name: d.name, label }); };
+    const walkTree = (nodes) => nodes.forEach((n) => { (n.datasets || []).forEach((d) => add(n.id, n.label, d)); walkTree(n.children || []); });
+    walkTree(catalog?.tree || []);
+    (catalog?.competitorProducts || []).forEach((p) => (p.datasets || []).forEach((d) => add(p.id, `${competitorName(p.competitorId)} ${p.name}`, d)));
+    return out;
+  }
+
+  /** Customer feedback files on record for this company (matched like the backend: case and spaces ignored). */
+  function customerFilesFor(company) {
+    const key = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+    const c = (catalog?.customers || []).find((x) => key(x.name) === key(company) && key(company));
+    return c ? `${c.files.length} file(s): ${c.files.join(", ")}` : "";
   }
   function buyerSummary() {
     const b = state.buyer;
@@ -313,7 +332,16 @@
           <legend>Whose data is it?</legend>
           <label><input type="radio" name="source" value="danfoss" ${source0 === "danfoss" ? "checked" : ""}> Danfoss</label>
           <label><input type="radio" name="source" value="competitor" ${source0 === "competitor" ? "checked" : ""}> Competitor</label>
+          <label><input type="radio" name="source" value="customer" ${source0 === "customer" ? "checked" : ""}> Customer feedback</label>
         </fieldset>
+
+        <div class="customer-fields">
+          <label class="field"><span>Customer <span class="req">*</span></span>
+            <input name="customerName" list="customer-names" placeholder="e.g. AGCO" value="${esc(state.buyer.company || "")}">
+            <datalist id="customer-names">${(catalog.customers || []).map((c) => `<option value="${esc(c.name)}">`).join("")}</datalist></label>
+          <p class="hint">Requirements, complaints or specs the customer sent (PDF, Excel, CSV, TXT). Only the text is kept,
+            not the file. It is used automatically when this customer is the buyer in a comparison, and cited as C1, C2 …</p>
+        </div>
 
         <div class="danfoss-fields">
           <label class="field">Attach to
@@ -346,7 +374,19 @@
           <span class="hint">PDF, CSV, Excel, JSON, HTML, Word · max 50 MB each</span>
           <span class="dz-list"></span>
         </label>
+        <details class="web-import">
+          <summary>…or import a datasheet from a manufacturer's website</summary>
+          <div class="form-grid tight">
+            <label class="field span-2"><span>Website or product page</span>
+              <input name="webUrl" type="url" placeholder="https://www.kawasakihydraulics.com/"></label>
+            <label class="field"><span>Look for</span>
+              <select name="webTopic"><option>valves</option><option>pumps</option><option>motors</option><option>steering</option></select></label>
+            <div class="field"><span>&nbsp;</span><button class="btn btn-ghost" type="button" data-act="web-search">Search website</button></div>
+          </div>
+          <div class="web-results"></div>
+        </details>
         <div class="form-issues"></div>
+        <div class="extract-box"></div>
         <div class="actions">
           <button class="btn btn-ghost" value="cancel" type="submit">Cancel</button>
           <button class="btn btn-primary" type="button" data-act="upload">Upload</button>
@@ -356,9 +396,12 @@
     const fileInput = f.querySelector('input[type="file"]');
     const list = f.querySelector(".dz-list");
     const syncSource = () => {
-      const comp = f.source.value === "competitor";
-      f.querySelector(".competitor-fields").hidden = !comp;
-      f.querySelector(".danfoss-fields").hidden = comp;
+      const src = f.source.value;
+      f.querySelector(".competitor-fields").hidden = src !== "competitor";
+      f.querySelector(".danfoss-fields").hidden = src !== "danfoss";
+      f.querySelector(".customer-fields").hidden = src !== "customer";
+      fileInput.accept = src === "customer" ? ".pdf,.xlsx,.xls,.csv,.txt" : ACCEPT;
+      f.querySelector(".dz-title").textContent = src === "customer" ? "Drop the customer's files here or click to choose" : "Drop datasheets here or click to choose";
     };
     const syncEquivalents = () => {
       const prods = productsIn(f.categoryId.value);
@@ -377,11 +420,11 @@
     dz.addEventListener("drop", (e) => { e.preventDefault(); dz.classList.remove("is-over"); fileInput.files = e.dataTransfer.files; showFiles(); });
     syncSource(); syncEquivalents();
 
-    f.querySelector('[data-act="upload"]').addEventListener("click", async (e) => {
-      const btn = e.currentTarget;
-      const issueBox = f.querySelector(".form-issues");
+    // which catalog item the files belong to (same fields for file upload and web import)
+    const targetMeta = () => {
       const isComp = f.source.value === "competitor";
-      const meta = isComp ? {
+      if (f.source.value === "customer") return { source: "customer", customerName: f.customerName.value.trim() };
+      return isComp ? {
         source: "competitor",
         competitorId: f.competitorId.value !== "__new" ? f.competitorId.value : null,
         competitorName: f.competitorId.value === "__new" ? f.competitorName.value.trim() : null,
@@ -389,16 +432,100 @@
         categoryId: f.categoryId.value,
         equivalentOf: f.equivalentOf.value || null,
       } : { source: "danfoss", nodeId: f.nodeId.value };
+    };
+
+    // ---- import from a website (teammates' scraper) ----
+    const webBox = f.querySelector(".web-results");
+    f.querySelector('[data-act="web-search"]').addEventListener("click", async (e) => {
+      const btn = e.currentTarget;
+      if (!f.webUrl.value.trim()) { webBox.innerHTML = flagHtml({ level: "error", text: "Enter a website address." }); return; }
+      btn.disabled = true;
+      webBox.innerHTML = '<p class="hint">Searching the website (up to a minute)…</p>';
+      try {
+        const res = await Api.webDiscover(f.webUrl.value.trim(), f.webTopic.value);
+        webBox.innerHTML = (res.issues || []).map(flagHtml).join("") + (res.documents.length ? `
+          <div class="web-list">${res.documents.map((d, i) => `<label class="web-doc"><input type="radio" name="webPick" value="${esc(d.url)}" data-name="${esc(d.name)}" ${i === 0 ? "checked" : ""}>
+            <span><strong>${esc(d.name)}</strong>${d.product ? ` · ${esc(d.product)}` : ""} <span class="hint">${esc(d.kind === "html" ? "web page text" : "PDF")}</span>
+            <a href="${esc(d.url)}" target="_blank" rel="noopener" class="hint">open</a></span></label>`).join("")}</div>
+          <div class="actions"><button class="btn btn-primary" type="button" data-act="web-import">Import selected for the product chosen above</button></div>` : "");
+        webBox.querySelector('[data-act="web-import"]')?.addEventListener("click", importPicked);
+      } catch (err) {
+        webBox.innerHTML = flagHtml({ level: "error", text: err.message });
+      } finally {
+        btn.disabled = false;
+      }
+    });
+    async function importPicked(e) {
+      const pick = f.querySelector('input[name="webPick"]:checked');
+      const meta = targetMeta();
+      if (!pick || meta.source === "customer") return;
+      const btn = e.currentTarget;                     // currentTarget is gone after an await
+      btn.disabled = true;
+      const issueBox = f.querySelector(".form-issues");
+      issueBox.innerHTML = '<p class="hint">Downloading…</p>';
+      try {
+        const res = await Api.webImport({ ...meta, url: pick.value, title: pick.dataset.name });
+        issueBox.innerHTML = res.issues.map(flagHtml).join("");
+        if (res.uploaded?.length) { await reloadCatalog(); showExtract(res.datasets); }
+      } catch (err) {
+        issueBox.innerHTML = flagHtml({ level: "error", text: err.message });
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // ---- extract facts (teammates' converter): from new uploads, or datasheets that have no facts yet ----
+    const extractBox = f.querySelector(".extract-box");
+    function showExtract(datasets) {
+      const pdfs = (datasets || []).filter((d) => d.name.toLowerCase().endsWith(".pdf"));
+      if (!pdfs.length) { extractBox.innerHTML = ""; return; }
+      extractBox.innerHTML = `<h4>Turn datasheets into comparable facts</h4>
+        <p class="hint">The AI reads each page (about a few cents per page, a few seconds each). For long datasheets
+          enter the pages with the technical data, e.g. 1-12.</p>
+        ${pdfs.map((d) => `<div class="extract-row" data-owner="${esc(d.ownerId)}" data-file="${esc(d.fileId)}">
+          <span class="extract-name">${esc(d.label ? d.label + " · " : "")}${esc(d.name)}</span>
+          <input class="extract-pages" placeholder="all pages" size="8" aria-label="Pages">
+          <button class="btn btn-ghost" type="button">Extract facts</button>
+          <div class="extract-status hint"></div></div>`).join("")}`;
+      extractBox.querySelectorAll(".extract-row").forEach((row) => row.querySelector("button").addEventListener("click", async (e) => {
+        const btn = e.currentTarget, status = row.querySelector(".extract-status");
+        btn.disabled = true;
+        try {
+          const res = await Api.extract(row.dataset.owner, row.dataset.file, row.querySelector(".extract-pages").value.trim());
+          if (!res.jobId) { status.innerHTML = res.issues.map(flagHtml).join(""); btn.disabled = false; return; }
+          for (;;) {                                         // poll the background job
+            const job = await Api.job(res.jobId);
+            status.textContent = job.progress || job.status;
+            if (job.status === "done" || job.status === "failed" || job.status === "unknown") break;
+            await new Promise((r) => setTimeout(r, 2000));
+          }
+          await reloadCatalog();
+        } catch (err) {
+          status.innerHTML = flagHtml({ level: "error", text: err.message });
+        } finally {
+          btn.disabled = false;
+        }
+      }));
+    }
+    showExtract(datasetsWithoutFacts());
+
+    f.querySelector('[data-act="upload"]').addEventListener("click", async (e) => {
+      const btn = e.currentTarget;
+      const issueBox = f.querySelector(".form-issues");
+      const isComp = f.source.value === "competitor";
+      const isCustomer = f.source.value === "customer";
+      const meta = targetMeta();
       btn.disabled = true;
       try {
         const res = await Api.uploadDatasets(meta, fileInput.files);
         issueBox.innerHTML = res.issues.map(flagHtml).join("");
         if (res.uploaded?.length) {
           await reloadCatalog();
-          const title = isComp ? `Competitor upload: ${meta.productName}` : `Upload to ${findNode(catalog.tree, meta.nodeId)?.label || meta.nodeId}`;
+          const title = isCustomer ? `Customer feedback: ${meta.customerName}` : isComp ? `Competitor upload: ${meta.productName}` : `Upload to ${findNode(catalog.tree, meta.nodeId)?.label || meta.nodeId}`;
           state.log.push({ stage: segments().length, role: "issues", title, issues: res.issues });
           render();
           fileInput.value = ""; list.textContent = "";
+          if (!isCustomer) showExtract(res.datasets);
         }
       } catch (err) {
         issueBox.innerHTML = flagHtml({ level: "error", text: err.message });
@@ -630,17 +757,31 @@
 
   const priorityRank = (factor) => ({ must: 0, nice: 1 }[state.factors[factor]] ?? 2);
 
+  // Footnote [n]: opens the original document at the cited page when we know its link (documents.csv,
+  // filled by the datasheet crawler); otherwise it jumps to the source list below the result.
+  let sourceById = {};
+  function ref(n) {
+    const s = sourceById[n];
+    return s?.url
+      ? `<a href="${esc(s.url)}" target="_blank" rel="noopener" class="ref" title="Open ${esc(s.title)}${s.page ? ", p. " + esc(s.page) : ""}">[${n}]</a>`
+      : `<a href="#src-${n}" class="ref" title="No online link yet">[${n}]</a>`;
+  }
+
   function cell(v) {
     if (v && v.value == null && v.status === "pending") {
       return `<td class="cell-pending">Awaiting extraction${v.note ? `<div class="cell-note">${esc(v.note)}</div>` : ""}</td>`;
     }
-    if (!v || v.value == null) {
-      return `<td class="cell-missing" title="${esc(v?.note || "Not found in sources")}">Not found${v?.note ? `<div class="cell-note">${esc(v.note)}</div>` : ""}</td>`;
+    if (v && v.status === "na") {                 // this product has no value under this name: not "missing"
+      return `<td class="cell-na" title="${esc(v.note || "No matching value")}">–</td>`;
     }
-    const refs = (v.sources || []).map((s) => `<a href="#src-${s}" class="ref">[${s}]</a>`).join("");
+    if (!v || v.value == null) {                  // the datasheet does not state it (detail in the tooltip)
+      return `<td class="cell-missing" title="${esc(v?.note || "Not found in sources")}">Not stated</td>`;
+    }
+    const refs = (v.sources || []).map(ref).join("");
     const st = CELL_STATUS[v.status];
-    const tag = st ? `<span class="badge ${st[1]}">${st[0]}</span>` : "";
-    const note = v.note ? `<div class="cell-note">${esc(v.note)}</div>` : "";
+    const tag = st ? `<span class="badge ${st[1]}" title="${esc(v.note || "")}">${st[0]}</span>` : "";
+    // short notes that change the meaning stay visible; the rest is a tooltip on the badge
+    const note = v.note && ["conflict", "converted", "inferred"].includes(v.status) ? `<div class="cell-note">${esc(v.note)}</div>` : "";
     return `<td class="cell-${v.status || "ok"}">${esc(v.value)}${refs}${tag}${note}</td>`;
   }
 
@@ -648,8 +789,8 @@
   function issueSummary(r) {
     const counts = {};
     r.attributes.forEach((a) => Object.values(a.values).forEach((v) => {
-      const s = v?.status === "pending" ? "pending" : !v || v.value == null ? "missing" : v.status;
-      if (s && s !== "ok") counts[s] = (counts[s] || 0) + 1;
+      const s = v?.status === "pending" || v?.status === "na" ? v.status : !v || v.value == null ? "missing" : v.status;
+      if (s && s !== "ok" && s !== "na") counts[s] = (counts[s] || 0) + 1;
     }));
     (r.flags || []).forEach((f) => { if (!(f.level in counts) && f.level !== "missing") counts[f.level] = 1; });
     const parts = Object.entries(counts).map(([k, n]) =>
@@ -660,12 +801,22 @@
   function insightList(title, items) {
     if (!items || !items.length) return "";
     return `<section class="insight"><h4>${esc(title)}</h4><ul>${items.map((it) =>
-      `<li>${esc(it.text)}${(it.sources || []).map((s) => `<a href="#src-${s}" class="ref">[${s}]</a>`).join("")}${it.sample ? ' <span class="badge badge-muted">Sample</span>' : ""}</li>`).join("")}</ul></section>`;
+      `<li>${esc(it.text)}${(it.sources || []).map(ref).join("")}${it.sample ? ' <span class="badge badge-muted">Sample</span>' : ""}</li>`).join("")}</ul></section>`;
   }
 
   function resultWidget(r) {
     const cols = [r.anchor, ...r.matches];
-    const rows = [...r.attributes].sort((a, b) => priorityRank(a.factor) - priorityRank(b.factor));
+    sourceById = Object.fromEntries((r.sources || []).map((s) => [s.id, s]));
+    const sorted = [...r.attributes].sort((a, b) => priorityRank(a.factor) - priorityRank(b.factor));
+    // short table = rows comparable across products ("core"); everything else is collapsed and not printed
+    const rows = sorted.filter((a) => a.core !== false);
+    const more = sorted.filter((a) => a.core === false);
+    const rowHtml = (a) => {
+      const pr = state.factors[a.factor];
+      return `<tr class="${pr ? "is-" + pr : ""}${a.paired ? " is-paired" : ""}"><th scope="row">${pr ? `<span class="prio prio-${pr}" title="${pr === "must" ? "Must-have" : "Nice-to-have"}"></span>` : ""}${esc(a.label)}${a.unit ? ` <span class="unit">(${esc(a.unit)})</span>` : ""}${a.paired ? `<div class="cell-note" title="${esc(a.note || "")}">paired by AI</div>` : ""}</th>${cols.map((c) => cell(a.values[c.key])).join("")}</tr>`;
+    };
+    const head = `<thead><tr><th>Attribute</th>${cols.map((c) =>
+          `<th><div class="col-name">${esc(c.name)}</div><div class="col-sub">${esc(c.manufacturer)}${c.knownEquivalent ? " · confirmed equivalent" : c.matchScore ? ` · match ${Math.round(c.matchScore * 100)}%` : ""}</div></th>`).join("")}</tr></thead>`;
     const card = el("div", { class: "result" });
     card.innerHTML = `
       <div class="result-head">
@@ -678,14 +829,10 @@
       <div class="issue-summary">${issueSummary(r)}
       </div>
       ${r.isSample ? '<div class="flag flag-sample">Prototype view: competitor values are sample data until the competitor dataset is loaded.</div>' : ""}
-      <div class="table-wrap"><table class="cmp">
-        <thead><tr><th>Attribute</th>${cols.map((c) =>
-          `<th><div class="col-name">${esc(c.name)}</div><div class="col-sub">${esc(c.manufacturer)}${c.knownEquivalent ? " · confirmed equivalent" : c.matchScore ? ` · match ${Math.round(c.matchScore * 100)}%` : ""}</div></th>`).join("")}</tr></thead>
-        <tbody>${rows.map((a) => {
-          const pr = state.factors[a.factor];
-          return `<tr class="${pr ? "is-" + pr : ""}"><th scope="row">${pr ? `<span class="prio prio-${pr}" title="${pr === "must" ? "Must-have" : "Nice-to-have"}"></span>` : ""}${esc(a.label)}${a.unit ? ` <span class="unit">(${esc(a.unit)})</span>` : ""}</th>${cols.map((c) => cell(a.values[c.key])).join("")}</tr>`;
-        }).join("")}</tbody>
-      </table></div>
+      ${rows.length ? `<div class="table-wrap"><table class="cmp">${head}<tbody>${rows.map(rowHtml).join("")}</tbody></table></div>`
+        : '<p class="hint">No attribute could be compared directly between these products - see the notes below.</p>'}
+      ${more.length ? `<details class="more-facts"><summary>All facts (${more.length} more rows, only one product has a value)</summary>
+        <div class="table-wrap"><table class="cmp">${head}<tbody>${more.map(rowHtml).join("")}</tbody></table></div></details>` : ""}
       <div class="insights">
         ${insightList("Key differences", r.insights?.differences)}
         ${insightList(`Benefits for ${state.buyer.company || "the customer"}`, r.insights?.benefits)}
@@ -693,13 +840,14 @@
       </div>
       ${r.flags?.length ? `<section class="insight"><h4>Open points</h4>${r.flags.map(flagHtml).join("")}</section>` : ""}
       <section class="sources"><h4>Sources</h4><ol>${r.sources.map((s) =>
-        `<li id="src-${s.id}">${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title)}${s.page ? `, p. ${esc(s.page)}` : ""}${s.date ? ` <span class="hint">(${esc(s.date)})</span>` : ""}${s.doc ? `<div class="hint">${esc(s.doc)}</div>` : ""}</li>`).join("")}</ol></section>
+        `<li id="src-${s.id}">${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title)}${s.page ? `, p. ${esc(s.page)}` : ""}${s.date ? ` <span class="hint">(${esc(s.date)})</span>` : ""}${s.url || s.kind === "customer" ? "" : ' <span class="hint">· no online link yet</span>'}${s.doc ? `<div class="hint">${esc(s.doc)}</div>` : ""}</li>`).join("")}</ol></section>
       <div class="actions">
         <button class="btn btn-ghost" type="button" data-act="print">Print / save as PDF</button>
         <button class="btn btn-ghost" type="button" data-act="edit">Adjust priorities</button>
       </div>`;
     card.querySelector('[data-act="print"]').addEventListener("click", () => window.print());
-    card.querySelector('[data-act="edit"]').addEventListener("click", () => {
+    if (state.mode !== "compare") card.querySelector('[data-act="edit"]').remove();
+    else card.querySelector('[data-act="edit"]').addEventListener("click", () => {
       const idx = segments().findIndex((s) => s.key === "factors");
       editSegment(idx);
     });
@@ -708,6 +856,21 @@
 
   // ---------- sidebar + stepper ----------
   function renderBrief() {
+    if (state.mode === "system") {
+      briefEl.innerHTML = `<h2>System comparison</h2>
+        <div class="brief-item"><div class="brief-label">${state.system.start === "danfoss" ? "Danfoss system" : "Customer uses"}</div><div class="brief-value">${esc(state.system.label)}</div></div>
+        <div class="brief-item"><div class="brief-label">Buyer</div><div class="brief-value ${buyerSummary() ? "" : "is-empty"}">${esc(buyerSummary() || "Not set")}</div></div>
+        ${customerFilesFor(state.buyer.company) ? `<div class="brief-item"><div class="brief-label">Customer feedback</div><div class="brief-value">${esc(customerFilesFor(state.buyer.company))}</div></div>` : ""}
+        <p class="hint brief-foot">System values (e.g. system flow) are calculated by code from the component facts, never by the AI.</p>`;
+      return;
+    }
+    if (state.mode === "match") {
+      briefEl.innerHTML = `<h2>Danfoss match</h2>
+        <div class="brief-item"><div class="brief-label">Customer uses</div><div class="brief-value">${esc(state.matchProduct.label)}</div></div>
+        <div class="brief-item"><div class="brief-label">Buyer</div><div class="brief-value ${buyerSummary() ? "" : "is-empty"}">${esc(buyerSummary() || "Not set")}</div></div>
+        <p class="hint brief-foot">Danfoss candidates come from the facts database. Every value links to its source; missing or conflicting data is flagged, never guessed.</p>`;
+      return;
+    }
     const segs = segments();
     const find = (key) => segs.findIndex((s) => s.key === key);
     const item = (label, value, key) => {
@@ -722,6 +885,7 @@
       ${item("Priorities", state.done.factors ? factorSummary() : "", "factors")}
       ${item("Buyer", state.done.buyer ? buyerSummary() : "", "buyer")}
       ${state.done.buyer && state.buyer.notes ? item("Notes", state.buyer.notes, "buyer") : ""}
+      ${customerFilesFor(state.buyer.company) ? `<div class="brief-item"><div class="brief-label">Customer feedback</div><div class="brief-value">${esc(customerFilesFor(state.buyer.company))}</div></div>` : ""}
       <p class="hint brief-foot">Every fact in the result links to its source. Missing or conflicting data is flagged, never guessed.</p>`;
     briefEl.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => editSegment(+b.dataset.edit)));
   }
@@ -738,8 +902,157 @@
   }
 
   // ---------- main render ----------
+  // ---------- reverse flow: competitor product -> closest Danfoss products ----------
+  function openMatchDialog() {
+    const dlg = $("#match-dialog");
+    const prods = catalog.competitorProducts || [];
+    dlg.innerHTML = `
+      <form method="dialog" class="dialog-body">
+        <div class="dialog-head"><h3>Find Danfoss match</h3><button class="link-btn" value="cancel" type="submit">Close</button></div>
+        <p class="hint">The customer uses a competitor product today. We look for the closest Danfoss products in the facts database.</p>
+        ${prods.length ? `
+        <label class="field">Competitor product the customer uses
+          <select name="productId">${prods.map((p) =>
+            `<option value="${esc(p.id)}">${esc(competitorName(p.competitorId) + " " + p.name)}${p.datasets?.length ? "" : " (no datasheet yet)"}</option>`).join("")}</select></label>
+        <div class="form-grid tight">
+          <label class="field"><span>Customer <span class="opt">(optional)</span></span><input name="company" placeholder="e.g. AGCO"></label>
+          <label class="field"><span>Application <span class="opt">(optional)</span></span><input name="application" placeholder="e.g. Tractor"></label>
+        </div>
+        <div class="actions"><button class="btn btn-primary" value="go" type="submit">Find match</button></div>`
+        : `<p class="flag flag-missing">No competitor products yet. Add one with "Upload data" → Competitor.</p>`}
+      </form>`;
+    dlg.querySelector("form").addEventListener("submit", (e) => {
+      if (e.submitter?.value !== "go") return;
+      const f = new FormData(e.target);
+      const prod = prods.find((p) => p.id === f.get("productId"));
+      state = freshState();
+      state.mode = "match";
+      state.matchProduct = { id: prod.id, label: competitorName(prod.competitorId) + " " + prod.name };
+      state.buyer.company = (f.get("company") || "").trim();
+      state.buyer.application = (f.get("application") || "").trim();
+      runMatch();
+    });
+    dlg.showModal();
+  }
+
+  async function runMatch() {
+    state.loading = true; state.error = null; state.result = null; render();
+    try {
+      state.result = await Api.match({ competitorProductId: state.matchProduct.id, buyer: { ...state.buyer },
+                                       factors: {}, customFactors: [], chatNotes: [] });
+    } catch (err) {
+      state.error = err.message;
+    } finally {
+      state.loading = false; render();
+    }
+  }
+
+  // ---------- system comparison: e.g. pump + valve against the other side's pump + valve ----------
+  async function openSystemDialog() {
+    const dlg = $("#system-dialog");
+    dlg.innerHTML = `<div class="dialog-body"><p>Loading products…</p></div>`;
+    dlg.showModal();
+    let products = [];
+    try { products = (await Api.products()).products || []; }
+    catch (err) { dlg.innerHTML = `<div class="dialog-body">${flagHtml({ level: "error", text: err.message })}</div>`; return; }
+    const families = [...new Set(products.map((p) => p.family))].filter(Boolean);
+    const label = (p) => `${p.brand} ${p.name}${p.demo ? " (DEMO data)" : ""}`;
+    const options = (fam, side, extra) => extra + products.filter((p) => p.family === fam && p.side === side)
+      .map((p) => `<option value="${esc(p.id)}">${esc(label(p))}</option>`).join("");
+    const draw = (start) => {
+      const other = start === "danfoss" ? "competitor" : "danfoss";
+      dlg.innerHTML = `
+      <form method="dialog" class="dialog-body">
+        <div class="dialog-head"><h3>Compare system</h3><button class="link-btn" value="cancel" type="submit">Close</button></div>
+        <p class="hint">A system is a set of components that work together. Code also calculates how well they fit
+          (e.g. system flow = the smaller of pump flow and valve inlet flow) – every value still links to its datasheet page.</p>
+        <fieldset class="field seg"><legend>Start from</legend>
+          <label><input type="radio" name="start" value="danfoss" ${start === "danfoss" ? "checked" : ""}> A Danfoss system</label>
+          <label><input type="radio" name="start" value="competitor" ${start === "competitor" ? "checked" : ""}> The competitor system the customer uses</label>
+        </fieldset>
+        <div class="form-grid tight">${families.map((fam) => `
+          <label class="field"><span>${esc(fam[0].toUpperCase() + fam.slice(1))} · ${start === "danfoss" ? "Danfoss" : "competitor"}</span>
+            <select name="c-${esc(fam)}">${options(fam, start, '<option value="">– not part of the system –</option>')}</select></label>
+          <label class="field"><span>compare with (${other === "danfoss" ? "Danfoss" : "competitor"})</span>
+            <select name="a-${esc(fam)}">${options(fam, other, '<option value="">Find best match automatically</option>')}</select></label>`).join("")}
+        </div>
+        <div class="form-grid tight">
+          <label class="field"><span>Customer <span class="opt">(optional)</span></span><input name="company" value="${esc(state.buyer.company || "")}" placeholder="e.g. AGCO"></label>
+          <label class="field"><span>Application <span class="opt">(optional)</span></span><input name="application" value="${esc(state.buyer.application || "")}" placeholder="e.g. Wheel loader"></label>
+        </div>
+        <div class="form-issues"></div>
+        <div class="actions"><button class="btn btn-primary" value="go" type="submit">Compare system</button></div>
+      </form>`;
+      const f = dlg.querySelector("form");
+      f.querySelectorAll('input[name="start"]').forEach((r) => r.addEventListener("change", () => draw(r.value)));
+      f.addEventListener("submit", (e) => {
+        if (e.submitter?.value !== "go") return;
+        const components = {}, against = {};
+        families.forEach((fam) => { components[fam] = f["c-" + fam].value || null; against[fam] = f["a-" + fam].value || null; });
+        const chosen = Object.entries(components).filter(([, v]) => v);
+        if (chosen.length < 2) {
+          e.preventDefault();
+          f.querySelector(".form-issues").innerHTML = flagHtml({ level: "error", text: "Choose at least two components (e.g. a pump and a valve)." });
+          return;
+        }
+        const name = (id) => label(products.find((p) => p.id === id) || { brand: "", name: id });
+        state = freshState();
+        state.mode = "system";
+        state.buyer.company = f.company.value.trim();
+        state.buyer.application = f.application.value.trim();
+        state.system = {
+          label: chosen.map(([fam, id]) => `${fam}: ${name(id)}`).join(" + "),
+          start: f.start.value,
+          payload: { start: f.start.value, components, against },
+        };
+        runSystem();
+      });
+    };
+    if (!families.length) {
+      dlg.innerHTML = `<div class="dialog-body"><p class="flag flag-missing">No products with extracted facts yet.</p></div>`;
+      return;
+    }
+    draw("danfoss");
+  }
+
+  async function runSystem() {
+    state.loading = true; state.error = null; state.result = null; render();
+    try {
+      state.result = await Api.compareSystem({ ...state.system.payload, buyer: { ...state.buyer }, factors: {}, chatNotes: [] });
+    } catch (err) {
+      state.error = err.message;
+    } finally {
+      state.loading = false; render();
+    }
+  }
+
+  function renderSystem() {
+    botMsg(state.system.start === "danfoss" ? "Which Danfoss components make up the system?" : "Which competitor system does the customer use?", { compact: true });
+    userMsg(state.system.label + (buyerSummary() ? " · " + buyerSummary() : ""), openSystemDialog);
+    if (state.loading) loadingWidget();
+    else if (state.error) botMsg(`<div class="flag flag-conflict">Couldn't compare the systems: ${esc(state.error)}</div>`);
+    else if (state.result) resultWidget(state.result);
+  }
+
+  function renderMatch() {
+    botMsg("Which competitor product does the customer use today?", { compact: true });
+    userMsg(state.matchProduct.label + (buyerSummary() ? " · " + buyerSummary() : ""), openMatchDialog);
+    if (state.loading) loadingWidget();
+    else if (state.error) botMsg(`<div class="flag flag-conflict">Couldn't find a match: ${esc(state.error)}</div>`);
+    else if (state.result) resultWidget(state.result);
+  }
+
   function render() {
     chat.innerHTML = "";
+    if (state.mode === "match" || state.mode === "system") {
+      botMsg(state.mode === "match" ? "Let's find the closest Danfoss products for the competitor product your customer uses."
+                                    : "Let's compare a whole system – component by component and how well the parts fit together.");
+      state.mode === "match" ? renderMatch() : renderSystem();
+      renderBrief();
+      renderStepper();
+      requestAnimationFrame(() => (chat.scrollTop = chat.scrollHeight));
+      return;
+    }
     botMsg("Hi! I'll help you compare a Danfoss product with its competitors. Pick the options below, or type a question at any time.");
     renderLog(0);
     segments().forEach((seg, i) => {
@@ -790,6 +1103,8 @@
 
   async function reloadCatalog() { catalog = await Api.getCatalog(); }
   $("#btn-upload").addEventListener("click", () => catalog && openUploadDialog());
+  $("#btn-match").addEventListener("click", () => catalog && openMatchDialog());
+  $("#btn-system").addEventListener("click", () => catalog && openSystemDialog());
 
   // ---------- boot ----------
   Api.getCatalog()
