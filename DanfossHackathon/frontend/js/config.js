@@ -9,4 +9,9 @@ window.APP_CONFIG = {
   // true  = use js/mock-data.js (works by just opening index.html)
   // false = call the real backend at API_BASE
   USE_MOCK: false,
+
+  // Voice input (🎤 button): language the speech recognizer listens for.
+  // In the Android app it can be changed under "Server" in the top bar.
+  VOICE_LANG: "en-US",
+  VOICE_LANGS: { "en-US": "English", "en-GB": "English (UK)", "da-DK": "Dansk", "de-DE": "Deutsch" },
 };

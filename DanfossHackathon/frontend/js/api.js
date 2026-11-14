@@ -13,7 +13,7 @@ const Api = (() => {
   async function call(path, options = {}) {
     const isForm = options.body instanceof FormData;
     const res = await fetch(cfg.API_BASE + path, {
-      headers: isForm ? {} : { "Content-Type": "application/json" },
+      headers: { ...(isForm ? {} : { "Content-Type": "application/json" }), ...(cfg.EXTRA_HEADERS || {}) },
       ...options,
     });
     if (!res.ok) throw new Error(`API ${path} failed with status ${res.status}`);

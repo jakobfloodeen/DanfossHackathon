@@ -6,6 +6,8 @@ and **every value links to its source page, uncertain data is flagged, and the A
 
 **New here? Start with [HOW_TO_RUN.md](HOW_TO_RUN.md)** – step-by-step setup for Mac and Windows.
 
+**Android app with voice input:** see [mobile/README.md](mobile/README.md) (APK is built by GitHub Actions).
+
 ## Run it (short version)
 ```
 cd DanfossHackathon

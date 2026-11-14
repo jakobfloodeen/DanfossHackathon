@@ -703,7 +703,7 @@
         <input name="currentSupplier" value="${esc(b.currentSupplier)}" placeholder="e.g. competitor valve in use today">
       </label>
       <label class="field span-2"><span>Additional notes <span class="opt">(optional)</span></span>
-        <textarea name="notes" rows="3" placeholder="Requirements, constraints, volumes, meeting goal…">${esc(b.notes)}</textarea>
+        <textarea name="notes" rows="3" data-voice placeholder="Requirements, constraints, volumes, meeting goal…">${esc(b.notes)}</textarea>
       </label>
       <div class="actions span-2"><button class="btn btn-primary" type="submit">Continue</button></div>`;
     form.addEventListener("submit", (e) => {
