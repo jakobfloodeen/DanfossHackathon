@@ -75,9 +75,11 @@ class _Sources:
         key = (f.source_file, f.page)
         if key not in self.index:
             self.index[key] = len(self.items) + 1
-            self.items.append({"id": self.index[key], "title": f.source_file, "doc": "", "quotes": [],
-                               "page": str(f.page) if f.page else "", "date": "",
-                               "url": self.doc_url(f.source_file, f.page)})
+            found = self.doc_url(f.source_file, f.page)        # str url, or {url, title, date}, or None
+            info = found if isinstance(found, dict) else {"url": found}
+            self.items.append({"id": self.index[key], "title": info.get("title") or f.source_file, "doc": "",
+                               "quotes": [], "page": str(f.page) if f.page else "", "date": info.get("date", ""),
+                               "file": f.source_file, "url": info.get("url")})
         item = self.items[self.index[key] - 1]
         if f.quote and f.quote not in item["quotes"]:
             item["quotes"].append(f.quote)
@@ -181,7 +183,7 @@ def to_website(result: AnalysisResult, names: dict[str, dict] | None = None,
                extra_flags: list[dict] | None = None) -> dict:
     """
     names    product_id -> {"name", "manufacturer", "knownEquivalent"} (from the website catalog)
-    doc_url  function(source_file, page) -> link to the stored PDF page, or None
+    doc_url  function(source_file, page) -> url, or {url, title, date} (documents.csv), or None
     pending  product_id -> note, for products that have uploaded files but no facts CSV yet
     """
     names, pending = names or {}, pending or {}

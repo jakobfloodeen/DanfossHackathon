@@ -632,6 +632,16 @@
 
   const priorityRank = (factor) => ({ must: 0, nice: 1 }[state.factors[factor]] ?? 2);
 
+  // Footnote [n]: opens the original document at the cited page when we know its link (documents.csv,
+  // filled by the datasheet crawler); otherwise it jumps to the source list below the result.
+  let sourceById = {};
+  function ref(n) {
+    const s = sourceById[n];
+    return s?.url
+      ? `<a href="${esc(s.url)}" target="_blank" rel="noopener" class="ref" title="Open ${esc(s.title)}${s.page ? ", p. " + esc(s.page) : ""}">[${n}]</a>`
+      : `<a href="#src-${n}" class="ref" title="No online link yet">[${n}]</a>`;
+  }
+
   function cell(v) {
     if (v && v.value == null && v.status === "pending") {
       return `<td class="cell-pending">Awaiting extraction${v.note ? `<div class="cell-note">${esc(v.note)}</div>` : ""}</td>`;
@@ -642,7 +652,7 @@
     if (!v || v.value == null) {                  // the datasheet does not state it (detail in the tooltip)
       return `<td class="cell-missing" title="${esc(v?.note || "Not found in sources")}">Not stated</td>`;
     }
-    const refs = (v.sources || []).map((s) => `<a href="#src-${s}" class="ref">[${s}]</a>`).join("");
+    const refs = (v.sources || []).map(ref).join("");
     const st = CELL_STATUS[v.status];
     const tag = st ? `<span class="badge ${st[1]}" title="${esc(v.note || "")}">${st[0]}</span>` : "";
     // short notes that change the meaning stay visible; the rest is a tooltip on the badge
@@ -666,11 +676,12 @@
   function insightList(title, items) {
     if (!items || !items.length) return "";
     return `<section class="insight"><h4>${esc(title)}</h4><ul>${items.map((it) =>
-      `<li>${esc(it.text)}${(it.sources || []).map((s) => `<a href="#src-${s}" class="ref">[${s}]</a>`).join("")}${it.sample ? ' <span class="badge badge-muted">Sample</span>' : ""}</li>`).join("")}</ul></section>`;
+      `<li>${esc(it.text)}${(it.sources || []).map(ref).join("")}${it.sample ? ' <span class="badge badge-muted">Sample</span>' : ""}</li>`).join("")}</ul></section>`;
   }
 
   function resultWidget(r) {
     const cols = [r.anchor, ...r.matches];
+    sourceById = Object.fromEntries((r.sources || []).map((s) => [s.id, s]));
     const sorted = [...r.attributes].sort((a, b) => priorityRank(a.factor) - priorityRank(b.factor));
     // short table = rows comparable across products ("core"); everything else is collapsed and not printed
     const rows = sorted.filter((a) => a.core !== false);
@@ -704,7 +715,7 @@
       </div>
       ${r.flags?.length ? `<section class="insight"><h4>Open points</h4>${r.flags.map(flagHtml).join("")}</section>` : ""}
       <section class="sources"><h4>Sources</h4><ol>${r.sources.map((s) =>
-        `<li id="src-${s.id}">${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title)}${s.page ? `, p. ${esc(s.page)}` : ""}${s.date ? ` <span class="hint">(${esc(s.date)})</span>` : ""}${s.doc ? `<div class="hint">${esc(s.doc)}</div>` : ""}</li>`).join("")}</ol></section>
+        `<li id="src-${s.id}">${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title)}${s.page ? `, p. ${esc(s.page)}` : ""}${s.date ? ` <span class="hint">(${esc(s.date)})</span>` : ""}${s.url ? "" : ' <span class="hint">· no online link yet</span>'}${s.doc ? `<div class="hint">${esc(s.doc)}</div>` : ""}</li>`).join("")}</ol></section>
       <div class="actions">
         <button class="btn btn-ghost" type="button" data-act="print">Print / save as PDF</button>
         <button class="btn btn-ghost" type="button" data-act="edit">Adjust priorities</button>

@@ -347,6 +347,7 @@ Rules:
 # =====================================================================
 from comparison_engine import interpret, load_repository      # noqa: E402
 from comparison_engine.website import to_website              # noqa: E402
+from comparison_engine.documents import link as document_link  # noqa: E402
 
 ENGINE_ASK = None   # None = the real Claude API. Tests put a fake function here (no key, no cost).
 WAITING = "Datasheet uploaded - values not extracted to the facts CSV yet."
@@ -369,8 +370,13 @@ def catalog_names(cat) -> dict:
     return names
 
 
-def doc_url(source_file: str, page) -> Optional[str]:
-    """Link to the stored upload at the cited page: /files/<owner>/<fileId>_<name>#page=N."""
+def doc_url(source_file: str, page):
+    """Where the user can open a source at the cited page:
+    1. the manufacturer's own document online (data/documents.csv, filled by the datasheet crawler)
+    2. otherwise the uploaded copy, if it is still stored (/files/<owner>/<fileId>_<name>#page=N)"""
+    online = document_link(source_file, page)
+    if online:
+        return online
     for path in FILES_DIR.glob(f"*/*_{source_file}"):
         return f"/files/{path.parent.name}/{path.name}" + (f"#page={page}" if page else "")
     return None
