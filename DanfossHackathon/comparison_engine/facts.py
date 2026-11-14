@@ -39,6 +39,7 @@ class Fact:
     note: str = ""
     based_on: list[str] = field(default_factory=list)   # fact ids a calculated value was made from
     attribute_original: str = ""                         # the datasheet's own name, if it was renamed
+    condition: str = ""                                  # e.g. "with pressure compensator", "intermittent"
 
     def display(self) -> str:
         """'71 cc/rev', 'PC, LS' or 'not stated'."""
@@ -116,6 +117,7 @@ def build_facts(target_id: str, candidate_ids: list[str], data: pd.DataFrame | N
                          status=r["status"], csv_file=_clean(r["csv_file"]), note=r.get("note") or "",
                          attribute_original=(_clean(r.get("attribute_original")) or "")
                          if _clean(r.get("attribute_original")) != attr else "",
+                         condition=str(_clean(r.get("condition")) or ""),
                          based_on=list(r["based_on"]) if isinstance(r.get("based_on"), list) else [])
                 product_facts.append(f)
                 by_attr.setdefault(attr, []).append(f.id)

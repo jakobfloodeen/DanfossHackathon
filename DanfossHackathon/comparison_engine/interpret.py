@@ -63,6 +63,7 @@ def _fact_line(f: Fact) -> str:
     quote = (f.quote or "")[:140].replace("\n", " ")
     extra = f" | from {', '.join(f.based_on)}" if f.based_on else ""
     extra += f" | datasheet calls it '{f.attribute_original}'" if f.attribute_original else ""
+    extra += f" | condition: {f.condition}" if f.condition else ""
     return (f"{f.id} | {f.product_id} | {f.attribute} | {f.display()} | original: {original} | "
             f"status: {f.status} | {f.source()} | \"{quote}\"{extra}")
 

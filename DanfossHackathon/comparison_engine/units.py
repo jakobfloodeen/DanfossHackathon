@@ -31,8 +31,12 @@ UNITS = {
     "inch": ("length", 25.4),
     # counts
     "count": ("count", 1), "pcs": ("count", 1), "sections": ("count", 1),
+    # temperature (°C only - °F would need an offset, not a factor) and viscosity
+    "°c": ("temperature", 1), "degc": ("temperature", 1), "degreesc": ("temperature", 1), "celsius": ("temperature", 1),
+    "mm2/s": ("viscosity", 1), "cst": ("viscosity", 1),
 }
-BASE_UNIT = {"pressure": "bar", "flow": "l/min", "displacement": "cc/rev", "speed": "rpm",
+BASE_UNIT = {"temperature": "°C", "viscosity": "mm2/s",
+             "pressure": "bar", "flow": "l/min", "displacement": "cc/rev", "speed": "rpm",
              "mass": "kg", "length": "mm", "count": ""}
 
 # a plain number: optional minus, digits, optional , or . separators. Nothing else.
@@ -51,7 +55,7 @@ def unit_key(unit) -> str:
     if unit is None or (isinstance(unit, float) and unit != unit):   # None or NaN
         return ""
     s = str(unit).strip().lower().replace(" ", "")
-    return s.replace("³", "3").replace("⁻¹", "-1").replace("−", "-").replace("–", "-")
+    return s.replace("³", "3").replace("²", "2").replace("⁻¹", "-1").replace("−", "-").replace("–", "-")
 
 
 def is_known_unit(unit) -> bool:

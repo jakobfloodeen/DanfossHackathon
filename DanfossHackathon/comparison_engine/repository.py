@@ -245,8 +245,11 @@ def _add_calculated(data: pd.DataFrame) -> pd.DataFrame:
 def _flag_conflicts(data: pd.DataFrame) -> pd.DataFrame:
     """Same product + attribute, 2+ different sources (another file, or another page of the same file),
     values differ by more than the tolerance."""
-    numeric = data[data["norm_value"].notna() & (data["source_file"] != "calculated")]
-    for (pid, attr), g in numeric.groupby(["product_id", "attribute"]):
+    numeric = data[data["norm_value"].notna() & (data["source_file"] != "calculated")].copy()
+    # values under different conditions ("with compensator" / "without") are not a conflict
+    numeric["_cond"] = numeric["condition"].fillna("").astype(str).str.lower().str.strip() \
+        if "condition" in numeric.columns else ""
+    for (pid, attr, _), g in numeric.groupby(["product_id", "attribute", "_cond"]):
         if len(set(zip(g["source_file"], g["page"].fillna(-1)))) < 2:
             continue
         tolerance = load_logic(g["family"].iloc[0]).settings["conflict_tolerance"]

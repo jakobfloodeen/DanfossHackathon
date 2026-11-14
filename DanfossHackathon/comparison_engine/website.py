@@ -130,6 +130,12 @@ def _cell(facts: list[Fact], row_unit: str, by_id: dict[str, Fact], sources: _So
         return {"value": " / ".join(dict.fromkeys(_value_text(f, row_unit) for f in stated)),
                 "status": "conflict", "sources": sources.refs(stated, by_id),
                 "note": " vs ".join(f"{_value_text(f, row_unit)} ({where(f)})" for f in stated)}
+    if len({(f.condition, _value_text(f, row_unit)) for f in stated}) > 1:   # several values, each under its condition
+        parts = [_cell([f], row_unit, by_id, sources) for f in stated]
+        worst = next((c["status"] for c in parts if c["status"] in ("unverified", "inferred")), parts[0]["status"])
+        return {"value": " · ".join(dict.fromkeys(f"{c['value']}" + (f" ({f.condition})" if f.condition else "")
+                                                for c, f in zip(parts, stated))),
+                "status": worst, "sources": sorted({n for c in parts for n in c.get("sources", [])})}
     f = stated[0]
     cell = {"value": _value_text(f, row_unit), "status": "ok", "sources": sources.refs([f], by_id)}
     if f.status == "calculated":
