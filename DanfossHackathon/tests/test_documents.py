@@ -37,10 +37,11 @@ def test_validate_documents():
 def test_sources_in_the_result_use_the_online_link(tmp_path, monkeypatch):
     monkeypatch.setenv("DOCUMENTS_FILE", str(write(tmp_path)))
     w = to_website(interpret(COMPX, None, use_ai=False), doc_url=lambda f, p: link(f, p))
-    by_file = {s["file"]: s for s in w["sources"]}
-    assert by_file["DEMO_compx.pdf"]["url"] == "https://example.com/docs/compx.pdf#page=4"
-    assert by_file["DEMO_compx.pdf"]["title"] == "CompetitorX pump datasheet"
-    assert by_file["DEMO_danfoss.pdf"]["url"] is None
+    by_page = {(s["file"], s["page"]): s for s in w["sources"]}           # one source per document page
+    assert by_page[("DEMO_compx.pdf", "4")]["url"] == "https://example.com/docs/compx.pdf#page=4"
+    assert by_page[("DEMO_compx.pdf", "12")]["url"] == "https://example.com/docs/compx.pdf#page=12"
+    assert by_page[("DEMO_compx.pdf", "4")]["title"] == "CompetitorX pump datasheet"
+    assert all(s["url"] is None for s in w["sources"] if s["file"] == "DEMO_danfoss.pdf")
 
 
 def test_broken_documents_file_is_ignored(tmp_path):
