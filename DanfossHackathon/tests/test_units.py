@@ -1,6 +1,6 @@
 import pytest
 
-from comparison_engine.units import normalize, parse_number, is_text_value, unit_key
+from comparison_engine.units import fmt, normalize, parse_number, is_text_value, unit_key
 
 
 @pytest.mark.parametrize("raw, expected", [
@@ -56,6 +56,12 @@ def test_unknown_unit_is_not_guessed():
 def test_text_value_with_unit_stays_text():
     n = normalize("PC, LS", "")
     assert n.value is None and n.problem == "text value"
+
+
+def test_fmt_keeps_small_values_precise():
+    # found in the first website test: 3.05 kg was shown as "3"
+    assert fmt(3.05) == "3.05" and fmt(4.33) == "4.33" and fmt(17.2) == "17.2"
+    assert fmt(70.956) == "71" and fmt(279.927) == "280" and fmt(2550) == "2550"
 
 
 def test_unit_key():

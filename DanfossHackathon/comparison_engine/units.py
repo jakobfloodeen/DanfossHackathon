@@ -108,5 +108,10 @@ def normalize(value, unit) -> Normalized:
 
 
 def fmt(v: float) -> str:
-    """Readable number: 71 instead of 70.956, 280 instead of 279.927, 4.3 instead of 4.33."""
-    return f"{round(v):d}" if abs(v) >= 100 else f"{round(v, 1):g}"
+    """Readable number without losing real precision: 280 (279.927), 71 (70.956), 3.05, 4.33, 17.2.
+    Small values keep 2 decimals - '3.05 kg' must never become '3 kg'."""
+    if abs(v) >= 100:
+        return f"{round(v):d}"
+    if abs(v) >= 10:
+        return f"{round(v, 1):g}"
+    return f"{round(v, 2):g}"

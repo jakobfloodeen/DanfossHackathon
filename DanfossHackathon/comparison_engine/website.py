@@ -243,13 +243,21 @@ def _flags(result, by_id, names, pending) -> list[dict]:
     for p in result.problems:
         flags.append({"level": "warning", "text": f"Code check of the AI answer: {p}"})
     verify = (result.onepager or {}).get("verify") or []
-    seen = set()
+    seen, unverified = set(), {}
     for v in verify:
         f = by_id.get((v.get("fact") or {}).get("id"))
-        if f and (f.product_id, f.attribute, f.status) not in seen:   # a conflict has 2+ facts: flag it once
-            seen.add((f.product_id, f.attribute, f.status))
-            flags.append({"level": STATUS_LEVEL.get(f.status, "warning"),
-                          "text": f"{_name(f.product_id, names)} · {label_for(f.attribute)}: {v.get('reason')}"})
+        if not f or (f.product_id, f.attribute, f.status) in seen:     # a conflict has 2+ facts: flag it once
+            continue
+        seen.add((f.product_id, f.attribute, f.status))
+        if f.status in ("unverified", "unknown unit"):                 # many of these: one line per product
+            unverified.setdefault(f.product_id, []).append(label_for(f.attribute))
+            continue
+        flags.append({"level": STATUS_LEVEL.get(f.status, "warning"),
+                      "text": f"{_name(f.product_id, names)} · {label_for(f.attribute)}: {v.get('reason')}"})
+    for pid, labels in unverified.items():
+        flags.append({"level": "unverified",
+                      "text": f"{_name(pid, names)}: {len(labels)} value(s) not confirmed by a quote on the page - "
+                              f"check before quoting: {', '.join(labels)}."})
     for e in result.excluded:
         flags.append({"level": "warning", "text": f"{_name(e['product_id'], names)} left out: {e['reason']}"})
     for pid, note in pending.items():

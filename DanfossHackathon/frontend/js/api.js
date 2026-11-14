@@ -51,6 +51,12 @@ const Api = (() => {
       return call("/compare", { method: "POST", body: JSON.stringify(payload) });
     },
 
+    /** Reverse flow: competitor product the customer uses -> closest Danfoss products (same response shape). */
+    async match(payload) {
+      if (cfg.USE_MOCK) { await delay(300); throw new Error("Danfoss match needs the real backend (USE_MOCK is on)."); }
+      return call("/match", { method: "POST", body: JSON.stringify(payload) });
+    },
+
     /** Free-text question typed into the chat box, with the current brief as context. */
     async ask(payload) {
       if (cfg.USE_MOCK) { await delay(700); return window.mockAsk(payload); }

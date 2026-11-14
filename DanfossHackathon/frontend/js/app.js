@@ -54,6 +54,8 @@
       loading: false,
       result: null,
       error: null,
+      mode: "compare",                            // "compare" (Danfoss first) | "match" (competitor first)
+      matchProduct: null,                         // { id, label } of the competitor product in match mode
     };
   }
 
@@ -699,7 +701,8 @@
         <button class="btn btn-ghost" type="button" data-act="edit">Adjust priorities</button>
       </div>`;
     card.querySelector('[data-act="print"]').addEventListener("click", () => window.print());
-    card.querySelector('[data-act="edit"]').addEventListener("click", () => {
+    if (state.mode === "match") card.querySelector('[data-act="edit"]').remove();
+    else card.querySelector('[data-act="edit"]').addEventListener("click", () => {
       const idx = segments().findIndex((s) => s.key === "factors");
       editSegment(idx);
     });
@@ -708,6 +711,13 @@
 
   // ---------- sidebar + stepper ----------
   function renderBrief() {
+    if (state.mode === "match") {
+      briefEl.innerHTML = `<h2>Danfoss match</h2>
+        <div class="brief-item"><div class="brief-label">Customer uses</div><div class="brief-value">${esc(state.matchProduct.label)}</div></div>
+        <div class="brief-item"><div class="brief-label">Buyer</div><div class="brief-value ${buyerSummary() ? "" : "is-empty"}">${esc(buyerSummary() || "Not set")}</div></div>
+        <p class="hint brief-foot">Danfoss candidates come from the facts database. Every value links to its source; missing or conflicting data is flagged, never guessed.</p>`;
+      return;
+    }
     const segs = segments();
     const find = (key) => segs.findIndex((s) => s.key === key);
     const item = (label, value, key) => {
@@ -738,8 +748,69 @@
   }
 
   // ---------- main render ----------
+  // ---------- reverse flow: competitor product -> closest Danfoss products ----------
+  function openMatchDialog() {
+    const dlg = $("#match-dialog");
+    const prods = catalog.competitorProducts || [];
+    dlg.innerHTML = `
+      <form method="dialog" class="dialog-body">
+        <div class="dialog-head"><h3>Find Danfoss match</h3><button class="link-btn" value="cancel" type="submit">Close</button></div>
+        <p class="hint">The customer uses a competitor product today. We look for the closest Danfoss products in the facts database.</p>
+        ${prods.length ? `
+        <label class="field">Competitor product the customer uses
+          <select name="productId">${prods.map((p) =>
+            `<option value="${esc(p.id)}">${esc(competitorName(p.competitorId) + " " + p.name)}${p.datasets?.length ? "" : " (no datasheet yet)"}</option>`).join("")}</select></label>
+        <div class="form-grid tight">
+          <label class="field"><span>Customer <span class="opt">(optional)</span></span><input name="company" placeholder="e.g. AGCO"></label>
+          <label class="field"><span>Application <span class="opt">(optional)</span></span><input name="application" placeholder="e.g. Tractor"></label>
+        </div>
+        <div class="actions"><button class="btn btn-primary" value="go" type="submit">Find match</button></div>`
+        : `<p class="flag flag-missing">No competitor products yet. Add one with "Upload data" → Competitor.</p>`}
+      </form>`;
+    dlg.querySelector("form").addEventListener("submit", (e) => {
+      if (e.submitter?.value !== "go") return;
+      const f = new FormData(e.target);
+      const prod = prods.find((p) => p.id === f.get("productId"));
+      state = freshState();
+      state.mode = "match";
+      state.matchProduct = { id: prod.id, label: competitorName(prod.competitorId) + " " + prod.name };
+      state.buyer.company = (f.get("company") || "").trim();
+      state.buyer.application = (f.get("application") || "").trim();
+      runMatch();
+    });
+    dlg.showModal();
+  }
+
+  async function runMatch() {
+    state.loading = true; state.error = null; state.result = null; render();
+    try {
+      state.result = await Api.match({ competitorProductId: state.matchProduct.id, buyer: { ...state.buyer },
+                                       factors: {}, customFactors: [], chatNotes: [] });
+    } catch (err) {
+      state.error = err.message;
+    } finally {
+      state.loading = false; render();
+    }
+  }
+
+  function renderMatch() {
+    botMsg("Which competitor product does the customer use today?", { compact: true });
+    userMsg(state.matchProduct.label + (buyerSummary() ? " · " + buyerSummary() : ""), openMatchDialog);
+    if (state.loading) loadingWidget();
+    else if (state.error) botMsg(`<div class="flag flag-conflict">Couldn't find a match: ${esc(state.error)}</div>`);
+    else if (state.result) resultWidget(state.result);
+  }
+
   function render() {
     chat.innerHTML = "";
+    if (state.mode === "match") {
+      botMsg("Let's find the closest Danfoss products for the competitor product your customer uses.");
+      renderMatch();
+      renderBrief();
+      renderStepper();
+      requestAnimationFrame(() => (chat.scrollTop = chat.scrollHeight));
+      return;
+    }
     botMsg("Hi! I'll help you compare a Danfoss product with its competitors. Pick the options below, or type a question at any time.");
     renderLog(0);
     segments().forEach((seg, i) => {
@@ -790,6 +861,7 @@
 
   async function reloadCatalog() { catalog = await Api.getCatalog(); }
   $("#btn-upload").addEventListener("click", () => catalog && openUploadDialog());
+  $("#btn-match").addEventListener("click", () => catalog && openMatchDialog());
 
   // ---------- boot ----------
   Api.getCatalog()
