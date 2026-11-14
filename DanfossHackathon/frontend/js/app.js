@@ -110,10 +110,13 @@
     if (nice.length) parts.push("Nice-to-have: " + nice.join(", "));
     return parts.join(" · ") || "No specific priorities";
   }
-  /** Uploaded PDF datasheets that have not been turned into facts yet (for the Extract panel). */
+  /** PDFs and web pages saved by the web import (.txt) can be turned into facts. */
+  const extractable = (name) => /\.(pdf|txt)$/i.test(name || "");
+
+  /** Uploaded datasheets that have not been turned into facts yet (for the Extract panel). */
   function datasetsWithoutFacts() {
     const out = [];
-    const add = (owner, label, d) => { if (!d.facts && d.name?.toLowerCase().endsWith(".pdf")) out.push({ ownerId: owner, fileId: d.fileId, name: d.name, label }); };
+    const add = (owner, label, d) => { if (!d.facts && extractable(d.name)) out.push({ ownerId: owner, fileId: d.fileId, name: d.name, label }); };
     const walkTree = (nodes) => nodes.forEach((n) => { (n.datasets || []).forEach((d) => add(n.id, n.label, d)); walkTree(n.children || []); });
     walkTree(catalog?.tree || []);
     (catalog?.competitorProducts || []).forEach((p) => (p.datasets || []).forEach((d) => add(p.id, `${competitorName(p.competitorId)} ${p.name}`, d)));
@@ -459,7 +462,7 @@
         const res = await Api.webDiscover(f.webUrl.value.trim(), f.webTopic.value);
         webBox.innerHTML = (res.issues || []).map(flagHtml).join("") + (res.documents.length ? `
           <div class="web-list">${res.documents.map((d, i) => `<label class="web-doc"><input type="radio" name="webPick" value="${esc(d.url)}" data-name="${esc(d.name)}" ${i === 0 ? "checked" : ""}>
-            <span><strong>${esc(d.name)}</strong>${d.product ? ` · ${esc(d.product)}` : ""} <span class="hint">${esc(d.kind === "html" ? "web page text" : "PDF")}</span>
+            <span><strong>${esc(d.name)}</strong>${d.product ? ` · ${esc(d.product)}` : ""} <span class="hint">${esc(d.kind === "html" ? "web page text" : d.kind === "pdf" ? "PDF" : "document link (checked on import)")}</span>
             <a href="${esc(d.url)}" target="_blank" rel="noopener" class="hint">open</a></span></label>`).join("")}</div>
           <div class="actions"><button class="btn btn-primary" type="button" data-act="web-import">Import selected for the product chosen above</button></div>` : "");
         webBox.querySelector('[data-act="web-import"]')?.addEventListener("click", importPicked);
@@ -491,7 +494,7 @@
     // ---- extract facts (teammates' converter): from new uploads, or datasheets that have no facts yet ----
     const extractBox = f.querySelector(".extract-box");
     function showExtract(datasets) {
-      const pdfs = (datasets || []).filter((d) => d.name.toLowerCase().endsWith(".pdf"));
+      const pdfs = (datasets || []).filter((d) => extractable(d.name));
       if (!pdfs.length) { extractBox.innerHTML = ""; return; }
       extractBox.innerHTML = `<h4>Turn datasheets into comparable facts</h4>
         <p class="hint">The AI reads each page with data (blank and cover pages are skipped; roughly $0.001–0.002 per page).
@@ -788,7 +791,7 @@
 
   function cell(v) {
     if (v && v.value == null && v.status === "pending") {
-      return `<td class="cell-pending">Awaiting extraction${v.note ? `<div class="cell-note">${esc(v.note)}</div>` : ""}</td>`;
+      return `<td class="cell-pending" title="${esc(v.note || "")}">Awaiting extraction</td>`;
     }
     if (v && v.status === "na") {                 // this product has no value under this name: not "missing"
       return `<td class="cell-na" title="${esc(v.note || "No matching value")}">–</td>`;
@@ -796,7 +799,10 @@
     if (!v || v.value == null) {                  // the datasheet does not state it (detail in the tooltip)
       return `<td class="cell-missing" title="${esc(v?.note || "Not found in sources")}">Not stated</td>`;
     }
-    const refs = (v.sources || []).map(ref).join("");
+    // numbered footnotes in the short table; direct page links ("p.12") for rows under "All facts"
+    const refs = (v.sources || []).map(ref).join("") + (v.links || []).map((l) => l.url
+      ? `<a href="${esc(l.url)}" target="_blank" rel="noopener" class="ref" title="${esc(l.title)}">p.${esc(l.page)}</a>`
+      : `<span class="ref" title="${esc(l.title)}">p.${esc(l.page)}</span>`).join("");
     const st = CELL_STATUS[v.status];
     const tag = st ? `<span class="badge ${st[1]}" title="${esc(v.note || "")}">${st[0]}</span>` : "";
     // short notes that change the meaning stay visible; the rest is a tooltip on the badge
@@ -820,8 +826,8 @@
   /** "AI cost: $0.004 · 1 call" – the price of this answer, so the cost per comparison is visible. */
   function aiCostText(c) {
     if (!c) return "";
-    if (c.cached) return '<span class="ai-cost" title="Same question as before: the stored answer was reused">AI cost: $0 (stored answer)</span>';
-    if (!c.calls) return '<span class="ai-cost">No AI used</span>';
+    if (c.cached) return `<span class="ai-cost" title="${esc(c.reason || "")}">AI cost: $0 (already compared)</span>`;
+    if (!c.calls) return `<span class="ai-cost">No AI used${c.reason ? ` (${esc(c.reason)})` : ""}</span>`;
     return `<span class="ai-cost" title="${esc(c.input)} tokens in, ${esc(c.output)} tokens out${c.factsSent ? `, ${esc(c.factsSent)} facts sent` : ""}">AI cost: $${c.usd < 0.01 ? c.usd.toFixed(4) : c.usd.toFixed(3)} · ${c.calls} call${c.calls > 1 ? "s" : ""}</span>`;
   }
 
@@ -858,16 +864,18 @@
       ${r.isSample ? '<div class="flag flag-sample">Prototype view: competitor values are sample data until the competitor dataset is loaded.</div>' : ""}
       ${rows.length ? `<div class="table-wrap"><table class="cmp">${head}<tbody>${rows.map(rowHtml).join("")}</tbody></table></div>`
         : '<p class="hint">No attribute could be compared directly between these products - see the notes below.</p>'}
-      ${more.length ? `<details class="more-facts"><summary>All facts (${more.length} more rows, only one product has a value)</summary>
-        <div class="table-wrap"><table class="cmp">${head}<tbody>${more.map(rowHtml).join("")}</tbody></table></div></details>` : ""}
+      ${more.length ? `<details class="more-facts"><summary>All other facts (${more.length})</summary>
+        <input type="search" class="more-filter" placeholder="Filter, e.g. pressure, PVE, weight">
+        <div class="table-wrap"><table class="cmp">${head}<tbody></tbody></table></div>
+        <p class="hint more-count"></p></details>` : ""}
       <div class="insights">
         ${insightList("Key differences", r.insights?.differences)}
         ${insightList(`Benefits for ${state.buyer.company || "the customer"}`, r.insights?.benefits)}
         ${insightList("Switching trade-offs", r.insights?.tradeoffs)}
       </div>
       ${r.flags?.length ? `<section class="insight"><h4>Open points</h4>${r.flags.map(flagHtml).join("")}</section>` : ""}
-      <details class="sources"><summary>Sources (${r.sources.length})</summary><ol>${r.sources.map((s) =>
-        `<li id="src-${s.id}">${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title)}${s.page ? `, p. ${esc(s.page)}` : ""}${s.date ? ` <span class="hint">(${esc(s.date)})</span>` : ""}${s.url || s.kind === "customer" ? "" : ' <span class="hint">· no online link yet</span>'}${s.doc ? `<div class="hint">${esc(s.doc)}</div>` : ""}</li>`).join("")}</ol></details>
+      ${!r.sources.length ? "" : `<details class="sources"><summary>Sources (${r.sources.length})</summary><ol>${r.sources.map((s) =>
+        `<li id="src-${s.id}">${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title)}${s.page ? `, p. ${esc(s.page)}` : ""}${s.date ? ` <span class="hint">(${esc(s.date)})</span>` : ""}${s.url || s.kind === "customer" ? "" : ' <span class="hint">· no online link yet</span>'}${s.doc ? `<div class="hint">${esc(s.doc)}</div>` : ""}</li>`).join("")}</ol></details>`}
       <div class="actions">
         ${aiCostText(r.aiCost)}
         <button class="btn btn-ghost" type="button" data-act="print">Print / save as PDF</button>
@@ -876,9 +884,24 @@
     card.querySelector('[data-act="print"]').addEventListener("click", () => window.print());
     const speak = window.Speech?.button(() => Speech.resultText(r, state.buyer.company), "Read the summary aloud");
     if (speak) { speak.classList.add("btn", "btn-ghost"); speak.insertAdjacentText("beforeend", " Read summary"); card.querySelector(".actions").prepend(speak); }
+    // "All other facts" can be thousands of rows: drawn only when opened, filterable, first 150 matches
+    const moreBox = card.querySelector(".more-facts");
+    if (moreBox) {
+      const body = moreBox.querySelector("tbody"), filter = moreBox.querySelector(".more-filter");
+      const count = moreBox.querySelector(".more-count");
+      const draw = () => {
+        const words = filter.value.toLowerCase().split(/\s+/).filter(Boolean);
+        const hits = more.filter((a) => words.every((w) => (a.label + " " + a.id).toLowerCase().includes(w)));
+        body.innerHTML = hits.slice(0, 150).map(rowHtml).join("");
+        count.textContent = hits.length > 150 ? `Showing 150 of ${hits.length} - type to narrow it down.` : "";
+      };
+      moreBox.addEventListener("toggle", () => moreBox.open && !body.children.length && draw());
+      filter.addEventListener("input", draw);
+    }
     // a footnote without an online link jumps to the source list: open it first
     card.querySelectorAll('a.ref[href^="#src-"]').forEach((a) => a.addEventListener("click", () => {
-      card.querySelector("details.sources").open = true;
+      const list = card.querySelector("details.sources");
+      if (list) list.open = true;
     }));
     if (state.mode !== "compare") card.querySelector('[data-act="edit"]').remove();
     else card.querySelector('[data-act="edit"]').addEventListener("click", () => {

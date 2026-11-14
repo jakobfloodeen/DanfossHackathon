@@ -10,7 +10,9 @@ Environment variables (optional, e.g. in .env):
     LLM_EFFORT   how much the model thinks before answering: low (default) / medium / high
     EXTRACT_MODEL  model for PDF -> facts, one call per page (default: claude-haiku-5-5, 1/20 of Sonnet's price)
     ASK_MODEL    model for free-text questions in the chat box (default: claude-haiku-5-5)
-    PROMPT_MAX_FACTS  most facts per product sent to the AI in one comparison (default: 60)
+    PROMPT_MAX_FACTS  most facts per product sent to the AI in one comparison (default: 40)
+    PROMPT_MAX_UNSHARED  of those, most facts only this product has (default: 10)
+    PROMPT_MAX_CANDIDATES  most candidate products the AI compares (default: 3, the website's columns)
     LLM_TIMEOUT  seconds before we give up on the AI (default: 90)
     CACHE_DIR    where interpret() results are stored (default: ./.cache/interpret)
 """
@@ -54,7 +56,15 @@ def ask_model() -> str:
 
 
 def prompt_max_facts() -> int:
-    return int(os.getenv("PROMPT_MAX_FACTS", "60"))
+    return int(os.getenv("PROMPT_MAX_FACTS", "40"))
+
+
+def prompt_max_unshared() -> int:
+    return int(os.getenv("PROMPT_MAX_UNSHARED", "10"))
+
+
+def prompt_max_candidates() -> int:
+    return int(os.getenv("PROMPT_MAX_CANDIDATES", "3"))
 
 
 def llm_timeout() -> float:

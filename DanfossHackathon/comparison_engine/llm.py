@@ -80,7 +80,9 @@ def ask_claude(system: str, prompt: str, schema: dict | None = None, model: str 
     except anthropic.RateLimitError as e:
         raise LLMUnavailable("rate limit reached - try again in a minute") from e
     except anthropic.APIStatusError as e:
-        raise LLMUnavailable(f"API error {e.status_code}") from e
+        detail = getattr(e, "message", "") or ""
+        hint = "the API key has no credit left" if "credit" in detail.lower() else ""
+        raise LLMUnavailable(hint or f"API error {e.status_code}") from e
     except anthropic.APIConnectionError as e:
         raise LLMUnavailable("no connection to the API") from e
 

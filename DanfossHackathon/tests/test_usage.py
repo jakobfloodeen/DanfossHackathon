@@ -55,3 +55,35 @@ def test_retry_can_use_a_stronger_model():
     check = lambda a: [] if a.get("x") == 2 else ["wrong"]                   # noqa: E731
     answer, problems, attempts = _ask_and_check(cheap, "sys", "prompt", check, strong)
     assert used == ["cheap", "strong"] and answer == {"x": 2} and not problems and attempts == 2
+
+
+def _flow(i, product, attribute, value, page):
+    return Fact(f"F{i}", product, "target" if product == "pvg" else "candidate", attribute, str(value), "l/min",
+                float(value), "l/min", f"{product}.pdf", page, "", "ok")
+
+
+def test_paired_rows_for_the_same_target_fact_are_merged_into_one_row():
+    from comparison_engine.results import AnalysisResult
+    from comparison_engine.website import to_website
+    facts = [_flow(1, "pvg", "max_inlet_flow", 140, 12), _flow(2, "kmp", "rated_flow_port_p", 70, 2),
+             _flow(3, "kpes6", "rated_flow_port_p", 70, 3)]
+    point = lambda cand, fid: {"topic": "Flow at P port", "candidate": cand, "target_facts": ["F1"],   # noqa: E731
+                               "candidate_facts": [fid], "candidate_value_is": "lower", "verdict": "target_better",
+                               "why": "", "confidence": "high"}
+    result = AnalysisResult(status="ok", message="", target={"product_id": "pvg", "product_name": "PVG"},
+                            shortlist=[{"product_id": "kmp"}, {"product_id": "kpes6"}], facts=facts,
+                            interpretation={"points": [point("kmp", "F2"), point("kpes6", "F3")]})
+    rows = [a for a in to_website(result)["attributes"] if a.get("paired")]
+    assert len(rows) == 1                                           # was one row per competitor
+    assert all(rows[0]["values"][p]["value"] for p in ("pvg", "kmp", "kpes6"))
+
+
+def test_lean_facts_limits_values_only_one_product_has():
+    facts = [_fact(i, "a", f"only_a_{i}") for i in range(30)] + [_fact(100, "a", "shared"), _fact(101, "b", "shared")]
+    logic = Logic("valve", {"better": {}, "attribute_aliases": {}}, "")
+    sent = lean_facts(facts, logic, None, max_per_product=40, max_unshared=5)
+    assert sum(f.product_id == "a" for f in sent) == 6              # the shared one + 5 of its own
+    # words from the customer's brief pick WHICH unshared facts are sent
+    facts = [_fact(1, "a", "pve_reaction_time"), _fact(2, "a", "spool_stroke"), _fact(3, "a", "max_inlet_flow")]
+    sent = lean_facts(facts, logic, None, max_per_product=40, max_unshared=1, context="must-have topics: flow")
+    assert [f.id for f in sent] == ["F3"]

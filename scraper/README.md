@@ -20,7 +20,7 @@ py -m unittest discover -s scraper/tests -v
 from scraper import discover, download_source
 
 # 1. Discover candidates; present these to the user or apply your selection logic.
-result = discover("https://www.kawasakihydraulics.com/", topic="pumps")
+result = discover("https://www.kawasakihydraulics.com/", topic="valves")   # any manufacturer's site
 candidates = result["documents"]
 
 # 2. Once your app selects a source, call:
@@ -30,11 +30,27 @@ candidates = result["documents"]
 # The converter owns PDF parsing, product identification, and the CSV schema.
 ```
 
-`discover(url, topic="pumps")` returns a JSON-serializable dictionary:
+`discover(url, topic="pumps")` works on any manufacturer's website. `topic` is the website's "Look for" choice
+(`valves`, `pumps`, `motors`, `steering`; other words are used as given) and steers the crawl:
+
+- links about the chosen component are followed first; links only about another component are skipped
+  (e.g. "Pumps" when looking for valves). The words per component are in `TOPICS` in `core.py`.
+- document links: `.pdf` addresses, links labelled PDF / data sheet / download / brochure / catalog / technical
+  information, and download-style addresses (`/media/`, `/download`, `/documents/`, `/dam/` ...).
+  `download_source` still checks that the bytes really are a PDF.
+- other websites of the same company are followed too (`apps.maker.com` from `www.maker.com`, see `site_key`).
+- when the crawled pages hold nothing relevant (e.g. pages built by JavaScript), the site map (`robots.txt` /
+  `sitemap.xml`) is read and the pages it lists for the chosen component are crawled.
+- web-page text is only offered when the page states values (bar, l/min, mm ...), not for marketing pages.
+- limits: `MAX_PAGES` (12) pages + half that from the site map, `MAX_SECONDS` (60), results ranked by relevance.
+
+Not possible without a real browser: content that only appears after JavaScript runs, and pages behind a login.
+
+It returns a JSON-serializable dictionary:
 
 | Field | Meaning |
 |---|---|
-| `documents` | Candidate sources, possibly empty. Each has `url`, `name`, `product`, `label`, `kind`. |
+| `documents` | Candidate sources, most relevant first, possibly empty. Each has `url`, `name`, `product`, `label`, `kind`, `relevance`. |
 | `documents[].kind` | `pdf`: detected PDF bytes; `html`: readable page; `auto`: document link whose content still needs checking. |
 | `documents[].product` | Nearby heading as an unverified suggestion; may be empty. |
 | `pageUrl` | Starting URL after any supported shortcut. |

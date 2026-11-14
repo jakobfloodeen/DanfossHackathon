@@ -14,8 +14,10 @@ INTERPRET - the ONE AI step, wrapped in code checks.
 6. token diet (the AI is the only thing that costs money per comparison):
    - fact lines are short: no quotes (code checks quotes, the AI does not need them), no repeated values
    - code numbers / ordering codes are never sent (they are not comparison facts)
-   - at most PROMPT_MAX_FACTS facts per product (default 60): focus attributes first, then attributes
-     both sides have, then standard attributes from the LOGIC file, then trusted values
+   - only the top PROMPT_MAX_CANDIDATES candidates (default 3 = the columns the website shows)
+   - per product at most PROMPT_MAX_FACTS facts (default 40), attributes another product also has first;
+     at most PROMPT_MAX_UNSHARED (default 10) that only this product has (lean_facts)
+   - the AI lists at most 3 'verify' items; code adds the rest (add_missing_verify) - output tokens cost 5x input
    - the answer format is enforced by the API (structured output), so the schema is not repeated in the text
    - the ONE retry can use a stronger model (LLM_RETRY_MODEL): cheap model first, strong model only if needed
 
@@ -25,6 +27,7 @@ import functools
 import hashlib
 import inspect
 import json
+import re
 from typing import Callable
 
 import pandas as pd
@@ -38,7 +41,7 @@ from .repository import load_repository
 from .results import STATUS_MESSAGES, AnalysisResult, comparison_rows, onepager_data
 from .shortlist import shortlist as make_shortlist
 
-PROMPT_VERSION = "4"            # change when the prompt text changes -> old cache entries are not reused
+PROMPT_VERSION = "5"            # change when the prompt text changes -> old cache entries are not reused
 _MEMORY_CACHE: dict = {}
 
 HARD_RULES = """HARD RULES (code checks every one of them; breaking one makes the answer fail):
@@ -49,7 +52,8 @@ HARD_RULES = """HARD RULES (code checks every one of them; breaking one makes th
 4. target_facts = facts of the TARGET only; candidate_facts = facts of that point's candidate only.
 5. candidate_value_is describes the numbers: higher / lower / similar (within {similar:.0%}) / n/a (text).
 6. For attributes with a 'better' direction (listed below) the verdict must follow the numbers.
-7. Facts with status missing / unverified / conflict / unknown unit go into 'verify'. Missing is not worse.
+7. 'verify': at most 3 entries - the doubtful facts (missing / unverified / conflict / unknown unit) that matter
+   most for THIS customer. Code adds all other doubtful facts itself; do not list them. Missing is not worse.
 8. If no candidate does the same job as the target: comparable=false, best_match=null, give the reason.
 9. Product ids must be copied exactly from the lists below.
 10. Keep it SHORT - this becomes a one-page brief: best_match.why at most 40 words; every other "why"/"text"
@@ -89,24 +93,35 @@ def _fact_line(f: Fact) -> str:
 NOISE = ("code_number", "ordering_code", "part_number")       # never comparison facts
 
 
-def lean_facts(facts: list[Fact], logic: Logic, focus: list[str] | None, max_per_product: int) -> list[Fact]:
-    """The facts worth sending to the AI. Drops code-number/ordering rows and keeps at most
-    max_per_product facts per product, most useful first. Facts that a kept calculated fact is based on
-    are always kept, so every 'from F..' reference still points at a sent fact."""
+def lean_facts(facts: list[Fact], logic: Logic, focus: list[str] | None, max_per_product: int,
+               max_unshared: int | None = None, context: str = "") -> list[Fact]:
+    """The facts worth sending to the AI, per product:
+    - never code numbers / ordering codes
+    - attributes that another product ALSO has (the AI can compare them) come first, up to max_per_product
+    - attributes only this product has: at most max_unshared (default 10), so the AI can still pair values
+      that the datasheets name differently. Picked by: focus attributes, words from the customer's brief
+      (e.g. 'flow', 'pressure'), standard attributes from the LOGIC file, trusted status.
+    Facts that a kept calculated fact is based on are always kept, so every 'from F..' reference still
+    points at a sent fact."""
+    max_unshared = config.prompt_max_unshared() if max_unshared is None else max_unshared
     facts = [f for f in facts if not f.attribute.startswith(NOISE)]
     wanted = {a.strip().lower().replace(" ", "_") for a in focus or []}
+    words = {w for w in re.findall(r"[a-z]{4,}", context.lower())}
     owners: dict[str, set] = {}
     for f in facts:
         owners.setdefault(f.attribute, set()).add(f.product_id)
     standard = set(logic.settings.get("better", {})) | set((logic.settings.get("attribute_aliases") or {}).values())
-    rank = lambda f: (f.attribute not in wanted, len(owners[f.attribute]) < 2,      # noqa: E731
+    rank = lambda f: (f.attribute not in wanted, not any(w in f.attribute for w in words),     # noqa: E731
                       f.attribute not in standard, f.status not in config.TRUSTED)
     keep: set[str] = set()
     by_product: dict[str, list[Fact]] = {}
     for f in facts:
         by_product.setdefault(f.product_id, []).append(f)
     for group in by_product.values():
-        keep |= {f.id for f in sorted(group, key=rank)[:max_per_product]}
+        shared = sorted([f for f in group if len(owners[f.attribute]) > 1], key=rank)[:max_per_product]
+        room = min(max_unshared, max_per_product - len(shared))
+        own = sorted([f for f in group if len(owners[f.attribute]) == 1], key=rank)[:max(room, 0)]
+        keep |= {f.id for f in shared + own}
     keep |= {b for f in facts if f.id in keep for b in f.based_on}
     return [f for f in facts if f.id in keep]
 
@@ -262,6 +277,7 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
     first = target_rows.iloc[0]
     logic = load_logic(first["family"])
     short, excluded = _candidate_list(target_id, candidates, must_haves, data, pool)
+    short = short[:config.prompt_max_candidates()]   # the website shows 3 columns: the AI only needs those
     cand_ids = [c["product_id"] for c in short]
     facts = build_facts(target_id, cand_ids, data, logic)
     diffs = code_differences(facts, logic)
@@ -281,7 +297,8 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
         result.message = STATUS_MESSAGES["no_ai"] + " (AI not requested)"
     else:
         sent = lean_facts(_focus_facts([f for f in facts if f.role != "customer"], focus_attributes),
-                          logic, focus_attributes, config.prompt_max_facts())
+                          logic, focus_attributes, config.prompt_max_facts(),
+                          context=f"{user_question} {customer_context}")
         result.meta["facts_sent"] = len(sent)
         system, prompt = build_prompts(target_id, short, sent, diffs, logic, user_question,
                                        customer_context, focus_attributes, pool, customer)
@@ -290,8 +307,11 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
         key = _cache_key(system, prompt)
         cached = _cache_get(key) if use_cache else None
         try:
-            if cached and cached.get("answer") is not None and check(cached["answer"]):
-                cached = None                   # fails today's (stricter) checks -> ask the AI again
+            if cached and cached.get("answer") is not None and \
+                    sorted(check(cached["answer"])) != sorted(cached.get("problems") or []):
+                cached = None                   # today's checks find something new -> ask the AI again
+                                                # (same known problems -> reuse: asking again costs money
+                                                #  and usually returns the same answer)
             if cached:
                 answer, attempts, problems = cached["answer"], cached["attempts"], cached["problems"]
                 result.meta["cached"] = True

@@ -16,6 +16,9 @@ The converter is NOT changed. This module calls it and translates its rows:
 
     rows, report = to_facts(converter_rows, owner_id="pvg32", owner_name="PVG 32", family="valve", brand="Danfoss")
     extract_pdf(path, owner_id, owner_name, family, brand, pages="1-20")   # runs the converter (AI) + saves
+    extract_text(text, name, owner_id, ...)   # same for WEB PAGE text (web import saves product pages as .txt):
+                                             # the text is cut into "pages" of ~4000 characters and each one goes
+                                             # through the converter's own prompt, retry and quote check
 
 Output: data/repository/<owner_id>__<file_id>.csv (facts) and data/pages/<file_id>.csv (page text, so the
 original PDF does not have to be kept).
@@ -78,7 +81,14 @@ def match_products(products: list[str], owner_name: str) -> set[str]:
     if len(names) == 1:
         return set(names)
     owner = _squash(owner_name)
-    return {p for p in names if owner and (owner in _squash(p) or _squash(p) in owner)}
+    mine = {p for p in names if owner and (owner in _squash(p) or _squash(p) in owner)}
+    if not mine and names:
+        # none of the names in the file looks like the product it was uploaded for (e.g. the AI wrote the
+        # series name): the file's most frequent product is the one it describes - otherwise ALL its facts
+        # would be filed under other products and the uploaded product stays "pending" for ever
+        from collections import Counter
+        mine = {Counter(p for p in products if _squash(p)).most_common(1)[0][0]}
+    return mine
 
 
 def to_facts(rows: list[dict], owner_id: str, owner_name: str, family: str, brand: str) -> tuple[pd.DataFrame, dict]:
@@ -118,6 +128,7 @@ def to_facts(rows: list[dict], owner_id: str, owner_name: str, family: str, bran
     df = pd.DataFrame(out, columns=FACT_COLUMNS)
     report["facts"] = len(df)
     report["owner_products"] = sorted(mine)
+    report["owner_facts"] = int((df["product_id"] == owner_id).sum())
     report["other_products"] = sorted({p for p in df["product_name"] if p != owner_name})
     return df, report
 
@@ -160,6 +171,69 @@ def extract_pdf(pdf_path: Path, owner_id: str, owner_name: str, family: str, bra
     facts_path, warnings = save_facts(df, owner_id, file_id)
     save_pages(page_texts, file_id)
     report.update(csv=facts_path.name, warnings=warnings[:10], pages_sent=len(page_filter) if page_filter else len(page_texts),
+                  model=config.extract_model(), cost=usage.total(calls))
+    log(f"saved {report['facts']} facts ({report['ok']} ok, {report['unverified']} unverified) to {facts_path.name}")
+    return report
+
+
+def text_pages(text: str, size: int = 4000) -> list[str]:
+    """Cut web-page text into 'pages' of about `size` characters, on line breaks (never mid-line)."""
+    pages, current = [], ""
+    for line in str(text or "").splitlines(keepends=True):
+        if current and len(current) + len(line) > size:
+            pages.append(current)
+            current = ""
+        current += line
+    if current.strip():
+        pages.append(current)
+    return pages
+
+
+def extract_text(text: str, name: str, owner_id: str, owner_name: str, family: str, brand: str, file_id: str,
+                 pages: str = "", client=None, converter=None, log=print, workers: int = 8) -> dict:
+    """Facts from web-page TEXT (the web import stores product pages as .txt; the converter only opens PDFs).
+    Uses the converter's own PROMPT, call_with_retry and quote_ok, so the facts are checked the same way.
+    'page' = the n-th ~4000-character section of the web page."""
+    import hashlib
+    from concurrent.futures import ThreadPoolExecutor
+    conv = converter or load_converter()
+    chunks = text_pages(text)
+    page_filter = conv.parse_pages(pages) if pages.strip() else None
+    todo = [(i, c) for i, c in enumerate(chunks, start=1) if (page_filter is None or i in page_filter)
+            and len(c.strip()) >= 30]
+    if client is None:
+        import anthropic
+        client = anthropic.Anthropic(timeout=90)
+    if hasattr(conv, "CLAUDE_MODEL"):
+        conv.CLAUDE_MODEL = config.extract_model()
+    metered = usage.MeteredClient(client, "extract")
+    prompt = conv.PROMPT.format(manufacturer=brand, product_family=owner_name, document_ref="")
+    file_hash = hashlib.sha256(str(text).encode()).hexdigest()[:16]
+    log(f"  {len(chunks)} sections of web-page text; {len(todo)} to send to the AI")
+
+    def work(job):
+        i, chunk = job
+        try:
+            return i, chunk, conv.call_with_retry(metered, "claude", prompt, chunk, None), None
+        except Exception as e:  # noqa: BLE001 - one bad section must not stop the others
+            return i, chunk, None, e
+
+    rows = []
+    with usage.collect() as calls, ThreadPoolExecutor(max_workers=workers) as ex:
+        for done, (i, chunk, facts, err) in enumerate(ex.map(work, todo), start=1):
+            if err:
+                log(f"  section {i}: AI call failed: {err}")
+                continue
+            facts = [facts] if isinstance(facts, dict) else (facts or [])
+            for f in facts:
+                f.update({"page": i, "source_file": name, "file_hash": file_hash, "manufacturer": brand,
+                          "product_family": owner_name, "quote_verified": conv.quote_ok(f.get("quote", ""), chunk)})
+                rows.append(f)
+            log(f"  [{done}/{len(todo)}] section {i}: {len(facts)} facts")
+    df, report = to_facts(rows, owner_id, owner_name, family, brand)
+    facts_path, warnings = save_facts(df, owner_id, file_id)
+    save_pages([{"source_file": name, "page": i, "text": c} for i, c in enumerate(chunks, start=1)], file_id)
+    report.update(csv=facts_path.name, warnings=warnings[:10], pages_sent=len(todo),
                   model=config.extract_model(), cost=usage.total(calls))
     log(f"saved {report['facts']} facts ({report['ok']} ok, {report['unverified']} unverified) to {facts_path.name}")
     return report

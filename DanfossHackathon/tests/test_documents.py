@@ -37,11 +37,15 @@ def test_validate_documents():
 def test_sources_in_the_result_use_the_online_link(tmp_path, monkeypatch):
     monkeypatch.setenv("DOCUMENTS_FILE", str(write(tmp_path)))
     w = to_website(interpret(COMPX, None, use_ai=False), doc_url=lambda f, p: link(f, p))
-    by_page = {(s["file"], s["page"]): s for s in w["sources"]}           # one source per document page
-    assert by_page[("DEMO_compx.pdf", "4")]["url"] == "https://example.com/docs/compx.pdf#page=4"
-    assert by_page[("DEMO_compx.pdf", "12")]["url"] == "https://example.com/docs/compx.pdf#page=12"
-    assert by_page[("DEMO_compx.pdf", "4")]["title"] == "CompetitorX pump datasheet"
+    # numbered sources = what the short table cites; "All facts" rows carry direct page links instead
+    cited = [s for s in w["sources"]]
+    linked = [lk for a in w["attributes"] if not a["core"] for v in a["values"].values() for lk in v.get("links", [])]
+    urls = {s["url"] for s in cited + linked}
+    assert "https://example.com/docs/compx.pdf#page=4" in urls
+    assert "https://example.com/docs/compx.pdf#page=12" in urls
+    assert any(s["title"] == "CompetitorX pump datasheet" for s in cited + linked)
     assert all(s["url"] is None for s in w["sources"] if s["file"] == "DEMO_danfoss.pdf")
+    assert [s["id"] for s in w["sources"]] == list(range(1, len(w["sources"]) + 1))   # numbered 1..n, no gaps
 
 
 def test_broken_documents_file_is_ignored(tmp_path):

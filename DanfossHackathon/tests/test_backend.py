@@ -248,7 +248,7 @@ def test_upload_then_extract_facts(client, tmp_path, monkeypatch):
 
 def test_extract_refuses_without_key_or_non_pdf(client, monkeypatch):
     up = client.post("/api/datasets", data={"source": "danfoss", "nodeId": "pvg48"},
-                     files={"files": ("notes.txt", b"some text " * 30, "text/plain")}).json()
+                     files={"files": ("notes.csv", b"a,b\n1,2\n", "text/csv")}).json()
     r = client.post("/api/extract", json=up["datasets"][0]).json()
     assert r["jobId"] is None and "Only PDF" in r["issues"][0]["text"]
     up = client.post("/api/datasets", data={"source": "danfoss", "nodeId": "pvg48"},
@@ -281,3 +281,28 @@ def test_web_errors_are_shown_not_raised(client, monkeypatch):
     monkeypatch.setattr(backend, "web_discover", boom)
     r = client.post("/api/web/discover", json={"url": "http://localhost/x"}).json()
     assert r["documents"] == [] and "blocked" in r["issues"][0]["text"]
+
+
+class FailingConverter(FakeConverter):
+    """Every AI call fails (e.g. a new key without credit): the converter prints it and returns no rows."""
+    @classmethod
+    def process_pdf(cls, path, page_filter, client, provider, company, dry_run):
+        print("  3 pages in the file; 2 to send to the AI, 1 skipped (blank/cover/no data)")
+        print("  page 1: AI call or JSON parsing failed: Error code: 400 - credit balance is too low")
+        print("  page 2: AI call or JSON parsing failed: Error code: 400 - credit balance is too low")
+        return [], [{"source_file": Path(path).name, "page": 1, "text": "x"}]
+
+
+def test_extraction_with_zero_facts_says_why_and_stays_in_the_list(client, tmp_path, monkeypatch):
+    monkeypatch.setattr(backend, "CONVERTER", FailingConverter)
+    monkeypatch.setattr(backend, "EXTRACT_CLIENT", object())
+    monkeypatch.setenv("PAGES_DIR", str(tmp_path / "pages"))
+    up = client.post("/api/datasets", data={"source": "competitor", "competitorId": "rexroth", "productName": "M4-12",
+                                            "categoryId": "proportional"},
+                     files={"files": ("m4-12.pdf", b"%PDF-1.4 demo", "application/pdf")}).json()
+    ds = up["datasets"][0]
+    job = wait_for(client, client.post("/api/extract", json=ds).json()["jobId"])
+    assert job["status"] == "failed"                                   # was: "done" with "0 facts saved"
+    assert "2 page(s) failed" in job["progress"] and "credit balance" in job["progress"]
+    prod = next(p for p in client.get("/api/catalog").json()["competitorProducts"] if p["id"] == "rexroth-m4-12")
+    assert not next(d for d in prod["datasets"] if d["fileId"] == ds["fileId"]).get("facts")   # can be retried

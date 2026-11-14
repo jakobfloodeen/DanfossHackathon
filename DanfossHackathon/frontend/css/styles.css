@@ -286,6 +286,8 @@ fieldset.seg input { accent-color: var(--brand); }
 .cmp tr.is-paired th .cell-note { color: var(--brand-strong); }
 .more-facts { margin-top: 10px; }
 .more-facts summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-2); padding: 6px 0; }
+.more-filter { max-width: 320px; margin: 4px 0 2px; }
+span.ref { color: var(--ink-3); }
 
 /* ---------- web import + extract facts ---------- */
 .web-import summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-2); }

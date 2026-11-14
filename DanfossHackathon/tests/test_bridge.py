@@ -59,9 +59,35 @@ def test_facts_load_into_the_engine(tmp_path):
 def test_match_products():
     assert match_products(["PVG 16", "PVG 32", "PVG 32"], "PVG 32") == {"PVG 32"}
     assert match_products(["KPES6"], "KMP") == {"KPES6"}
-    assert match_products(["A", "B"], "C") == set()
+    # no name looks like the uploaded product: the file's most frequent product is the one it describes
+    # (before, nothing was filed under the product and it stayed "pending" after extraction)
+    assert match_products(["Directional valve", "Directional valve", "Spool kit"], "M4-12") == {"Directional valve"}
 
 
 def test_the_teammates_converter_can_be_imported():
     conv = load_converter()
     assert callable(conv.process_pdf) and conv.parse_pages("1,3-4") == {1, 3, 4}
+
+
+def test_web_page_text_is_extracted_in_sections(tmp_path, monkeypatch):
+    """Web import saves product pages as .txt: they go through the converter's prompt + quote check too."""
+    from types import SimpleNamespace
+    from comparison_engine import bridge
+    monkeypatch.setenv("REPO_DIR", str(tmp_path / "repo"))
+    monkeypatch.setenv("PAGES_DIR", str(tmp_path / "pages"))
+    text = "K3VG pump\n" + "filler line\n" * 500 + "Rated pressure 350 bar\n"
+    asked = []
+
+    def call_with_retry(client, provider, prompt, chunk, image):
+        asked.append(chunk)
+        if "Rated pressure" in chunk:
+            return [{"product": "K3VG", "attribute": "rated_pressure", "value": "350", "unit": "bar",
+                     "quote": "Rated pressure 350 bar", "uncertain": False}]
+        return []
+    conv = SimpleNamespace(PROMPT="{manufacturer} {product_family} {document_ref}", call_with_retry=call_with_retry,
+                           quote_ok=lambda q, page: q in page, parse_pages=lambda spec: None)
+    report = bridge.extract_text(text, "k3vg.txt", "kawasaki-k3vg", "K3VG", "pump", "Kawasaki", "abc",
+                                 client=object(), converter=conv, log=lambda *_: None)
+    assert len(asked) == len(bridge.text_pages(text)) > 1                    # long page -> several sections
+    assert report["facts"] == 1 and report["ok"] == 1                       # quote found in its section
+    assert (tmp_path / "pages" / "abc.csv").exists()                        # section text kept for checking
