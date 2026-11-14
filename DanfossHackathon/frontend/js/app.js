@@ -56,6 +56,7 @@
       error: null,
       mode: "compare",                            // "compare" (Danfoss first) | "match" (competitor first)
       matchProduct: null,                         // { id, label } of the competitor product in match mode
+      system: null,                               // { label, payload } in system mode
     };
   }
 
@@ -734,13 +735,13 @@
       </div>
       ${r.flags?.length ? `<section class="insight"><h4>Open points</h4>${r.flags.map(flagHtml).join("")}</section>` : ""}
       <section class="sources"><h4>Sources</h4><ol>${r.sources.map((s) =>
-        `<li id="src-${s.id}">${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title)}${s.page ? `, p. ${esc(s.page)}` : ""}${s.date ? ` <span class="hint">(${esc(s.date)})</span>` : ""}${s.url ? "" : ' <span class="hint">· no online link yet</span>'}${s.doc ? `<div class="hint">${esc(s.doc)}</div>` : ""}</li>`).join("")}</ol></section>
+        `<li id="src-${s.id}">${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title)}${s.page ? `, p. ${esc(s.page)}` : ""}${s.date ? ` <span class="hint">(${esc(s.date)})</span>` : ""}${s.url || s.kind === "customer" ? "" : ' <span class="hint">· no online link yet</span>'}${s.doc ? `<div class="hint">${esc(s.doc)}</div>` : ""}</li>`).join("")}</ol></section>
       <div class="actions">
         <button class="btn btn-ghost" type="button" data-act="print">Print / save as PDF</button>
         <button class="btn btn-ghost" type="button" data-act="edit">Adjust priorities</button>
       </div>`;
     card.querySelector('[data-act="print"]').addEventListener("click", () => window.print());
-    if (state.mode === "match") card.querySelector('[data-act="edit"]').remove();
+    if (state.mode !== "compare") card.querySelector('[data-act="edit"]').remove();
     else card.querySelector('[data-act="edit"]').addEventListener("click", () => {
       const idx = segments().findIndex((s) => s.key === "factors");
       editSegment(idx);
@@ -750,6 +751,14 @@
 
   // ---------- sidebar + stepper ----------
   function renderBrief() {
+    if (state.mode === "system") {
+      briefEl.innerHTML = `<h2>System comparison</h2>
+        <div class="brief-item"><div class="brief-label">${state.system.start === "danfoss" ? "Danfoss system" : "Customer uses"}</div><div class="brief-value">${esc(state.system.label)}</div></div>
+        <div class="brief-item"><div class="brief-label">Buyer</div><div class="brief-value ${buyerSummary() ? "" : "is-empty"}">${esc(buyerSummary() || "Not set")}</div></div>
+        ${customerFilesFor(state.buyer.company) ? `<div class="brief-item"><div class="brief-label">Customer feedback</div><div class="brief-value">${esc(customerFilesFor(state.buyer.company))}</div></div>` : ""}
+        <p class="hint brief-foot">System values (e.g. system flow) are calculated by code from the component facts, never by the AI.</p>`;
+      return;
+    }
     if (state.mode === "match") {
       briefEl.innerHTML = `<h2>Danfoss match</h2>
         <div class="brief-item"><div class="brief-label">Customer uses</div><div class="brief-value">${esc(state.matchProduct.label)}</div></div>
@@ -833,6 +842,93 @@
     }
   }
 
+  // ---------- system comparison: e.g. pump + valve against the other side's pump + valve ----------
+  async function openSystemDialog() {
+    const dlg = $("#system-dialog");
+    dlg.innerHTML = `<div class="dialog-body"><p>Loading products…</p></div>`;
+    dlg.showModal();
+    let products = [];
+    try { products = (await Api.products()).products || []; }
+    catch (err) { dlg.innerHTML = `<div class="dialog-body">${flagHtml({ level: "error", text: err.message })}</div>`; return; }
+    const families = [...new Set(products.map((p) => p.family))].filter(Boolean);
+    const label = (p) => `${p.brand} ${p.name}${p.demo ? " (DEMO data)" : ""}`;
+    const options = (fam, side, extra) => extra + products.filter((p) => p.family === fam && p.side === side)
+      .map((p) => `<option value="${esc(p.id)}">${esc(label(p))}</option>`).join("");
+    const draw = (start) => {
+      const other = start === "danfoss" ? "competitor" : "danfoss";
+      dlg.innerHTML = `
+      <form method="dialog" class="dialog-body">
+        <div class="dialog-head"><h3>Compare system</h3><button class="link-btn" value="cancel" type="submit">Close</button></div>
+        <p class="hint">A system is a set of components that work together. Code also calculates how well they fit
+          (e.g. system flow = the smaller of pump flow and valve inlet flow) – every value still links to its datasheet page.</p>
+        <fieldset class="field seg"><legend>Start from</legend>
+          <label><input type="radio" name="start" value="danfoss" ${start === "danfoss" ? "checked" : ""}> A Danfoss system</label>
+          <label><input type="radio" name="start" value="competitor" ${start === "competitor" ? "checked" : ""}> The competitor system the customer uses</label>
+        </fieldset>
+        <div class="form-grid tight">${families.map((fam) => `
+          <label class="field"><span>${esc(fam[0].toUpperCase() + fam.slice(1))} · ${start === "danfoss" ? "Danfoss" : "competitor"}</span>
+            <select name="c-${esc(fam)}">${options(fam, start, '<option value="">– not part of the system –</option>')}</select></label>
+          <label class="field"><span>compare with (${other === "danfoss" ? "Danfoss" : "competitor"})</span>
+            <select name="a-${esc(fam)}">${options(fam, other, '<option value="">Find best match automatically</option>')}</select></label>`).join("")}
+        </div>
+        <div class="form-grid tight">
+          <label class="field"><span>Customer <span class="opt">(optional)</span></span><input name="company" value="${esc(state.buyer.company || "")}" placeholder="e.g. AGCO"></label>
+          <label class="field"><span>Application <span class="opt">(optional)</span></span><input name="application" value="${esc(state.buyer.application || "")}" placeholder="e.g. Wheel loader"></label>
+        </div>
+        <div class="form-issues"></div>
+        <div class="actions"><button class="btn btn-primary" value="go" type="submit">Compare system</button></div>
+      </form>`;
+      const f = dlg.querySelector("form");
+      f.querySelectorAll('input[name="start"]').forEach((r) => r.addEventListener("change", () => draw(r.value)));
+      f.addEventListener("submit", (e) => {
+        if (e.submitter?.value !== "go") return;
+        const components = {}, against = {};
+        families.forEach((fam) => { components[fam] = f["c-" + fam].value || null; against[fam] = f["a-" + fam].value || null; });
+        const chosen = Object.entries(components).filter(([, v]) => v);
+        if (chosen.length < 2) {
+          e.preventDefault();
+          f.querySelector(".form-issues").innerHTML = flagHtml({ level: "error", text: "Choose at least two components (e.g. a pump and a valve)." });
+          return;
+        }
+        const name = (id) => label(products.find((p) => p.id === id) || { brand: "", name: id });
+        state = freshState();
+        state.mode = "system";
+        state.buyer.company = f.company.value.trim();
+        state.buyer.application = f.application.value.trim();
+        state.system = {
+          label: chosen.map(([fam, id]) => `${fam}: ${name(id)}`).join(" + "),
+          start: f.start.value,
+          payload: { start: f.start.value, components, against },
+        };
+        runSystem();
+      });
+    };
+    if (!families.length) {
+      dlg.innerHTML = `<div class="dialog-body"><p class="flag flag-missing">No products with extracted facts yet.</p></div>`;
+      return;
+    }
+    draw("danfoss");
+  }
+
+  async function runSystem() {
+    state.loading = true; state.error = null; state.result = null; render();
+    try {
+      state.result = await Api.compareSystem({ ...state.system.payload, buyer: { ...state.buyer }, factors: {}, chatNotes: [] });
+    } catch (err) {
+      state.error = err.message;
+    } finally {
+      state.loading = false; render();
+    }
+  }
+
+  function renderSystem() {
+    botMsg(state.system.start === "danfoss" ? "Which Danfoss components make up the system?" : "Which competitor system does the customer use?", { compact: true });
+    userMsg(state.system.label + (buyerSummary() ? " · " + buyerSummary() : ""), openSystemDialog);
+    if (state.loading) loadingWidget();
+    else if (state.error) botMsg(`<div class="flag flag-conflict">Couldn't compare the systems: ${esc(state.error)}</div>`);
+    else if (state.result) resultWidget(state.result);
+  }
+
   function renderMatch() {
     botMsg("Which competitor product does the customer use today?", { compact: true });
     userMsg(state.matchProduct.label + (buyerSummary() ? " · " + buyerSummary() : ""), openMatchDialog);
@@ -843,9 +939,10 @@
 
   function render() {
     chat.innerHTML = "";
-    if (state.mode === "match") {
-      botMsg("Let's find the closest Danfoss products for the competitor product your customer uses.");
-      renderMatch();
+    if (state.mode === "match" || state.mode === "system") {
+      botMsg(state.mode === "match" ? "Let's find the closest Danfoss products for the competitor product your customer uses."
+                                    : "Let's compare a whole system – component by component and how well the parts fit together.");
+      state.mode === "match" ? renderMatch() : renderSystem();
       renderBrief();
       renderStepper();
       requestAnimationFrame(() => (chat.scrollTop = chat.scrollHeight));
@@ -902,6 +999,7 @@
   async function reloadCatalog() { catalog = await Api.getCatalog(); }
   $("#btn-upload").addEventListener("click", () => catalog && openUploadDialog());
   $("#btn-match").addEventListener("click", () => catalog && openMatchDialog());
+  $("#btn-system").addEventListener("click", () => catalog && openSystemDialog());
 
   // ---------- boot ----------
   Api.getCatalog()

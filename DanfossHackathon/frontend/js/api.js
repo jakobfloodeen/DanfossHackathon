@@ -57,6 +57,18 @@ const Api = (() => {
       return call("/match", { method: "POST", body: JSON.stringify(payload) });
     },
 
+    /** All products that have extracted facts (for the system builder). */
+    async products() {
+      if (cfg.USE_MOCK) return { products: [] };
+      return call("/products");
+    },
+
+    /** System comparison: a set of components (pump + valve ...) against the other side's set. */
+    async compareSystem(payload) {
+      if (cfg.USE_MOCK) { await delay(300); throw new Error("System comparison needs the real backend (USE_MOCK is on)."); }
+      return call("/compare-system", { method: "POST", body: JSON.stringify(payload) });
+    },
+
     /** Free-text question typed into the chat box, with the current brief as context. */
     async ask(payload) {
       if (cfg.USE_MOCK) { await delay(700); return window.mockAsk(payload); }

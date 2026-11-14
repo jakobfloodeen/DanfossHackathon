@@ -354,6 +354,7 @@ from comparison_engine import interpret, load_repository      # noqa: E402
 from comparison_engine.website import to_website              # noqa: E402
 from comparison_engine.documents import link as document_link  # noqa: E402
 from comparison_engine.customer import customer_facts, list_customers, save_customer_file  # noqa: E402
+from comparison_engine.system import System, compare_systems, compose_system  # noqa: E402
 
 
 async def upload_customer_files(customer_name: Optional[str], files: list[UploadFile]) -> dict:
@@ -447,12 +448,16 @@ def empty_response(title, anchor, flags):
             "confidence": {"level": "low", "reason": "No extracted facts to compare yet."}}
 
 
+def customer_passages(payload: dict, question: str, context: str):
+    """The buyer's own feedback files (if any were uploaded), as citable facts C1, C2 ..."""
+    words = re.findall(r"[a-zA-Z]{3,}", " ".join([context, question] + list((payload.get("factors") or {}).keys())))
+    return customer_facts((payload.get("buyer") or {}).get("company", ""), words)
+
+
 def run_engine(target_id: str, candidates, pool: str, payload: dict, names: dict, pending: dict,
                extra_flags: list) -> dict:
     question, context = brief_text(payload)
-    buyer = payload.get("buyer") or {}
-    words = re.findall(r"[a-zA-Z]{3,}", " ".join([context, question] + list((payload.get("factors") or {}).keys())))
-    customer = customer_facts(buyer.get("company", ""), words)
+    customer = customer_passages(payload, question, context)
     result = interpret(target_id, candidates, question, context, ask=ENGINE_ASK, use_ai=True, pool=pool,
                        customer_facts=customer)
     for pid, info in names.items():                     # confirmed equivalent pairs from the uploads
@@ -506,6 +511,67 @@ def compare(payload: dict):
                               {"key": anchor["id"], "name": anchor["label"], "manufacturer": "Danfoss"},
                               [issue("missing", "None of the chosen competitor products has data yet.")])
     return run_engine(anchor["id"], candidates, "competitors", payload, names, pending, flags)
+
+
+# =====================================================================
+# GET /api/products   (everything that has facts, for the system builder)
+# =====================================================================
+@app.get("/api/products")
+def list_products():
+    data = load_repository()
+    if data.empty:
+        return {"products": []}
+    names = catalog_names(load_catalog())
+    out = []
+    for pid, g in data.groupby("product_id"):
+        brand = g["brand"].iloc[0]
+        out.append({"id": pid, "name": names.get(pid, {}).get("name") or g["product_name"].iloc[0],
+                    "brand": names.get(pid, {}).get("manufacturer") or brand, "family": g["family"].iloc[0],
+                    "side": "danfoss" if brand.lower() == "danfoss" else "competitor",
+                    "demo": bool("DEMO" in pid or g["source_file"].astype(str).str.contains("DEMO").any())})
+    return {"products": sorted(out, key=lambda p: (p["family"], p["side"], p["name"]))}
+
+
+# =====================================================================
+# POST /api/compare-system   (a set of components, e.g. pump + valve, against another set)
+# Request: { "start": "danfoss" | "competitor",            which side the user describes
+#            "components": {"pump": "<product id>", "valve": "<product id>"},
+#            "against":    {"pump": null, "valve": "<product id>"},   null = best match chosen automatically
+#            "buyer": {...}, "factors": {...}, "chatNotes": [...] }
+# Response: same shape as /api/compare; rows are "Pump · ...", "Valve · ..." and "System · ..." values.
+# =====================================================================
+@app.post("/api/compare-system")
+def compare_system_endpoint(payload: dict):
+    start = "competitor" if payload.get("start") == "competitor" else "danfoss"
+    have = products_with_facts()
+    components = {r: p for r, p in (payload.get("components") or {}).items() if p}
+    names = catalog_names(load_catalog())
+    side_name = {"danfoss": ("Danfoss system", "Danfoss"), "competitor": ("Competitor system", "Competitors")}
+    anchor_name, anchor_brand = side_name[start]
+    other_name, other_brand = side_name["competitor" if start == "danfoss" else "danfoss"]
+    no_data = [p for p in components.values() if p not in have]
+    if len(components) < 2 or no_data:
+        why = ("Choose at least two components (e.g. a pump and a valve)." if len(components) < 2 else
+               f"No extracted facts yet for: {', '.join(names.get(p, {}).get('name', p) for p in no_data)}.")
+        return empty_response(f"{anchor_name} vs. {other_name}", {"key": "system:anchor", "name": anchor_name,
+                                                                   "manufacturer": ""}, [issue("missing", why)])
+    anchor = System("system:anchor", anchor_name, anchor_brand, components)
+    fixed = {role: (payload.get("against") or {}).get(role) for role in components}
+    other = compose_system("system:other", other_name, other_brand, fixed, anchor,
+                           pool="competitors" if start == "danfoss" else "danfoss")
+    question, context = brief_text(payload)
+    result = compare_systems(anchor, other, question, context, ask=ENGINE_ASK,
+                             customer_facts=customer_passages(payload, question, context),
+                             pool="competitors" if start == "danfoss" else "danfoss")
+
+    def parts(system):
+        return " + ".join(f"{names.get(p, {}).get('name') or p.split('|')[-1]} ({r})"
+                          for r, p in system.components.items() if p) or "no components with data"
+    flags = [issue("unverified", f"{other_name} · {n}") for n in other.notes if "automatically" in n]
+    flags += [issue("missing", f"{other_name} · {n}") for n in other.notes if "automatically" not in n]
+    return to_website(result, names={anchor.id: {"name": anchor_name, "manufacturer": parts(anchor)},
+                                     other.id: {"name": other_name, "manufacturer": parts(other)}},
+                      doc_url=doc_url, extra_flags=flags)
 
 
 # =====================================================================

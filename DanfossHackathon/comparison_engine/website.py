@@ -21,6 +21,7 @@ Short output (one-pager): rows where the anchor product AND at least one match h
 paired across different names, are "core" (shown in the table); all other rows go to a collapsed "All facts" list that is not printed.
 AI text is capped at 3 key differences, 3 benefits and 2 trade-offs.
 """
+import re
 from collections import Counter
 from typing import Callable
 
@@ -81,11 +82,11 @@ class _Sources:
             self.index[key] = len(self.items) + 1
             found = self.doc_url(f.source_file, f.page)        # str url, or {url, title, date}, or None
             info = found if isinstance(found, dict) else {"url": found}
-            if f.role == "customer":
-                info = {"title": f"Customer file: {f.source_file}", "url": None}
+            if f.role == "customer":                              # the customer's own file: never online
+                info = {"title": f"Customer file: {f.source_file}", "url": None, "kind": "customer"}
             self.items.append({"id": self.index[key], "title": info.get("title") or f.source_file, "doc": "",
                                "quotes": [], "page": str(f.page) if f.page else "", "date": info.get("date", ""),
-                               "file": f.source_file, "url": info.get("url")})
+                               "file": f.source_file, "url": info.get("url"), "kind": info.get("kind", "document")})
         item = self.items[self.index[key] - 1]
         if f.quote and f.quote not in item["quotes"]:
             item["quotes"].append(f.quote)
@@ -268,7 +269,8 @@ def _name(pid: str, names: dict) -> str:
 def _insights(result, by_id, sources, names, match_ids) -> dict:
     interp = result.interpretation
     if interp:
-        def item(text, ids):
+        def item(text, ids):     # "(C2)" / "[F12]" in the text are redundant: the footnotes show the sources
+            text = re.sub(r"\s*[\(\[](?:[CF]\d+(?:,\s*)?)+[\)\]]", "", text)
             return {"text": text, "sources": sources.refs([by_id[i] for i in ids if i in by_id], by_id)}
         bm = interp.get("best_match") or {}
         differences = ([item(f"Closest match: {_name(bm.get('product_id'), names)}. {bm.get('why', '')}",

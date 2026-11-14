@@ -155,3 +155,38 @@ def test_customer_feedback_upload_and_use(client, tmp_path, monkeypatch):
 def test_customer_upload_needs_a_name(client):
     r = client.post("/api/datasets", data={"source": "customer"}, files={"files": ("a.txt", b"x", "text/plain")}).json()
     assert r["uploaded"] == [] and r["issues"][0]["level"] == "error"
+
+
+def add_demo_pumps(monkeypatch):
+    import os
+    repo = Path(os.environ["REPO_DIR"])
+    for name in ("danfoss_DEMO_pumps.csv", "competitorx_DEMO_pump71.csv"):
+        shutil.copy(APP / "examples" / "repository_demo" / name, repo / name)
+
+
+def test_products_list_for_the_system_builder(client, monkeypatch):
+    add_demo_pumps(monkeypatch)
+    prods = client.get("/api/products").json()["products"]
+    by_id = {p["id"]: p for p in prods}
+    assert by_id["pvg32"]["family"] == "valve" and by_id["pvg32"]["side"] == "danfoss"
+    assert by_id["rexroth-sb23"]["side"] == "competitor"
+    assert by_id["Danfoss|DEMO pump 75"]["family"] == "pump" and by_id["Danfoss|DEMO pump 75"]["demo"]
+
+
+def test_compare_system_pump_and_valve(client, monkeypatch):
+    add_demo_pumps(monkeypatch)
+    r = client.post("/api/compare-system", json={
+        "start": "danfoss", "components": {"pump": "Danfoss|DEMO pump 75", "valve": "pvg32"},
+        "against": {"pump": None, "valve": "rexroth-sb23"}, "buyer": {"company": "AGCO"}}).json()
+    assert r["anchor"]["name"] == "Danfoss system" and "PVG 32 (valve)" in r["anchor"]["manufacturer"]
+    assert r["matches"][0]["manufacturer"] == "DEMO pump 71 (pump) + SB 23 (valve)"
+    labels = [a["label"] for a in r["attributes"] if a["core"]]
+    assert "System · Max flow" in labels and any(l.startswith("Pump · ") for l in labels)
+    assert any(f["level"] == "unverified" and "pump: chosen automatically" in f["text"] for f in r["flags"])
+
+
+def test_compare_system_needs_two_components_with_data(client):
+    r = client.post("/api/compare-system", json={"components": {"valve": "pvg32"}}).json()
+    assert r["flags"][0]["level"] == "missing" and "at least two" in r["flags"][0]["text"]
+    r = client.post("/api/compare-system", json={"components": {"valve": "pvg32", "pump": "nope"}}).json()
+    assert "No extracted facts yet for: nope" in r["flags"][0]["text"]
