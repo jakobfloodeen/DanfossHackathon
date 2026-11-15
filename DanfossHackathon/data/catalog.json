@@ -20,8 +20,26 @@
               "id": "pvg16",
               "type": "product",
               "label": "PVG 16",
-              "desc": "No datasheet uploaded yet",
-              "status": "data-pending"
+              "desc": "1 dataset(s) loaded",
+              "status": "active",
+              "datasets": [
+                {
+                  "name": "BC152986484323en-001302.pdf",
+                  "fileId": "5d0c649079b66480",
+                  "source": "danfoss",
+                  "competitorId": null,
+                  "pages": 115,
+                  "uploadedAt": "2026-11-15T04:58:20+00:00",
+                  "facts": {
+                    "status": "done",
+                    "csv": "pvg16__5d0c649079b66480.csv",
+                    "facts": 43,
+                    "ok": 43,
+                    "unverified": 0,
+                    "at": "2026-11-15T04:58:30+00:00"
+                  }
+                }
+              ]
             },
             {
               "id": "pvg32",

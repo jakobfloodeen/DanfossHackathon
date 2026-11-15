@@ -1,0 +1,3422 @@
+source_file,page,text
+BC152986484323en-001302.pdf,1,"Technical Information
+PVG 16
+Proportional Valve Group
+www.danfoss.com"
+BC152986484323en-001302.pdf,2,"Technical Information
+PVG 16 Proportional Valve Group
+Revision history Table of revisions
+Date Changed Rev
+March 2024 Updated table information 1302
+September 2023 Major update 1301
+January 2023 Updated schematic 1205
+November 2022 Updated part numbers for PVBS main spools 1204
+September 2022 Updated part numbers for compensated PVB 1203
+July 2022 Updated PVB schematic 1202
+June 2022 Removed mention of integrated LS pressure relief valve 1201
+July 2021 Added part number for PVPX port plug 1104
+January 2021 Minor change on page 79 (PVEO Technical Data) 1103
+June 2020 Edited PVEO section 1102
+May 2020 Major update - changes throughout, Changed document number from 'BC00000211' 1101
+to 'BC152986484323'
+December 2018 Major rework of document: new sections added, data corrected. 0901
+October 2018 'PVBS Main Spools' section reworked. 'Safety in Systems' and 'PVB Basic Modules 0801
+Accessories' sections added.
+August 2018 Minor update - part number typo corrected 0702
+May 2018 Major update. 0701
+April 2018 Minor change for PVEA. 0602
+January 2018 Major update. 0601
+July 2017 Major update. 0501
+February 2017 Major update. 0401
+March 2016 Minor update in PVHC technical characteristics 0303
+March 2016 Updated to Engineering Tomorrow design. 0302
+February 2016 Drawing was updated in topic: How to select the correct spool 0301
+September 2015 PVG 16 Step II 0200
+Feb. 2013-Mar. 2015 Major layout revision, drawings change BA-BF
+October 2012 New Edition AA
+2 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,3,"Technical Information
+PVG 16 Proportional Valve Group
+Contents
+General Information
+General Description.........................................................................................................................................................................5
+PVG 16 Features................................................................................................................................................................................5
+Safety in Systems..............................................................................................................................................................................6
+Technical Data...................................................................................................................................................................................7
+Error Pin Specification.....................................................................................................................................................................8
+PVG 16 Modules Overview............................................................................................................................................................9
+PVP Inlet Modules
+Open Center PVP............................................................................................................................................................................12
+Open Center PVP with PPRV......................................................................................................................................................15
+Open center PVP with HPCO and PVE PPRV.........................................................................................................................19
+Closed Center PVP.........................................................................................................................................................................22
+Closed Center PVP with PPRV....................................................................................................................................................24
+Closed center PVPV with PPRV..................................................................................................................................................27
+Closed center PVPVM with PPRV..............................................................................................................................................29
+Open/Closed center PVP with PPRV........................................................................................................................................31
+Open/Closed center PVPM.........................................................................................................................................................34
+PVP Inlet Module Accessories
+PVPX Electrical LS Pressure Unloading Valve.......................................................................................................................35
+Part numbers for PVPX............................................................................................................................................................36
+PVPC without Check Valve..........................................................................................................................................................38
+PVPC with Check Valve................................................................................................................................................................40
+PVB Basic Modules
+Compensated PVB.........................................................................................................................................................................43
+Compensated PVB with PVLP/PVLA........................................................................................................................................46
+Compensated PVB with LS A/B.................................................................................................................................................50
+Uncompensated PVB....................................................................................................................................................................53
+Uncompensated PVB with PVLP...............................................................................................................................................55
+PVLP Shock and Anti-Cavitation Valve...................................................................................................................................58
+PVB Basic Modules Accessories
+PVLP Shock and Anti-Cavitation Valve...................................................................................................................................61
+PVLA Suction Valve........................................................................................................................................................................63
+PVBS Main Spools
+PVBS Fluid Flow Characteristics - Theoretical Performance...........................................................................................65
+PVBS Main Spools Part Numbers
+Flow Control Spools - Closed Neutral Position....................................................................................................................68
+Flow Control Spools - Throttled Open Neutral Position..................................................................................................69
+Flow Control Spools - Open/Closed Neutral Position.......................................................................................................70
+PVG 16 Actuation
+PVM Manual Actuation................................................................................................................................................................71
+PVMD Cover................................................................................................................................................................................72
+PVH Hydraulic Actuation.............................................................................................................................................................73
+PVHC Electro-Hydraulic Actuation...........................................................................................................................................75
+PVE Electro-hydraulic Actuation...............................................................................................................................................77
+PVEO...................................................................................................................................................................................................79
+PVEO Technical Data...............................................................................................................................................................81
+PVEA Series 7 Proportional Control Actuator......................................................................................................................82
+PVEA Technical Data................................................................................................................................................................84
+PVG 16 connector variants.........................................................................................................................................................86
+Fault Monitoring and Reaction
+Generic Fault Reaction.................................................................................................................................................................87
+Fault Reaction Overview..............................................................................................................................................................88
+PVS End Plates
+PVS/PVSI ...........................................................................................................................................................................................90
+© Danfoss | March 2024 BC152986484323en-001302 | 3"
+BC152986484323en-001302.pdf,4,"Technical Information
+PVG 16 Proportional Valve Group
+Contents
+PVS/PVSI with LX-connection....................................................................................................................................................92
+PVSI with P-, T-, LX- and M-connection..................................................................................................................................94
+PVST with T-connection...............................................................................................................................................................96
+PVAS Stay Bolts
+PVAS Part Numbers.......................................................................................................................................................................99
+PVG 16 modules total length and weight.............................................................................................................................99
+PVG 32/16 Combinations..........................................................................................................................................................100
+PVG 256/128/32/16 Combinations.......................................................................................................................................101
+PVG 16 Combinations Valve Stack Dimensions
+PVG 16 Dimensions.....................................................................................................................................................................103
+PVG 32/16 Dimensions..............................................................................................................................................................104
+PVG 100/16 Dimensions............................................................................................................................................................106
+PVG 120/16 Dimensions............................................................................................................................................................108
+PVG 128/16 Dimensions............................................................................................................................................................110
+PVG 256/16 Dimensions............................................................................................................................................................112
+PVG 16 Applications Schematics
+PVG 16 Schematic with Basic End Plate...............................................................................................................................114
+PVG 16 with P- and T-connection end plate......................................................................................................................114
+4 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,5,"Technical Information
+PVG 16 Proportional Valve Group
+General Information
+General Description
+PVG is a hydraulic, load-sensing proportional valve, designed for optimal machine performance and
+maximum design flexibility. The PVG valve design is based on a modular concept that enables machine
+designers to specify a valve solution suitable for multiple market segments across multiple applications.
+The PVG 16 is a member of the PVG product platform and interfaces to other valve families enabling all
+machine functions being controlled from one single valve stack.
+PVG 16 controls work port flow up to 65 l/min [17 US gal/min] l/min and up to 420 bar [6090 psi] bar work
+port pressure.
+The load independent proportional control valve and high performance actuator technology combined
+with a low pressure drop design improves the machine performance and efficiency – increasing
+productivity and reducing energy consumption.
+PVG 16 Features
+PVG load-sensing proportional valves features and benefits summarized in bullets below:
+• Load-independent flow control:
+‒ Oil flow to an individual function is independent of the load pressure of this function
+‒ Oil flow to one function is independent of the load pressure of other functions
+• Inlet flow up to 140 l/min [37 US gal/min] 230 l/min [61 US gal/min] when used with mid-inlet
+• Easy integration with PVG 32
+• Possible combination with the rest of the PVG family, when using an interface module
+• Up to 12 basic modules per PVG 16 valve group
+• Reliable regulation characteristics across the entire flow range
+• Load sense relief valves for A and B port enables reduced energy loss at target pressure
+• Several options for connection threads and flange mount
+• Compact design, easy installation and serviceability
+© Danfoss | March 2024 BC152986484323en-001302 | 5"
+BC152986484323en-001302.pdf,6,"Technical Information
+PVG 16 Proportional Valve Group
+General Information
+Safety in Systems
+All types and brands of control valves, including proportional valves, can fail. Therefore, the necessary
+protection against the serious consequences of a functional failure should always be built into the
+system.
+General safety considerations
+For each application an assessment should be made for the consequences of the system in case of
+pressure failure and uncontrolled or blocked movements.
+W Warning
+Because the proportional valve is used in many different applications and under different operating
+conditions, it is the sole responsibility of the manufacturer to ensure that all performance, safety and
+warning requirements of the application is met in his selection of products and complies with relevant
+machine specific and generic standards.
+Control system example
+An example of a control system using an aerial lift is shown below:
+Aerial lift
+This example breaks down the control system into smaller bits explaining the architecture in depth. Even
+though many Danfoss components are used in the PVG control system.
+The function of the control system is to use the output from the PVE together other external sensors to
+ensure the PLUS+1 main controllers correct function of the aerial lift.
+6 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,7,"Technical Information
+PVG 16 Proportional Valve Group
+General Information
+Electrical block diagram
+W Warning
+It is the responsibility of the equipment manufacturer that the control system incorporated in the
+machine is declared as being in conformity with the relevant machine directives.
+C Caution
+A mix of electrical actuation and hydraulic actuation on the same valve stack is not safe. PVE and PVH are
+designed for different pilot pressure.
+Cost-free repairs, as mentioned in Danfoss General Conditions of Sale, are carried out only at Danfoss or
+at service shops authorized by Danfoss.
+Technical Data
+Maximum pressure Port P continuous 350 bar [5075 psi]
+Port P intermittent 400 bar [5800 psi]
+Port A/B continous 350 bar [5075 psi]
+Port A/B intermittent 420 bar 6090 psi]
+Port T, static/dynamic 25/40 bar [365/580 psi]
+Oil flow rated Port P 140/230 l/min [37/61 US gal/min]
+Port A/B 65 l/min [17 US gal/min]
+Spool travel Deadband ± 1.5 mm [± 0.06 in]
+Proportional range ± 5 mm [± 0.2 in]
+Float position ± 7.5 mm [± 0.3 in]
+Maximum internal leakage at 100 A/B → T without shock valve 20 cm3/min [1.85 in3/min]
+bar [1450 psi] and 21 mm2/s [102
+A/B → T with shock valve (system setting 30 bar [435 25 cm3/min [2.15 in3/min]
+SUS]
+psi]
+Ambient temperature -30 → 60 °C [-22 → 140 °F]
+© Danfoss | March 2024 BC152986484323en-001302 | 7"
+BC152986484323en-001302.pdf,8,"Technical Information
+PVG 16 Proportional Valve Group
+General Information
+Oil viscosity Operating range 12 - 75 mm2/s [65 - 347 SUS]
+Minimum viscosity 4 mm2/s [39 SUS]
+Maximum viscosity 460 mm2/s [2128 SUS]
+Filtration Maximum contamination (ISO 4406) 23/19/16
+PVM regulating range Proportional 13.9°
+Float position 22.3°
+PVM operating force PVM + PVMD Neutral position 2.2 ±0.2 N•m [5.0 ± 1.8 lbf•in]
+Maximum stroke 2.8 ±0.2 N•m [6.3 ± 1.8 lbf•in]
+PVM + PVE Neutral position 2.2 ±0.2 N•m [5.0 ± 1.8 lbf•in]
+Maximum stroke 2.8 ±0.2 N•m [6.3 ± 1.8 lbf•in]
+PVM + PVH Neutral position 2.7 ±0.2 N•m [23.9 ± 1.8 lbf•in]
+Maximum stroke 7.1 ±0.2 N•m [62.8 ± 1.8 lbf•in]
+PVH pressure Regulating range 5 – 15 bar [75 – 220 psi]
+Maximum pilot pressure 30 bar [435 psi]
+Maximum pressure on T-port 10 bar [145 psi]
+PVE input voltage Supply 11 – 32 V
+DC
+Regulating range 25 – 75% of supply voltage
+Oil consumption in pilot oil 0.5 l/min [0.13 US gal/min]
+reduction valve
+Error Pin Specification
+All proportional control PVE Series 7 actuators feature an error pin, indicating when an error is detected/
+occurs, according to the Fault Reaction Overview table. The specifications of the error pin is shown
+below.
+Description No error Error
+Output state Low High
+Output voltage <2 Vdc ~Udc
+Output current Max. 100 mA
+8 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,9,"Technical Information
+PVG 16 Proportional Valve Group
+General Information
+PVG 16 Modules Overview
+PVG proportional valve group shown in the exploded view illustration for a quick modules navigation.
+PVG 16 Modules Assembly Overview
+PVP PVE
+PVM PVBS PVB PVH/Covers
+PVS PVHC
+PVAS
+© Danfoss | March 2024 BC152986484323en-001302 | 9"
+BC152986484323en-001302.pdf,10,"Technical Information
+PVG 16 Proportional Valve Group
+General Information
+PVG Modules Navigation:
+PVP Inlet Modules on page 11
+PVB Basic Modules on page 42
+PVBS Main Spools on page 64
+PVM Manual Actuation on page 71
+PVE Electro-hydraulic Actuation on page 77
+PVH Hydraulic Actuation on page 73
+PVHC Electro-Hydraulic Actuation on page 75
+PVS End Plates on page 89
+PVAS Stay Bolts on page 98
+10 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,11,"The PVG 16 PVP inlet modules, also referred to as pump side modules, act as an interface between the
+PVG 16 proportional valve group and the hydraulic pump and tank reservoir.
+PVP Inlet Module PVP inlet module dimensions
+]34.4[
+5.211
+Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+95 [3.74] 23 [0.9]
+110 [4.33] 48 [1.89]
+Weight: 3.1 kg [6.9 lb]
+Fixed displacement pump symbol Variable displacement pump symbol
+The PVP inlet module variants are based on a generic platform with a selection of additional features,
+enabling you to tailor the PVP to suit the demands of any hydraulic system:
+• Open Center PVP on page 12 (for fixed displacement pumps)
+• Open Center PVP with PPRV on page 15 (for fixed displacement pumps)
+• Open center PVP with HPCO and PVE PPRV on page 19 (for fixed displacement pumps)
+• Closed Center PVP on page 22 (for variable displacement pumps)
+• Closed Center PVP with PPRV on page 24 (for variable displacement pumps)
+• Closed center PVPV with PPRV on page 27 (for variable displacement pumps)
+• Closed center PVPVM with PPRV on page 29 (for variable displacement pumps)
+• Open/Closed center PVP with PPRV on page 31
+• Open/Closed center PVPM on page 34
+© Danfoss | March 2024 BC152986484323en-001302 | 11"
+BC152986484323en-001302.pdf,12,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Open Center PVP
+The basic Open Center PVP inlet module is intended for use with fixed displacement pumps in
+applications, where a valve group with mechanically controlled work sections is desired, or where the
+pilot pressure to the valve group is supplied externally.
+The Open Center PVP features:
+• Integrated LS pressure relief valve
+• Threaded ports for P/T/LS and M measuring gauge
+• Optional LS unloading valve, PVPX
+• Optional T0 facility and external T0 port
+• Models with T0 port have internal T0 connection closed by default.
+All modules can be manually activated with the PVM actuation.
+Open center PVP schematic Open center PVP with T0
+LS M LS M T0
+T T
+P P
+Technical specification for PVP
+Max. P-port continuous Max. P-port intermittent Max. T-port static/ Max. rated flow
+dynamic
+350 [5076 psi] 400 bar [5800 psi] 25/40 bar [365/580 psi] 140 l/min [37 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+12 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,13,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Theoretical Performance Graphs
+Integrated LS pressure relief valve characteristics
+P P
+[psi] (bar)
+300
+4000
+250
+3000
+200
+150
+2000
+100
+1000
+50
+0 0 Q
+0 20 40 60 80 100 120 140 [l/min]
+Q
+0 4 8 12 16 20 24 28 32 36 [US gal/min]
+Neutral by-pass pressure drop characteristics
+[psi] (bar)
+20
+240
+16
+12
+160
+8
+80
+4
+0 0
+0 20 40 60 80 100 120 140 (l/min)
+0 4 8 12 16 20 24 28 32 36 [US gal/min]
+Part numbers for Open Center PVP
+Part number P-port T-port LS-, M-port (LS1**) T0-port Mounting PVPX*
+157B5000 G1/2” - –
+157B5100 G3/4” G3/4” G1/4” – M8 -
+157B5102 G3/4” - Yes
+157B5200 7/8-14 UNF - -
+1 1/16-12 UNF 1/2-20 UNF 5/16-18 UNC
+157B5300 1-1/16 UN - -
+110088521 G1/2 G3/4 G1/4 (G1/8) - M8 -
+11030545 G3/4 G3/4 G1/4 (G1/4) G1/4 M8 -
+11053974 G3/4 G3/4 G1/4 (G1/4) G1/4 M8 -
+11151852 1 1/16-12 UNF 1 1/16-12 UNF 9/16-18 UNF 9/16-18 UNF M8 -
+157B5908 1 1/16-12 UNF 1 1/16-12 UNF 1/2-20 UNF - M8 -
+157B5921 JIS 1/2 JIS 3/4 JIS 1/4 - M8 -
+© Danfoss | March 2024 BC152986484323en-001302 | 13"
+BC152986484323en-001302.pdf,14,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Part numbers for Open Center PVP (continued)
+Part number P-port T-port LS-, M-port (LS1**) T0-port Mounting PVPX*
+157B5925 JIS 3/4 JIS 3/4 JIS 1/4 - M8 -
+157B5945 G1/2 G3/4 G1/4 (G1/8) - M8 -
+157B59902 1 1/16-12 UNF 1 1/16-12 UNF - - M8 -
+** LS1 is an extra LS-port.
+* For more information see PVPX Electrical LS Pressure Unloading Valve on page 35.
+1 Dampened LS response
+2 No relief valve
+14 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,15,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Open Center PVP with PPRV
+The Open Center PVP inlet with integrated pilot pressure reduction valve (PPRV) is intended for use with
+fixed displacement pumps in applications, where a valve group with electro-hydraulically or hydraulically
+controlled work sections is desired (PVE or PVH/PVHC).
+The Open Center PVP with PPRV features:
+• Integrated LS pressure relief valve
+• Threaded ports for P/T/LS and M measuring gauge
+• Integrated pilot pressure reducing valve (PPRV) for PVE or PVH/PVHC
+• Optional external pilot pressure port (Pp)
+• Optional LS unloading valve, PVPX
+• Models with T0 port have internal T0 connection closed by default.
+All modules can be manually activated with the PVM actuation.
+Open center PVP with PPRV schematic Open center PVP with PPRV and T0
+LS M LS M T0
+T T
+P Pp P Pp
+Technical specification for PVP
+Max. P-port continuous Max. P-port intermittent Max. T-port static/ Max. rated flow
+dynamic
+350 [5076 psi] 400 bar [5800 psi] 25/40 bar [365/580 psi] 140 l/min [37 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+© Danfoss | March 2024 BC152986484323en-001302 | 15"
+BC152986484323en-001302.pdf,16,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Theoretical Performance Graphs
+Integrated LS pressure relief valve characteristics
+P P
+[psi] (bar)
+300
+4000
+250
+3000
+200
+150
+2000
+100
+1000
+50
+0 0 Q
+0 20 40 60 80 100 120 140 [l/min]
+Q
+0 4 8 12 16 20 24 28 32 36 [US gal/min]
+Neutral by-pass pressure drop characteristics
+[psi] (bar)
+20
+240
+16
+12
+160
+8
+80
+4
+0 0
+0 20 40 60 80 100 120 140 (l/min)
+0 4 8 12 16 20 24 28 32 36 [US gal/min]
+Pilot pressure reduction valve characteristics
+[psi] P [bar] PVE [psi] P [bar] PVH/PVHC
+280 20 480 30
+18 28
+240 440
+16 26
+200 14 400 24
+12 22
+160 360
+Max.
+10 20
+120 8 320 18
+80 6 Min. 280 16 Max.
+4 14
+40 2 240 12 Min.
+0 0 Q 0 0 Q
+0 1 2 3 4 5 [l/min] 0 1 2 3 4 5 [l/min]
+Q Q
+0 0.2 0.4 0.6 0.8 1.0 1.2 [US gal/min] 0 0.2 0.4 0.6 0.8 1.0 1.2 [US gal/min]
+16 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,17,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Part numbers for Open Center PVP with PPRV
+Part number Actuation P-port T-port LS-port M-port Pp-port T0-port Mounting PVPX*
+157B5010 PVE G1/2” G3/4” G1/4” G1/4” - - M8 -
+157B5012 PVE G1/2” G3/4” G1/4” G1/4” - - M8 Yes
+157B5110 PVE G3/4” G3/4” G1/4” G1/4” - - M8 -
+157B5112 PVE G3/4” G3/4” G1/4” G1/4” - - M8 Yes
+157B5180 PVE G3/4” G3/4” G1/4” G1/4” G1/4” - M8 -
+157B5190 PVH/PVHC G3/4” G3/4” G1/4” G1/4” G1/4” - M8 -
+157B5210 PVE 7/8-14 UNF 1 1/16-12 UNF 1/2-20 UNF 1/2-20 UNF - - 5/16-18 UNC -
+157B5212 PVE 7/8-14 UNF 1 1/16-12 UNF 1/2-20 UNF 1/2-20 UNF - - 5/16-18 UNC Yes
+157B5310 PVE 1 1/16-12 UNF 1 1/16-12 UNF 1/2-20 UNF 1/2-20 UNF - - 5/16-18 UNC -
+157B5312 PVE 1 1/16-12 UNF 1 1/16-12 UNF 1/2-20 UNF 1/2-20 UNF - - 5/16-18 UNC Yes
+157B5380 PVE 1 1/16-12 UNF 1 1/16-12 UNF 9/16-18 UNF 9/16-18 UNF 9/16-18 UNF - 5/16-18 UNC -
+157B5390 PVH/PVHC 1 1/16-12 UNF 1 1/16-12 UNF 9/16-18 UNF 9/16-18 UNF 9/16-18 UNF - 5/16-18 UNC -
+11008850 PVE G3/4 G3/4 G1/4 G1/4 - - M8 Yes
+110133171 PVE G3/4 G3/4 G1/4 G1/4 G1/4 G1/4 M8 -
+11020964 PVE 1 1/16-12 UNF 1 1/16-12 UNF 1/2-20 UNF 1/2-20 UNF - - M8 -
+110875901 PVH/PVHC G3/4 G3/4 G1/4 G1/4 G1/4 - M8 -
+11090453 PVE JIS 3/4 JIS 3/4 JIS 1/4 JIS 1/4 JIS 1/4 JIS 1/4 M8 -
+111194292 PVE G3/4 G3/4 G1/4 G1/4 G1/4 - M8 -
+11124965 PVH/PVHC G3/4 G3/4 G1/4 G1/4 G1/4 G1/4 M8 Yes
+11124966 PVH/PVHC G3/4 G3/4 G1/4 G1/4 G1/4 G1/4 M8 -
+111309412 PVE 1 1/16-12 UNF 1 1/16-12 UNF 9/16-18 UNF 9/16-18 UNF 9/16-18 UNF - 5/16-18 UNC -
+11167773 PVH/PVHC 1 1/16-12 UNF 1 1/16-12 UNF 1/2-20 UNF 1/2-20 UNF - - 5/16-18 UNC Yes
+111873564 PVE G1/2 G3/4 G1/4 G1/4 - - M8 Yes
+11190123 PVH/PVHC G1/2 G3/4 G1/4 G1/4 - - M8 Yes
+11196947 PVE G3/4 G3/4 G1/4 G1/4 - G1/4 M8 -
+11225941 PVE 1 1/16-12 UNF 1 1/16-12 UNF 9/16-18 UNF 9/16-18 UNF 9/16-18 UNF 9/16-18 5/16-18 UNC -
+UNF
+157B51353 PVE G3/4 G3/4 G1/4 G1/4 G1/4 G1/4 M8 -
+157B59042 PVE G3/4 G3/4 G1/4 G1/4 G1/4 - M8 -
+157B5923 PVE JIS 1/2 JIS 3/4 JIS 1/4 JIS 1/4 - - M8 -
+157B5926 PVE JIS 3/4 JIS 3/4 JIS 1/4 JIS 1/4 - - M8 -
+157B5934 PVE G3/4 G3/4 G1/4 G1/4 - - M8 -
+157B59432 PVH/PVHC G3/4 G3/4 G1/4 G1/4 G1/4 - M8 -
+157B59532 PVE G3/4 G3/4 G1/4 G1/4 - - M8 Yes
+157B5954 PVE G3/4 G3/4 G1/4 G1/4 G1/4 - M8 -
+157B5960 PVE 1 1/16-12 UNF 1 1/16-12 UNF 9/16-18 UNF 9/16-18 UNF - 9/16-18 5/16-18 UNF -
+UNF
+157B59662 PVE G3/4 G3/4 G1/4 G1/4 - - M8 Yes
+157B5976 PVE G3/4 G3/4 G1/4 G1/4 - - M8 Yes
+© Danfoss | March 2024 BC152986484323en-001302 | 17"
+BC152986484323en-001302.pdf,18,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Part numbers for Open Center PVP with PPRV (continued)
+Part number Actuation P-port T-port LS-port M-port Pp-port T0-port Mounting PVPX*
+157B59771,4 PVE G3/4 G3/4 G1/4 G1/4 - - M8 -
+11101194 PVE M22 x 1.5 M22 x 1.5 M12 x 1.5 M10 x 1 - M16 x 1.5 M8 -
+* For more information please see the topic PVPX Electrical LS Pressure Unloading Valve.
+1 Dampened LS response
+2 Pressure adjustment spool with check valve
+3 Internal T0 connection
+4 Low flow pressure adjustment spool
+All modules can be manually activated with the PVM. For more information please see PVM Manual
+Actuation on page 71.
+18 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,19,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Open center PVP with HPCO and PVE PPRV
+The Open Center PVP inlet with integrated High Pressure Carry Over (HPCO) functionality is intended for
+use with fixed displacement pumps in applications where one pump supply for multiple hydraulic
+subsystems is desired.
+The integrated HPCO functionality guides the excess flow of the PVG 16 valve group to the external
+hydraulic subsystem(s), giving priority to the PVG 16 work functions.
+The Open Center PVP with HPCO and PVE PPRV features:
+• Integrated LS pressure relief valve
+• Threaded ports for P/T/LS/HPCO and M measuring gauge
+• Integrated pilot pressure reducing valve (PPRV) for PVE
+• Optional T0 facility and external T0 port
+• Optional external pilot pressure port (Pp)
+• Optional LS unloading valve, PVPX
+• Models with T0 port have internal T0 connection closed by default.
+Only applicable with PVST end plates with separate T-port due to blocked T-lines for HPCO functionality.
+Open center PVP with HPCO, PPRV, and T0
+LS M T0
+HPCO
+Pp
+P
+Technical specification for PVP
+Max. P-port continuous Max. P-port intermittent Max. T-port static/ Max. rated flow
+dynamic
+350 [5076 psi] 400 bar [5800 psi] 25/40 bar [365/580 psi] 140 l/min [37 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+© Danfoss | March 2024 BC152986484323en-001302 | 19"
+BC152986484323en-001302.pdf,20,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Theoretical Performance Graphs
+Integrated LS pressure relief valve characteristics
+P P
+[psi] (bar)
+300
+4000
+250
+3000
+200
+150
+2000
+100
+1000
+50
+0 0 Q
+0 20 40 60 80 100 120 140 [l/min]
+Q
+0 4 8 12 16 20 24 28 32 36 [US gal/min]
+Neutral by-pass pressure drop characteristics
+[psi] (bar)
+20
+240
+16
+12
+160
+8
+80
+4
+0 0
+0 20 40 60 80 100 120 140 (l/min)
+0 4 8 12 16 20 24 28 32 36 [US gal/min]
+Pilot pressure reduction valve characteristics
+[psi] P [bar] PVE [psi] P [bar] PVH/PVHC
+280 20 480 30
+18 28
+240 440
+16 26
+200 14 400 24
+12 22
+160 360
+Max.
+10 20
+120 8 320 18
+80 6 Min. 280 16 Max.
+4 14
+40 2 240 12 Min.
+0 0 Q 0 0 Q
+0 1 2 3 4 5 [l/min] 0 1 2 3 4 5 [l/min]
+Q Q
+0 0.2 0.4 0.6 0.8 1.0 1.2 [US gal/min] 0 0.2 0.4 0.6 0.8 1.0 1.2 [US gal/min]
+20 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,21,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Part numbers for OC PVP (HPCO and PPRV)
+Part number P-port HPCO- LS-port M-port Pp-port T0-port Mounting PVPX*
+port
+157B5140 G3/4” G3/4"" G1/4” G1/4” G1/4” G1/4” M8 -
+157B5142 G3/4” G3/4"" G1/4” G1/4” G1/4” G1/4” M8 Yes
+157B5340 1 1/16-12 UNF 1 1/16-12 1/2-20 UNF 1/2-20 UNF 1/2-20 UNF 1/2-20 UNF 5/16-18 UNC -
+UNF
+157B5342 1 1/16-12 UNF 1 1/16-12 1/2-20 UNF 1/2-20 UNF 1/2-20 UNF – 5/16-18 UNC Yes
+UNF
+157B5961 M27x2 M27x2 M14x1.5 M14x1.5 – M14x1.5 M8 –
+11101195 M22x1.5 M22x1.5 M12x1.5 M10x1 – M16x1.5 M8 –
+M16x1.5 (P2)
+* For more information please see the topic PVPX Electrical LS Pressure Unloading Valve.
+© Danfoss | March 2024 BC152986484323en-001302 | 21"
+BC152986484323en-001302.pdf,22,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Closed Center PVP
+The basic Closed Center PVP inlet is intended for use with variable displacement pumps in applications
+where a valve group with mechanically controlled work sections is desired, or where the pilot pressure to
+the valve group is supplied externally.
+The Closed Center PVP features:
+• Integrated LS pressure relief valve
+• Threaded ports for P/T/LS and M measuring gauge
+• Optional LS unloading valve, PVPX
+• Optional T0 facility and external T0 port
+• Models with T0 port have internal T0 connection closed by default.
+Closed center PVP schematic
+LS M
+T
+P
+Technical specification for PVP
+Max. P-port continuous Max. P-port intermittent Max. T-port static/ Max. rated flow
+dynamic
+350 [5076 psi] 400 bar [5800 psi] 25/40 bar [365/580 psi] 140 l/min [37 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+22 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,23,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Theoretical Performance Graphs
+Integrated LS pressure relief valve characteristics
+P P
+[psi] (bar)
+300
+4000
+250
+3000
+200
+150
+2000
+100
+1000
+50
+0 0 Q
+0 20 40 60 80 100 120 140 [l/min]
+Q
+0 4 8 12 16 20 24 28 32 36 [US gal/min]
+Part numbers for Closed Center PVP
+Part P-port T-port LS-port M-port T0-port Mounting PVPX*
+number (LS1**)
+11030683 G3/4 G3/4 G1/4 (G1/4) G1/4 G1/4 M8 -
+157B5001 G1/2 G3/4 G1/4 G1/4 - M8 -
+157B5101 G3/4 G3/4 G1/4 G1/4 - M8 -
+157B5103 G3/4 G3/4 G1/4 G1/4 - M8 Yes
+157B5201 7/8-14 UNF 1 1/16-12 1/2-20 UNF 1/2-20 UNF -- 5/16-18 UNC -
+UNF
+157B5301 1 1/16-12 1 1/16-12 1/2-20 UNF 1/2-20 UNF - 5/16-18 UNC -
+UNF UNF
+15B5907 1 1/16-12 1 1/16-12 1/2-20 UNF 1/2-20 UNF - M8 -
+UNF UNF
+157B5922 JIS 1/2 JIS 3/4 JIS 1/4 JIS 1/4 - M8 -
+157B5927 JIS 3/4 JIS 3/4 JIS 1/4 JIS 1/4 - M8 -
+157B5946 G1/2 G3/4 G1/4 (G1/8) G1/4 - M8 -
+** LS1 is an extra LS-port
+* For more information see PVPX Electrical LS Pressure Unloading Valve on page 35
+© Danfoss | March 2024 BC152986484323en-001302 | 23"
+BC152986484323en-001302.pdf,24,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Closed Center PVP with PPRV
+The Closed Center PVP inlet with integrated pilot pressure reduction valve (PPRV) is intended for use with
+variable displacement pumps in applications where a valve group with electro-hydraulic or hydraulically
+controlled work sections is desired.
+The Closed Center PVP with PPRV features:
+• Integrated LS pressure relief valve
+• Threaded ports for P/T/LS and M measuring gauge
+• Integrated pilot pressure reducing valve (PPRV) for PVE or PVH/PVHC
+• Optional external pilot pressure port (Pp)
+• Optional LS unloading valve, PVPX
+• Models with T0 port have internal T0 connection closed by default.
+Closed center PVP with PPRV schematic Closed center PVP with PPRV and T0
+LS M LS M T0
+T T
+Pp Pp
+P P
+Technical specification for PVP
+Max. P-port continuous Max. P-port intermittent Max. T-port static/ Max. rated flow
+dynamic
+350 [5076 psi] 400 bar [5800 psi] 25/40 bar [365/580 psi] 140 l/min [37 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+24 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,25,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Theoretical Performance Graphs
+Integrated LS pressure relief valve characteristics
+P P
+[psi] (bar)
+300
+4000
+250
+3000
+200
+150
+2000
+100
+1000
+50
+0 0 Q
+0 20 40 60 80 100 120 140 [l/min]
+Q
+0 4 8 12 16 20 24 28 32 36 [US gal/min]
+Pilot pressure reduction valve characteristics
+[psi] P [bar] PVE [psi] P [bar] PVH/PVHC
+280 20 480 30
+18 28
+240 440
+16 26
+200 14 400 24
+12 22
+160 360
+Max.
+10 20
+120 8 320 18
+80 6 Min. 280 16 Max.
+4 14
+40 2 240 12 Min.
+0 0 Q 0 0 Q
+0 1 2 3 4 5 [l/min] 0 1 2 3 4 5 [l/min]
+Q Q
+0 0.2 0.4 0.6 0.8 1.0 1.2 [US gal/min] 0 0.2 0.4 0.6 0.8 1.0 1.2 [US gal/min]
+Part numbers for Closed Center PVP with PPRV
+Part number Actuation P-port T-port LS-port M-port Pp-port T0-port Mounting PVPX*
+(LS1**
+157B5011 PVE G1/2” G3/4” G1/4” G1/4” - - M8 -
+157B5013 PVE G1/2” G3/4” G1/4” G1/4” - - M8 Yes
+157B5111 PVE G3/4” G3/4” G1/4” G1/4” - - M8 -
+157B5113 PVE G3/4” G3/4” G1/4” G1/4” - - M8 Yes
+157B5181 PVE G3/4” G3/4” G1/4” G1/4” G1/4” - M8 -
+157B5191 PVH/PVHC G3/4” G3/4” G1/4” G1/4” G1/4” - M8 -
+157B5211 PVE 7/8-14 UNF 1 1/16-12 UNF 1/2-20 UNF 1/2-20 UNF - - 5/16-18 UNC -
+157B5213 PVE 7/8-14 UNF 1 1/16-12 UNF 1/2-20 UNF 1/2-20 UNF - - 5/16-18 UNC Yes
+157B5311 PVE 1 1/16-12 UNF 1 1/16-12 UNF 1/2-20 UNF 1/2-20 UNF - - 5/16-18 UNC -
+157B5313 PVE 1 1/16-12 UNF 1 1/16-12 UNF 1/2-20 UNF 1/2-20 UNF - - 5/16-18 UNC Yes
+© Danfoss | March 2024 BC152986484323en-001302 | 25"
+BC152986484323en-001302.pdf,26,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Part numbers for Closed Center PVP with PPRV (continued)
+Part number Actuation P-port T-port LS-port M-port Pp-port T0-port Mounting PVPX*
+(LS1**
+157B5381 PVE 1 1/16-12 UNF 1 1/16-12 UNF 9/16-18 UNF 9/16-18 UNF 9/16-18 UNF - 5/16-18 UNC -
+157B5391 PVH/PVHC 1 1/16-12 UNF 1 1/16-12 UNF 9/16-18 UNF 9/16-18 UNF 9/16-18 UNF - 5/16-18 UNC
+** LS1 is an extra LS-port
+* For more information please see PVPX Electrical LS Pressure Unloading Valve on page 35
+All modules can be manually activated with the PVM actuation.
+For more information, please see PVM Manual Actuation on page 71.
+26 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,27,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Closed center PVPV with PPRV
+The Closed Center PVPV inlet with integrated pilot pressure reduction valve (PPRV) is intended for use
+with variable displacement pumps in applications where a valve group with electro-hydraulic or
+hydraulically controlled work sections is desired.
+The Closed Center PVPV with PPRV features:
+• Optional shock/anti-cavitation valve facility (PVLP)
+• Threaded ports for P/T/LS and M measuring gauge
+• Integrated pilot pressure reducing valve (PPRV) for PVE or PVH/PVHC
+• Models with T0 port have internal T0 connection closed by default.
+Hydraulic schematic
+T
+LS
+M
+P
+Technical specification for PVP
+Max. P-port continuous Max. P-port intermittent Max. T-port static/ Max. rated flow
+dynamic
+350 [5076 psi] 400 bar [5800 psi] 25/40 bar [365/580 psi] 150 l/min [37 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+Pilot pressure reduction valve characteristics
+[psi] P [bar] PVE [psi] P [bar] PVH/PVHC
+280 20 480 30
+18 28
+240 440
+16 26
+200 14 400 24
+12 22
+160 360
+Max.
+10 20
+120 8 320 18
+80 6 Min. 280 16 Max.
+4 14
+40 2 240 12 Min.
+0 0 Q 0 0 Q
+0 1 2 3 4 5 [l/min] 0 1 2 3 4 5 [l/min]
+Q Q
+0 0.2 0.4 0.6 0.8 1.0 1.2 [US gal/min] 0 0.2 0.4 0.6 0.8 1.0 1.2 [US gal/min]
+© Danfoss | March 2024 BC152986484323en-001302 | 27"
+BC152986484323en-001302.pdf,28,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Part numbers for Closed Center PVPV with PPRV
+Part number Actuator P-port T-port (T2) LS-port M-port Pp-port T0-port Mounting PVLP
+(T02)
+110123501 M27x2.0 M33x2.0 M14x1.5 M14x1.5 - - M8 -
+11003806 M27x2.0 M27x2.0 M14x1.5 M14x1.5 - M14x1.5 M8 -
+(M14x1.5) (M14x1.5)
+110088542 G1 G1 G1/4 G1/4 - - M8 Yes
+11124107 1 5/16-12 1 1/16-12 9/16-18 9/16-18 - - M8 Yes
+11196949 G1 G1 - - G1/4 - M8 Yes
+157B5911 PVE 1 5/16-12 1 5/16-12 9/16-18 9/16-18 - - 5/16-18 -
+157B5913 1 5/16-12 1 5/16-12 9/16-18 9/16-18 - - 5/16-18 Yes
+157B5938 G1 G1 G1/4 G1/4 - - M8 -
+157B5941 G1 G1 G1/4 G1/4 - - M8 Yes
+157B59483 G1 G1 G1/4 G1/4 - - M8 Yes
+157B59734 G1 G1 G1/4 G1/4 - - M8 Yes
+157B5978 M27x2.0 M33x2.0 M14x1.5 M14x1.5 - - M8 -
+11008856 G1 G1 G1/4 G1/4 - - M8 Yes
+11051803 1 5/16-12 1 5/16-12 9/16-18 9/16-18 - - 5/16-18 Yes
+PVH/PVHC
+157B5916 1 5/16-12 1 5/16-12 9/16-18 9/16-18 - - 5/16-18 -
+157B5963 1 1/16-12 1 1/16-12 7/16-20 - - 9/16-18 M8 -
+1 No LS-orifice
+2 Internal T0 connection
+3 0.4 mm hole in the pilot reduction cone (standard 0.8 mm)
+4 HPCO-facility
+All modules can be manually activated with the PVM actuation.
+28 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,29,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Closed center PVPVM with PPRV
+The Closed Center PVPVM mid-inlet module with integrated pilot pressure reduction valve (PPRV) is
+intended for use with variable displacement pumps in applications where a valve group with electro-
+hydraulic or hydraulically controlled work sections is desired.
+Using a PVPVM module in a valve group requires a 180° degree rotation of the PVG work sections on one
+side.
+The Closed Center PVPVM with PPRV features:
+• Optional shock/anti-cavitation valve facility (PVLP)
+• Threaded ports for P/T/LS and M measuring gauge
+• Integrated pilot pressure reducing valve (PPRV) for PVE or PVH/PVHC
+Hydraulic schematic
+T
+LS
+M
+P
+Pp
+Technical specification for PVP
+Max. P-port continuous Max. P-port intermittent Max. T-port static/ Max. rated flow
+dynamic
+350 [5076 psi] 400 bar [5800 psi] 25/40 bar [365/580 psi] 230 l/min [61 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+© Danfoss | March 2024 BC152986484323en-001302 | 29"
+BC152986484323en-001302.pdf,30,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Pilot pressure reduction valve characteristics
+[psi] P [bar] PVE [psi] P [bar] PVH/PVHC
+280 20 480 30
+18 28
+240 440
+16 26
+200 14 400 24
+12 22
+160 360
+Max.
+10 20
+120 8 320 18
+80 6 Min. 280 16 Max.
+4 14
+40 2 240 12 Min.
+0 0 Q 0 0 Q
+0 1 2 3 4 5 [l/min] 0 1 2 3 4 5 [l/min]
+Q Q
+0 0.2 0.4 0.6 0.8 1.0 1.2 [US gal/min] 0 0.2 0.4 0.6 0.8 1.0 1.2 [US gal/min]
+Part numbers for Closed Center PVPVM with PPRV
+Part number Actuator P-port T-port LS-port M-port Pp-port Mounting PVLP
+157B5914 1 5/16-12 1 5/16-12 9/16-18 UNF 9/16-18 UNF G1/4 5/16-18 UNC Yes
+UNF UNF
+157B5937 G1 G1 G1/4 G1/4 G1/4 M8 -
+PVE
+157B5940 G1 G1 G1/4 G1/4 G1/4 M8 Yes
+157B5912 1 5/16-12 1 5/16-12 9/16-18 UNF 9/16-18 UNF G1/4 5/16-18 UNC -
+UNF UNF
+11083156 1 1/16-12 1 1/16-12 9/16-18 UNF 9/16-18 UNF G1/4 5/16-18 UNC Yes
+PVH/PVHC UNF UNF
+157B5986 G1 G1 G1/4 G1/4 G1/4 M8 Yes
+All modules can be manually activated with the PVM actuation.
+30 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,31,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Open/Closed center PVP with PPRV
+The Open Center/Closed Center PVP with integrated pilot pressure reduction valve (PPRV) is intended for
+use with fixed or variable displacement pumps in applications where the application manufacturer does
+not determine the pump type.
+The modules allow an easy switch between Open Center and Closed Center configuration by means of an
+external hexagon selector key. Variants also feature an LS boost functionality, increasing the LS pressure
+to the pump LS regulator with a constant 6 bar, compensating for potential LS bleed-off and leakage.
+The Open/closed center PVP with PPRV features:
+• Integrated OC/CC selector
+• Integrated LS pressure relief valve
+• Threaded ports for P/T/LS and M measuring gauge
+• Integrated pilot pressure reducing valve (PPRV) for PVE or PVH/PVHC
+• Optional LS boost functionality
+Hydraulic schematic
+LS M
+T
+OC CC
+P
+Technical specification for PVP
+Max. P-port continuous Max. P-port intermittent Max. T-port static/ Max. rated flow
+dynamic
+350 [5076 psi] 400 bar [5800 psi] 25/40 bar [365/580 psi] 140 l/min [37 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+© Danfoss | March 2024 BC152986484323en-001302 | 31"
+BC152986484323en-001302.pdf,32,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Theoretical Performance Graphs
+Integrated LS pressure relief valve characteristics
+P P
+[psi] (bar)
+300
+4000
+250
+3000
+200
+150
+2000
+100
+1000
+50
+0 0 Q
+0 20 40 60 80 100 120 140 [l/min]
+Q
+0 4 8 12 16 20 24 28 32 36 [US gal/min]
+Neutral by-pass pressure drop characteristics
+[psi] (bar)
+20
+240
+16
+12
+160
+8
+80
+4
+0 0
+0 20 40 60 80 100 120 140 (l/min)
+0 4 8 12 16 20 24 28 32 36 [US gal/min]
+Pilot pressure reduction valve characteristics
+[psi] P [bar] PVE [psi] P [bar] PVH/PVHC
+280 20 480 30
+18 28
+240 440
+16 26
+200 14 400 24
+12 22
+160 360
+Max.
+10 20
+120 8 320 18
+80 6 Min. 280 16 Max.
+4 14
+40 2 240 12 Min.
+0 0 Q 0 0 Q
+0 1 2 3 4 5 [l/min] 0 1 2 3 4 5 [l/min]
+Q Q
+0 0.2 0.4 0.6 0.8 1.0 1.2 [US gal/min] 0 0.2 0.4 0.6 0.8 1.0 1.2 [US gal/min]
+32 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,33,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Part numbers for Open/Closed Center PVP with PPRV
+Part number Actuation P-port T-port LS-port (LS1**) M-port T0-port Mounting LS Boost
+11093273 PVE G3/4 G3/4 - G1/4 - M8 Yes
+11119094 PVE G3/4 G3/4 - G1/4 - M8 -
+11119095 PVE 1 1/16-12 UNF 1 1/16-12 UNF 1/2-20 UNF 1/2-20 UNF - M8 -
+11131344 PVH/PVHC G3/4 G3/4 - G1/4 - M8 Yes
+111686081 PVE G3/4 G3/4 - G1/4 - M8 Yes
+** LS1 is an extra LS-port
+1 Dampened LS response
+All modules can be manually activated with the PVM actuation.
+© Danfoss | March 2024 BC152986484323en-001302 | 33"
+BC152986484323en-001302.pdf,34,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Modules
+Open/Closed center PVPM
+The Open Center/Closed Center PVPM mid-inlet acts as a simple manifold and is intended for use with
+fixed or variable displacement pumps. The PVPM features no logic other than a PVLP shock/anti-
+cavitation valve facility for pressure peak protection and anti-cavitation prevention.
+The PVPM module must be configured together with an Open Center PVP module for fixed
+displacement pumps and for variable displacement pumps can be configured together with a PVSI
+start plate or a Closed Center PVP/PVPV module.
+The Open center/closed center PVPM features:
+• Integrated shock/anti-cavitation valve facility (PVLP)
+• Threaded ports for P/T
+• Pilot pressure and T0 lines through module
+Hydraulic schematic
+T
+P
+Technical specification for PVP
+Max. P-port continuous Max. P-port intermittent Max. T-port static/ Max. rated flow
+dynamic
+350 [5076 psi] 400 bar [5800 psi] 25/40 bar [365/580 psi] 230 l/min [61 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+Part numbers for Open Center/Closed Center PVPM
+Part number P-, T-port Mounting PVLP
+11093682 1 5/16-12 UN 5/16-18 UNC Yes
+11093684 G1” M8 Yes
+34 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,35,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Module Accessories
+The generic PVP inlet module accessory platform includes the PVPX Electrical LS pressure unloading
+valve, External pilot pressure adapters PVPC with or without check valve for all Open Center PVP with
+PPRV.
+• PVPX Electrical LS Pressure Unloading Valve on page 35
+• PVPC without Check Valve on page 38
+• PVPC with Check Valve on page 40
+PVPX Electrical LS Pressure Unloading Valve
+The electrical LS pressure unloading valve is an accessory available for PVP inlet modules with PVPX
+facility. The PVPX consist of a solenoid valve and a magnetic coil package, allowing the operator to relieve
+the LS pressure to tank electrically.
+Configuration variants also feature a Manual Override functionality to activate the PVPX manually:
+• Normally Open (NO),
+• Normally Open with Manual Override (NOMO)
+There are two types of NOMO-configurations - PUSH, and PUSH & TURN. With the TURN function you can
+keep the override function until you unlock it again.
+• Normally Closed (NC)
+Configuration variants
+Normally Open (NO) Normally Open with MOR (NOMO) Normally Closed (NC)
+Relieving the LS pressure to tank results in a reduced system pressure level, which is determined by:
+• the sum of the tank and neutral by-pass pressure drop in a Open Center PVP configuration
+• the sum of the tank and standby-pressure in a Closed Center PVP configuration
+PVPX with NOMO schematic
+LS M
+T
+P
+PVPX technical data
+Voltage supply 12/24 V DC ± 10%
+Resistance @ 12 V 7.2 Ω ± 7%
+DC
+Resistance @ 24 V 28.2 Ω ± 7%
+DC
+Power consumption 20 W
+Maximum LS response time 300 ms
+Max. pressure drop @ 0.1 l/min [2.6 US gal/min] 2 bar [30 psi]
+© Danfoss | March 2024 BC152986484323en-001302 | 35"
+BC152986484323en-001302.pdf,36,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Module Accessories
+PVPX technical data (continued)
+Max. coil surface temperature 155°C [311°F]
+Thread size 3/4-16 UNF
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+Part numbers for PVPX
+Part numbers for PVPX, NO and NC configuration
+Part number Configuration Voltage Supply Connector IP Rating
+157B4236 NO 12 V DC
+157B4238 NO 24 V DC
+157B4246 NC 12 V DC 1x2 DIN IP 65
+157B4248 NC 24 V DC
+157B4976 NC 26 V DC
+157B4981 NO 12 V DC
+157B4982 NO 24 V DC
+1x2 AMP IP 66
+157B4983 NC 12 V DC
+157B4984 NC 24 V DC
+11180766 NO 12 V DC
+11180767 NO 24 V DC
+11180768 NC 12 V DC
+1x2 DEUTSCH IP 67
+11180769 NC 24 V DC
+11225108 NO 26 V DC
+11225109 NC 26 V DC
+Part numbers for PVPX, NOMO configuration
+Part number Manual Override Voltage Supply Connector IP Rating
+157B4256 PUSH 12 V DC
+157B4257 PUSH & TURN 12 V DC
+157B4258 PUSH 24 V DC 1x2 DIN IP 65
+157B4259 PUSH & TURN 24 V DC
+157B4260 PUSH 26 V DC
+36 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,37,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Module Accessories
+Part numbers for PVPX, NOMO configuration (continued)
+Part number Manual Override Voltage Supply Connector IP Rating
+157B4985 PUSH 12 V DC
+1x2 AMP IP 66
+157B4986 PUSH 24 V DC
+11193839 PUSH 12 V DC
+11193836 PUSH 24 V DC
+1x2 DEUTSCH IP 67
+11225111 PUSH
+26 V
+DC
+11225110 PUSH & TURN
+Part number for plug in PVPX port
+Part number Description
+157B5601 Plug
+© Danfoss | March 2024 BC152986484323en-001302 | 37"
+BC152986484323en-001302.pdf,38,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Module Accessories
+PVPC without Check Valve
+The PVPC external pilot pressure adapter without check valve is an accessory in the M-port available for
+PVP inlet modules with integrated pilot pressure reduction valve (PPRV).
+The PVPC without check valve cuts off the integrated PPRV to the PVE or PVH/PVHC in the valve group
+and enables an external pilot pressure supply through the PVPC adapter.
+PVPC without Check Valve
+One application example for the PVPC without check valve is where it is a wanted feature to supply the
+valve group with oil from a manually operated emergency pump without directing oil flow to the PPRV.
+When the main pump is running in its normal operation mode, the oil is directed through the PVPC
+adapter via the PPRV to the PVE electrical actuators.
+When the main pump flow fails, the external shuttle valve ensures that the oil flow from the manually
+operated emergency pump is used to pilot open the over-center valve and lower the load. The load is
+only possible to lower when using the mechanical operating lever of the PVG work sections.
+Part numbers for Open Center/Closed Center PVPM
+Part number 157B5400
+Thread G1/4”
+38 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,39,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Module Accessories
+Hydraulic diagram for PVPC without check valve
+A B
+M
+LS
+T P
+© Danfoss | March 2024 BC152986484323en-001302 | 39"
+BC152986484323en-001302.pdf,40,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Module Accessories
+PVPC with Check Valve
+The PVPC external pilot pressure adapter with check valve is an accessory in the M-port available for PVP
+inlet modules with integrated pilot pressure reduction valve (PPRV).
+The PVPC with check valve enables an external pilot pressure supply through the PVPC adapter and the
+PPRV, while also allowing the main pump to supply the PPRV through the P-gallery as a standard Open
+Center PVP with PPRV.
+PVPC with Check Valve
+One application example for the PVPC with check valve is where it is a wanted feature to operate the
+valve group by means of the PVE electrical actuators without pump flow.
+When the external solenoid valve is opened, oil from the pressure side of the cylinder is fed via the PVPC
+through the PPRV to act as the pilot supply for the PVE electrical actuators. This means that it is possible
+to lower a load by means of the PVE electrical actuators without starting the pump.
+The built-in check valve prevents the oil from flowing via the pressure adjustment spool to tank. With the
+pump functioning normally the external solenoid valve is closed to ensure that the load is not lowered
+due to the pilot supply oil flow requirement of approximately 1 l/min [0.25 US gal/min].
+With a Closed Center PVP the external pilot oil supply can be connected to the pressure gauge
+connection without the use of a PVPC plug.
+Part numbers for Open Center/Closed Center PVPM
+Part number 157B5600 157B5700
+Thread G1/2” 1/2-20 UNF
+40 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,41,"Technical Information
+PVG 16 Proportional Valve Group
+PVP Inlet Module Accessories
+Hydraulic diagram for PVPC with check valve
+A B
+M
+LS
+T P
+© Danfoss | March 2024 BC152986484323en-001302 | 41"
+BC152986484323en-001302.pdf,42,"The PVG 16 PVB basic modules, also referred to as work sections, are the interface between the PVG 16
+proportional valve group and the work function such as a cylinder or a motor.
+PVB Basic Module PVB 16 dimensions
+]94.4[
+411
+]92.4[
+901
+Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+110 [4.33] 20 [0.79]
+40 [1.57]
+Weight: 2,6 kg [5,7 lb]
+Uncompensated PVB schematic symbol Compensated PVB schematic symbol
+P
+P
+The PVB basic module variants are based on a generic platform with a selection of additional features,
+enabling you to tailor the PVB to suit the demands of any hydraulic system. The generic PVB basic
+module platform includes the following main variants:
+• Compensated basic module; Compensated PVB on page 43
+• Compensated basic module with facilities for shock and anti-cavitation valves (PVLP/PVLA);
+Compensated PVB with PVLP/PVLA on page 46
+• Compensated basic module with one common adjustable LS valve for port A and port B;
+Compensated PVB with LS A/B on page 50
+• Uncompensated basic module with optional integrated load drop check valve; Uncompensated PVB
+on page 53
+• Uncompensated basic module with facilities for shock valves (PVLP) and optional integrated load
+drop check valve; Uncompensated PVB with PVLP on page 55
+42 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,43,"Compensated PVB
+The compensated PVB is intended for controlling a work function where the function behavior in terms
+of flow and pressures requires independence on the load pressure of other functions used
+simultaneously.
+The Compensated PVB features:
+• Integrated LS shuttle network
+• Integrated compensator
+Compensated PVB schematic
+A
+B
+Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+1 0 2
+Technical specification for A/B-port
+Max. continuous pressure Max. intermittent pressure Max. rated flow
+350 bar [5067 psi] 420 bar [6090 psi] 60 l/min [15 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+© Danfoss | March 2024 BC152986484323en-001302 | 43"
+BC152986484323en-001302.pdf,44,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+Performance graphs (Theoretical)
+Fluid flow as a function of spool travel - compensated PVB
+Load Independent Fluid Flow – Pressure Compensated PVB
+(l/min) [US gal/min]
+70
+18
+65 17
+60 16 AA = 5/min D
+15
+55 A = 10 l/min
+14
+B = 15 l/min
+50 13 C = 25 l/min
+45 12 D = 40 l/min
+11
+40
+10
+35 9 C
+30 8
+7
+25
+6 B
+20 5
+15 4
+3
+10 A
+2
+5 1 AA
+P
+0 25 50 75 100 125 150 175 200 225 250 275 300 (bar)
+P
+0 500 1000 1500 2000 2500 3000 3500 4000 [psi]
+44 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,45,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+PVB pressure compensated P-line and T-line characteristics
+P P
+[psi] (bar) Port A/B
+5
+70
+4,5
+60
+4
+50 3,5
+T-line
+3
+40 P-line
+2,5
+30 2
+20 1,5
+1
+10
+0,5
+0 0 Q
+0 25 50 75 100 125 150 (l/min)
+Q
+0 5 10 15 20 25 30 35 40 [US gal/min]
+Part numbers for compensated PVB
+Part number A/B-port
+11130976 3/8” BSP
+11130977 3/4” – 16 UNF
+© Danfoss | March 2024 BC152986484323en-001302 | 45"
+BC152986484323en-001302.pdf,46,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+Compensated PVB with PVLP/PVLA
+The compensated PVB featuring an optional PVLP/PVLA shock and anti-cavitation valves on each work
+port for pressure peak protection and anti-cavitation prevention.
+The compensated PVB is intended for controlling a work function where the function behavior in terms
+of flow and pressures requires independence on the load pressure of other functions used
+simultaneously.
+Featuring an optional shock and anti-cavitation valves (PVLP/PVLA ) on each work port for pressure peak
+protection and anti-cavitation prevention.
+The Compensated PVB with PVLP/PVLA features:
+• Integrated LS shuttle network
+• Integrated compensator
+• Optional shock/anti-cavitation and suction valves facility (PVLP/PVLA)
+Compensated PVB with PVLP/PVLA schematic
+T PLX T0 Pp
+1 0 2
+A
+B
+Technical specification for A/B-port
+Max. continuous pressure Max. intermittent pressure Max. rated flow
+380 bar [5510 psi] 420 bar [6090 psi] 60 l/min [15 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+46 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,47,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+Performance graphs (Theoretical)
+Fluid flow as a function of spool travel - compensated PVB
+PVLP shock valve characteristics
+P
+[psi] (bar)
+6000
+400
+5000 350
+300
+4000
+250
+3000
+200
+150
+2000
+100
+1000
+50
+0 0 Q
+0 20 40 60 80 100 120 140 (l/min)
+Q
+0 5 10 15 20 25 30 35 40 45 [US gal/min]
+© Danfoss | March 2024 BC152986484323en-001302 | 47"
+BC152986484323en-001302.pdf,48,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+PVLP/PVLA suction valve characteristics
+P P
+[psi] [bar]
+400 28
+26
+360
+24
+320 22
+280 20 PVLP
+18
+240
+16
+200 14
+12 PVLA
+160
+10
+120 8
+80 6
+4
+40
+2
+0 0 Q
+0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100105 110115120 [l/min]
+Q
+0 1 2 3 4 5 6 7 8 9 1011 12 131415 1617 18 192021 222324 2526 27 282930 31 [US gal/min]
+Load Independent Fluid Flow – Pressure Compensated PVB
+(l/min) [US gal/min]
+70
+18
+65 17
+60 16 AA = 5/min D
+15
+55 A = 10 l/min
+14
+B = 15 l/min
+50 13 C = 25 l/min
+45 12 D = 40 l/min
+11
+40
+10
+35 9 C
+30 8
+7
+25
+6 B
+20 5
+15 4
+3
+10 A
+2
+5 1 AA
+P
+0 25 50 75 100 125 150 175 200 225 250 275 300 (bar)
+P
+0 500 1000 1500 2000 2500 3000 3500 4000 [psi]
+48 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,49,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+PVB pressure compensated P-line and T-line characteristics
+P P
+[psi] (bar) Port A/B
+5
+70
+4,5
+60
+4
+50 3,5
+T-line
+3
+40 P-line
+2,5
+30 2
+20 1,5
+1
+10
+0,5
+0 0 Q
+0 25 50 75 100 125 150 (l/min)
+Q
+0 5 10 15 20 25 30 35 40 [US gal/min]
+Part numbers for Compensated PVB with PVLP/PVLA
+Part number A/B-port PVLP/PVLA
+11130978 3/8” BSP 1
+11130979 3/4” – 16 UNF 1
+© Danfoss | March 2024 BC152986484323en-001302 | 49"
+BC152986484323en-001302.pdf,50,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+Compensated PVB with LS A/B
+The compensated PVB is intended for controlling a work function where the function behavior in terms
+of flow and pressures requires independency on the load pressure of other functions used
+simultaneously. The integrated LS relief valve is used to limit the maximum work port build-up on the
+A/B
+A/B-ports individually.
+The compensated PVB with LS features:
+A/B
+• Integrated LS shuttle network
+• Integrated compensator
+Compensated PVB with LS A/B schematic
+T PLX T0 Pp
+1 0 2
+A
+B
+Technical specification for A/B-port
+Max. continuous pressure Max. intermittent pressure Max. rated flow
+350 bar [5076 psi] 420 bar [6090 psi] 60 l/min [15 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+50 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,51,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+Performance graphs (Theoretical)
+Fluid flow as a function of spool travel - compensated PVB
+PVB pressure compensated for LS A/B characteristics
+Q
+(l/min) [US gal/min]
+70
+18
+65 17
+60 16
+15
+55
+14
+50 13
+45 12
+11
+40
+10
+35 9
+30 8
+7
+25
+6
+20 5
+15 4
+3
+10
+2
+5
+1
+0 P
+0 25 50 75 100 125 150 175 200 225 250 275 300 325 350 (bar)
+P
+0 500 1000 1500 2000 2500 3000 3500 4000 4500 5000 [psi]
+© Danfoss | March 2024 BC152986484323en-001302 | 51"
+BC152986484323en-001302.pdf,52,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+Load Independent Fluid Flow – Pressure Compensated PVB
+(l/min) [US gal/min]
+70
+18
+65 17
+60 16 AA = 5/min D
+15
+55 A = 10 l/min
+14
+B = 15 l/min
+50 13 C = 25 l/min
+45 12 D = 40 l/min
+11
+40
+10
+35 9 C
+30 8
+7
+25
+6 B
+20 5
+15 4
+3
+10 A
+2
+5 1 AA
+P
+0 25 50 75 100 125 150 175 200 225 250 275 300 (bar)
+P
+0 500 1000 1500 2000 2500 3000 3500 4000 [psi]
+PVB pressure compensated P-line and T-line characteristics
+P P
+[psi] (bar) Port A/B
+5
+70
+4,5
+60
+4
+50 3,5
+T-line
+3
+40 P-line
+2,5
+30 2
+20 1,5
+1
+10
+0,5
+0 0 Q
+0 25 50 75 100 125 150 (l/min)
+Q
+0 5 10 15 20 25 30 35 40 [US gal/min]
+Part numbers for Compensated PVB with LS A/B
+Part number A/B-port
+11130982 3/8” BSP
+11130983 3/4” – 16 UNF
+52 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,53,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+Uncompensated PVB
+The uncompensated PVB is intended for controlling a work function where the function behavior in
+terms of flow and pressures requires independence on the load pressure of other functions used
+simultaneously.
+The Uncompensated PVB features:
+• Integrated LS shuttle network
+• Optional load drop check valve
+Uncompensated PVB
+T PLX T0 Pp
+1 0 2
+A
+B
+Technical specification for A/B-port
+Max. continuous pressure Max. intermittent pressure Max. rated flow
+380 bar [5510 psi] 420 bar [6090 psi] 65 l/min [17 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+© Danfoss | March 2024 BC152986484323en-001302 | 53"
+BC152986484323en-001302.pdf,54,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+Performance graphs (Theoretical)
+Fluid flow as a function of spool travel - compensated PVB
+PVB pressure compensated P-line and T-line characteristics
+P P
+[psi] (bar) Port A/B
+5
+70
+4,5
+60
+4
+50 3,5
+T-line
+3
+40 P-line
+2,5
+30 2
+20 1,5
+1
+10
+0,5
+0 0 Q
+0 25 50 75 100 125 150 (l/min)
+Q
+0 5 10 15 20 25 30 35 40 [US gal/min]
+Part numbers for Uncompensated PVB
+Part number A/B-port Check valve
+11106801 3/8” BSP Yes
+11101421 3/8” BSP —
+11106797 3/4” – 16 UNF Yes
+11101423 3/4” – 16 UNF —
+54 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,55,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+Uncompensated PVB with PVLP
+The uncompensated PVB featuring an optional PVLP shock valve on each work port for pressure peak
+protection and anti-cavitation prevention, is intended for controlling a work function where the function
+behavior in terms of flow and pressures requires independence on the load pressure of other functions
+used simultaneously.
+The Uncompensated PVB with PVLP features:
+• Integrated LS shuttle network
+• Optional shock valve facility (PVLP)
+• Optional load drop check valve
+Uncompensated PVB with PVLP schematic
+T PLX Pp
+1 0 2
+A
+B
+Technical specification for A/B-port
+Max. continuous pressure Max. intermittent pressure Max. rated flow
+380 bar [5510 psi] 420 bar [6090 psi] 65 l/min [17 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+© Danfoss | March 2024 BC152986484323en-001302 | 55"
+BC152986484323en-001302.pdf,56,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+Performance graphs (Theoretical)
+Fluid flow as a function of spool travel - compensated PVB
+PVLP shock valve characteristics
+P
+[psi] (bar)
+6000
+400
+5000 350
+300
+4000
+250
+3000
+200
+150
+2000
+100
+1000
+50
+0 0 Q
+0 20 40 60 80 100 120 140 (l/min)
+Q
+0 5 10 15 20 25 30 35 40 45 [US gal/min]
+56 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,57,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+PVB pressure compensated P-line and T-line characteristics
+P P
+[psi] (bar) Port A/B
+5
+70
+4,5
+60
+4
+50 3,5
+T-line
+3
+40 P-line
+2,5
+30 2
+20 1,5
+1
+10
+0,5
+0 0 Q
+0 25 50 75 100 125 150 (l/min)
+Q
+0 5 10 15 20 25 30 35 40 [US gal/min]
+Part numbers for Uncompensated PVB with PVLP
+Part number A/B-port PVLP Check valve
+11101424 3/8” BSP 1 Yes
+11106754 3/8” BSP 1 —
+11101425 3/4” – 16 UNF 1 Yes
+11106755 3/4” – 16 UNF 1 —
+© Danfoss | March 2024 BC152986484323en-001302 | 57"
+BC152986484323en-001302.pdf,58,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+PVLP Shock and Anti-Cavitation Valve
+The PVLP shock and anti-cavitation valve will relieve a pressure peak to the internal tank galleries and will
+furthermore suck oil from the tank to the work port to prevent cavitation. Pressure settings range: 32–400
+bar [460–5801 psi].
+The pressure setting of the PVLP must always be 20 bar [290 psi] higher than LS setting in the same
+A/B
+module.
+PVLP schematic
+Port pressure
+P109174
+PVLP shock valve characteristics
+P
+[psi] (bar)
+6000
+400
+5000 350
+300
+4000
+250
+3000
+200
+150
+2000
+100
+1000
+50
+0 0 Q
+0 20 40 60 80 100 120 140 (l/min)
+Q
+0 5 10 15 20 25 30 35 40 45 [US gal/min]
+58 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,59,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules
+PVLP/PVLA suction valve characteristics
+P P
+[psi] [bar]
+400 28
+26
+360
+24
+320 22
+280 20 PVLP
+18
+240
+16
+200 14
+12 PVLA
+160
+10
+120 8
+80 6
+4
+40
+2
+0 0 Q
+0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100105 110115120 [l/min]
+Q
+0 1 2 3 4 5 6 7 8 9 1011 12 131415 1617 18 192021 222324 2526 27 282930 31 [US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+Part numbers for PVLP according to pressure settings
+Part number Pressure in bar [psi] Part number Pressure in bar [psi]
+157B2032 32 [464] 157B2210 210 [3045]
+157B2050 50 [725] 157B2230 230 [3335]
+157B2063 63 [913] 157B2240 240 [3480]
+157B2080 80 [1160] 157B2250 250 [3626]
+157B2100 100 [1450] 157B2265 265 [3844]
+157B2125 125 [1813] 157B2280 280 [4061]
+157B2140 140 [2031] 157B2300 300 [4351]
+157B2150 150 [2176] 157B2320 320 [4641]
+157B2160 160 [2321] 157B2350 350 [5076]
+157B2175 175 [2538] 157B2380 380 [5511]
+157B2190 190 [2756] —
+© Danfoss | March 2024 BC152986484323en-001302 | 59"
+BC152986484323en-001302.pdf,60,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules Accessories
+The generic PVB module accessory platform include the PVLP shock and anti-cavitation valve and PVLA
+suction valve.
+• PVLP Shock and Anti-Cavitation Valve on page 58
+• PVLA Suction Valve on page 63
+60 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,61,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules Accessories
+PVLP Shock and Anti-Cavitation Valve
+The PVLP shock and anti-cavitation valve will relieve a pressure peak to the internal tank galleries and will
+furthermore suck oil from the tank to the work port to prevent cavitation. Pressure settings range: 32–400
+bar [460–5801 psi].
+The pressure setting of the PVLP must always be 20 bar [290 psi] higher than LS setting in the same
+A/B
+module.
+PVLP schematic
+Port pressure
+P109174
+PVLP shock valve characteristics
+P
+[psi] (bar)
+6000
+400
+5000 350
+300
+4000
+250
+3000
+200
+150
+2000
+100
+1000
+50
+0 0 Q
+0 20 40 60 80 100 120 140 (l/min)
+Q
+0 5 10 15 20 25 30 35 40 45 [US gal/min]
+© Danfoss | March 2024 BC152986484323en-001302 | 61"
+BC152986484323en-001302.pdf,62,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules Accessories
+PVLP/PVLA suction valve characteristics
+P P
+[psi] [bar]
+400 28
+26
+360
+24
+320 22
+280 20 PVLP
+18
+240
+16
+200 14
+12 PVLA
+160
+10
+120 8
+80 6
+4
+40
+2
+0 0 Q
+0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100105 110115120 [l/min]
+Q
+0 1 2 3 4 5 6 7 8 9 1011 12 131415 1617 18 192021 222324 2526 27 282930 31 [US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+Part numbers for PVLP according to pressure settings
+Part number Pressure in bar [psi] Part number Pressure in bar [psi]
+157B2032 32 [464] 157B2210 210 [3045]
+157B2050 50 [725] 157B2230 230 [3335]
+157B2063 63 [913] 157B2240 240 [3480]
+157B2080 80 [1160] 157B2250 250 [3626]
+157B2100 100 [1450] 157B2265 265 [3844]
+157B2125 125 [1813] 157B2280 280 [4061]
+157B2140 140 [2031] 157B2300 300 [4351]
+157B2150 150 [2176] 157B2320 320 [4641]
+157B2160 160 [2321] 157B2350 350 [5076]
+157B2175 175 [2538] 157B2380 380 [5511]
+157B2190 190 [2756] —
+62 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,63,"Technical Information
+PVG 16 Proportional Valve Group
+PVB Basic Modules Accessories
+PVLA Suction Valve
+The PVLA valve is an accessory available for PVB basic modules.
+The PVLA will suck fluid from the tank to the work port to prevent cavitation by the 0.5 bar spring. The
+plug will ensure that when using a single acting spool, all flow returning through the work port is led to
+tank.
+PVLA schematic
+Port pressure
+P109175
+PVLP/PVLA suction valve characteristics
+P P
+[psi] [bar]
+400 28
+26
+360
+24
+320 22
+280 20 PVLP
+18
+240
+16
+200 14
+12 PVLA
+160
+10
+120 8
+80 6
+4
+40
+2
+0 0 Q
+0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100105 110115120 [l/min]
+Q
+0 1 2 3 4 5 6 7 8 9 1011 12 131415 1617 18 192021 222324 2526 27 282930 31 [US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+PVLA suction valve part number
+PVLA suction valve Plug
+157B2001 157B2002
+© Danfoss | March 2024 BC152986484323en-001302 | 63"
+BC152986484323en-001302.pdf,64,"Technical Information
+PVG 16 Proportional Valve Group
+PVBS Main Spools
+The main spools (PVBS) determine the flow out of the work section or the pressure build up and are
+based on a generic platform with a wide selection of additional features, enabling you to tailor the PVBS
+to suit the demands of any hydraulic system and any function.
+The PVBS main spool can be activated in three different ways:
+• Mechanically by a PVM lever
+• Electrically by a PVE/PVHC actuator
+• Hydraulically by a PVH actuator
+PVBS main spool
+PVBS main spool dimensions
+110 [4.33] 46 [1.81] 14,8 [0.59]
+Weight: 0.16 kg [0.35 lb]
+General features
+• 4-way, positions
+• Optional 4-way, 4 positions with the right PVM
+• Flow control AB
+• Dead band 1.2mm [0.047 in]
+PVBS Technical Parameters
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+64 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,65,"Technical Information
+PVG 16 Proportional Valve Group
+PVBS Main Spools
+PVBS Fluid Flow Characteristics - Theoretical Performance
+Fluid flow as a function of spool travel - compensated PVB
+© Danfoss | March 2024 BC152986484323en-001302 | 65"
+BC152986484323en-001302.pdf,66,"Technical Information
+PVG 16 Proportional Valve Group
+PVBS Main Spools
+Fluid flow as a function of spool travel (asymmetrical spools)
+[l/min] [US gal/min]
+P B P A
+70
+18
+E
+65 17 Spool types:
+60 16 AA = 5/min
+15 A = 10 l/min
+55 B = 15 l/min
+14
+C = 25 l/min
+50
+13 D = 40 l/min
+45 12 E = 65 l/min
+E 11 D
+40
+10
+35
+9
+30 8
+D 7 C
+25
+6
+20
+5
+C B
+15 4
+B 3 A
+10
+A 2
+AA
+5
+AA 1
+[mm] [mm]
+7 6 5 4 3 2 1 0 0 1 2 3 4 5 6
+[in] PVM [in]
+0.28 0.24 0.20 0.16 0.12 0.08 0.04 0 0 0.04 0.08 0.12 0.16 0.20 0.24
+Us
+PVEA
+Us
+UDC
+0.75 0.7 0.65 0.6 0.55 0.5 0.5 0.45 0.4 0.35 0.3 0.25
+UDC
+bar PVH bar
+19 17 15 13 11 9 7 5 5 7 9 11 13 15 17
+psi PVH psi
+276 247 218 189 160 131 102 73 73 102 131 160 189 218 247
+66 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,67,"Technical Information
+PVG 16 Proportional Valve Group
+PVBS Main Spools
+Pressure drop to T (open spool in neutral)
+P P
+[psi] (bar)
+4000 280
+260
+3600
+240
+3200 220
+200
+2800
+180
+2400
+160
+Pressure drop for
+2000 140 PVBS 65 l/min
+120
+1600
+100
+1200 80
+60
+800
+40
+400
+20
+0 Q
+0 5 10 15 20 25 30 35 40 45 50 55 60 [l/min]
+Q
+0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 [US gal/min]
+© Danfoss | March 2024 BC152986484323en-001302 | 67"
+BC152986484323en-001302.pdf,68,"Technical Information
+PVG 16 Proportional Valve Group
+PVBS Main Spools Part Numbers
+Flow Control Spools - Closed Neutral Position
+Schematic for PVBS - 4-way, 3 positions Schematic for PVBS - 4-way, 4 positions
+Symmetrical spools
+Part number Actuation* Flow – l/min [US gal/min]
+A → T P → A P → B B → T
+11274390 PVE 5 [1.32] 5 [1.32] 5 [1.32] 5 [1.32]
+11266923 PVE 10 [2.64] 10 [2.64] 10 [2.64] 10 [2.64]
+11263594 PVE 25 [6.60] 25 [6.60] 25 [6.60] 25 [6.60]
+11263595 PVE 40 [10.57] 40 [10.57] 40 [10.57] 40 [10.57]
+11274474 PVE 65 [17.17] 65 [17.17] 65 [17.17] 65 [17.17]
+11274391 PVH/PVHC 5 [1.32] 5 [1.32] 5 [1.32] 5 [1.32]
+11274477 PVH/PVHC 10 [2.64] 10 [2.64] 10 [2.64] 10 [2.64]
+11274471 PVH/PVHC 25 [6.60] 25 [6.60] 25 [6.60] 25 [6.60]
+11274478 PVH/PVHC 40 [10.57] 40 [10.57] 40 [10.57] 40 [10.57]
+11274476 PVH/PVHC 65 [17.17] 65 [17.17] 65 [17.17] 65 [17.17]
+* All spools can be mechanically actuated with a PVM, for more details see PVM Manual Actuation on page 71
+Asymmetrical Spools
+Part number Actuation* Flow – l/min [US gal/min]
+A → T P → A P → B B → T
+11274479 PVE 5 [1.32] 5 [1.32] 2.5 [0.66] 2.5 [0.66]
+11274493 PVE 10 [2.64] 10 [2.64] 5 [1.32] 5 [1.32]
+11295455 PVE 15 [3.96] 15 [3.96] 25 [6.60] 25 [6.60]
+11274495 PVE 25 [6.60] 25 [6.60] 10 [2.64] 10 [2.64]
+11274496 PVE 25 [6.60] 25 [6.60] 15 [3.96] 15 [3.96]
+11295456 PVE 25 [6.60] 25 [6.60] 40 [10.57] 40 [10.57]
+11274497 PVE 40 [10.57] 40 [10.57] 15 [3.96] 15 [3.96]
+11274480 PVH/PVHC 5 [1.32] 5 [1.32] 2.5 [0.66] 2.5 [0.66]
+11295499 PVH/PVHC 10 [2.64] 10 [2.64] 5 [1.32] 5 [1.32]
+11295485 PVH/PVHC 25 [6.60] 25 [6.60] 10 [2.64] 10 [2.64]
+11295486 PVH/PVHC 25 [6.60] 25 [6.60] 15 [3.96] 15 [3.96]
+11274487 PVH/PVHC 40 [10.57] 40 [10.57] 15 [3.96] 15 [3.96]
+11295454 PVH/PVHC 40 [10.57] 40 [10.57] 25 [6.60] 25 [6.60]
+* All spools can be mechanically actuated with a PVM, for more details see PVM Manual Actuation on page 71
+68 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,69,"Technical Information
+PVG 16 Proportional Valve Group
+PVBS Main Spools Part Numbers
+Flow Control Spools - Throttled Open Neutral Position
+Schematic for PVBS - 4-way, 3 positions Schematic for PVBS - 4-way, 4 positions
+Symmetrical Spools
+Part number Actuation* Flow – l/min [US gal/min]
+A → T P → A P → B B → T
+11243966 PVE 5 [1.32] 5 [1.32] 5 [1.32] 5 [1.32]
+11243967 PVE 10 [2.64] 10 [2.64] 10 [2.64] 10 [2.64]
+11240624 PVE 25 [6.60] 25 [6.60] 25 [6.60] 25 [6.60]
+11240625 PVE 40 [10.57] 40 [10.57] 40 [10.57] 40 [10.57]
+11240632 PVE 65 [17.17] 65 [17.17] 65 [17.17] 65 [17.17]
+11274482 PVH/PVHC 5 [1.32] 5 [1.32] 5 [1.32] 5 [1.32]
+11274449 PVH/PVHC 10 [2.64] 10 [2.64] 10 [2.64] 10 [2.64]
+11274483 PVH/PVHC 25 [6.60] 25 [6.60] 25 [6.60] 25 [6.60]
+11274484 PVH/PVHC 40 [10.57] 40 [10.57] 40 [10.57] 40 [10.57]
+11274467 PVH/PVHC 65 [17.17] 65 [17.17] 65 [17.17] 65 [17.17]
+* All spools can be mechanically actuated with a PVM, for more details see PVM Manual Actuation on page 71
+Asymmetrical Spools
+Part number Actuation* Flow – l/min [US gal/min]
+A → T P → A P → B B → T
+11295512 PVE 5 [1.32] 5 [1.32] 2.5 [0.66] 2.5 [0.66]
+11295513 PVE 5 [1.32] 5 [1.32] 5 [1.32] 5 [1.32]
+11295489 PVE 15 [3.96] 15 [3.96] 25 [6.60] 25 [6.60]
+11295490 PVE 25 [6.60] 25 [6.60] 40 [10.57] 40 [10.57]
+11309231 PVE 40 [10.57] 40 [10.57] 25 [6.60] 25 [6.60]
+11295503 PVE 40 [10.57] 40 [10.57] 65 [17.17] 65 [17.17]
+11295457 PVH/PVHC 15 [3.96] 15 [3.96] 25 [6.60] 25 [6.60]
+* All spools can be mechanically actuated with a PVM, for more details see PVM Manual Actuation on page 71
+© Danfoss | March 2024 BC152986484323en-001302 | 69"
+BC152986484323en-001302.pdf,70,"Technical Information
+PVG 16 Proportional Valve Group
+PVBS Main Spools Part Numbers
+Flow Control Spools - Open/Closed Neutral Position
+Schematic for PVBS - 4-way, 3 positions Schematic for PVBS - 4-way, 4 positions
+Asymmetrical Spools
+Part number Actuation* Flow – l/min [US gal/min]
+A → T P → A P → B B → T
+11179510 PVE 15 [3.96] 15 [3.96] 5 [1.32] 15 [3.96]
+* All spools can be mechanically actuated with a PVM, for more details see PVM Manual Actuation on page 71
+70 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,71,"PVG 16 actuation can be done manually, hydraulically, electro-hydraulically and electrically.
+PVG 16 actuation overview:
+• PVM Manual Actuation on page 71
+‒ PVMD Cover on page 72
+• PVH Hydraulic Actuation on page 73
+• PVHC Electro-Hydraulic Actuation on page 75
+• PVE Electro-hydraulic Actuation on page 77
+‒ PVEO on page 79
+‒ PVEA Series 7 Proportional Control Actuator on page 82
+PVM Manual Actuation
+The PVM manual actuation cover is intended for use on any work section where the operator has to have
+the ability to interact with the spool manually.
+The PVM variants are based on a generic platform with a selection of additional features, enabling you to
+tailor the PVM to suit the demands of any hydraulic system, which includes the following main variants:
+• PVM manual actuation or override of a function
+• Spring centering cover without manual override (PVML)
+‒ Optional with lever base
+‒ Optional with lever base and lever
+‒ Optional flow adjustment screws
+The adjustment screws are intended for limiting the spool travel and thereby the maximum achievable
+flow.
+PVM cover PVM dimensions
+]53.3[
+58
+]42.7[
+8.381
+Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+51.7 [2.04]
+60 [2.36] 13 [0.51] 45.6 [1.80]
+Control lever data
+Standard control range Control lever range + float position
+± 13.9° 22.3°
+© Danfoss | March 2024 BC152986484323en-001302 | 71"
+BC152986484323en-001302.pdf,72,"PVM torque data
+Spool displacement PVM+PVMD PVM+PVH
+PVM+PVE
+From neutral position 2.2 ± 0.2 N•m 2.7 ± 0.2 N•m
+[19.5 ± 1.8 lb•in] [23.9 ± 1.8 lb•in]
+Max. spool travel 2.8 ± 0.2 N•m 7.1 ± 0.2 N•m
+[24.8 ± 1.8 lb•in] [62.8 ± 1.8 lb•in]
+Part numbers for PVM Manual Actuation
+Part number Float Adjustment screws Lever base and lever Weight
+11107332 — Yes Yes
+11107333 — — Yes
+11107335 Yes — Yes 0,22 kg
+11107505 — — — [0,49 lb]
+11107506 Yes — —
+11107507 — Yes —
+PVMD Cover
+The PVMD cover is used when work section is purely mechanical activated.
+PVMD Cover Dimensions, mm [in]
+]93.3[
+68
+Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+39 [1.54]
+14 [0.55]
+Part number and weight for PVMD Cover
+Part number 11105518
+Weight 1.5 kg [3.3 lb]
+72 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,73,"PVH Hydraulic Actuation
+The PVH hydraulic actuation is intended for use on any work section where the operator wants to have a
+possibility to interact with the main spool via a hydraulic joystick. The spool spring package must match
+with this activation method.
+PVH cover PVH 16 cover dimensions
+]93.3[
+68
+]60.1[
+72
+]41.1[
+92
+Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+19.5 [0.77]
+39 [1.55] 28 [1.1]
+The hydraulic remote control lever should be connected directly to the tank.
+© Danfoss | March 2024 BC152986484323en-001302 | 73"
+BC152986484323en-001302.pdf,74,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+Fluid flow as a function of spool travel - PVH
+[l/min] [US gal/min]
+P B Float P A
+70
+18
+Spool types: D
+65 17
+AA = 5/min
+16
+60 A = 10 l/min
+15
+55 B = 25 l/min
+14
+C = 40 l/min
+50 13 D = 65 l/min
+45 12
+11 C
+40
+10
+35
+9
+30 8
+7 B
+25
+6
+20
+5
+15 4
+3 A
+10
+2
+AA
+5
+1
+[mm] [mm]
+7 6 5 4 3 2 1 0 0 1 2 3 4 5 6 7
+PVM
+[in] [in]
+0.28 0.24 0.20 0.16 0.12 0.08 0.04 0 0 0.04 0.08 0.12 0.16 0.20 0.24 0.28
+bar bar
+19 17 15 13 11 9 7 5 PVH 5 7 9 11 13 15
+psi psi
+276 247 218 189 160 131 102 73 73 102 131 160 189 218
+Technical data
+Main spool spring control pressure range 5 – 15 bar [73 – 218 psi]
+Maximum pilot oil pressure 30 bar [435 psi]
+Maximum pressure on port T 10 bar [145 psi]
+Part numbers for PVH Hydraulic Actuation
+Part number Material Connection Weight
+11108380 G1/4"" BSP 0,13 kg
+Aluminum
+11108381 9/16""-18 UNF [0.29 lb]
+74 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,75,"PVHC Electro-Hydraulic Actuation
+The PVHC is an electrical actuator module for main spool control. The PVHC control is done by dual Pulse
+Width Modulated, high current supply 100-400 Hz PWM control signals. The spool position will shift
+when conditions are changed such as temperature change.
+Inlet with Hydraulic Pilot Pressure is needed.
+PVHC, Electro-Hydraulic Actuator PVHC dimensions
+]26.3[
+29
+Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+100.5 [3.96] 39 [1.55]
+Weight: 0,9 kg [1,98 lb]
+PVHC schematic
+Dither frequency with a certain amplitude is needed for optimal application performance.
+© Danfoss | March 2024 BC152986484323en-001302 | 75"
+BC152986484323en-001302.pdf,76,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+PVHC spool stroke vs current characteristics
+PVHC characteristics – Spool stroke vs current
+P A Spool stroke, mm P B
+10
+9
+8
+7 Ideal curve
+6
+5
+4 Hysteresis
+3
+2
+1
+[Current in mA] [Current in mA]
+@12V 1600 1400 1200 1000 800 600 400 200 0 200 400 600 800 1000 1200 1400 1600 @12V
+@24V 800 700 600 500 400 300 200 100 0 100 200 300 400 500 600 700 800 @24V
+P109250
+The hysteresis is affected by viscosity, friction, flow forces, dither frequency and modulation frequency.
+Technical data
+Supply Voltage U 12 V 24 V
+DC DC DC
+Current input 0 – 1500 mA 0 – 750 mA
+Resistance 4.75 Ω ± 5 % 20.8 Ω ± 5 %
+Response time 150 to 200 ms
+PWM frequency 100 to 400 Hz
+Recommended dither frequency 250 Hz
+Recommended dither amplitude 40 mA
+Main spool spring control pressure 5 – 15 bar [73 – 218 psi]
+range
+Pilot oil pressure range 20 – 25 bar [290 – 362 psi]
+Ambient temperature range -30°C to 80°C [-22 °F to 176°F]
+Temperature range -20°C to 80°C [-4 °F to 176°F]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+Part numbers for PVHC Actuators
+Part number Power supply Connector type Protection Class
+11126941 12V
+2x2 DEUTSCH IP 67
+11127535 24V
+76 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,77,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+PVE Electro-hydraulic Actuation
+The analog PVE Series 7 is an electro-hydraulic actuator used to control a single work section of a PVG
+proportional valve group. The PVE actuator program for PVG 16 includes variants with different
+performance levels and features.
+The actuator positions the main spool in a PVG work section to control either the flow or the pressure of
+the oil distributed to and from the work function. The control signal to the actuator is an analog voltage
+signal, enabling the user to operate the work function remotely by means of a joystick, a controller or the
+similar.
+The electro-hydraulic solenoid valve bridge of the actuator is available in different designs utilizing
+different regulation principles, depending on performance variant. The actuator positions the main spool
+by distributing pilot oil pressure to either side of it, pressurizing one side by pilot pressure while relieving
+the opposite side to tank and vice versa. All proportional actuators feature a closed- loop spool control
+and continuous fault monitoring.
+The analog PVE Series 7 actuator program for PVG 16 features two different main hydraulic principle
+variants (PVEO and PVEA).
+The different hydraulic principles combined with the different solenoid valve regulation principles
+determine whether the actuator controls the spool proportionally according to a demand signal or
+ON/OFF according to a voltage signal. The voltage control characteristic of the PVE actuators is shown in
+the figure below on the left side.
+PVG 16 with PVEO sectional view
+© Danfoss | March 2024 BC152986484323en-001302 | 77"
+BC152986484323en-001302.pdf,78,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+PVG 16 with PVEA sectional view
+PVE Series 7 Overview
+ON/OFF voltage control, non-proportional functions Proportional spool control for work functions
+PVEO Series 7 PVEA Series 7
+For more information please see PVEO on page 79.
+78 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,79,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+PVEO
+The PVEO actuator is a non-proportional ON/OFF control actuator with open-loop spool control primarily
+used to control simple ON/OFF work functions where a proportional control of speed or oil flow is not a
+requirement.
+PVEO Series 7
+• Neutral position or max. spool stroke according to control signal
+• 12 V or 24 V supply voltage
+DC DC
+• DEUTSCH connectors
+• Standard PVE pilot oil pressure of 13.5 bar [196 psi]
+• LED only indicating Power ON or Power OFF
+• CAN-interface (-CI)
+Functionality principle
+PVEO functionality diagram
+A
+B Pp
+LED Circuit (PCB)
+LED
+UDC Power SV1 SV2
+Supply
+1 0 2
+) ( ) (
+© Danfoss | March 2024 BC152986484323en-001302 | 79"
+BC152986484323en-001302.pdf,80,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+The standard PVEO functionality includes the simplest electric circuit of the PVE actuator program, using
+a fixed 12 V or 24 V supply voltage or signal voltage and a simple LED circuit to control the LED light
+DC DC
+indicating Power ON/OFF.
+An energization of solenoid valve SV1 and a simultaneous de-energization of SV2 will cause the main
+spool to move to the right direction and vice versa. If both SV1 and SV2 are energized or de-energized
+simultaneously, the main spool stays locked in its neutral position.
+PVEO Series 7 schematic
+PVEO Series 7 dimensions
+Weight: 0.7 kg [1.54 lb]
+80 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,81,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+PVEO Technical Data
+Control Specifications
+Description Type 12 V ± 10% 24 V ± 10%
+DC DC
+Supply Voltage (U ) Range 11 to 15 V 22 to 30 V
+DC DC DC
+Max. ripple 5% 5%
+Current Consumption Typical 710 mA 360 mA
+Pilot pressure
+Minimum Nominal Maximum
+10.0 bar [145 psi] 13.5 bar [196 psi] 15.0 bar [218 psi]
+Fluid consumption
+Neutral/Locked position Actuating
+0.2 l/min [0.05 US gal/min] 0.4 l/min [0.11 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+Storage temperature Ambient: -50 to 90°C [-58 to 194°F]
+Operating temperature Ambient: -40 to 90°C [-40 to 194°F]
+LED characteristic
+Color LED characteristic Description
+Green constant Power ON
+PVEO/PVEO-CI reaction time
+Reaction time A-direction B-direction
+Neutral to full stroke 80 ms 80 ms
+Full spool stroke to neutral 80 ms 80 ms
+Part numbers for PVEO and PVEO-CI
+Part number Type Connector Protection Class Voltage Interface
+11313916 PVEO 1x4 DEUTSCH IP 67 12 V DC —
+11313926 PVEO 1x4 DEUTSCH IP 67 24 V DC —
+11314843 PVEO-CI 2x4 DEUTSCH IP 67 11-32 V J1939/ISObus
+11149443 PVEO-CI 2x4 DEUTSCH IP 67 11-32 V CANopen
+© Danfoss | March 2024 BC152986484323en-001302 | 81"
+BC152986484323en-001302.pdf,82,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+PVEA Series 7 Proportional Control Actuator
+The PVEA actuator is a proportional control actuator with a closed-loop spool control primarily used to
+control work functions with above medium performance requirements
+PVEA Series 7
+The PVEA functionality includes an electric circuit with a closed-loop logic. An integrated feedback
+transducer measures spool movement in relation to the input signal. The PVEA features passive fault
+monitoring, LED indicating fault state, error output pin and Power Save mode.
+PVEA functionality
+Power Save mode is entered when the command signal to the PVEA is below 15% of the supply voltage.
+Entering Power Save mode will torn off the power to the solenoid valves. Power Save mode can be
+identified by the LED blinking green at 1 Hz.
+All variants available with following features:
+82 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,83,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+• Spool stroke according to control signal
+• 11–32 V multi-voltage power supply
+DC
+• DEUTSCH connectors
+• Standard PVE pilot oil pressure of 13.5 bar [196 psi]
+• LED indicating error state and passive fault monitoring
+• Analog and CAN-interface (-CI)
+PVEA Series 7 schematic
+PVEA Series 7 dimensions
+Weight: 0.7 kg [1.54 lb]
+© Danfoss | March 2024 BC152986484323en-001302 | 83"
+BC152986484323en-001302.pdf,84,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+PVEA Technical Data
+PVEA/PVEA-CI actuator technical specification and part numbers.
+Control specification
+Description Type Value
+Supply voltage (U ) Rated/range 11 to 32 V
+DC DC
+Max. ripple 15 bar [218 psi]
+Signal voltage (U) Neutral 0.5 U
+S DC
+Q: P -> A 0.25 U
+DC
+Q: P -> B 0.75 U
+DC
+Current consumption @ 12 V 320 mA
+DC
+@ 24 V 170 mA
+DC
+Input impedance Rated 12 kΩ
+Input capacitance Rated 1 µF
+Technical data
+Pilot pressure Nominal 13.5 bar [196 psi]
+Minimum 10.0 [145 psi]
+Maximum 15.0 bar [218 psi]
+Fluid consumption Neutral 0.2 l/min [0.05 US gal/min]
+Locked position 0.2 l/min [0.05 US gal/min]
+Actuating 0.4 l/min [0.11 US gal/min]
+Fluid temperature Ambient Storage -50 to +90°C [-58 to +194°F]
+Ambient Operating -40 to +90°C [-40 to +194°F]
+Fluid viscosity Operating range 12 to 75 mm2/sec [65 to 347 SUS]
+Minimum 4 mm2/sec [39 SUS]
+Maximum 460 mm2/sec [2128 SUS]
+Fluid cleanliness Minimum 18/16/13 (according to ISO 4406)
+LED characteristic
+Color LED characteristic Description
+Green constant No error – Actuating
+Green flashing @ 1.5 Hz Neutral – Power save
+Red constant Internal error
+Red flashing @ 1.5 Hz External or Float error
+PVEA/PVEA-CI reaction time
+Reaction time A-direction B-direction
+Neutral to full spool stroke 345 ms 368 ms
+Full spool stroke to neutral 106 ms 91 ms
+84 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,85,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+Part numbers for PVEA/PVEA-CI
+Part number Type Connector Protection Class Interface Functionality
+11313922 PVEA 1x4 DEUTSCH IP 67 — Standard
+11314834 PVEA-CI 2x4 DEUTSCH IP 67 J1939/ISObus Standard
+11149437 PVEA-CI 2x4 DEUTSCH IP 67 CANopen Standard
+© Danfoss | March 2024 BC152986484323en-001302 | 85"
+BC152986484323en-001302.pdf,86,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Actuation
+PVG 16 connector variants
+PVG 16 connector variants for PVEO, PVEA, PVEO-CI, PVEA-CI with pin layout information.
+Pin connector
+1 x 4 DEUTSCH 2 x 4 DEUTSCH
+4 1
+3 2
+2 3
+1 4
+2 3
+1 4
+Pin layout for PVEO, PVEA, PVEO-CI, PVEA-CI
+PVE Type Connector Pin 1 Pin 2 Pin 3 Pin 4
+PVEO 1 x 4 DEUTSCH U _A GND GND U _B
+DC DC
+PVEA 1 x 4 DEUTSCH U Error GND U
+S DC
+PVEO-CI, PVEA-CI 2 x 4 DEUTSCH CAN_H CAN_L Vbat Vneg
+86 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,87,"Technical Information
+PVG 16 Proportional Valve Group
+Fault Monitoring and Reaction
+All proportional control PVG 16 actuators feature:
+• Integrated fault monitoring
+• Detecting spool stroke inconsistencies
+• Detecting internal hardware defects
+• Detecting demand signal inconsistencies
+• Fault reaction depending on the type of fault monitoring
+‒ Generic
+‒ Specific
+The PVEA comes with a passive fault monitoring.
+Passive fault monitoring
+Passive fault monitoring does not disable the solenoid valves when an error is detected. It will continue
+to operate despite that an error was detected. When the error no longer is registered the passive fault
+monitoring will “forget” the error and continue as if the error was never there.
+With a passive fault monitoring the following conditions will happen when an error is detected/occurs:
+• The LED light will switch from green to red and the error pin output will go high
+• The solenoid valves will continue operating at the set point given at the time of the error
+‒ Only exception is if the error is caused by the supply voltage (U DC ) being either above or below
+the allowed range or if the temperature measured on the internal electronics board is higher than
+allowed. In these cases, the solenoid valves will be disabled.
+Generic Fault Reaction
+All PVE actuators with fault monitoring are triggered by the following main events:
+Control Signal Monitoring The Control signal voltage (U S ) is continuously monitored.
+The permissible range is between 15% and 85% of the supply voltage (U ).
+DC
+Outside this range the PVE will switch into an error state. A disconnected U
+S
+pin (floating) is recognized as a neutral set point.
+Transducer/LVDT Supervision The internal LVDT wires are monitored. If the signals are interrupted or short-
+circuited, the PVE will switch into an error state.
+Supervision of Spool Position The actual position must always correspond to the demanded position (U S ).
+If the actual spool position is further out from neutral than the demanded
+spool position or in opposite direction, the PVE will switch into an error state.
+Spool position closer to neutral and in same direction will not cause an error
+state – the situation is considered in control.
+Temperature Monitoring When the temperature is too high the PVE LED will light constant red and
+solenoid valves will be disabled.
+© Danfoss | March 2024 BC152986484323en-001302 | 87"
+BC152986484323en-001302.pdf,88,"Technical Information
+PVG 16 Proportional Valve Group
+Fault Monitoring and Reaction
+Fault Reaction Overview
+Description Monitoring LED Solenoid valves Error pin output Reaction time
+(ms)
+Spool not at setpoint Passive — High 250
+Unable to reach float position Passive — High 250
+U > max. Passive Disabled — 250
+DC
+U < min. Passive ——————— Disabled — 250
+DC
+U out of range Passive — High 250
+S
+LVDT error Passive — High 250
+Temp > max. Passive Disabled High 250
+88 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,89,"Technical Information
+PVG 16 Proportional Valve Group
+PVS End Plates
+The PVG 16 PVS end plates close off the valve stack section placed between them by placing them at the
+end. Furthermore, the end plate is ensuring Load Sense (LS) is relieved to tank pressure when the valve is
+not operated.
+The PVS end plate variants are based on a generic platform with a wide selection of additional features,
+enabling you to tailor the PVS to suit the demands of any hydraulic system.
+The generic PVS end plates platform includes the following main variants:
+• PVS/PVSI – Either aluminum or cast iron
+• PVS/PVSI with LX-connection – Either aluminum or cast iron
+• PVSI with P-, T-, LX- and M-connection – Cast iron
+• PVST with T-connection – Steel
+PVS/PVSI PVS/PVSI with LX-connection
+PVSI with P-, T-, LX- and M-connection PVST with T-connection
+For more information about PVS End Plates, see:
+PVS/PVSI on page 90
+PVS/PVSI with LX-connection on page 92
+PVSI with P-, T-, LX- and M-connection on page 94
+PVST with T-connection on page 96
+© Danfoss | March 2024 BC152986484323en-001302 | 89"
+BC152986484323en-001302.pdf,90,"PVS/PVSI
+The PVS/PVSI are made of either aluminum or cast iron material and works as an end plate.
+The PVSI Start Plates features:
+• Integrated LS pressure relief to tank
+• Optional integrated thermal orifice
+• Optional version without seals
+PVS/PVSI PVS/PVSI dimensions
+]13.4[
+4.901
+Technical Information
+PVG 16 Proportional Valve Group
+PVS End Plates
+95 [3.74]
+111 [4.37] 23 [0.91]
+Weight: 0.47 kg [1.05 lb]
+PVS/PVSI schematic
+See part number table for details on maximum pressure capacity
+Technical specification for A/B-port
+Max. continuous pressure Max. intermittent pressure Max. rated flow
+380 bar [5510 psi] 420 bar [6090 psi] 65 l/min [17 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+Part numbers for PVS end plates
+Part number Maximum pressure Material Weight kg [lb] Seals Mounting
+157B2000 300 bar [4351 psi] Aluminum 0.475 [1.05] Yes M8
+157B2020 300 bar [4351 psi] Aluminum 0.475 [1.05] Yes 5/16-18 UNC
+90 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,91,"Technical Information
+PVG 16 Proportional Valve Group
+PVS End Plates
+Part numbers for PVS end plates (continued)
+Part number Maximum pressure Material Weight kg [lb] Seals Mounting
+157B2004 350 bar [5076 psi] Cast iron 1.745 [3.85] Yes 5/16-18 UNC
+157B2014 350 bar [5076 psi] Cast iron 1.745 [3.85] Yes M8
+© Danfoss | March 2024 BC152986484323en-001302 | 91"
+BC152986484323en-001302.pdf,92,"PVS/PVSI with LX-connection
+The PVG 16 PVS end plates are placed at the end the valve stack section. Furthermore, the end plate is
+ensuring Load Sense (LS) is relieved to tank pressure when the valve is not operated. The LX port enables
+other remote valves to be connected onto the Load Sense shuttle network.
+The PVS type end plates are made of aluminum while the PVSI types are made of cast iron thereby being
+able to withstand a higher pressure.
+The PVS/PVSI with LX-port connection features:
+• Threaded LX port for connecting another valve to LS network
+PVS/PVSI with LX-connection PVS/PVSI with LX-connection dimensions
+]13.4[
+4.901
+]15.1[
+4.83
+Technical Information
+PVG 16 Proportional Valve Group
+PVS End Plates
+LX
+G1/8
+11.5 [0.45] 95 [3.74]
+23 [0.9] 110 [4.33]
+PVS/PVSI with LX-connection schematic
+Lx
+See part number table for details on maximum pressure capacity
+Technical specification for A/B-port
+Max. continuous pressure Max. intermittent pressure Max. rated flow
+380 bar [5510 psi] 420 bar [6090 psi] 65 l/min [17 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+92 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,93,"Technical Information
+PVG 16 Proportional Valve Group
+PVS End Plates
+Part numbers for PVS/PVSI with LX-port connection
+Part number Max. pressure Material Weight kg [lb] LX port Mounting
+157B2005 1/2-20 UNF 5/16-18 UNC
+157B2015 350 bar 5076 psi] Cast iron 1.695 [3.74] G1/4”
+M8
+157B2910 M12x1.5 ISO 6149
+157B2011 G1/8” M8
+300 bar [4351 psi] Aluminum 0.495 [1.09]
+157B2021 3/8-24 UNF 5/16-18 UNC
+© Danfoss | March 2024 BC152986484323en-001302 | 93"
+BC152986484323en-001302.pdf,94,"PVSI with P-, T-, LX- and M-connection
+PVSI is made of cast iron and works as an end plate. The PVSI with LX connection enables another valves
+LS pressure to be shuttled to the pump when needed. The additional P- and T-port connections enables
+an additional pump flow to a PVG 16 valve.
+The PVSI with P-, T-, LX- and M-connection features:
+• Threaded ports for P/T/LS/LX and M measuring gauge
+PVSI with P-, T-, LX- and M-connection PVSI with P-, T-, LX- and M-connection dimensions
+]50.3[
+4.77
+70.8 [2.79]
+11.5 [0.45]
+]683.1[
+2.53
+35.3 [1.39]
+30.5 [1.20]
+]8.0[
+4.02
+]13.4[
+4.901
+]75.1[
+04
+Technical Information
+PVG 16 Proportional Valve Group
+PVS End Plates
+95 [3.74]
+112.7 [4.44] 23 [0.91]
+PVSI with P-, T-, LX- and M-connection schematic
+T Lx
+M
+P
+Maximum pressure for P- and T-port
+Max. P-port continuous Max. P-port intermittent Max. T-port static/dynamic
+210 bar [3045 psi] 250 bar [3625 psi] 25/40 bar [365/580 psi]
+See part number table for details on maximum pressure capacity
+Technical specification for A/B-port
+Max. continuous pressure Max. intermittent pressure Max. rated flow
+380 bar [5510 psi] 420 bar [6090 psi] 65 l/min [17 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+94 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,95,"Technical Information
+PVG 16 Proportional Valve Group
+PVS End Plates
+Technical specification (continued)
+Parameter Minimum Recommended range Maximum
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+Part number for PVSI with P-, T-, LX-, M-ports
+Part number P-port T-port LX-port M-port Mounting feet Weight
+157B2920 G3/8 G1/2 G1/8 G1/4 M8 0.47 kg [1.05 lb]
+© Danfoss | March 2024 BC152986484323en-001302 | 95"
+BC152986484323en-001302.pdf,96,"PVST with T-connection
+The PVST end plate closes off the valve stack section placed between them by placing it at the end.
+Furthermore, the end plate is ensuring Load Sense (LS) is relieved to tank pressure when the valve is not
+operated.
+The PVSI Start Plates features:
+• Integrated LS pressure relief to tank
+• Threaded T port
+• Optional integrated thermal orifice
+PVST with T-connection PVST with T-connection dimensions
+]50.3[
+4.77
+110 [4.33]
+]33.4[
+011
+Technical Information
+PVG 16 Proportional Valve Group
+PVS End Plates
+95 [3.74] 16
+[0.63]
+32 [1.26]
+PVST with T-connection schematic
+T
+Maximum pressure for P- and T-port
+Max. P-port continuous Max. P-port intermittent Max. T-port static/dynamic
+350 bar [5076 psi] 400 bar [5800 psi] 25/40 bar [365/580 psi]
+Technical specification for A/B-port
+Max. continuous pressure Max. intermittent pressure Max. rated flow
+380 bar [5510 psi] 420 bar [6090 psi] 65 l/min [17 US gal/min]
+Technical specification
+Parameter Minimum Recommended range Maximum
+Fluid temperature -30°C [-22°F] 30 to 60°C [86 to 140°F] 90° [194°F]
+Fluid viscosity 4 mm2/s [39 SUS] 12 to 75 mm2/s [65 to 347 SUS] 460 mm2/s [2128 SUS]
+Fluid cleanliness 23/19/16 (according to ISO 4406)
+(mechanical activation)
+Fluid cleanliness 18/16/13 (according to ISO 4406)
+(PVE activation)
+Operating temperature Ambient: -30 to 60°C [-22 to 140°F]
+When using a PVST with T-connection it is not possible to use the LS A/B fitting in the bottom of the PVG
+section next to the PVST.
+96 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,97,"Technical Information
+PVG 16 Proportional Valve Group
+PVS End Plates
+Part numbers for PVST with T-connection
+Part number Material T-port Mounting feet Weight
+157B2500 G1/2 M8
+Steel 0.47 kg [1.05 lb]
+157B2520 7/8–14 5/16–18
+© Danfoss | March 2024 BC152986484323en-001302 | 97"
+BC152986484323en-001302.pdf,98,"Technical Information
+PVG 16 Proportional Valve Group
+PVAS Stay Bolts
+PVAS Stay Bolts kit for various PVG combinations consist of three tie rods, six washers, six nuts and O-ring.
+Use the guide and reference tables how to choose PVAS kit.
+The tie rods are inserted through the entire length of the PVG valve stack. The nuts are tightened at the
+pump side and at the end plate.
+To find the PVAS kit that fits your PVG 16 valve stack, you need to go to the table PVG 16 modules total
+length and weight on page 99 and find the length. Then go to the table PVAS Part Numbers on page 99
+and find the matching part number.
+For stay bolts for a PVG 32/16 combination, see this PVG 32/16 Combinations on page 100.
+Stay bolts for PVG 256/128/32/16 combinations consist of two different kits. See PVG 256/128/32/16
+Combinations on page 101 to find the right kits for your combination.
+Combinations with PVG 100 and PVG 120 requires special PVAS kits. These are not included in the PVAS
+table.
+98 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,99,"Technical Information
+PVG 16 Proportional Valve Group
+PVAS Stay Bolts
+PVAS Part Numbers
+PVAS part numbers according to accumulated length interval PVG 16.
+PVAS part numbers
+Length, mm [in] Part number Length, mm [in] Part number
+20 – 48 [0.79 – 1.89] 11188219 361 – 372 [14.21 – 14.65] 11188205
+49 – 60 [1.93 – 2.36] 11188218 373 – 384 [14.69 – 15.12] 157B8026
+61 – 72 [2.40 – 2.83] 157B8000 385 – 396 [15.16 – 15.59] 11188204
+73 – 84 [2.87 – 3.31] 11188217 397 – 408 [15.63 – 16.06] 157B8007
+85 – 96 [3.35 – 3.78] 157B8031 409 – 420 [16.10 – 16.54] 11188203
+97 – 108 [3.82 – 4.25] 11188216 421 – 432 [16.58 – 17.01] 157B8027
+109 – 120 [4.29 – 4.72] 157B8001 433 – 444 [17.05 – 17.48] 11188202
+121 – 132 [4.76 – 5.20] 11188215 445 – 456 [17.52 – 17.95] 157B8008
+133 – 144 [5.24 – 5.67] 157B8021 457 – 468 [17.99 – 18.43] 11188201
+145 – 156 [5.71 – 6.14] 11188214 469 – 480 [18.47 – 18.90] 157B8028
+157 – 168 [6.18 – 6.61] 157B8002 481 - 492 [18.94 – 19.37] 11188200
+169 – 180 [6.65 – 7.09] 11188213 493 – 504 [19.41 – 19.84] 157B8009
+181 – 192 [7.13 – 7.56] 157B8022 505 – 516 [19.88 – 20.31] 11188199
+193 – 204 [7.60 – 8.03] 11188212 517 – 528 [20.35 – 20.79] 157B8029
+205 – 216 [8.07 – 8.50] 157B8003 529 – 540 [20.83 – 21.26] 11188198
+217 – 228 [8.54 – 8.98] 11188211 541 – 552 [21.30 – 21.73] 157B8010
+229 – 240 [9.02 – 9.45] 157B8023 553 – 564 [21.77 - 22.20] 11188197
+241 – 252 [9.49 – 9.92] 11188210 565 – 576 [22.24 – 22.68] 157B8030
+253 – 264 [9.96 – 10.39] 157B8004 577 – 588 [22.72 – 23.15] 11188196
+265 – 276 [10.43 – 10.87] 11188209 589 – 600 [23.19 – 23.62] 157B8061
+277 – 288 [10.91 – 11.34] 157B8024 601 – 612 [23.66 – 24.09] 11188195
+289 – 300 [11.38 – 11.81] 11188208 613 – 624 [24.13 – 24.57] 157B8081
+301 – 312 [11.85 – 12.28] 157B8005 625 – 636 [24.61 – 25.04] 11188194
+313 – 324 [12.32 – 12.76] 11188207 637 – 648 [25.08 – 25.51] 157B8062
+325 – 336 [12.80 – 13.23] 157B8025 649 – 660 [25.55 – 25.98] 11188189
+337 – 348 [13.27 – 13.70] 11188206 661 - 672 [26.02 – 26.46] 157B8082
+349 – 360 [13.74 – 14.17] 157B8006
+PVG 16 modules total length and weight
+Table with total length of the PVG 16 depending on the number of PVB modules.
+No. of 1 2 3 4 5 6 7 8 9 10 11 12
+PVB 16
+Length 111 151 191 231 271 311 351 391 431 471 511 551
+mm [in] [4.37] [5.94] [7.52] [9.09] [10.67] [12.24] [13.82] [15.39] [16.97] [18.54] [20.12] [21.69]
+Weight* 7.2 10.9 14.6 18.3 22.0 25.7 29.4 33.1 36.8 40.5 44.2 47.9
+kg [lb] [15.9] [24] [32.2] [40.3] [48.5] [56.7] [64.8] [73] [81.1] [89.3] [97.4] [105.6]
+* Weight is for a PVG 16 with a PVE on each working section and is only approximate.
+© Danfoss | March 2024 BC152986484323en-001302 | 99"
+BC152986484323en-001302.pdf,100,"Technical Information
+PVG 16 Proportional Valve Group
+PVAS Stay Bolts
+PVG 32/16 Combinations
+The table of PVB 32 and PVB 16 modules combination, the total length depending on the amount of
+valve groups.
+PVB 16
+Modules in mm [in] 1 2 3 4 5 6 7 8 9 10 11
+1 159 199 239 279 319 359 399 439 479 519 559
+[6.26] [7.83] [9.41] [10.98] [12.56] [14.13] [15.71] [17.28] [18.86] [20.43] [22.01]
+2 207 247 287 327 367 407 447 487 527 567 607
+[8.15] [9.72] [11.30] [12.87] [14.45] [16.02] [17.60] [19.17] [20.74] [22.32] [23.90]
+3 255 295 335 375 415 455 495 535 575 615 655
+[10.04] [11.61] [13.19] [14.76] [16.34] [17.91] [19.49] [21.06] [22.64] [24.21] [25.79]
+4 303 343 383 423 463 503 543 583 623 663 -
+[11.93] [13.50] [15.08] [16.65] [18.23] [19.80] [21.38] [22.95] [24.53] [26.10]
+5 351 391 431 471 511 551 591 631 671 - -
+[13.82] [15.39] [16.97] [18.54] [20.12] [21.69] [23.27] [24.84] [26.42]
+6 399 439 479 519 559 599 639 - - - -
+PVB 32
+[15.71] [17.28] [18.86] [20.43] [22.01] [23.58] [25.16]
+7 447 487 527 567 607 647 - - - - -
+[17.60] [19.17] [20.75] [22.32] [23.90] [25.47]
+8 495 535 575 615 655 - - - - - -
+[19.49] [21.06] [22.64] [24.21] [25.79]
+9 543 583 623 663 - - - - - - -
+[21.38] [22.95] [24.53] [26.10]
+10 591 631 671 - - - - - - - -
+[23.27] [24.84] [26.42]
+11 639 - - - - - - - - - -
+[25.16]
+100 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,101,"Technical Information
+PVG 16 Proportional Valve Group
+PVAS Stay Bolts
+PVG 256/128/32/16 Combinations
+The tables of PVB 256/128, 32/16 modules, total length depending on the amount of valve groups.
+Stay bolts for PVG 128/256/32/16 combinations consist of 2 different kits:
+1.For PVAS containing 2 stay bolts – please look in the Table 1 below and use the part number before
+the + symbol.
+2.For PVAS containing 3 stay bolts – please look in Table 1 below and write down the length in
+millimeters which is the number after the + symbol. Next you add the number from Table 2 below.
+Now find the part number for the needed stay bolts in the table PVAS Part Numbers on page 99.
+O-rings are a part of the PVAS kits – no additional part number needed.
+C Caution
+It is not possible to do combinations exceeding 672 mm.
+Example
+For 2 PVB 256 and 1 PVB 128 and 1 PVB 32 and 2 PVB 16: PVAS 1 Part number = 11187681 from Table 1.
+PVAS 2 = 278 mm from Table 1 + 152 mm from Table 2= 278+152 =430 mm which equals 157B8027 in
+the PVAS table.
+Table 2 – PVG 256/128 combinations
+PVB 256
+Modules (mm) 0 1 2 3 4 5 6 7
+0 11187676+ 11187672+ 11187673+ 11187656+ 11187675+ 11187696+ 11187697+ 11187698+
+40 126 212 298 384 470 556 642
+1 11187320+ 11187677+ 11187681+ 11187658+ 11187685+ 11187687+ 11187690+
+106 192 278 364 450 536 622
+2 11187617+ 11187678+ 11187682+ 11187686+ 11187691+ 11187704+
+172 258 344 430 516 602
+3 11187655+ 11187679+ 11187683+ 11187705+ 11187694+ 11187695+
+238 324 410 496 582 668
+4 11187684+ 11187680+ 11187696+ 11187697+ 11187689+
+304 390 476 562 648
+PVB 128
+5 11187658+ 11187699+ 11187688+ 11187710+
+370 456 542 628
+6 11187693+ 11187703+ 11187704+
+436 522 608
+7 11187705+ 11187694+
+502 588
+8 11187692+ 11187709+
+568 654
+9 11187710+
+634
+© Danfoss | March 2024 BC152986484323en-001302 | 101"
+BC152986484323en-001302.pdf,102,"Technical Information
+PVG 16 Proportional Valve Group
+PVAS Stay Bolts
+Table 2 – PVG 32/16 combinations
+PVB 16
+Modules (mm) 0 1 2 3 4 5 6 7 8 9 10
+0 - 64 104 144 184 224 264 304 344 384 424
+1 72 112 152 192 232 272 312 352 392 432 -
+2 120 160 200 240 280 320 360 400 440 - -
+3 168 208 248 288 328 368 408 448 - - -
+4 216 256 296 236 276 416 456 - - - -
+PVB 32 5 264 304 344 384 424 464 - - - - -
+6 312 352 392 432 472 - - - - - -
+7 360 400 440 480 - - - - - - -
+8 408 448 488 - - - - - - - -
+9 456 496 - - - - - - - - -
+10 504 - - - - - - - - - -
+102 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,103,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Combinations Valve Stack Dimensions
+PVG 16 Dimensions
+The table of PVB 16 valve stack dimensions overview table with accompanying drawing.
+PVB 16 dimensions (12 sections)
+Number of 1 2 3 4 5 6 7 8 9 10 11 12
+PVB 16
+L1 mm 74 114 154 194 234 274 314 354 394 434 474 514
+[in] [2.91] [4.49] [6.06] [7.64] [9.21] [10.79] [12.36] [13.94] [15.51] [17.09] [18.66] [20.24]
+L2 mm 140 189 213 262 311 336 385 434 458 507 551 576
+[in] [5.51] [7.44] [8.39] [10.31] [12.24] [13.23] [15.16] [17.09] [18.03] [19.96] [21.69] [22.68]
+© Danfoss | March 2024 BC152986484323en-001302 | 103"
+BC152986484323en-001302.pdf,104,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Combinations Valve Stack Dimensions
+PVG 32/16 Dimensions
+The table of PVB 32 and PVB 16 combination valve stack dimensions overview table with accompanying
+drawing.
+PVB 32/16 combination valve stack dimensions, mm [in]
+Number Number of PVB 16 modules
+of PVB 32
+(down) 1 2 3 4 5 6 7 8 9 10 11
+1 L1 122 162 202 242 282 322 362 402 442 482 522
+[4.80] [6.38] [7.95] [9.53] [11.10] [12.68] [14.25] [15.83] [17.40] [18.98] [20.55]
+L2 189 238 262 311 360 385 434 483 507 551 600
+[7.44] [9.37] [10.31] [12.24] [14.17] [15.16] [17.09] [19.02] [19.96] [21.69] [23.62]
+104 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,105,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Combinations Valve Stack Dimensions
+PVB 32/16 combination valve stack dimensions, mm [in] (continued)
+Number Number of PVB 16 modules
+of PVB 32
+(down) 1 2 3 4 5 6 7 8 9 10 11
+2 L1 170 210 250 290 330 370 410 450 490 530 570
+[6.69] [8.27] [9.84] [11.42] [12.99] [14.57] [16.14] [17.72] [19.29] [20.87] [22.44]
+L2 238 287 311 360 409 434 483 507 551 600 646
+[9.37] [11.30] [12.24] [14.17] [16.10] [17.09] [19.02] [19.96] [21.69] [23.62] [25.43]
+3 L1 218 258 298 338 378 418 458 498 538 578 -
+[8.58] [10.16] [11.73] [13.31] [14.88] [16.46] [18.03] [19.61] [21.18] [22.76]
+L2 287 336 360 409 458 483 527 576 600 646 -
+[11.30] [13.23] [14.17] [16.10] [18.03] [19.02] [20.75] [22.68] [23.62] [25.43]
+4 L1 266 306 346 386 426 466 506 546 586 - -
+[10.47] [12.05] [13.62] [15.20] [16.77] [18.35] [19.92] [21.50] [23.07]
+L2 336 385 409 458 483 527 576 622 646 - -
+[13.23] [15.16] [16.10] [18.03] [19.02] [20.75] [22.68] [24.49] [25.43]
+5 L1 314 354 394 434 474 514 554 594 - - -
+[12.36] [13.94] [15.51] [17.09] [18.66] [20.24] [21.81] [23.39]
+L2 385 434 458 507 551 576 622 670 - - -
+[15.16] [17.09] [18.03] [19.96] [21.69] [22.68] [24.49] [26.38]
+6 L1 362 402 442 482 522 562 602 - - - -
+[14.25] [15.83] [17.40] [18.98] [20.55] [22.13] [23.70]
+L2 434 483 507 551 600 622 670 - - - -
+[17.09] [19.02] [19.96] [21.69] [23.62] [24.49] [26.38]
+7 L1 410 450 490 530 570 610 - - - - -
+[16.14] [17.72] [19.29] [20.87] [22.44] [24.02]
+L2 483 527 551 600 646 670 - - - - -
+[19.02] [20.75] [21.69] [23.62] [25.43] [26.38]
+8 L1 458 498 538 578 - - - - - - -
+[18.03] [19.61] [21.18] [22.76]
+L2 527 576 600 646 - - - - - - -
+[20.75] [22.68] [23.62] [25.43]
+9 L1 506 546 586 - - - - - - - -
+[19.92] [21.50] [23.07]
+L2 576 622 646 - - - - - - - -
+[22.68] [24.49] [25.43]
+10 L1 554 594 - - - - - - - - -
+[21.81] [23.39]
+L2 622 670 - - - - - - - - -
+[24.49] [26.38]
+11 L1 602 - - - - - - - - - -
+[23.70]
+L2 670 - - - - - - - - - -
+[26.38]
+Weight for a PVG 32/16 valve stack
+The combined weight of a PVG 32/16 valve stack can be defined like this:
+(Numbers of PVB 32 x 4,42) + (numbers of PVB 16 x 3,67) + 3,6 = Weight in kg
+(Numbers of PVB 32 x 9.75) + (numbers of PVB 16 x 8.09) + 7.95 = Weight in lb
+© Danfoss | March 2024 BC152986484323en-001302 | 105"
+BC152986484323en-001302.pdf,106,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Combinations Valve Stack Dimensions
+PVG 100/16 Dimensions
+The table of PVB 100 and PVB 16 combination valve stack dimensions overview table with accompanying
+drawing.
+PVB 100/16 combination valve stack dimensions, mm [in]
+Number of Number of PVB 16
+PVB 100
+(down) 1 2 3 4 5 6 7 8 9 10 11
+1 L1 172 212 252 292 332 372 412 452 492 532 572
+[6.77] [8.35] [9.92] [11.50] [13.07] [14.65] [16.22] [17.80] [19.37] [20.94] [22.52]
+L2 236 285 311 358 407 432 481 530 554 603 652
+[9.29] [11.22] [12.24] [14.09] [16.02] [17.01] [18.94] [20.87] [21.81] [23.74] [25.67]
+L3 80 [3.15]
+106 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,107,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Combinations Valve Stack Dimensions
+PVB 100/16 combination valve stack dimensions, mm [in] (continued)
+Number of Number of PVB 16
+PVB 100
+(down) 1 2 3 4 5 6 7 8 9 10 11
+2 L1 220 260 300 340 380 420 460 500 540 580 620
+[8.66] [10.24] [11.81] [13.39] [14.96] [16.54] [18.11] [19.69] [21.26] [22.83] [24.41]
+L2 284 333 359 406 455 480 529 578 602 651 700
+[11.18] [13.11] [14.13] [15.98] [17.91] [18.90] [20.83] [22.76] [23.70] [25.63] [27.56]
+L3 128 [5.04]
+3 L1 268 308 348 388 428 468 508 548 588 628 668
+[10.55] [12.13] [13.70] [15.28] [16.85] [18.43] [20.00] [21.57] [23.15] [24.72] [26.30]
+L2 332 381 407 454 503 528 577 626 650 699 748
+[13.07] [15.00] [16.02] [17.87] [19.80] [20.79] [22.72] [24.65] [25.59] [27.52] [29.45]
+L3 176 [6.93]
+4 L1 316 256 396 436 476 516 556 596 636 676 716
+[12.44] [10.08] [15.59] [17.17] [18.74] [20.31] [21.89] [23.46] [25.04] [26.61] [28.19]
+L2 380 429 455 502 551 576 625 674 698 747 796
+[14.96] [16.89] [17.91] [19.76] [21.69] [22.68] [24.61] [26.54] [27.48] [29.41] [31.34]
+L3 224 [8.82]
+5 L1 364 404 444 484 524 564 604 644 684 724 -
+[14.33] [15.91] [17.48] [19.06] [20.63] [22.20] [23.78] [25.35] [26.93] [28.50]
+L2 428 477 503 550 599 624 673 722 746 795 -
+[16.85] [18.78] [19.80] [21.65] [23.58] [24.57] [26.50] [28.43] [29.37] [31.30]
+L3 272 [10.71]
+6 L1 412 452 492 532 572 612 652 692 732 - -
+[16.22] [17.80] [19.37] [20.94] [22.52] [24.09] [25.67] [27.24] [28.82]
+L2 476 525 551 598 647 672 721 770 794 - -
+[18.74] [20.67] [21.69] [23.54] [25.47] [26.46] [28.39] [30.31] [31.26]
+L3 320 [12.60]
+7 L1 460 500 540 580 620 660 700 740 - - -
+[18.11] [19.69] [21.26] [22.83] [24.41] [25.98] [27.56] [29.13]
+L2 524 573 599 646 695 720 769 818 - - -
+[20.63] [22.56] [23.58] [25.43] [27.36] [28.35] [30.28] [32.20]
+L3 368 [14.49]
+8 L1 508 548 588 628 668 708 748 - - - -
+[20.00] [21.57] [23.15] [24.72] [26.30] [27.87] [29.45]
+L2 572 621 647 694 743 768 817 - - - -
+[22.52] [24.45] [25.47] [27.32] [29.25] [30.24] [32.17]
+L3 416 [16.38]
+Weight for a PVG 100/16 valve stack
+The combined weight of a PVG 100/16 valve stack can be defined like this:
+(Numbers of PVB 100 x 7) + (numbers of PVB 16 x 3.67) + 10 = Weight in kg
+(Numbers of PVB 100 x 9.37) + (numbers of PVB 16 x 8.09) + 22 = Weight in lb
+© Danfoss | March 2024 BC152986484323en-001302 | 107"
+BC152986484323en-001302.pdf,108,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Combinations Valve Stack Dimensions
+PVG 120/16 Dimensions
+The table of PVB 120 and PVB 16 combination valve stack dimensions overview table with accompanying
+drawing.
+PVB 120/16 combination valve stack dimensions, mm [in]
+Number of Number of PVB 16 modules
+PVB 120
+(down) 1 2 3 4 5 6 7 8 9 10 11
+1 L1 284 324 364 404 444 484 524 564 604 644 684
+[11.18] [12.76] [14.33] [15.91] [17.48] [19.06] [20.63] [22.20] [23.78] [25.35] [26.93]
+L2 348 397 421 470 519 544 593 642 666 715 759
+[13.70] [15.63] [16.57] [18.50] [20.43] [21.42] [23.35] [25.28] [26.22] [28.15] [29.88]
+L3 80 [3.15]
+2 L1 351 391 431 471 511 551 591 631 671 711 751
+[13.82] [15.39] [16.97] [18.54] [20.12] [21.69] [23.27] [24.84] [26.42] [27.99] [29.57]
+L2 413 462 486 535 584 609 658 707 731 780 824
+[16.26] [18.19] [19.13] [21.06] [22.99] [23.98] [25.91] [27.83] [28.78] [30.71] [32.44]
+L3 128 [5.04]
+3 L1 418 458 498 538 578 618 658 698 738 778 818
+[16.46] [18.03] [19.61] [21.18] [22.76] [24.33] [25.91] [27.48] [29.06] [30.63] [32.20]
+L2 478 527 551 600 649 674 723 772 796 845 889
+[18.82] [20.75] [21.69] [23.62] [25.55] [26.54] [28.46] [30.39] [31.34] [33.27] [35.00]
+L3 176 [6.93]
+108 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,109,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Combinations Valve Stack Dimensions
+PVB 120/16 combination valve stack dimensions, mm [in] (continued)
+Number of Number of PVB 16 modules
+PVB 120
+(down) 1 2 3 4 5 6 7 8 9 10 11
+4 L1 485 525 565 605 545 685 725 765 805 845 885
+[19.09] [20.67] [22.24] [23.82] [21.46] [26.97] [28.54] [30.12] [31.69] [33.27] [34.84]
+L2 543 592 616 665 714 739 788 837 861 910 954
+[21.38] [23.31] [24.25] [26.18] [28.11] [29.09] [31.02] [32.95] [33.9] [35.83] [37.56]
+L3 224 [8.82]
+5 L1 552 592 632 672 712 752 792 832 872 912 -
+[21.73] [23.31] [24.8] [26.46] [28.03] [29.61] [31.18] [32.76] [34.33] [35.91]
+L2 608 657 681 730 779 804 853 902 926 975 -
+[23.94] [25.87] [26.81] [28.74] [30.67] [31.65] [33.58] [35.51] [36.46] [38.39]
+L3 272 [10.71]
+6 L1 619 659 699 739 779 819 859 899 939 - -
+[24.37] [25.94] [27.52] [29.09] [30.67] [32.24] [33.82] [35.39] [36.97]
+L2 673 722 746 795 844 869 918 967 991 - -
+[26.50] [28.43] [29.37] [31.30] [33.23] [34.21] [36.14] [38.07] [39.02]
+L3 320 [12.60]
+7 L1 686 726 766 806 846 886 926 966 - - -
+[27.01] [28.58] [30.16] [31.73] [33.31] [34.88] [36.46] [38.03]
+L2 738 787 811 860 909 934 983 1032 - - -
+[29.06] [30.98] [31.93] [33.86] [35.79] [36.77] [38.70] [40.63]
+L3 368 [14.49]
+8 L1 753 793 833 873 913 953 993 - - - -
+[29.65] [31.22] [32.80] [34.37] [35.94] [37.52] [39.09]
+L2 803 852 876 925 974 999 1048 - - - -
+[31.61] [33.54] [34.49] [36.42] [38.35] [39.33] [41.26]
+L3 639 [25.16]
+There is a horizontal difference 62.5 mm [2.46 in] in the mounting plane of the PVG 120/PVG 16.
+The PVG 120 interface module is large sized.
+It is necessary to have at least one PVG 32 module between the PVGI and the first PVG 16 slice.
+© Danfoss | March 2024 BC152986484323en-001302 | 109"
+BC152986484323en-001302.pdf,110,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Combinations Valve Stack Dimensions
+PVG 128/16 Dimensions
+The table of PVB 128 and PVB 16 combination valve stack dimensions overview table with accompanying
+drawing.
+110 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,111,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Combinations Valve Stack Dimensions
+PVB 128/PVB 16 valve stack dimensions, mm [in]
+Number Number of PVB 16
+of PVB
+128 1 2 3 4 5 6 7 8 9 10 11
+(down)
+1 L1 173 213 253 293 333 373 413 453 493 533 573
+[6.81] [8.39] [9.96] [11.54] [13.11] [14.69] [16.26] [17.83] [19.41] [20.98] [22.56]
+L2 297,5 346,5 382,5 418,5 467,5 503,5 540,5 588,5 625,5 661,5 685,5
+[11.71] [13.64] [15.06] [16.48] [18.41] [19.82] [21.28] [23.17] [24.63] [26.04] [26.99]
+L3 98,5 [3.88]
+2 L1 239 279 319 359 399 439 479 519 559 599 —
+[9.41] [10.98] [12.56] [14.13] [15.71] [17.28] [18.86] [20.43] [22.01] [23.58]
+L2 370,5 406,5 455,5 491,5 528,5 576,5 588,5 649,5 697,5 734,5 —
+[14.59] [16.00] [17.93] [19.35] [20.81] [22.70] [23.17] [25.57] [27.46] [28.92]
+L3 164,5 [6.48]
+3 L1 305 345 385 425 465 505 545 585 — — —
+[12.01] [13.58] [15.16] [16.73] [18.31] [19.88] [21.46] [23.03]
+L2 431,5 479,5 515,5 552,5 600,5 637,5 673,5 722,5 — — —
+[16.99] [18.88] [20.30] [21.75] [23.64] [25.10] [26.52] [28.44]
+L3 230,5 [9.07]
+4 L1 371 411 451 491 531 571 611 — — — —
+[14.61] [16.18] [17.76] [19.33] [20.91] [22.48] [24.06]
+L2 503,5 540,5 588,5 625,5 661,5 709,5 746,5 — — — —
+[19.82] [21.28] [23.17] [24.63] [26.04] [27.93] [29.39]
+L3 296,5 [11.67]
+5 L1 437 477 517 557 597 — — — — — —
+[17.02] [18.78] [20.35] [21.93] [23.50]
+L2 564,5 612,5 649,5 685,5 734,5 — — — — — —
+[22.22] [24.11] [25.57] [26.99] [28.92]
+L3 362,5 [14.27]
+6 L1 503 543 583 — — — — — — — —
+[19.80] [21.38] [22.95]
+L2 637,5 673,5 722,5 — — — — — — — —
+[25.10] [26.52] [28.44]
+L3 428,5 [16.87]
+7 L1 569 609 — — — — — — — — —
+[22.40] [23.98]
+L2 697,5 746,5 — — — — — — — — —
+[27.46] [29.39]
+L3 494,5 [19.47]
+Weight for a PVG 128/16 valve stack
+The combined weight of a PVG 128/16 valve stack can be defined like this:
+(Numbers of PVB 128 x 16.9) + (numbers of PVB 16 x 3,67) + 17.5 = Weight in kg
+(Numbers of PVB 128 x 37.26) + (numbers of PVB 16 x 8.09) + 38.6 = Weight in lb
+© Danfoss | March 2024 BC152986484323en-001302 | 111"
+BC152986484323en-001302.pdf,112,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Combinations Valve Stack Dimensions
+PVG 256/16 Dimensions
+The table of PVB 256 and PVB 16 combination valve stack dimensions overview table with accompanying
+drawing.
+112 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,113,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Combinations Valve Stack Dimensions
+PVB 256/16 combination valve stack dimensions, mm [in]
+Number Number of PVB 16
+of PVB
+256 1 2 3 4 5 6 7 8 9 10 11
+(down)
+1 L1 193 233 273 313 353 393 433 473 513 553 593
+[7.60] [9.17] [10.75] [12.32] [13.90] [15.47] [17.05] [18.62] [20.20] [21.78] [23.35]
+L2 321,5 358,5 406,5 443,5 479,5 528,5 564,5 600,5 649,5 685,5 734,5
+[12.66] [14.11] [16.01] [17.46] [18.88] [20.81] [22.22] [23.64] [25.57] [26.99] [28.92]
+L3 118,5 [4.67]
+2 L1 285 325 365 405 445 485 525 565 605 — —
+[11.22] [12.80] [14.37] [15.94] [17.52] [19.09] [20.67] [22.224 [23.82]
+]
+L2 406,5 455,5 491,5 528,5 576,5 612,5 649,5 697,5 734,5 — —
+[16.01] [17.93] [19.35] [20.81] [22.70] [24.11] [25.57] [27.46] [28.92]
+L3 204,5 [8.05]
+3 L1 371 411 451 491 531 571 611 — — — —
+[14.61] [16.18] [17.76] [19.33] [20.91] [22.48] [24.06]
+L2 491,5 540,5 576,5 612,5 661,5 697,5 734,5 — — — —
+[19.35] [21.28] [22.70] [24.11] [26.04] [27.46] [28.92]
+L3 290,5 [11.44]
+4 L1 457 497 537 577 617 — — — — — —
+[17.99] [19.57] [21.14] [22.72] [24.29]
+L2 588,5 625,5 661,5 709,5 746,5 — — — — — —
+[23.17] [24.63] [26.04] [27.93] [29.39]
+L3 376,5 [14.82]
+5 L1 543 583 623 — — — — — — — —
+[21.38] [22.95] [24.53]
+L2 673,5 709,5 746,5 — — — — — — — —
+[26.52 [27.93] [29.93]
+L3 462,5 [18.21]
+Weight for a PVG 256/16 valve stack
+The combined weight of a PVG 256/16 valve stack can be defined like this:
+(Numbers of PVB 256 x 20.9) + (numbers of PVB 16 x 3,67) + 17.5 = Weight in kg
+(Numbers of PVB 256 x 40.08) + (numbers of PVB 16 x 8.09) + 38.6 = Weight in lb
+© Danfoss | March 2024 BC152986484323en-001302 | 113"
+BC152986484323en-001302.pdf,114,"Technical Information
+PVG 16 Proportional Valve Group
+PVG 16 Applications Schematics
+PVG 16 Schematic with Basic End Plate
+The schematic example of PVG 16 with basic end plate.
+PVG 16 with P- and T-connection end plate
+The schematic example of PVG 16 with P- and T-connection end plate.
+114 | © Danfoss | March 2024 BC152986484323en-001302"
+BC152986484323en-001302.pdf,115,"Products we offer: Danfoss Power Solutions is a global manufacturer and supplier of high-quality hydraulic and
+electric components. We specialize in providing state-of-the-art technology and solutions
+• Cartridge valves
+that excel in the harsh operating conditions of the mobile off-highway market as well as the
+• DCV directional control marine sector. Building on our extensive applications expertise, we work closely with you to
+valves ensure exceptional performance for a broad range of applications. We help you and other
+• Electric converters customers around the world speed up system development, reduce costs and bring vehicles
+• Electric machines and vessels to market faster.
+• Electric motors Danfoss Power Solutions – your strongest partner in mobile hydraulics and mobile
+• Gear motors electrification.
+• Gear pumps Go to www.danfoss.com for further product information.
+• Hydraulic integrated We offer you expert worldwide support for ensuring the best possible solutions for
+circuits (HICs) outstanding performance. And with an extensive network of Global Service Partners, we also
+• Hydrostatic motors provide you with comprehensive global service for all of our components.
+• Hydrostatic pumps
+• Orbital motors
+• PLUS+1® controllers
+• PLUS+1® displays
+• PLUS+1® joysticks and
+pedals
+• PLUS+1® operator
+interfaces
+• PLUS+1® sensors
+• PLUS+1® software
+• PLUS+1® software services,
+support and training
+• Position controls and
+sensors
+• PVG proportional valves
+• Steering components and
+systems
+• Telematics Local address:
+Hydro-Gear
+www.hydro-gear.com
+Daikin-Sauer-Danfoss
+www.daikin-sauer-danfoss.com
+Danfoss
+Power Solutions Trading
+Danfoss Danfoss Danfoss (Shanghai) Co., Ltd.
+Power Solutions (US) Company Power Solutions GmbH & Co. OHG Power Solutions ApS Building #22, No. 1000 Jin Hai Rd
+2800 East 13th Street Krokamp 35 Nordborgvej 81 Jin Qiao, Pudong New District
+Ames, IA 50010, USA D-24539 Neumünster, Germany DK-6430 Nordborg, Denmark Shanghai, China 201206
+Phone: +1 515 239 6000 Phone: +49 4321 871 0 Phone: +45 7488 2222 Phone: +86 21 2080 6201
+Danfoss can accept no responsibility for possible errors in catalogues, brochures and other printed material. Danfoss reserves the right to alter its products without notice. This also applies to products
+already on order provided that such alterations can be made without subsequent changes being necessary in specifications already agreed.
+All trademarks in this material are property of the respective companies. Danfoss and the Danfoss logotype are trademarks of Danfoss A/S. All rights reserved.
+© Danfoss | March 2024 BC152986484323en-001302"

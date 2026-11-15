@@ -52,8 +52,9 @@ def test_facts_load_into_the_engine(tmp_path):
     data = load_repository(tmp_path)
     temp = data[data["attribute"] == "max_oil_temperature"].iloc[0]
     assert temp["norm_value"] == 90 and temp["norm_unit"] == "°C" and temp["status"] == "ok"
-    flow = data[data["attribute"] == "rated_flow_port_p"]
+    flow = data[data["attribute"] == "max_inlet_flow"]       # rules/valve.md: rated_flow_port_p = inlet flow
     assert set(flow["status"]) == {"ok"}                     # different conditions: NOT a conflict
+    assert flow.iloc[0]["attribute_original"] == "rated_flow_port_p"
 
 
 def test_match_products():

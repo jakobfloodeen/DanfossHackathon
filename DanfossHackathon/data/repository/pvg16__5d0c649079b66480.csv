@@ -1,0 +1,44 @@
+product_id,brand,product_name,family,attribute,value,unit,source_file,page,quote,status,condition,fact_type
+pvg16,Danfoss,PVG 16,valves,max_work_sections,12,,BC152986484323en-001302.pdf,5,Up to 12 basic modules per PVG 16 valve group,ok,,spec
+pvg16,Danfoss,PVG 16,valves,max_inlet_flow_mid_inlet,230,l/min,BC152986484323en-001302.pdf,5,230 l/min [61 US gal/min] when used with mid-inlet,ok,when used with mid-inlet,spec
+pvg16,Danfoss,PVG 16,valves,load_independent_flow_control,yes,,BC152986484323en-001302.pdf,5,Load-independent flow control:,ok,,feature
+pvg16,Danfoss,PVG 16,valves,platform_compatibility,Easy integration with PVG 32; combination with the rest of the PVG family via an interface module,,BC152986484323en-001302.pdf,5,Easy integration with PVG 32,ok,,feature
+pvg16,Danfoss,PVG 16,valves,ls_relief_valves_ports_ab,yes,,BC152986484323en-001302.pdf,5,Load sense relief valves for A and B port,ok,,feature
+pvg16,Danfoss,PVG 16,valves,port_connection_options,connection threads and flange mount,,BC152986484323en-001302.pdf,5,Several options for connection threads and flange mount,ok,,feature
+pvg16,Danfoss,PVG 16,valves,max_pressure_continuous_p,350,bar,BC152986484323en-001302.pdf,7,Port P continuous 350 bar,ok,,spec
+pvg16,Danfoss,PVG 16,valves,max_pressure_intermittent_p,400,bar,BC152986484323en-001302.pdf,7,Port P intermittent 400 bar,ok,,spec
+pvg16,Danfoss,PVG 16,valves,max_pressure_continuous_ab,350,bar,BC152986484323en-001302.pdf,7,Port A/B continous 350 bar,ok,,spec
+pvg16,Danfoss,PVG 16,valves,max_pressure_intermittent_ab,420,bar,BC152986484323en-001302.pdf,7,Port A/B intermittent 420 bar,ok,,spec
+pvg16,Danfoss,PVG 16,valves,max_pressure_port_t,25,bar,BC152986484323en-001302.pdf,7,"Port T, static/dynamic 25/40 bar",ok,static,spec
+pvg16,Danfoss,PVG 16,valves,max_pressure_port_t,40,bar,BC152986484323en-001302.pdf,7,"Port T, static/dynamic 25/40 bar",ok,dynamic,spec
+pvg16,Danfoss,PVG 16,valves,max_inlet_flow,140,l/min,BC152986484323en-001302.pdf,7,Oil flow rated Port P 140/230 l/min,ok,standard inlet,spec
+pvg16,Danfoss,PVG 16,valves,rated_flow_per_section,65,l/min,BC152986484323en-001302.pdf,7,Port A/B 65 l/min,ok,port A/B,spec
+pvg16,Danfoss,PVG 16,valves,spool_deadband,1.5,mm,BC152986484323en-001302.pdf,7,Deadband ± 1.5 mm,ok,plus/minus,spec
+pvg16,Danfoss,PVG 16,valves,spool_proportional_range,5,mm,BC152986484323en-001302.pdf,7,Proportional range ± 5 mm,ok,plus/minus,spec
+pvg16,Danfoss,PVG 16,valves,spool_float_position,7.5,mm,BC152986484323en-001302.pdf,7,Float position ± 7.5 mm,ok,plus/minus,spec
+pvg16,Danfoss,PVG 16,valves,max_internal_leakage_ab_t,20,cm3/min,BC152986484323en-001302.pdf,7,without shock valve 20 cm3/min,ok,"A/B to T without shock valve, at 100 bar and 21 mm2/s",spec
+pvg16,Danfoss,PVG 16,valves,max_internal_leakage_ab_t,25,cm3/min,BC152986484323en-001302.pdf,7,25 cm3/min,ok,"A/B to T with shock valve (system setting 30 bar), at 100 bar and 21 mm2/s",spec
+pvg16,Danfoss,PVG 16,valves,ambient_temperature,-30 to 60,°C,BC152986484323en-001302.pdf,7,Ambient temperature -30,ok,,spec
+pvg16,Danfoss,PVG 16,valves,oil_viscosity_operating_range,12 - 75,mm2/s,BC152986484323en-001302.pdf,8,Operating range 12 - 75 mm2/s,ok,,spec
+pvg16,Danfoss,PVG 16,valves,oil_viscosity_min,4,mm2/s,BC152986484323en-001302.pdf,8,Minimum viscosity 4 mm2/s,ok,,spec
+pvg16,Danfoss,PVG 16,valves,oil_viscosity_max,460,mm2/s,BC152986484323en-001302.pdf,8,Maximum viscosity 460 mm2/s,ok,,spec
+pvg16,Danfoss,PVG 16,valves,oil_cleanliness_iso4406,23/19/16,,BC152986484323en-001302.pdf,8,Maximum contamination (ISO 4406) 23/19/16,ok,,spec
+pvg16,Danfoss,PVG 16,valves,pvh_pilot_pressure_max,30,bar,BC152986484323en-001302.pdf,8,Maximum pilot pressure 30 bar,ok,,spec
+pvg16,Danfoss,PVG 16,valves,pvh_regulating_range,5 – 15,bar,BC152986484323en-001302.pdf,8,Regulating range 5 – 15 bar,ok,,spec
+pvg16,Danfoss,PVG 16,valves,pve_supply_voltage,11 – 32,V,BC152986484323en-001302.pdf,8,Supply 11 – 32 V,ok,DC,spec
+pvg16,Danfoss,PVG 16,valves,pve_pilot_oil_consumption,0.5,l/min,BC152986484323en-001302.pdf,8,Oil consumption in pilot oil 0.5 l/min,ok,pilot oil reduction valve,spec
+pvg16,Danfoss,PVG 16,valves,open_center_inlet_open_center_pvp,for fixed displacement pumps,,BC152986484323en-001302.pdf,12,The basic Open Center PVP inlet module is intended for use with fixed displacement pumps,ok,,feature
+pvg16,Danfoss,PVG 16,valves,oil_temperature_max,90,°C,BC152986484323en-001302.pdf,12,90° [194°F],ok,"fluid temperature, maximum",spec
+pvg16,Danfoss,PVG 16,valves,oil_temperature_min,-30,°C,BC152986484323en-001302.pdf,12,Fluid temperature -30°C,ok,"fluid temperature, minimum",spec
+pvg16,Danfoss,PVG 16,valves,oil_cleanliness_iso4406,18/16/13,,BC152986484323en-001302.pdf,12,Fluid cleanliness 18/16/13,ok,PVE activation,spec
+pvg16,Danfoss,PVG 16,valves,closed_center_inlet_closed_center_pvp,for variable displacement pumps,,BC152986484323en-001302.pdf,22,intended for use with variable displacement pumps,ok,,feature
+pvg16,Danfoss,PVG 16,valves,rated_flow_per_section_compensated_compensated_pvb,60,l/min,BC152986484323en-001302.pdf,43,350 bar [5067 psi] 420 bar [6090 psi] 60 l/min,ok,,spec
+pvg16,Danfoss,PVG 16,valves,max_pressure_continuous_ab_compensated_compensated_pvb,350,bar,BC152986484323en-001302.pdf,43,350 bar [5067 psi] 420 bar [6090 psi] 60 l/min,ok,,spec
+pvg16,Danfoss,PVG 16,valves,rated_flow_per_section_uncompensated_uncompensated_pvb,65,l/min,BC152986484323en-001302.pdf,53,380 bar [5510 psi] 420 bar [6090 psi] 65 l/min,ok,,spec
+pvg16,Danfoss,PVG 16,valves,max_pressure_continuous_ab_uncompensated_uncompensated_pvb,380,bar,BC152986484323en-001302.pdf,53,380 bar [5510 psi] 420 bar [6090 psi] 65 l/min,ok,,spec
+pvg16,Danfoss,PVG 16,valves,actuation_options,"manual, hydraulic, electro-hydraulic, electric",,BC152986484323en-001302.pdf,71,"PVG 16 actuation can be done manually, hydraulically, electro-hydraulically and electrically.",ok,,feature
+pvg16,Danfoss,PVG 16,valves,pveo_reaction_time_neutral_to_full_pveo,80,ms,BC152986484323en-001302.pdf,81,Neutral to full stroke 80 ms 80 ms,ok,,spec
+pvg16,Danfoss,PVG 16,valves,pveo_pilot_pressure_nominal_pveo,13.5,bar,BC152986484323en-001302.pdf,81,10.0 bar [145 psi] 13.5 bar,ok,,spec
+pvg16,Danfoss,PVG 16,valves,pvea_reaction_time_neutral_to_full_pvea,345,ms,BC152986484323en-001302.pdf,84,Neutral to full spool stroke 345 ms,ok,A-direction,spec
+pvg16,Danfoss,PVG 16,valves,pvea_reaction_time_full_to_neutral_pvea,106,ms,BC152986484323en-001302.pdf,84,Full spool stroke to neutral 106 ms,ok,A-direction,spec
+pvg16,Danfoss,PVG 16,valves,pvea_supply_voltage_pvea,11 to 32,V,BC152986484323en-001302.pdf,84,Rated/range 11 to 32 V,ok,DC,spec

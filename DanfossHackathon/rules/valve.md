@@ -38,6 +38,14 @@ attribute_aliases:
   section_weight: weight_per_section
   oil_cleanliness_iso4406: oil_cleanliness
   rated_current: coil_current
+  rated_flow_port_p: max_inlet_flow          # converter style: flow at the P (inlet) port
+  max_flow_port_p: max_inlet_flow
+  rated_flow_port_ab: rated_flow_per_section
+  max_flow_port_ab: rated_flow_per_section
+  max_pressure_continuous_ab: max_pressure_continuous
+  max_pressure_port_ab_continuous: max_pressure_continuous
+  max_pressure_intermittent_ab: max_pressure_intermittent
+  max_pressure_port_ab_intermittent: max_pressure_intermittent
 
 weights:                    # importance for ranking candidates (0 = ignore, 5 = crucial)
   rated_flow_per_section: 5
