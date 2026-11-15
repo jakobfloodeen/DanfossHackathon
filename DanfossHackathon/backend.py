@@ -8,11 +8,9 @@ Run:   uvicorn backend:app --reload
 """
 
 import hashlib
-import io
 import json
 import os
 import re
-import shutil
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -356,16 +354,11 @@ def claude():
 
 
 
-RULES = """You compare hydraulic products for Danfoss sales teams.
-Rules:
+RULES = """Rules:
 - Use ONLY the <page> text provided. Never use outside knowledge for values.
-- Every non-null value and every insight must cite sources as [{"file_id": "...", "page": N}] taken from the <page> tags it came from.
-- status per value: ok | conflict (sources disagree; explain in note) | missing (value null) | inferred (derived, explain) | converted (unit converted, e.g. psi->bar; keep the original in note).
-- Prefer metric units (bar, l/min, mm, kg, °C).
-- Compare like with like (e.g. continuous vs intermittent pressure) and say so in the note when unclear.
-- Add a flag for every conflict, missing must-have, and anything a salesperson must double-check.
-- Benefits are for the named buyer and application; trade-offs are what changes if they switch.
-- Do not invent prices, lead times or service life. Mark them missing unless a page states them."""
+- Prefer metric units (bar, l/min, mm, kg, °C). When you convert, say so.
+- Compare like with like (continuous vs intermittent pressure are different things).
+- Say it plainly when sources disagree or a value is missing - never smooth it over."""
 
 
 # =====================================================================

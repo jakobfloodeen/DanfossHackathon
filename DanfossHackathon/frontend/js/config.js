@@ -8,5 +8,4 @@ window.APP_CONFIG = {
 
   // true  = use js/mock-data.js (works by just opening index.html)
   // false = call the real backend at API_BASE
-  USE_MOCK: false,
 };

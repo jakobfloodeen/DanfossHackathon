@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------
 // Chat-style guided flow:
 //   product tree (any depth) → competitors → priorities → buyer → review → result
-// Everything the user can pick comes from the catalog (see mock-data.js),
+// Everything the user can pick comes from the catalog (GET /api/catalog),
 // so adding families/products/competitors never requires edits here.
 // ---------------------------------------------------------------
 (() => {

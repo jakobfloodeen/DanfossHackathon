@@ -1,6 +1,5 @@
 // ---------------------------------------------------------------
-// API layer. The UI only talks to these functions, so swapping
-// mock data for the real backend is a one-line change in config.js.
+// API layer. The UI only talks to these functions.
 // Request/response shapes are documented in README.md.
 //
 // The backend owns the catalog: after any create/upload the UI
@@ -8,7 +7,6 @@
 // ---------------------------------------------------------------
 const Api = (() => {
   const cfg = window.APP_CONFIG;
-  const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
   async function call(path, options = {}) {
     const isForm = options.body instanceof FormData;
@@ -24,13 +22,11 @@ const Api = (() => {
   return {
     /** Product tree, competitors, factors, applications. */
     async getCatalog() {
-      if (cfg.USE_MOCK) return JSON.parse(JSON.stringify(window.MOCK_CATALOG));
       return call("/catalog");
     },
 
     /** Create a product family, product type or product under parentId (null = root). */
     async createNode(body) {
-      if (cfg.USE_MOCK) { await delay(300); return window.mockCreateNode(body); }
       return call("/catalog/nodes", { method: "POST", body: JSON.stringify(body) });
     },
 
@@ -39,7 +35,6 @@ const Api = (() => {
      * meta = { nodeId, source: "danfoss" | "competitor", competitorId?, competitorName? }
      */
     async uploadDatasets(meta, files) {
-      if (cfg.USE_MOCK) { await delay(600); return window.mockUpload(meta, files); }
       const fd = new FormData();
       Object.entries(meta).forEach(([k, v]) => v != null && fd.append(k, v));
       [...files].forEach((f) => fd.append("files", f));
@@ -48,13 +43,11 @@ const Api = (() => {
 
     /** Full comparison for the brief the user built. */
     async compare(payload) {
-      if (cfg.USE_MOCK) { await delay(2000); return window.mockCompare(payload); }
       return call("/compare", { method: "POST", body: JSON.stringify(payload) });
     },
 
     /** Reverse flow: competitor product the customer uses -> closest Danfoss products (same response shape). */
     async match(payload) {
-      if (cfg.USE_MOCK) { await delay(300); throw new Error("Danfoss match needs the real backend (USE_MOCK is on)."); }
       return call("/match", { method: "POST", body: JSON.stringify(payload) });
     },
 
@@ -80,19 +73,16 @@ const Api = (() => {
 
     /** All products that have extracted facts (for the system builder). */
     async products() {
-      if (cfg.USE_MOCK) return { products: [] };
       return call("/products");
     },
 
     /** System comparison: a set of components (pump + valve ...) against the other side's set. */
     async compareSystem(payload) {
-      if (cfg.USE_MOCK) { await delay(300); throw new Error("System comparison needs the real backend (USE_MOCK is on)."); }
       return call("/compare-system", { method: "POST", body: JSON.stringify(payload) });
     },
 
     /** Free-text question typed into the chat box, with the current brief as context. */
     async user() {
-      if (cfg.USE_MOCK) return { id: "senior", name: "Senior (demo)", role: "editor", users: [] };
       return call("/user");
     },
     async addCommercial(payload) {
@@ -102,11 +92,9 @@ const Api = (() => {
       return call("/commercial/decide", { method: "POST", body: JSON.stringify({ id, action }) });
     },
     async usage() {
-      if (cfg.USE_MOCK) return null;
       return call("/usage");
     },
     async ask(payload) {
-      if (cfg.USE_MOCK) { await delay(700); return window.mockAsk(payload); }
       return call("/ask", { method: "POST", body: JSON.stringify(payload) });
     },
   };
