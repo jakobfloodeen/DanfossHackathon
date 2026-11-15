@@ -1,0 +1,593 @@
+source_file,page,text
+EHG_EN.pdf,1,"NO. HL-CN-EHG 01/2026 01/20
+1.3.1
+EHG SERIES
+LOAD SENSING PROPORTIONAL
+CONTROL VALVE
+Benefits:
+EHG： ·Small and light
+Specification: 04 ·High-performance
+Rated pressure(bar): 350 (pump side) ·Low pressure drop,
+350 (actuator side) more energy-efficient
+Rated flow(L/min): 40 ·Precise control, good
+micro motion property
+045"
+EHG_EN.pdf,2,"02/20 Hengli hydraulics Mobile Control Valve
+Contents
+Page
+Features 03
+Section view 04
+Technical data 05
+Ordering code 06-07
+Hydraulic diagram 08
+Characteristic curves 09
+Dimension (Section) 10-14
+01 Unit dimensions
+·The valve with 3 working sections 15
+·The valve with 5 working sections 16
+046"
+EHG_EN.pdf,3,"EHG Series Loading Sensing Proportional Control Valve Hengli hydraulics 03/20
+Features
+1. System
+Load pressure independent flow distribution
+Open center, for fixed displacement pump system
+Closed center, for variable piston pump system
+·Priority function
+·Less control pressure, ΔP=12bar
+·High flow accuracy
+·Electrical on/off and electrical proportional control
+01
+2. Structure
+·Sandwich plate of design
+·Max. 12 middle section
+3. Pressure
+·Primary and secondary pressure relief valve
+·LS relief valve （With LS pressure relief valve in each section）
+4. Flow
+·Load pressure compensated
+·Quick response
+·Low hysteresis
+5. Applications
+Aerial work platform Forklift Concrete pump truck Municipal vehicle
+047"
+EHG_EN.pdf,4,"04/20 Hengli hydraulics Mobile Control Valve
+Section view
+8 8
+01
+5 4 4 5
+3
+6 7 2 1
+1. Valve block 6. LS shuttle valve
+2. Main spool 7. Pressure compensator
+3. Spring 8. Relief valve with anticavitation
+4. Coil or anticavitation only
+5. Ring nut
+048"
+EHG_EN.pdf,5,"EHG Series Loading Sensing Proportional Control Valve Hengli hydraulics 05/20
+Technical data
+General
+Specification 04
+Structure Stackable, load sensing, pre-compensated
+Type of connection ISO BSP thread, metric thread (with SAE thread option per SAE J1626)
+Open center 4.2
+Inlet element
+Closed center 3.1
+Mass (kg) Electrical on/off 1.9
+Middle section
+Electrical proportional 1.9
+End element 1.3
+01
+Hydraulic
+Specification 04
+Rated flow With 4 bar compensation pressure 32
+Q (L/min) With 6 bar compensation pressure 40
+P 350
+Max. operating pressure
+LS 350
+at port
+A/B 350
+(bar)
+T 210
+Electric
+·Electrical proportional valve
+·Electrical on/off valve ·Dither frequency required: 120Hz
+·Connection: Deutsch DT04-2P ·Hysteresis: Less than 3%
+Normal E-H
+·Protection class: IP67k ·Connection: Deutsch DT04-2P
+operation
+·Supply voltage: 12 or 24VDC ·Protection class: IP67k
+·Control current @24VDC: 0~800mA;
+@12VDC: 0~1800mA
+Using environment
+Mineral oil (HL, HLP) according to DIN 51524.
+Hydraulic fluid Other hydraulic fluids, such as HEES (Synthetic Ester)
+according to VDMA 24568.
+Hydraulic fluid temperature range (℃) -30 to +100
+2
+Viscosity range ν (mm/s) 20 to 380
+Maximum permissible degree of contamination of the Class 20/18/15, we therefore recommend a filter
+pressure fluid cleanliness class to ISO 4406 (c) with a minimum retention rate of β10 ≥ 75
+(For applications outside above mentioned parameters, please consult our sales dept.)
+049"
+EHG_EN.pdf,6,"M A1 B1 A2 B2 A3 B3
+M A1 B1 A2 B2 A3 B3
+P M A1 B1 A2 B2 A3 B3
+M LS A1 B1 A2 B2 A3 B3
+06/20 Hengli hydraulics P Mobile Control Valve
+M L P S A1 B1 A2 B2 b A3 B3 b b
+OrderPing cod M e LS A1 B1 A2 B2 b A3 B3 b b
+M L P S A1 B1 A2 B2 A3 B3 b b b
+M BL P SasicA 1codeB 1 Inlet elemAe2nt B 2 b Middle As3ectionB 3 b End elemebnt
+P M LS A1 B1 A2 No. B 1 2 spo b ol 1 c 2 o b d a e r A3 B3 b a b a a
+L P S EHG 04 T b 12 bar b a b a a
+LS b b 12 bar b a a a
+P ① ② ③ ④ ⑤ ⑥ T⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮⑯⑰
+LS b 12 bar b No.2 Tspaool code b a a
+T b 12 bar b a b a a
+12 bar No.3 spaool code a a
+01 T
+12 bar T a a a
+… …
+T 12 bar a a a A1 B1 A2 B2 A3 B3 A4 B4 A5 B5
+12 bar a a P a P1
+T LS A1 B1 A2 B2 A3 B3 A4 B4 A5 B5
+T Basic ①Structure EHG StaPckable, load sensing, pre-co bA m 1 pe B n 1 sated Ab2 B2 bA3 B3 Ab4 B4 A5 B5 P1
+②Specification 04LS
+code P P1
+③Number of blocks .A.1 B01-1LS2 A2 B2 A3 b B3 A4 B b 4 A5 b B5 b
+P P1
+LS ④Circuit types JA1 BC1losed cenA2ter, Bfo2r variableA p3ist b oBn3 pump sAy4stemBb4 A5 bB5 b
+Inlet P b P A1 B O 1 pen 1 c 2 e b n ar t Ab e 2 r, fo B r K2 fixed disp bA l 3 ace a m B3 ent pum Ab p 4 sys B t a e 4 m A5 Ba5 P1 a a
+e A le 1 me B1 n L L P S St ⑤Mai A n 2 reli B e 2 f valve A3 …b Q B3 W W i iT t t h h o m1A u 24a t b ia m nrb a pB i 4r n e s p s r Ku e r s e s u re r A e li5 e re f b l v ie Ba f 5lv v e a a, l ( v p e r ( e n s o su t r fo e b r i n o p b e aa n r, c 3 e -d n i t g e i r t ) s) a P1 a a
+L P S A1 B1 ⑥Spo A o 2 l fu B n 2 ction A3 bS B3 WiTth p1 A 2r 4 ebsarsbu B r 4 e coKmpen A s 5 atbo B r 5 a P1 b a a a a
+P bA1 B1 12 bar Ab2 KB2 bA3 Q a M B Q 3 Wi T th L Ab S 4 pr a e B s 4 sure relie A f 5 plu a g B , 5 with LSP1 meas a uring port a
+LS With LS pressure relief valve, with LS measuring port
+L P S b T 12 bar b K b ... a M... (press b ure ain bar, 3-digits)a P1 a a
+Only with A port LS pressure relief valve, with LS measuring port
+b T 12 bar b K b ...aMQ (pressbure ain bar, 3-d E igits)a a J a Q
+12 bar K a T ⑦LS r a elief valve a QM... Only w a ith B port LS pre a ssure relief valve, with LS measuring port
+(pressure in bar, 3-dEigits) J Q
+T 12 bar K a a a ...R... w Wi i t t h h r L e a S m m ot e e a L s S u p r r in es g s Ep ur o ea r r t e ( l p ie r f e v s a s l u ve re , d in ec b re a a r s , i 3 n - g d c ig h i a t r s a ) cteris J tic curve, Q
+T 12 bar K a a E a ...L... With rebamote LS preJssurea relief valve, iancreasingb charactQeristic curve, a b a
+Middle with LS measuring port (pressure in bar, 3-digits)
+T section E b J a b Q a b a
+E E b J a b Q a b a
+E b J a b Q a b a
+E ⑧b Spool symbJol J a b Q a b a
+E b J a b Q a b a
+b a b Q a b a
+b a b a b a
+b a ⑨ b A/B flow ...—... a Flow i b n l/min, 3-digits, e.g. 50-50 a
+050"
+EHG_EN.pdf,7,"EHG Series Loading Sensing Proportional Control Valve Hengli hydraulics 07/20
+Ordering code
+Basic code Inlet element Middle section End element
+No.1 spool code
+EHG 04
+① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮⑯⑰
+No.2 spool code
+No.3 spool code
+01
+… …
+W21 Electrical proportional control, 24V
+W23 Electrical proportional control, 12V
+⑩Cover
+W41 Electrical on/off control, 24V
+W43 Electrical on/off control, 12V
+Middle Blank Without emergency handle
+section ⑪Emergency handle
+1 With emergency handle
+QQ Plug, without relief valve (port relief valve can be added)
+GG Check valve, for anti-cavitation function
+⑫A/B port relief valve
+H320H320, pressure in bar,
+H...H...
+pressure details of port relief valve in 3 digits
+LZ Without LS unload function
+⑬LS unload
+End LA With LS unload function
+element Blank Without additional P port
+⑭ Additional P port
+PT With additional P port
+V FKM
+⑮ Sealing type
+N NBR
+Others
+⑯ Design code 001
+⑰ Special application Blank Without special requirement
+* Other request Further requirement in the clear text
+051"
+EHG_EN.pdf,8,"08/20 Hengli hydraulics Mobile Control Valve
+Hydraulic diagram
+·The valve with 3 working sections
+M A1 B1 A2 B2 A3 B3
+P
+LS
+b b b
+01
+12 bar a a a
+T
+·The valve with 5 working sections
+A1 B1 A2 B2 A3 B3 A4 B4 A5 B5
+P P1
+LS
+b b b b
+12 bar K a a a a a
+T
+E J Q
+b a b a b a
+052"
+EHG_EN.pdf,9,"EHG Series Loading Sensing Proportional Control Valve Hengli hydraulics 09/20
+Characteristic curves 特性曲线Q=Q（I）
+Flow and control current
+characteristic curve (example)
+01
+0 20 40 60 80 100 %A
+Flow - Pressure compensated
+characteristic curve
+053
+Q
+-
+wolF
+30
+25
+20
+15
+10
+nim/L
+50
+40
+5
+0 0
+mpg
+13.2 Spool type 1
+10.96
+7.92
+6.6
+5.28
+Spool type 2
+3.96
+2.64
+1.32
+Current - I
+0 50 100 150 200 300 bar
+Load pressure (A/B side) -P
+Q
+-
+wolF
+30
+25
+20
+15
+10
+0
+mpg
+nim/L
+Minimum pressure drop
+13.2 50
+10.96 40 100% spool area
+7.92 90% spool area
+6.6
+50% spool area
+5.28
+3.96
+25% spool area
+2.64
+1.32 5 10% spool area
+0
+14 250
+0203725.2 1450.4 2175.5 2900.7 3625.9 4351.1 psi
+双向流量控制器"
+EHG_EN.pdf,10,"进油联——开中心
+/20 Hengli hydraulics Mobile Control Valve
+116.5
+98
+01
+054
+05
+23
+33.4
+62
+86
+51
+T
+LS
+P
+LS口
+84
+08
+M
+32
+70
+9 53
+L
+5.5
+10
+Inlet element - Open center
+·EHG 04
+Measuring
+port
+2×M8 depth 12
+Hole depth 15
+Port dimension Thread dimensions
+P port： G1/2 G1/2： ∅D 30 L 15
+T port： G1/2 G1/4： ∅D 24 L 12
+LS port： G1/4
+Thread dimensions： G1/4
+Thread G"
+EHG_EN.pdf,11,"EHG Series Loading Sensing Proportional Control Valve Hengli hydraulics 11/20
+Inlet element - With LS solenoid operated unloading valve and relief valve
+·EHG 04
+172.3
+98
+01
+Port dimension Thread dimensions
+P port： G1/2 G1/2： ∅D 30 L 15
+T port： G3/4 G3/4： ∅D 38 L 16
+LS port： G1/4 G1/4： ∅D 24 L 12
+Thread dimensions： G1/4
+055
+05
+23
+33.4
+LS口
+65
+86
+51
+T
+LS
+P
+84
+M
+32
+70
+08
+1.621
+12V 8.1 Ω
+9 53
+12V 8.1 Ω
+L
+5.5
+Measuring
+port
+2×M8 depth 12
+Hole depth 15
+Thread G"
+EHG_EN.pdf,12,"中间联部装
+EHG04
+/20 Hengli hydraulics Mobile Control Valve
+Middle section
+·EHG 04
+01
+056
+L
+B port A port
+32
+66
+40 70.1 98 70.1
+238.2
+45° 1.6
+Thread G
+43
+5.87
+51
+52
+12
+A port B port
+solenoid valves solenoid valves
+Port dimension Thread dimensions
+A/B ： G3/8 G3/8： ∅D 28 L 12.5"
+EHG_EN.pdf,13,"中间联部装-带端口安全阀
+EHG04
+EHG Series Loading Sensing Proportional Control Valve Hengli hydraulics /20
+Middle section- Safety valve with port
+·EHG 04
+32
+01
+66
+057
+51
+52
+40 70.1 98 70.1
+238.2
+43
+5.87
+L
+13
+B port A port
+A port B port
+solenoid valves solenoid valves
+45°
+1.6 Port dimension Thread dimensions
+A1/B1： G3/8 G3/8： ∅D 28 L 12.5
+Thread G"
+EHG_EN.pdf,14,"中间联部装-带单侧平衡阀 EHG04
+/20 Hengli hydraulics Mobile Control Valve
+22
+55
+01
+058
+02
+5.42
+40 70.1 98 70.1
+238.2
+43
+L
+001
+5.36
+04
+14
+Middle section- Equipped with a single-side balance valve
+·EHG 04
+A port
+B port
+solenoid valves
+solenoid valves
+45°
+1.6
+Port dimension Thread dimensions
+A1/B1： G3/8 G3/8： ∅D 23 L 12.5
+Thread G"
+EHG_EN.pdf,15,"中间联部装-带双侧平衡阀 EHG04
+EHG Series Loading Sensing Proportional Control Valve Hengli hydraulics /20
+25.5 01
+72.5
+059
+02
+40
+70.1 98 70.1
+238.2
+43
+L
+19
+15
+Middle section- Equipped with double-sided balance valves
+·EHG 04
+B port A port
+A port B port
+solenoid valves solenoid valves
+45° Port dimension Thread dimensions
+1.6
+A/B ： G3/8 G3/8： ∅D 28 L 12.5
+Thread G"
+EHG_EN.pdf,16,"/20 Hengli hydraulics Mobile Control Valve
+32
+01 66
+40 70.1 98 125.5
+293.6
+060
+43
+5.87
+52 51
+3.061
+加应急手柄
+L
+16
+Middle section- With emergency handle
+·EHG 04
+B port A port
+A port B port
+solenoid valves solenoid valves
+45° Port dimension Thread dimensions
+1.6
+A/B ： G3/8 G3/8： ∅D 28 L 12.5
+Thread G"
+EHG_EN.pdf,17,"EHG Series Loading Sensing Proportional Control Valve Hengli hydraulics /20
+End element
+·EHG 04
+01
+061
+L
+15 98
+53 9
+45°
+1.6
+Thread G
+08
+8
+17"
+EHG_EN.pdf,18,"/20 Hengli hydraulics Mobile Control Valve
+Unit dimensions
+·The valve with
+3 working sections
+01
+062
+712
+04
+04
+59
+51
+04
+04
+04
+07
+66
+32
+48 33.4 80
+62
+86
+23
+3.261
+03
+121
+01
+01
+01
+05
+08
+23 51
+70.1 98 125.5
+293.6
+9 53±0.2 36 4×M8-12
+depth 15
+5.5
+5.0±5.191
+8
+18
+6 work ports
+(G3/8)
+T port (G3/4)
+M port P port
+(G1/4) (G1/2) LS port (G1/4)
+9 53±0.2 36"
+EHG_EN.pdf,19,"EHG Series Loading Sensing Proportional Control Valve Hengli hydraulics /20
+36.9
+01
+063
+5.51
+32 34 32
+73
+04
+04
+04
+04
+54
+81
+01
+01
+01
+01
+01
+T
+LS
+P
+33.4
+65
+M
+403
+1.621
+B A 22
+04
+04
+04
+04
+04
+07
+68.3 98
+234.6
+36 53±0.2 9
+7
+5.0±5.972
+5.5
+19
+外形尺寸
+P1 port (G3/8)
+·The valve with
+5 working sections
+10 work ports
+(G3/8)
+T port (G3/4)
+P port
+M port (G1/2) M port (G1/4) (G1/4)
+4×M8
+depth 13
+36 53±0.2 9"
+EHG_EN.pdf,20,"20/20 Hengli hydraulics Mobile Control Valve
+© This brochure can be reproduced, edited, reproduced or
+transmitted electronically without the authorization of Hengli
+Hydraulic Company. Due to the continuous development of
+the product, the information in this brochure is not specific to
+the specific conditions or applicability of the industry, thus,
+Hengli does not take any responsibility for any incomplete or
+inaccurate description.
+064"

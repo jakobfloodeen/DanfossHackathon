@@ -45,11 +45,14 @@ UNITS = {
     # power, torque, frequency, angle (pumps, motors, actuators)
     "kw": ("power", 1), "hp": ("power", 0.7457), "nm": ("torque", 1), "n•m": ("torque", 1), "n·m": ("torque", 1),
     "lbf•in": ("torque", 0.112985), "lbfin": ("torque", 0.112985), "hz": ("frequency", 1), "°": ("angle", 1),
+    # percentages (hysteresis, efficiency): only ever compared with other percentages
+    "%": ("percent", 1),
 }
 BASE_UNIT = {"temperature": "°C", "viscosity": "mm2/s", "current": "A", "voltage": "V", "resistance": "ohm",
              "pressure": "bar", "flow": "l/min", "displacement": "cc/rev", "speed": "rpm",
              "mass": "kg", "length": "mm", "count": "", "time": "ms", "leakage": "cm3/min",
-             "power": "kW", "torque": "Nm", "frequency": "Hz", "angle": "°"}
+             "power": "kW", "torque": "Nm", "frequency": "Hz", "angle": "°",
+             "percent": "%"}
 
 # a plain number: optional minus, digits, optional , or . separators. Nothing else.
 _PLAIN_NUMBER = re.compile(r"-?\d[\d.,]*")

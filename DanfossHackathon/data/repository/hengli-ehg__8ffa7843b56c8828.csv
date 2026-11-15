@@ -1,0 +1,73 @@
+product_id,brand,product_name,family,attribute,value,unit,source_file,page,quote,status,condition,fact_type
+hengli-ehg,Hengli,EHG,valves,size_specification,04,,EHG_EN.pdf,1,Specification: 04,ok,,feature
+hengli-ehg,Hengli,EHG,valves,rated_pressure,350,bar,EHG_EN.pdf,1,Rated pressure(bar): 350 (pump side),ok,pump side,spec
+hengli-ehg,Hengli,EHG,valves,rated_pressure,350,bar,EHG_EN.pdf,1,350 (actuator side),ok,actuator side,spec
+hengli-ehg,Hengli,EHG,valves,rated_flow,40,l/min,EHG_EN.pdf,1,Rated flow(L/min): 40,ok,,spec
+hengli-ehg,Hengli,EHG,valves,benefit,small and light,,EHG_EN.pdf,1,·Small and light,ok,,claim
+hengli-ehg,Hengli,EHG,valves,benefit,"low pressure drop, more energy-efficient",,EHG_EN.pdf,1,"·Low pressure drop,",ok,,claim
+hengli-ehg,Hengli,EHG,valves,benefit,"precise control, good micro motion property",,EHG_EN.pdf,1,"·Precise control, good",ok,,claim
+hengli-ehg,Hengli,EHG,valves,flow_distribution,load pressure independent,,EHG_EN.pdf,3,Load pressure independent flow distribution,ok,,feature
+hengli-ehg,Hengli,EHG,valves,circuit_type,open center,,EHG_EN.pdf,3,"Open center, for fixed displacement pump system",ok,for fixed displacement pump system,feature
+hengli-ehg,Hengli,EHG,valves,circuit_type,closed center,,EHG_EN.pdf,3,"Closed center, for variable piston pump system",ok,for variable piston pump system,feature
+hengli-ehg,Hengli,EHG,valves,priority_function,yes,,EHG_EN.pdf,3,·Priority function,ok,,feature
+hengli-ehg,Hengli,EHG,valves,control_pressure_difference,12,bar,EHG_EN.pdf,3,"·Less control pressure, ΔP=12bar",ok,,spec
+hengli-ehg,Hengli,EHG,valves,flow_accuracy,high flow accuracy,,EHG_EN.pdf,3,·High flow accuracy,ok,,claim
+hengli-ehg,Hengli,EHG,valves,actuation_options,"electrical on/off, electrical proportional",,EHG_EN.pdf,3,·Electrical on/off and electrical proportional control,ok,,feature
+hengli-ehg,Hengli,EHG,valves,design,sandwich plate,,EHG_EN.pdf,3,·Sandwich plate of design,ok,,feature
+hengli-ehg,Hengli,EHG,valves,max_sections,12,,EHG_EN.pdf,3,·Max. 12 middle section,ok,middle sections,spec
+hengli-ehg,Hengli,EHG,valves,pressure_relief,primary and secondary pressure relief valve,,EHG_EN.pdf,3,·Primary and secondary pressure relief valve,ok,,feature
+hengli-ehg,Hengli,EHG,valves,ls_relief_valve,LS pressure relief valve in each section,,EHG_EN.pdf,3,With LS pressure relief valve in each section,ok,,feature
+hengli-ehg,Hengli,EHG,valves,flow_compensation,load pressure compensated,,EHG_EN.pdf,3,·Load pressure compensated,ok,,feature
+hengli-ehg,Hengli,EHG,valves,response,quick response,,EHG_EN.pdf,3,·Quick response,ok,,claim
+hengli-ehg,Hengli,EHG,valves,hysteresis,low hysteresis,,EHG_EN.pdf,3,·Low hysteresis,ok,,claim
+hengli-ehg,Hengli,EHG,valves,typical_applications,"aerial work platform, forklift, concrete pump truck, municipal vehicle",,EHG_EN.pdf,3,Aerial work platform Forklift Concrete pump truck Municipal vehicle,ok,,feature
+hengli-ehg,Hengli,EHG,valves,size_specification,04,,EHG_EN.pdf,5,Specification 04,ok,,feature
+hengli-ehg,Hengli,EHG,valves,valve_structure,"stackable, load sensing, pre-compensated",,EHG_EN.pdf,5,"Structure Stackable, load sensing, pre-compensated",ok,,feature
+hengli-ehg,Hengli,EHG,valves,port_connection_options,"ISO BSP thread, metric thread, SAE thread option per SAE J1626",,EHG_EN.pdf,5,"ISO BSP thread, metric thread (with SAE thread option per SAE J1626)",ok,,feature
+hengli-ehg,Hengli,EHG,valves,weight_inlet_element,4.2,kg,EHG_EN.pdf,5,Open center 4.2,ok,open center,dimension
+hengli-ehg,Hengli,EHG,valves,weight_inlet_element,3.1,kg,EHG_EN.pdf,5,Closed center 3.1,ok,closed center,dimension
+hengli-ehg,Hengli,EHG,valves,weight_work_section,1.9,kg,EHG_EN.pdf,5,Electrical on/off 1.9,ok,electrical on/off,dimension
+hengli-ehg,Hengli,EHG,valves,weight_work_section,1.9,kg,EHG_EN.pdf,5,Electrical proportional 1.9,ok,electrical proportional,dimension
+hengli-ehg,Hengli,EHG,valves,weight_end_element,1.3,kg,EHG_EN.pdf,5,End element 1.3,ok,,dimension
+hengli-ehg,Hengli,EHG,valves,rated_flow,32,l/min,EHG_EN.pdf,5,With 4 bar compensation pressure 32,ok,with 4 bar compensation pressure,spec
+hengli-ehg,Hengli,EHG,valves,rated_flow,40,l/min,EHG_EN.pdf,5,With 6 bar compensation pressure 40,ok,with 6 bar compensation pressure,spec
+hengli-ehg,Hengli,EHG,valves,max_operating_pressure_port_p,350,bar,EHG_EN.pdf,5,P 350,ok,,spec
+hengli-ehg,Hengli,EHG,valves,max_operating_pressure_port_ls,350,bar,EHG_EN.pdf,5,LS 350,ok,,spec
+hengli-ehg,Hengli,EHG,valves,max_operating_pressure_port_ab,350,bar,EHG_EN.pdf,5,A/B 350,ok,,spec
+hengli-ehg,Hengli,EHG,valves,max_operating_pressure_port_t,210,bar,EHG_EN.pdf,5,T 210,ok,,spec
+hengli-ehg,Hengli,EHG,valves,protection_class,IP67k,,EHG_EN.pdf,5,·Protection class: IP67k,ok,,feature
+hengli-ehg,Hengli,EHG,valves,supply_voltage,12,VDC,EHG_EN.pdf,5,·Supply voltage: 12 or 24VDC,ok,electrical on/off valve,spec
+hengli-ehg,Hengli,EHG,valves,supply_voltage,24,VDC,EHG_EN.pdf,5,·Supply voltage: 12 or 24VDC,ok,electrical on/off valve,spec
+hengli-ehg,Hengli,EHG,valves,dither_frequency,120,Hz,EHG_EN.pdf,5,·Dither frequency required: 120Hz,ok,electrical proportional valve,spec
+hengli-ehg,Hengli,EHG,valves,hysteresis,3,%,EHG_EN.pdf,5,·Hysteresis: Less than 3%,ok,less than; electrical proportional valve,spec
+hengli-ehg,Hengli,EHG,valves,control_current,0 to 800,mA,EHG_EN.pdf,5,·Control current @24VDC: 0~800mA;,ok,at 24 VDC,spec
+hengli-ehg,Hengli,EHG,valves,control_current,0 to 1800,mA,EHG_EN.pdf,5,@12VDC: 0~1800mA,ok,at 12 VDC,spec
+hengli-ehg,Hengli,EHG,valves,hydraulic_fluid,"mineral oil HL, HLP (DIN 51524)",,EHG_EN.pdf,5,"Mineral oil (HL, HLP) according to DIN 51524.",ok,,feature
+hengli-ehg,Hengli,EHG,valves,hydraulic_fluid,HEES synthetic ester (VDMA 24568),,EHG_EN.pdf,5,"Other hydraulic fluids, such as HEES (Synthetic Ester)",ok,,feature
+hengli-ehg,Hengli,EHG,valves,oil_temperature_range,-30 to 100,°C,EHG_EN.pdf,5,Hydraulic fluid temperature range (℃) -30 to +100,ok,,spec
+hengli-ehg,Hengli,EHG,valves,oil_viscosity_range,20 to 380,mm2/s,EHG_EN.pdf,5,Viscosity range ν (mm/s) 20 to 380,ok,,spec
+hengli-ehg,Hengli,EHG,valves,oil_cleanliness_iso4406,20/18/15,,EHG_EN.pdf,5,"Class 20/18/15, we therefore recommend a filter",ok,maximum permissible contamination,spec
+hengli-ehg,Hengli,EHG,valves,filter_retention_rate_beta10,75,,EHG_EN.pdf,5,with a minimum retention rate of β10 ≥ 75,ok,minimum,spec
+hengli-ehg,Hengli,EHG,valves,port_size_p,G1/2,,EHG_EN.pdf,10,P port： G1/2,ok,inlet element,spec
+hengli-ehg,Hengli,EHG,valves,port_size_t_open_center_inlet,G1/2,,EHG_EN.pdf,10,T port： G1/2,ok,,spec
+hengli-ehg,Hengli,EHG,valves,port_size_ls,G1/4,,EHG_EN.pdf,10,LS port： G1/4,ok,inlet element,spec
+hengli-ehg,Hengli,EHG,valves,port_size_p,G1/2,,EHG_EN.pdf,11,P port： G1/2,ok,inlet element,spec
+hengli-ehg,Hengli,EHG,valves,port_size_t_inlet_with_ls_solenoid_unloading_valve,G3/4,,EHG_EN.pdf,11,T port： G3/4,ok,,spec
+hengli-ehg,Hengli,EHG,valves,port_size_ls,G1/4,,EHG_EN.pdf,11,LS port： G1/4,ok,inlet element,spec
+hengli-ehg,Hengli,EHG,valves,unloading_solenoid_resistance,8.1,Ω,EHG_EN.pdf,11,12V 8.1 Ω,unverified,12 V coil,spec
+hengli-ehg,Hengli,EHG,valves,work_port_size,G3/8,,EHG_EN.pdf,12,A/B ： G3/8,ok,middle section,spec
+hengli-ehg,Hengli,EHG,valves,work_port_size,G3/8,,EHG_EN.pdf,13,A1/B1： G3/8,ok,middle section with port safety valve,spec
+hengli-ehg,Hengli,EHG,valves,work_port_size,G3/8,,EHG_EN.pdf,14,A1/B1： G3/8,ok,middle section with single-side balance valve,spec
+hengli-ehg,Hengli,EHG,valves,work_port_size,G3/8,,EHG_EN.pdf,15,A/B ： G3/8,ok,middle section with double-sided balance valves,spec
+hengli-ehg,Hengli,EHG,valves,work_port_size,G3/8,,EHG_EN.pdf,16,A/B ： G3/8,ok,middle section with emergency handle,spec
+hengli-ehg,Hengli,EHG,valves,work_port_size,G3/8,,EHG_EN.pdf,18,"6 work ports
+(G3/8)",ok,valve with 3 working sections,spec
+hengli-ehg,Hengli,EHG,valves,port_size_t,G3/4,,EHG_EN.pdf,18,T port (G3/4),ok,valve with 3 working sections,spec
+hengli-ehg,Hengli,EHG,valves,port_size_m,G1/4,,EHG_EN.pdf,18,"M port P port
+(G1/4) (G1/2)",ok,valve with 3 working sections,spec
+hengli-ehg,Hengli,EHG,valves,port_size_p,G1/2,,EHG_EN.pdf,18,"M port P port
+(G1/4) (G1/2)",ok,valve with 3 working sections,spec
+hengli-ehg,Hengli,EHG,valves,work_port_size,G3/8,,EHG_EN.pdf,19,"10 work ports
+(G3/8)",ok,valve with 5 working sections,spec
+hengli-ehg,Hengli,EHG,valves,port_size_p1,G3/8,,EHG_EN.pdf,19,P1 port (G3/8),ok,"additional P port, valve with 5 working sections",spec
+hengli-ehg,Hengli,EHG,valves,port_size_t,G3/4,,EHG_EN.pdf,19,T port (G3/4),ok,valve with 5 working sections,spec

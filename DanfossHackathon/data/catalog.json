@@ -168,7 +168,7 @@
     {
       "id": "hengli",
       "name": "Hengli",
-      "hasData": false
+      "hasData": true
     }
   ],
   "competitorProducts": [
@@ -209,6 +209,32 @@
             "ok": 12,
             "unverified": 2,
             "at": "2026-11-14T11:50:06+00:00"
+          }
+        }
+      ],
+      "status": "active"
+    },
+    {
+      "id": "hengli-ehg",
+      "competitorId": "hengli",
+      "name": "EHG",
+      "categoryId": "proportional",
+      "equivalentOf": [],
+      "datasets": [
+        {
+          "name": "EHG_EN.pdf",
+          "fileId": "8ffa7843b56c8828",
+          "source": "competitor",
+          "competitorId": "hengli",
+          "pages": 20,
+          "uploadedAt": "2026-11-15T09:44:15+00:00",
+          "facts": {
+            "status": "done",
+            "csv": "hengli-ehg__8ffa7843b56c8828.csv",
+            "facts": 68,
+            "ok": 67,
+            "unverified": 1,
+            "at": "2026-11-15T09:44:45+00:00"
           }
         }
       ],
