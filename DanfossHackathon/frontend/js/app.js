@@ -818,6 +818,16 @@
     return parts.length ? parts.join("") : '<span class="issue-chip flag-ok">No data issues found</span>';
   }
 
+  /** "12 AI statements · 31 citations · every number checked by code" - the anti-hallucination meter. */
+  function groundingText(g) {
+    if (!g || !g.statements) return "";
+    const checks = g.problems
+      ? `${g.problems} failed check${g.problems > 1 ? "s" : ""} - see Open points`
+      : "every number checked by code against its source";
+    return `<div class="grounding" title="Every AI statement must cite fact ids; every number in it is verified against the cited facts by code. Statements that fail are listed under Open points - never silently accepted.">
+      ${esc(g.statements)} AI statement${g.statements > 1 ? "s" : ""} · ${esc(g.citations)} citation${g.citations > 1 ? "s" : ""} · ${checks}</div>`;
+  }
+
   /** "AI cost: $0.004 · 1 call" – the price of this answer, so the cost per comparison is visible. */
   function aiCostText(c) {
     if (!c) return "";
@@ -885,7 +895,7 @@
           <h3>${esc(r.title)}</h3>
           <div class="hint">Prepared for ${esc(state.buyer.company || "—")}${state.buyer.application ? " · " + esc(state.buyer.application) : ""}</div>
         </div>
-        <span class="confidence conf-${esc(r.confidence?.level)}" title="${esc(r.confidence?.reason)}">Confidence: ${esc(r.confidence?.level || "n/a")}</span>
+        <div class="head-right"><span class="confidence conf-${esc(r.confidence?.level)}" title="${esc(r.confidence?.reason)}">Confidence: ${esc(r.confidence?.level || "n/a")}</span>${groundingText(r.grounding)}</div>
       </div>
       <div class="issue-summary">${issueSummary(r)}
       </div>

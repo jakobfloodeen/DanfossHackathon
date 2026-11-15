@@ -159,6 +159,8 @@ textarea { resize: vertical; }
 .result h3 { margin: 0; font-size: 19px; }
 .result h4 { margin: 0 0 6px; font-size: 14px; }
 .result-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+.head-right { text-align: right; }
+.grounding { font-size: 11px; color: var(--ink-3); margin-top: 4px; max-width: 260px; }
 .confidence { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 3px; white-space: nowrap; text-transform: capitalize; }
 .conf-high { background: var(--ok-tint); color: var(--ok); }
 .conf-medium { background: var(--warn-tint); color: var(--warn); }

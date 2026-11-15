@@ -1,4 +1,4 @@
-# Competitor Intelligence Assistant (Danfoss × SDU G.E.A.R., Case 5)
+# Dani – Competitor Intelligence Assistant (Danfoss × SDU G.E.A.R., Case 5)
 
 One app: the website (HTML/JS) + FastAPI backend + the comparison engine.
 A Danfoss salesperson compares a Danfoss product with competitor products (or the other way round),
@@ -17,6 +17,33 @@ uvicorn backend:app --port 8000
 Open http://localhost:8000. Without a key everything still works, minus the AI interpretation.
 Tests (no key, no cost): `pytest -q` inside `DanfossHackathon/`.
 
+## Why Dani is not just a chatbot
+The case asks for *"accuracy, source traceability and transparent uncertainty … at every level"*. A chatbot
+answers from its training data and sounds right either way. Dani is an **engine with an AI in one, checked seat**:
+
+1. **Code decides what is true.** Facts come only from uploaded datasheets (one AI extraction call per page,
+   every quote re-checked by code against the page text). Shortlisting, unit conversion, differences,
+   conflicts and system formulas are plain Python - deterministic and testable (200 tests).
+2. **The AI only interprets, and is never trusted.** It gets numbered facts and must cite ids for every
+   statement. Code re-checks every citation and **every number** in its answer against the cited facts;
+   a failed check sends the answer back once, then the problems are shown to the user under *Open points*.
+   The result card shows the meter: "N AI statements · M citations · every number checked by code".
+3. **Uncertainty is a feature.** Unverified, conflicting and missing values are flagged, never smoothed
+   over ("not stated" is not "worse"). Dani happily says what it cannot know and what to upload to fix it.
+4. **Commercial claims are governed.** Only sales-guideline notes an **editor approved** can appear or be
+   cited (K1, K2 …); viewers can suggest, the review queue decides. No invented prices, ever.
+5. **Every answer carries its receipts**: footnotes open the source PDF at the cited page, the AI cost of
+   the answer is printed under it, and a cached answer is reused for free.
+
+## The context window, and why Dani does not hallucinate your specs
+The engineers asked how we handle the AI context window. Short version: **the model never sees the
+documents during a comparison.** The 240-page manual is read once at upload (page by page, ~$0.002/page);
+after that, comparisons run on the extracted, code-verified fact table. One comparison sends ~3,000 input
+tokens: the family's rules, at most 3 candidates, at most `PROMPT_MAX_FACTS` (40) one-line facts per product
+(no quotes, no code numbers), at most 6 approved commercial notes - and the API enforces the answer schema.
+Small context = cheap, fast, and nothing irrelevant for the model to "remember wrong". Hallucination control
+is not a prompt plea: it is the schema + the number/citation re-check + the retry + the visible meter above.
+
 ## Three ways to compare
 | Flow | Where in the website | API |
 |---|---|---|
@@ -27,6 +54,13 @@ Tests (no key, no cost): `pytest -q` inside `DanfossHackathon/`.
 **Customer feedback:** "Upload data" → *Customer feedback* (PDF, Excel, CSV, TXT). Only the text is kept
 (`data/customers/<customer>/<file>.csv`, never committed). It is used automatically whenever that customer is the
 buyer, and the AI cites it as C1, C2 … (code checks every customer number against the cited passage).
+
+All four families of the success criteria (pump + motor + valve + steering) have rule files in `rules/`
+and combine in System mode; motor/steering rules are marked as drafts for the product team until their
+sales guidelines are loaded. **Commercial layer:** every comparison shows the approved sales-guideline
+notes for the involved products (positioning, availability, transitions, warnings - `data/commercial/`),
+and the AI may cite them as K1, K2 …; a demo login in the top bar switches between a viewer (suggests
+notes) and an editor (approves them).
 
 **System comparison:** each system becomes one virtual product (`pump__max_flow`, `valve__max_inlet_flow`, …).
 Code calculates system values from `rules/system.md` (e.g. system flow = min(pump flow, valve inlet flow),
@@ -46,13 +80,13 @@ Model per job is set in `.env` (see `.env.example`):
 
 Cheapest setup: `LLM_MODEL=claude-haiku-5-5` + `LLM_RETRY_MODEL=claude-sonnet-5-5` (Sonnet only runs when code finds a
 problem in Haiku's answer). The comparison prompt sends short fact lines (no quotes), never code numbers, and at most
-`PROMPT_MAX_FACTS` (60) facts per product; the system prompt is prompt-cached; same question twice = stored answer, $0.
+`PROMPT_MAX_FACTS` (40) facts per product for at most `PROMPT_MAX_CANDIDATES` (3) candidates; the system prompt is prompt-cached; same question twice = stored answer, $0.
 
 ## Getting data in
 | Step | In the website | What happens |
 |---|---|---|
 | Upload a datasheet | **Upload data** → Danfoss / Competitor → drop the PDF | stored in `data/files/`, page text in `data/extracted/` |
-| …or import it from the web | **Upload data** → "…or import a datasheet from a manufacturer's website" → Search website → pick → Import | the teammates' `scraper/` finds and downloads it; its web address goes into `data/documents.csv`, so footnotes open the online PDF at the cited page |
+| …or import it from the web | **Upload data** → "…or import a datasheet from a manufacturer's website" → Search website → pick → Import | the `scraper/` crawls the site steered by the "Look for" choice (valves/pumps/motors/steering); JavaScript sites are rendered in a hidden browser when Playwright is installed (`python -m playwright install chromium`); its web address goes into `data/documents.csv`, so footnotes open the online PDF at the cited page |
 | Turn it into facts | **Extract facts** (shown after an upload; also lists every PDF without facts) – optionally only some pages, e.g. `1-12` | the teammates' converter `pdf_to_csv_test.py` (one AI call per page, ~cents/page) runs in the background; `comparison_engine/bridge.py` translates its rows into `data/repository/<product>__<file>.csv`; page text goes to `data/pages/` |
 | Customer feedback | **Upload data** → Customer feedback | text only, `data/customers/` (not committed) |
 

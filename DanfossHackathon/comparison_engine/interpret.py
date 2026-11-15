@@ -34,7 +34,7 @@ import pandas as pd
 
 from . import commercial, config
 from .facts import Fact, build_facts, code_differences
-from .guardrails import OUTPUT_SCHEMA, add_missing_verify, check_interpretation
+from .guardrails import OUTPUT_SCHEMA, add_missing_verify, check_interpretation, grounding_summary
 from .llm import LLMUnavailable, ask_claude, extract_json
 from .logic import Logic, load_logic
 from .repository import load_repository
@@ -360,6 +360,8 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
                 result.problems = problems
                 result.status = "ok_with_problems" if problems else "ok"
                 result.message = STATUS_MESSAGES[result.status]
+                result.meta["grounding"] = {**grounding_summary(answer, facts),
+                                            "problems": len(problems), "attempts": attempts}
         except LLMUnavailable as e:
             result.message = f"{STATUS_MESSAGES['no_ai']} Reason: {e}."
         except Exception as e:  # noqa: BLE001 - the website must keep working whatever the AI does

@@ -305,3 +305,18 @@ def add_missing_verify(answer: dict, facts: list[Fact], target_id: str) -> dict:
             answer.setdefault("verify", []).append(
                 {"fact_id": f.id, "reason": f"status '{f.status}' ({f.attribute}) - added by code"})
     return answer
+
+
+def grounding_summary(answer: dict | None, facts: list[Fact]) -> dict:
+    """What the code verified in the final answer - shown to the user, not just checked internally:
+    how many AI statements there are, how many facts they cite, and how many numbers appear in them.
+    Together with the problems count this is the 'nothing uncited, nothing unchecked' meter."""
+    if not answer:
+        return {}
+    by_id = facts_by_id(facts)
+    statements = citations = numbers = 0
+    for _where, text, ids, _product in _statements(answer):
+        statements += 1
+        citations += len({i for i in ids if i in by_id})
+        numbers += len(numbers_in(text))
+    return {"statements": statements, "citations": citations, "numbers": numbers}

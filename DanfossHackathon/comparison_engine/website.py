@@ -283,6 +283,7 @@ def to_website(result: AnalysisResult, names: dict[str, dict] | None = None,
         "confidence": _confidence(result),
         "sources": source_list,
         "commercial": commercial_block,
+        "grounding": result.meta.get("grounding") or {},
         "engine": {"status": result.status, "message": result.message, "best_match": result.best_match_id,
                    "problems": result.problems, "meta": result.meta},
     }

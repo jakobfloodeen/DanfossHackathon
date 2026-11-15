@@ -105,3 +105,24 @@ def test_family_notes_match_singular_and_plural(monkeypatch, tmp_path):
     commercial.add("valves", "positioning", "Catalog-family note.", EDITOR)       # catalog says 'valves'
     assert commercial.for_products(["pvg32"], family="valve")                     # engine says 'valve'
     assert commercial.for_products(["pvg32"], family="valves")
+
+
+def test_grounding_meter_counts_statements_citations_numbers(monkeypatch, tmp_path):
+    monkeypatch.setenv("COMMERCIAL_FILE", str(tmp_path / "commercial.csv"))
+    monkeypatch.setenv("CACHE_DIR", str(tmp_path / "cache"))
+    import json
+    from comparison_engine.website import to_website
+
+    def fake(system, prompt, schema=None):
+        return json.dumps({"comparable": True, "not_comparable_reason": None,
+                           "best_match": {"product_id": "m4-12", "why": "Same 350 bar pressure class.",
+                                          "fact_ids": ["F1", "F2"]},
+                           "alternatives": [], "points": [],
+                           "application_fit": {"text": "Fits the pressure need.", "fact_ids": ["F1"]},
+                           "talking_points": [], "tradeoffs": [], "verify": [],
+                           "overall_confidence": "high"})
+
+    r = interpret("pvg32", ["m4-12"], ask=fake, pool="competitors", data=_data(), use_cache=False)
+    g = r.meta["grounding"]
+    assert g == {"statements": 2, "citations": 3, "numbers": 1, "problems": 0, "attempts": 1}
+    assert to_website(r)["grounding"] == g
