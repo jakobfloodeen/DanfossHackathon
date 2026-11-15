@@ -12,7 +12,7 @@ const Api = (() => {
     const isForm = options.body instanceof FormData;
     const user = localStorage.getItem("dani-user") || "senior";   // demo login: senior (editor) / junior (viewer)
     const res = await fetch(cfg.API_BASE + path, {
-      headers: { "X-User": user, ...(isForm ? {} : { "Content-Type": "application/json" }) },
+      headers: { "X-User": user, ...(isForm ? {} : { "Content-Type": "application/json" }), ...(cfg.EXTRA_HEADERS || {}) },
       ...options,
     });
     if (!res.ok) throw new Error(`API ${path} failed with status ${res.status}`);

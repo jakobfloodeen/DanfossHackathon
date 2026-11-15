@@ -217,7 +217,11 @@
       if (m.role === "user") userMsg(m.text);
       else if (m.role === "typing") botMsg('<span class="typing"><i></i><i></i><i></i></span>');
       else if (m.role === "issues") botMsg(`<p><strong>${esc(m.title)}</strong></p>${m.issues.map(flagHtml).join("")}`).classList.add("bubble-wide");
-      else botMsg(esc(m.text));
+      else {
+        const bubble = botMsg(esc(m.text));
+        const speak = window.Speech?.button(m.text, "Read this answer aloud");  // js/speech.js
+        if (speak) bubble.appendChild(speak);
+      }
     });
   }
 
@@ -706,7 +710,7 @@
         <input name="currentSupplier" value="${esc(b.currentSupplier)}" placeholder="e.g. competitor valve in use today">
       </label>
       <label class="field span-2"><span>Additional notes <span class="opt">(optional)</span></span>
-        <textarea name="notes" rows="3" placeholder="Requirements, constraints, volumes, meeting goal…">${esc(b.notes)}</textarea>
+        <textarea name="notes" rows="3" data-voice placeholder="Requirements, constraints, volumes, meeting goal…">${esc(b.notes)}</textarea>
       </label>
       <div class="actions span-2"><button class="btn btn-primary" type="submit">Continue</button></div>`;
     form.addEventListener("submit", (e) => {
@@ -744,6 +748,7 @@
     state.loading = true; state.error = null; render();
     try {
       state.result = await Api.compare(buildPayload());
+      window.Speech?.onResult(state.result, state.buyer.company);
     } catch (err) {
       state.error = err.message;
     } finally {
@@ -944,6 +949,8 @@
         b.closest(".pending-tools").textContent = b.dataset.decide === "approve" ? "approved - rerun the comparison to use it" : "rejected";
       } catch (err) { b.disabled = false; alert(err.message); }
     }));
+    const speak = window.Speech?.button(() => Speech.resultText(r, state.buyer.company), "Read the summary aloud");
+    if (speak) { speak.classList.add("btn", "btn-ghost"); speak.insertAdjacentText("beforeend", " Read summary"); card.querySelector(".actions").prepend(speak); }
     // "All other facts" can be thousands of rows: drawn only when opened, filterable, first 150 matches
     const moreBox = card.querySelector(".more-facts");
     if (moreBox) {
@@ -1069,6 +1076,7 @@
     try {
       state.result = await Api.match({ competitorProductId: state.matchProduct.id, buyer: { ...state.buyer },
                                        factors: {}, customFactors: [], chatNotes: [] });
+      window.Speech?.onResult(state.result, state.buyer.company);
     } catch (err) {
       state.error = err.message;
     } finally {
@@ -1148,6 +1156,7 @@
     state.loading = true; state.error = null; state.result = null; render();
     try {
       state.result = await Api.compareSystem({ ...state.system.payload, buyer: { ...state.buyer }, factors: {}, chatNotes: [] });
+      window.Speech?.onResult(state.result, state.buyer.company);
     } catch (err) {
       state.error = err.message;
     } finally {
@@ -1225,6 +1234,7 @@
     state.log = state.log.filter((m) => m !== typing);
     state.log.push({ stage, role: "bot", text: answer });
     render();
+    window.Speech?.onAnswer(answer);   // hands-free: read it aloud (js/speech.js)
   });
 
   $("#btn-restart").addEventListener("click", () => { state = freshState(); render(); });

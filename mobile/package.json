@@ -1,0 +1,21 @@
+{
+  "name": "ci-assistant-mobile",
+  "version": "1.0.0",
+  "description": "Android app (Capacitor) wrapping DanfossHackathon/frontend, with voice input",
+  "scripts": {
+    "copy-web": "node copy-web.mjs",
+    "sync": "node copy-web.mjs && cap sync android",
+    "apk": "npm run sync && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor-community/speech-recognition": "^7.0.1",
+    "@capacitor-community/text-to-speech": "^8.0.2",
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/core": "^8.6.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.2"
+  },
+  "private": true,
+  "type": "module"
+}

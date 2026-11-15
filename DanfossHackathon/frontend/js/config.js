@@ -6,6 +6,8 @@ window.APP_CONFIG = {
   // Endpoints used: GET {API_BASE}/catalog, POST {API_BASE}/compare, POST {API_BASE}/ask
   API_BASE: "/api",
 
-  // true  = use js/mock-data.js (works by just opening index.html)
-  // false = call the real backend at API_BASE
+  // Voice input (🎤) and read aloud (🔊 / Hands-free): language to listen and speak in.
+  // In the Android app it can be changed under "Server" in the top bar.
+  VOICE_LANG: "en-US",
+  VOICE_LANGS: { "en-US": "English", "en-GB": "English (UK)", "da-DK": "Dansk", "de-DE": "Deutsch" },
 };

@@ -1,0 +1,12 @@
+{
+  "appId": "com.danfosshackathon.ciassistant",
+  "appName": "Dani",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}
