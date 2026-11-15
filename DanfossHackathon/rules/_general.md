@@ -34,6 +34,15 @@ family_aliases:             # other names the PDF->CSV converter might write -> 
   motors: motor
   steering: steering
 
+# Recognising the same quantity under different datasheet names (comparison_engine/attributes.py).
+# Two names match when they have the same words after these rules - word order does not matter.
+# Built-in defaults already cover: hydraulic fluid/fluid -> oil, maximum -> max, minimum -> min,
+# temp -> temperature, mass -> weight, contamination -> cleanliness, and the filler words range,
+# permissible, allowable, iso4406 ... Add your own here:
+attribute_words:
+  same: {}                  # e.g.  nominal: rated   (only if it really means the same everywhere!)
+  ignore: []                # e.g.  [operating]
+
 weights: {}                 # attribute -> importance for ranking (0 = ignore, 5 = crucial). Family files fill this.
 better: {}                  # attribute -> higher / lower (which direction is better). Family files fill this.
 hard_filters:               # used only to RANK candidates lower (penalty) - customer must-haves are the real filters

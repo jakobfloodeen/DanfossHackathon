@@ -21,6 +21,7 @@ from pathlib import Path
 import pandas as pd
 
 from . import config
+from . import attributes
 from .logic import canonical_family, load_logic
 from .units import is_empty, is_known_unit, normalize, parse_number
 
@@ -178,7 +179,8 @@ def _clean(data: pd.DataFrame) -> pd.DataFrame:
     data["attribute_original"] = data["attribute"]
     data["attribute"] = _standard_names(data)
     data["page"] = data["page"].map(lambda p: None if parse_number(p) is None else int(parse_number(p)))
-    data["note"] = ""
+    data = attributes.unify(data)            # same quantity, different datasheet names -> one attribute
+    data["note"] = data.pop("_derived").fillna("") if "_derived" in data.columns else ""
     data["based_on"] = [[] for _ in range(len(data))]
 
     # status: start from the CSV, then let the code be stricter (never more trusting)
