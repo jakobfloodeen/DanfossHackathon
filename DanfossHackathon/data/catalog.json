@@ -78,6 +78,14 @@
               "label": "PVG 256",
               "desc": "No datasheet uploaded yet",
               "status": "data-pending"
+            },
+            {
+              "id": "cvg-8",
+              "label": "CVG 8",
+              "desc": "No datasheet uploaded yet",
+              "status": "data-pending",
+              "datasets": [],
+              "type": "product"
             }
           ]
         },
@@ -219,7 +227,9 @@
       "competitorId": "hengli",
       "name": "EHG",
       "categoryId": "proportional",
-      "equivalentOf": [],
+      "equivalentOf": [
+        "cvg-8"
+      ],
       "datasets": [
         {
           "name": "EHG_EN.pdf",
