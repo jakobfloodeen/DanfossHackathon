@@ -4,9 +4,9 @@ Settings for the comparison engine. Change things HERE, not inside the other mod
 Environment variables (optional, e.g. in .env):
     REPO_DIR     folder with the product CSVs (default: ./data/repository - the PDF->CSV tool writes here)
     RULES_DIR    folder with the LOGIC files (default: ./rules)
-    LLM_MODEL    Claude model for the comparison text (default: claude-sonnet-5-5)
-    LLM_RETRY_MODEL  model for the ONE retry when code finds problems (default: same as LLM_MODEL).
-                 Cheapest setup: LLM_MODEL=claude-haiku-5-5 and LLM_RETRY_MODEL=claude-sonnet-5-5
+    LLM_MODEL    Claude model for the comparison text (default: claude-haiku-5-5, 1/20 of Sonnet's price)
+    LLM_RETRY_MODEL  model for the ONE retry when code finds problems in that answer
+                 (default: claude-sonnet-5-5 - the stronger model only runs when it is needed)
     LLM_EFFORT   how much the model thinks before answering: low (default) / medium / high
     EXTRACT_MODEL  model for PDF -> facts, one call per page (default: claude-haiku-5-5, 1/20 of Sonnet's price)
     ASK_MODEL    model for free-text questions in the chat box (default: claude-haiku-5-5)
@@ -36,11 +36,11 @@ def cache_dir() -> Path:
 
 
 def llm_model() -> str:
-    return os.getenv("LLM_MODEL", "claude-sonnet-5-5")
+    return os.getenv("LLM_MODEL", "claude-haiku-5-5")
 
 
 def llm_retry_model() -> str:
-    return os.getenv("LLM_RETRY_MODEL") or llm_model()
+    return os.getenv("LLM_RETRY_MODEL") or "claude-sonnet-5-5"
 
 
 def llm_effort() -> str:

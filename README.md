@@ -75,11 +75,10 @@ Model per job is set in `.env` (see `.env.example`):
 | Job | Default | Why |
 |---|---|---|
 | PDF → facts (`EXTRACT_MODEL`), one call per page | `claude-haiku-5-5` | the biggest bill by far; quotes are still verified by code |
-| Comparison text (`LLM_MODEL`), one call per comparison | `claude-sonnet-5-5`, `LLM_EFFORT=low` | the text the salesperson reads |
+| Comparison text (`LLM_MODEL`), one call per comparison | `claude-haiku-5-5`, `LLM_EFFORT=low`; retry on `claude-sonnet-5-5` only when code rejects the answer | the text the salesperson reads |
 | Chat-box questions (`ASK_MODEL`) | `claude-haiku-5-5` | short answers from a few pages |
 
-Cheapest setup: `LLM_MODEL=claude-haiku-5-5` + `LLM_RETRY_MODEL=claude-sonnet-5-5` (Sonnet only runs when code finds a
-problem in Haiku's answer). The comparison prompt sends short fact lines (no quotes), never code numbers, and at most
+This cheap-first setup is the default; for best text quality set `LLM_MODEL=claude-sonnet-5-5`. The comparison prompt sends short fact lines (no quotes), never code numbers, and at most
 `PROMPT_MAX_FACTS` (40) facts per product for at most `PROMPT_MAX_CANDIDATES` (3) candidates; the system prompt is prompt-cached; same question twice = stored answer, $0.
 
 ## Getting data in
