@@ -128,3 +128,18 @@ def test_factor_mapping():
     assert factor_for("max_flow_per_section") == "flow"
     assert factor_for("work_port_threads") == "ports"
     assert factor_for("something_else") == "options"
+
+
+def test_rows_say_who_is_better_so_the_sales_scoreboard_needs_no_guessing():
+    """`better` per row comes from the engine's own differences (rules `better:`), keyed by competitor column."""
+    res = interpret(COMPX, None, use_ai=False)
+    w = to_website(res)
+    keys = {c["key"] for c in w["matches"]}
+    assert all(isinstance(a["better"], dict) for a in w["attributes"])
+    assert all(set(a["better"]) <= keys for a in w["attributes"])
+    assert all(v in ("target", "candidate", "similar", None) for a in w["attributes"] for v in a["better"].values())
+    # every difference the code computed shows up on its row
+    for d in res.differences:
+        row = next((a for a in w["attributes"] if a["id"] == d.attribute), None)
+        if row is not None and d.candidate in keys:
+            assert row["better"].get(d.candidate) == d.better
