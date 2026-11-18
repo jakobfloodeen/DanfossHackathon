@@ -16,6 +16,7 @@ A note's product_id is a catalog product id (pvg32) or a family id (valves, pump
 family notes attach to every comparison in that family.
 """
 import csv
+import re
 import os
 import threading
 from datetime import datetime, timezone
@@ -112,3 +113,57 @@ def decide(note_id: str, action: str, user: dict) -> dict:
                 _save_all(rows)
                 return r
     raise KeyError(f"No note with id {note_id}")
+
+
+# ---------------------------------------------------------------- which notes fit THIS comparison + customer
+def _product_mentions(text: str, names: list[str]) -> bool:
+    squashed = re.sub(r"[^a-z0-9]+", "", text.lower())
+    return any(n and re.sub(r"[^a-z0-9]+", "", n.lower()) in squashed for n in names)
+
+
+def _note_regions(text: str) -> set[str]:
+    from .customer_profile import region_groups
+    low = (text or "").lower().strip()
+    return set() if low in ("", "all", "all regions") else region_groups([low]) | (
+        {"emea", "apa"} if "emea & apa" in low else set())
+
+
+def score_note(row: dict, target_id: str, involved_ids: list[str], involved_names: list[str],
+               terms: set[str], regions: set[str]) -> tuple[int, list[str]]:
+    """How relevant one approved note is. -> (score, reasons). Code only, no AI."""
+    score, why = 0, []
+    text = row.get("text", "")
+    if row.get("product_id") == target_id:
+        score += 6; why.append("about the product being compared")
+    elif row.get("product_id") in involved_ids:
+        score += 4; why.append("about a product in this comparison")
+    if _product_mentions(text, involved_names):
+        score += 4; why.append("names a product in this comparison")
+        if row.get("kind") in ("warning", "transition"):
+            score += 3
+    words = set(re.findall(r"[a-z]{4,}", text.lower()))
+    hits = sorted(t for t in terms if any(w.startswith(t[:6]) or t.startswith(w[:6]) for w in words if len(w) >= 4))
+    if hits:
+        score += min(6, 2 * len(hits)); why.append("matches the customer: " + ", ".join(hits[:3]))
+    note_regions = _note_regions(row.get("regions", ""))
+    if note_regions and regions:
+        if note_regions & regions:
+            score += 3; why.append("customer's region")
+        else:
+            score -= 6; why.append("other regions only")
+    return score, why
+
+
+def relevant_notes(target_id: str, involved_ids: list[str], family: str, involved_names: list[str],
+                   terms: set[str], regions: set[str], max_shown: int = 5, threshold: int = 4) -> tuple[list, list]:
+    """Approved notes for the products in the comparison and their family, split into
+    (shown: relevant to this comparison and customer, best first; other: the rest, kept for reference)."""
+    rows = for_products([target_id, *involved_ids], family)
+    scored = []
+    for r in rows:
+        s, why = score_note(r, target_id, involved_ids, involved_names, terms, regions)
+        scored.append({**r, "score": s, "why": "; ".join(why)})
+    scored.sort(key=lambda r: (-r["score"], r["id"]))
+    shown = [r for r in scored if r["score"] >= threshold][:max_shown]
+    other = [r for r in scored if r not in shown]
+    return shown, other

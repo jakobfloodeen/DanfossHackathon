@@ -10,6 +10,8 @@ Environment variables (optional, e.g. in .env):
     LLM_EFFORT   how much the model thinks before answering: low (default) / medium / high
     EXTRACT_MODEL  model for PDF -> facts, one call per page (default: claude-haiku-5-5, 1/20 of Sonnet's price)
     ASK_MODEL    model for free-text questions in the chat box (default: claude-haiku-5-5)
+    CUSTOMER_MODEL  model that reads a customer's website into a business profile, once per customer
+                 (default: claude-haiku-5-5)
     PROMPT_MAX_FACTS  most facts per product sent to the AI in one comparison (default: 40)
     PROMPT_MAX_UNSHARED  of those, most facts only this product has (default: 10)
     PROMPT_MAX_CANDIDATES  most candidate products the AI compares (default: 3, the website's columns)
@@ -53,6 +55,11 @@ def extract_model() -> str:
 
 def ask_model() -> str:
     return os.getenv("ASK_MODEL", "claude-haiku-5-5")
+
+
+def customer_model() -> str:
+    """Model for the customer-website profile (one call per new customer)."""
+    return os.getenv("CUSTOMER_MODEL", "claude-haiku-5-5")
 
 
 def prompt_max_facts() -> int:

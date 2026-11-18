@@ -168,3 +168,48 @@ class TransportTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class ProfileModeTests(unittest.TestCase):
+    """Settings used by the app's customer profile (collect='all', profile link terms, JavaScript render hook)."""
+    ABOUT = (b'<title>About us</title><h1>Who we are</h1><p>Example Machines designs compact wheel loaders for farms '
+             b'and builders in Europe, with a strong focus on operator comfort.</p>')
+    HOME = b'<title>Example</title><a href="/about-us">About us</a><a href="/careers">Careers</a>'
+
+    def test_collect_all_keeps_untagged_paragraphs(self):
+        pages = {'https://customer.example/': self.HOME, 'https://customer.example/about-us': self.ABOUT}
+        with patch.object(c, 'fetch', side_effect=website(pages)):
+            tagged = research_customer('https://customer.example/')
+        with patch.object(c, 'fetch', side_effect=website(pages)):
+            everything = research_customer('https://customer.example/', collect='all',
+                                           link_terms=c.PROFILE_LINK_TERMS)
+        text = ' '.join(e['excerpt'] for e in everything['evidence'])
+        self.assertIn('compact wheel loaders', text)
+        self.assertGreaterEqual(len(everything['evidence']), len(tagged['evidence']))
+        self.assertNotIn('https://customer.example/careers', [s['url'] for s in everything['sources']])
+
+    def test_crawl_delay_is_waited_and_large_delay_skips_site(self):
+        def fetch_with(robots):
+            def fetch(url, allowed_hosts=None):
+                if url.endswith('/robots.txt'):
+                    return robots, url, 'text/plain', False
+                return {'https://customer.example/': self.HOME,
+                        'https://customer.example/about-us': self.ABOUT}[url], url, 'text/html', False
+            return fetch
+        with patch.object(c, 'fetch', side_effect=fetch_with(b'User-agent: *\nCrawl-delay: 2\nAllow: /')), \
+                patch.object(c, 'sleep') as slept:
+            r = research_customer('https://customer.example/', link_terms=c.PROFILE_LINK_TERMS)
+        self.assertEqual(len(r['sources']), 2)
+        self.assertTrue(slept.called and max(a.args[0] for a in slept.call_args_list) <= 2)
+        with patch.object(c, 'fetch', side_effect=fetch_with(b'User-agent: *\nCrawl-delay: 60\nAllow: /')):
+            r = research_customer('https://customer.example/')
+        self.assertEqual(r['sources'], [])
+        self.assertTrue(r['warnings'])
+
+    def test_javascript_page_is_rendered_when_a_renderer_is_given(self):
+        shell = b'<title>App</title><div id="root"></div><script src="/app.js"></script>'
+        with patch.object(c, 'fetch', side_effect=website({'https://customer.example/': shell})):
+            r = research_customer('https://customer.example/', collect='all',
+                                  render=lambda url: self.ABOUT.decode())
+        self.assertEqual(r['sources'][0]['kind'], 'html_rendered')
+        self.assertIn('compact wheel loaders', ' '.join(e['excerpt'] for e in r['evidence']))

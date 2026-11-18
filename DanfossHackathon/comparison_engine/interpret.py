@@ -32,7 +32,7 @@ from typing import Callable
 
 import pandas as pd
 
-from . import commercial, config
+from . import commercial, customer_profile, config
 from .facts import Fact, build_facts, code_differences
 from .guardrails import OUTPUT_SCHEMA, add_missing_verify, check_interpretation, grounding_summary
 from .llm import LLMUnavailable, ask_claude, extract_json
@@ -41,7 +41,7 @@ from .repository import load_repository
 from .results import STATUS_MESSAGES, AnalysisResult, comparison_rows, onepager_data
 from .shortlist import shortlist as make_shortlist
 
-PROMPT_VERSION = "6"            # change when the prompt text changes -> old cache entries are not reused
+PROMPT_VERSION = "7"            # change when the prompt text changes -> old cache entries are not reused
 _MEMORY_CACHE: dict = {}
 
 HARD_RULES = """HARD RULES (code checks every one of them; breaking one makes the answer fail):
@@ -70,9 +70,16 @@ HARD_RULES = """HARD RULES (code checks every one of them; breaking one makes th
     they help THIS customer, cite them like customer passages (never in target_facts / candidate_facts),
     and never go beyond what a note says. A note of kind "warning" or "transition" about an involved
     product MUST be mentioned (talking_points or tradeoffs).
-14. Answer with ONE JSON object in the response format you are given (fields: comparable,
+14. CUSTOMER PROFILE facts (P1, P2 ...) are public statements from the customer's OWN website, verified by
+    code: what markets they serve, what machines they build, what they say their priorities are. Use them to
+    tailor the business points and, where it helps, the talking points. Cite them like customer passages
+    (never in target_facts / candidate_facts). Never infer budgets, buying intent or current suppliers.
+15. business_fit: 0-3 bullets on why this comparison matters for THIS customer's business - connect what the
+    customer does or wants (P / C facts, the brief) with product facts (F) and approved notes (K). Every
+    bullet cites at least one P, C or K fact. No customer information at all -> an empty list.
+16. Answer with ONE JSON object in the response format you are given (fields: comparable,
     not_comparable_reason, best_match, alternatives, points, application_fit, talking_points, tradeoffs,
-    verify, overall_confidence), nothing else."""
+    business_fit, verify, overall_confidence), nothing else."""
 
 
 # ---------------------------------------------------------------- prompt
@@ -146,7 +153,8 @@ ROLES = {   # pool -> (what the TARGET is, what the CANDIDATES are, default ques
 def build_prompts(target_id: str, short: list[dict], facts: list[Fact], diffs, logic: Logic,
                   user_question: str, customer_context: str, focus: list[str] | None,
                   pool: str = "danfoss", customer: list[Fact] | None = None,
-                  commercial_notes: list[Fact] | None = None) -> tuple[str, str]:
+                  commercial_notes: list[Fact] | None = None,
+                  profile: list[Fact] | None = None) -> tuple[str, str]:
     target_role, cand_role, default_question = ROLES[pool]
     better = ", ".join(f"{a}: {d} is better" for a, d in logic.settings["better"].items()) or "none given"
     system = (f"You compare a TARGET ({target_role}) with CANDIDATES ({cand_role}) for a Danfoss "
@@ -181,6 +189,10 @@ def build_prompts(target_id: str, short: list[dict], facts: list[Fact], diffs, l
         *([f"{k.id} | {k.product_id} | {k.attribute}" + (f" | {k.note}" if k.note and k.note != "all" else "")
            + f' | "{k.value}" | {k.source_file}' + (f" slide {k.page}" if k.page else "") for k in commercial_notes or []]
           or ["- none approved"]),
+        "",
+        "CUSTOMER PROFILE (from the customer's own website, verified - cite as P1, P2 ...; rule 14):",
+        *([f"{f.id} | {f.attribute} | {f.value}" + (f" ({f.note})" if f.note else "") for f in profile or []]
+          or ["- not researched"]),
     ])
     return system, prompt
 
@@ -288,7 +300,8 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
               must_haves: dict | None = None, data: pd.DataFrame | None = None,
               use_cache: bool = True, pool: str = "danfoss",
               customer_facts: list[Fact] | None = None,
-              commercial_notes: list[Fact] | None = None) -> AnalysisResult:
+              commercial_notes: list[Fact] | None = None,
+              profile_facts: list[Fact] | None = None) -> AnalysisResult:
     """Compare the target with candidates (ids, a shortlist DataFrame, or None = make the shortlist).
     pool = "danfoss": target is a competitor product, candidates are Danfoss products (default).
     pool = "competitors": target is a Danfoss product, candidates are competitor products.
@@ -305,16 +318,24 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
     facts = build_facts(target_id, cand_ids, data, logic)
     diffs = code_differences(facts, logic)
     customer = list(customer_facts or [])                 # C1, C2 ... from the customer's own files
-    if commercial_notes is None:                          # K1, K2 ... approved sales-guideline notes
-        commercial_notes = commercial.commercial_facts([target_id, *cand_ids], first["family"])
-    facts = facts + customer + list(commercial_notes)
+    profile = list(profile_facts or [])                   # P1, P2 ... from the customer's own website
+    other_notes: list[dict] = []
+    if commercial_notes is None:                          # K1, K2 ... approved notes that fit THIS customer
+        terms, regions = customer_profile.terms_from(profile, f"{customer_context} {user_question}")
+        names = [first["product_name"]] + [c.get("product_name", "") for c in short]
+        shown, other_notes = commercial.relevant_notes(target_id, cand_ids, first["family"], names, terms, regions)
+        commercial_notes = commercial.facts(shown)
+        for f, r in zip(commercial_notes, shown):
+            f.condition = r["why"]                        # why this note was picked (shown on hover)
+    facts = facts + customer + list(commercial_notes) + profile
     result = AnalysisResult(
         status="no_ai", message="", target={"product_id": target_id, "brand": first["brand"],
                                             "product_name": first["product_name"], "family": first["family"]},
         shortlist=short, excluded=excluded, facts=facts, differences=diffs,
         meta={"model": config.llm_model(), "logic_files": logic.files, "cached": False, "attempts": 0,
               "focus_attributes": focus_attributes or [], "pool": pool, "customer_passages": len(customer),
-              "commercial_notes": len(commercial_notes)})
+              "commercial_notes": len(commercial_notes), "profile_facts": len(profile),
+              "commercial_other": other_notes})
 
     if not cand_ids:
         result.message = (f"No {ROLES[pool][1]} with data in the same family"
@@ -323,12 +344,14 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
     elif not use_ai:
         result.message = STATUS_MESSAGES["no_ai"] + " (AI not requested)"
     else:
-        sent = lean_facts(_focus_facts([f for f in facts if f.role not in ("customer", "commercial")], focus_attributes),
+        sent = lean_facts(_focus_facts([f for f in facts if f.role not in ("customer", "commercial", "profile")],
+                                       focus_attributes),
                           logic, focus_attributes, config.prompt_max_facts(),
                           context=f"{user_question} {customer_context}")
         result.meta["facts_sent"] = len(sent)
         system, prompt = build_prompts(target_id, short, sent, diffs, logic, user_question,
-                                       customer_context, focus_attributes, pool, customer, commercial_notes)
+                                       customer_context, focus_attributes, pool, customer, commercial_notes,
+                                       profile)
         check = lambda a: check_interpretation(a, facts, diffs, target_id, cand_ids, logic,
                                                f"{user_question} {customer_context}")
         key = _cache_key(system, prompt)

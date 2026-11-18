@@ -40,7 +40,7 @@ _product_choice = {"type": "object", "additionalProperties": False, "required": 
 OUTPUT_SCHEMA = {
     "type": "object", "additionalProperties": False,
     "required": ["comparable", "not_comparable_reason", "best_match", "alternatives", "points",
-                 "application_fit", "talking_points", "tradeoffs", "verify", "overall_confidence"],
+                 "application_fit", "talking_points", "tradeoffs", "business_fit", "verify", "overall_confidence"],
     "properties": {
         "comparable": {"type": "boolean"},
         "not_comparable_reason": {"anyOf": [{"type": "string"}, {"type": "null"}]},
@@ -62,6 +62,7 @@ OUTPUT_SCHEMA = {
         "application_fit": _cited,
         "talking_points": {"type": "array", "items": _cited},
         "tradeoffs": {"type": "array", "items": _cited},
+        "business_fit": {"type": "array", "items": _cited},
         "verify": {"type": "array", "items": {
             "type": "object", "additionalProperties": False, "required": ["fact_id", "reason"],
             "properties": {"fact_id": {"type": "string"}, "reason": {"type": "string"}}}},
@@ -92,7 +93,7 @@ def check_shape(value, schema: dict = OUTPUT_SCHEMA, path: str = "answer") -> li
         problems.append(f"{path}: '{value}' is not one of {', '.join(schema['enum'])}")
     if schema.get("type") == "object":
         for key in schema.get("required", []):
-            if key not in value:
+            if key not in value and not (path == "answer" and key in OPTIONAL_IN_OLD_ANSWERS):
                 problems.append(f"{path}: missing field '{key}'")
         for key, sub in schema.get("properties", {}).items():
             if key in value:
@@ -122,7 +123,7 @@ def _allowed_numbers(fact_ids: list[str], by_id: dict[str, Fact], diffs: list[Di
     allowed: set[float] = set()
     cited = [by_id[i] for i in fact_ids if i in by_id]
     for f in cited:
-        if f.role in ("customer", "commercial"):         # a passage/note: every number in its text counts
+        if f.role in BUSINESS_ROLES:                     # a passage/note: every number in its text counts
             allowed |= {abs(v) for v in (parse_number(x) for x in numbers_in(f.value or "")) if v is not None}
             continue
         for f2 in [f] + [by_id[b] for b in f.based_on if b in by_id]:      # calculated: inputs count too
@@ -171,7 +172,7 @@ def _statements(answer: dict) -> list[tuple[str, str, list[str], str | None]]:
     fit = answer.get("application_fit")
     if isinstance(fit, dict) and (fit.get("text") or "").strip():
         out.append(("application_fit", fit.get("text", ""), fit.get("fact_ids", []), None))
-    for key in ("talking_points", "tradeoffs"):
+    for key in ("talking_points", "tradeoffs", "business_fit"):
         for i, t in enumerate(answer.get(key) or []):
             out.append((f"{key}[{i}]", t.get("text", ""), t.get("fact_ids", []), None))
     for i, v in enumerate(answer.get("verify") or []):
@@ -217,7 +218,7 @@ def check_interpretation(answer: dict, facts: list[Fact], diffs: list[Diff], tar
         for fid in ids:
             if fid not in by_id:
                 problems.append(f"{where}: cites unknown fact {fid}")
-            elif product and by_id[fid].role not in ("customer", "commercial") \
+            elif product and by_id[fid].role not in BUSINESS_ROLES \
                     and by_id[fid].product_id not in (product, target_id):
                 problems.append(f"{where}: {fid} belongs to {by_id[fid].product_id}, not {product} or the target")
         allowed = _allowed_numbers(ids, by_id, diffs) | user_numbers
@@ -225,6 +226,11 @@ def check_interpretation(answer: dict, facts: list[Fact], diffs: list[Diff], tar
             n = parse_number(raw)
             if n is not None and not _number_ok(abs(n), allowed):
                 problems.append(f"{where}: number {raw} is not in the cited facts {', '.join(ids)}")
+
+    # 9. business points must rest on something about THIS customer (profile, customer file or approved note)
+    for i, b in enumerate(answer.get("business_fit") or []):
+        if not any(by_id[x].role in BUSINESS_ROLES for x in b.get("fact_ids", []) if x in by_id):
+            problems.append(f"business_fit[{i}]: cite at least one customer fact (P.., C..) or approved note (K..)")
 
     # 8. length
     problems += check_length(answer)
@@ -243,7 +249,9 @@ def check_interpretation(answer: dict, facts: list[Fact], diffs: list[Diff], tar
     return problems
 
 
-MAX_COUNT = {"talking_points": 3, "tradeoffs": 2, "points": 8}
+MAX_COUNT = {"talking_points": 3, "tradeoffs": 2, "points": 8, "business_fit": 3}
+BUSINESS_ROLES = ("customer", "commercial", "profile")
+OPTIONAL_IN_OLD_ANSWERS = ("business_fit",)               # answers cached before the field existed still pass    # facts ABOUT the customer / sales guidelines, not products
 MAX_WORDS, MAX_WORDS_BEST_MATCH = 45, 55
 
 

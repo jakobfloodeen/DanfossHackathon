@@ -31,7 +31,7 @@ from .results import AnalysisResult
 from .units import UNITS, fmt, unit_key
 
 MAX_MATCHES = 3
-MAX_DIFFERENCES, MAX_BENEFITS, MAX_TRADEOFFS = 3, 3, 2
+MAX_DIFFERENCES, MAX_BENEFITS, MAX_TRADEOFFS, MAX_BUSINESS = 3, 3, 2, 3
 SHOWN = {"ok", "converted", "unverified", "conflict", "inferred"}     # a cell that actually has a value
 
 # attribute name contains ... -> the website's priority chip ("factor")
@@ -87,6 +87,9 @@ class _Sources:
                 info = {"title": f"Customer file: {f.source_file}", "url": None, "kind": "customer"}
             elif f.role == "commercial":                          # internal sales guidelines: never online
                 info = {"title": f"Sales guideline: {f.source_file}", "url": None, "kind": "commercial"}
+            elif f.role == "profile":                             # the customer's own public web page
+                info = {"title": f"Customer website: {f.condition or f.source_file}", "url": f.source_file,
+                        "kind": "profile"}
             self.items.append({"id": self.index[key], "title": info.get("title") or f.source_file, "doc": "",
                                "quotes": [], "page": str(f.page) if f.page else "", "date": info.get("date", ""),
                                "file": f.source_file, "url": info.get("url"), "kind": info.get("kind", "document")})
@@ -265,10 +268,12 @@ def to_website(result: AnalysisResult, names: dict[str, dict] | None = None,
 
     insights = _insights(result, by_id, sources, names, match_ids)
     commercial_block = [{"id": f.id, "product": f.product_id, "kind": f.attribute, "text": f.value,
-                         "regions": f.note, "source": f.source_file,
+                         "regions": f.note, "source": f.source_file, "why": f.condition or "",
                          "page": str(f.page) if f.page else "", "sources": sources.ref(f, by_id)}
                         for f in result.facts if f.role == "commercial"]
-    source_list = _number_cited_sources(attributes, insights, sources.finish(), commercial_block)
+    profile_block = _profile_block(result, by_id, sources)
+    source_list = _number_cited_sources(attributes, insights, sources.finish(),
+                                        commercial_block + (profile_block or {}).get("items", []))
     flags = _flags(result, by_id, names, pending) + list(extra_flags or [])
     anchor = column(target) if target else {"key": "none", "name": "?", "manufacturer": ""}
     matches = [column(p) for p in match_ids]
@@ -283,6 +288,8 @@ def to_website(result: AnalysisResult, names: dict[str, dict] | None = None,
         "confidence": _confidence(result),
         "sources": source_list,
         "commercial": commercial_block,
+        "commercialOther": result.meta.get("commercial_other") or [],
+        "customerProfile": profile_block,
         "grounding": result.meta.get("grounding") or {},
         "engine": {"status": result.status, "message": result.message, "best_match": result.best_match_id,
                    "problems": result.problems, "meta": result.meta},
@@ -314,6 +321,18 @@ def _number_cited_sources(attributes: list[dict], insights: dict, items: list[di
     return [{**by_old[old], "id": new} for old, new in new_id.items()]
 
 
+def _profile_block(result: AnalysisResult, by_id: dict, sources: "_Sources") -> dict | None:
+    """The customer snapshot (from their website) shown above the business points, each line footnoted."""
+    facts = [f for f in result.facts if f.role == "profile"]
+    if not facts:
+        return None
+    info = result.meta.get("customer_profile") or {}
+    return {"company": info.get("company", ""), "website": info.get("website", ""),
+            "researchedAt": info.get("researched_at", ""), "pages": info.get("pages", 0),
+            "items": [{"id": f.id, "kind": f.attribute, "text": f.value, "date": f.note or "",
+                       "sources": sources.ref(f, by_id)} for f in facts]}
+
+
 def _name(pid: str, names: dict) -> str:
     return names.get(pid, {}).get("name") or (pid.split("|", 1)[-1] if "|" in (pid or "") else pid)
 
@@ -322,7 +341,7 @@ def _insights(result, by_id, sources, names, match_ids) -> dict:
     interp = result.interpretation
     if interp:
         def item(text, ids):     # "(C2)" / "[F12]" in the text are redundant: the footnotes show the sources
-            text = re.sub(r"\s*[\(\[](?:[CF]\d+(?:,\s*)?)+[\)\]]", "", text)
+            text = re.sub(r"\s*[\(\[](?:[CFKP]\d+(?:,\s*)?)+[\)\]]", "", text)
             return {"text": text, "sources": sources.refs([by_id[i] for i in ids if i in by_id], by_id)}
         bm = interp.get("best_match") or {}
         differences = ([item(f"Closest match: {_name(bm.get('product_id'), names)}. {bm.get('why', '')}",
@@ -337,7 +356,8 @@ def _insights(result, by_id, sources, names, match_ids) -> dict:
         if fit.get("text") and len(benefits) < MAX_BENEFITS:
             benefits.append(item(fit["text"], fit.get("fact_ids", [])))
         tradeoffs = [item(t["text"], t["fact_ids"]) for t in interp.get("tradeoffs", [])][:MAX_TRADEOFFS]
-        return {"differences": differences, "benefits": benefits, "tradeoffs": tradeoffs}
+        business = [item(t["text"], t["fact_ids"]) for t in interp.get("business_fit") or []][:MAX_BUSINESS]
+        return {"differences": differences, "benefits": benefits, "tradeoffs": tradeoffs, "business": business}
     # no AI: only differences that code computed itself
     first = match_ids[0] if match_ids else None
     differences = []
@@ -351,7 +371,7 @@ def _insights(result, by_id, sources, names, match_ids) -> dict:
                      f"{d.candidate_value_is})"),
             "sources": sources.refs([t, c], by_id)})
     differences.sort(key=lambda d: -abs(float(d["text"].rsplit("(", 1)[1].split("%")[0])))   # biggest first
-    return {"differences": differences[:MAX_DIFFERENCES], "benefits": [], "tradeoffs": []}
+    return {"differences": differences[:MAX_DIFFERENCES], "benefits": [], "tradeoffs": [], "business": []}
 
 
 def _flags(result, by_id, names, pending) -> list[dict]:
@@ -394,6 +414,11 @@ def _flags(result, by_id, names, pending) -> list[dict]:
     if customer:
         files = ", ".join(sorted({f.source_file for f in customer}))
         flags.append({"level": "ok", "text": f"Customer feedback considered: {len(customer)} passage(s) from {files}."})
+    profile = [f for f in result.facts if f.role == "profile"]
+    if profile:
+        site = (result.meta.get("customer_profile") or {}).get("website") or "the customer's website"
+        flags.append({"level": "ok", "text": f"Customer profile considered: {len(profile)} statement(s) verified "
+                                            f"against {site}."})
     commercial = [f for f in result.facts if f.role == "commercial"]
     if commercial:
         flags.append({"level": "ok", "text": f"Approved commercial notes considered: {len(commercial)} "

@@ -67,7 +67,10 @@ def test_interpret_sends_approved_notes_and_ai_may_cite_them(monkeypatch, tmp_pa
 
     r = interpret("pvg32", ["m4-12"], ask=fake, pool="competitors", data=_data(), use_cache=False)
     assert "APPROVED COMMERCIAL NOTES" in captured["prompt"] and "K1 | pvg32 | positioning" in captured["prompt"]
-    assert r.status == "ok" and r.meta["commercial_notes"] == 2
+    # the PVG32 note is relevant; the family note about PVG120 is not (no product of this comparison, no customer
+    # match), so it is kept aside instead of being shown in every comparison
+    assert r.status == "ok" and r.meta["commercial_notes"] == 1
+    assert [n["id"] for n in r.meta["commercial_other"]] == ["COM-002"]
     assert not r.meta.get("problems")                                   # citing K1 passes the guardrails
 
 
@@ -77,7 +80,8 @@ def test_website_shows_commercial_block_with_source(monkeypatch, tmp_path):
     r = interpret("pvg32", ["m4-12"], use_ai=False, data=_data(), use_cache=False)
     w = to_website(r)
     block = w["commercial"]
-    assert len(block) == 2 and block[0]["kind"] == "positioning"
+    assert len(block) == 1 and block[0]["kind"] == "positioning"
+    assert [n["id"] for n in w["commercialOther"]] == ["COM-002"]
     cited = [s for s in w["sources"] if s["kind"] == "commercial"]
     assert cited and cited[0]["title"].startswith("Sales guideline:") and cited[0]["url"] is None
 

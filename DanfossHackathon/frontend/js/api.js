@@ -97,5 +97,18 @@ const Api = (() => {
     async ask(payload) {
       return call("/ask", { method: "POST", body: JSON.stringify(payload) });
     },
+    /** Read the customer's website into a saved profile (once per customer). -> {status:"cached", profile} | {jobId} */
+    async researchCustomer(payload) {
+      const user = localStorage.getItem("dani-user") || "senior";
+      const res = await fetch(cfg.API_BASE + "/customers/research", {
+        method: "POST", headers: { "X-User": user, "Content-Type": "application/json" }, body: JSON.stringify(payload),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.detail || `Research failed (status ${res.status})`);
+      return body;
+    },
+    async customerProfile(company) {
+      return call("/customers/profile?company=" + encodeURIComponent(company));
+    },
   };
 })();

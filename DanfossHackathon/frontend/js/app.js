@@ -48,7 +48,7 @@
       competitors: { mode: "auto", ids: [], productIds: [] }, // auto = let backend find best matches
       factors: {},                                // { factorId: "nice" | "must" }
       customFactors: [],                          // user-typed factor labels
-      buyer: { company: "", application: "", currentSupplier: "", notes: "" },
+      buyer: { company: "", application: "", currentSupplier: "", notes: "", website: "", focus: "" },
       done: { competitors: false, factors: false, buyer: false },
       log: [],                                    // free-text chat: { stage, role, text }
       loading: false,
@@ -131,7 +131,8 @@
   }
   function buyerSummary() {
     const b = state.buyer;
-    return [b.company, b.application, b.currentSupplier && "uses " + b.currentSupplier].filter(Boolean).join(" · ");
+    return [b.company, b.application, b.currentSupplier && "uses " + b.currentSupplier, b.focus && "focus: " + b.focus]
+      .filter(Boolean).join(" · ");
   }
 
   /** The payload sent to POST /compare and as context for /ask. */
@@ -696,6 +697,16 @@
       <label class="field span-2"><span>Company / buyer name <span class="req">*</span></span>
         <input name="company" required value="${esc(b.company)}" placeholder="e.g. AGCO">
       </label>
+      <label class="field"><span>Company website <span class="opt">(optional)</span></span>
+        <input name="website" value="${esc(b.website || "")}" placeholder="e.g. www.agcocorp.com">
+      </label>
+      <label class="field"><span>Business focus <span class="opt">(optional)</span></span>
+        <input name="focus" value="${esc(b.focus || "")}" placeholder="e.g. electric compact loaders">
+      </label>
+      <div class="span-2 research-row">
+        <button class="btn btn-ghost btn-sm" type="button" data-act="research">Read their website</button>
+        <span class="hint research-status">${researchStatusText()}</span>
+      </div>
       <label class="field">Application
         <select name="application">
           <option value="">Select…</option>
@@ -709,11 +720,39 @@
         <textarea name="notes" rows="3" placeholder="Requirements, constraints, volumes, meeting goal…">${esc(b.notes)}</textarea>
       </label>
       <div class="actions span-2"><button class="btn btn-primary" type="submit">Continue</button></div>`;
+    const readForm = () => {
+      const fd = new FormData(form);
+      return Object.fromEntries(["company", "application", "currentSupplier", "notes", "website", "focus"]
+        .map((k) => [k, (fd.get(k) || "").trim()]));
+    };
+    const status = form.querySelector(".research-status");
+    const show = () => { status.innerHTML = researchStatusText(); };
+    form.querySelector('[data-act="research"]').addEventListener("click", async (ev) => {
+      const b2 = readForm();
+      if (!b2.company) { status.textContent = "Enter the customer's name first."; return; }
+      ev.target.disabled = true;
+      await startResearch(b2, show, ev.shiftKey || !!state.research?.profile);   // pressing again = refresh
+      ev.target.disabled = false;
+      ev.target.textContent = state.research?.profile ? "Read again (refresh)" : "Read their website";
+    });
+    form.company.addEventListener("change", async () => {        // a known customer: show the saved profile
+      const name = form.company.value.trim();
+      if (!name) return;
+      try {
+        const { profile } = await Api.customerProfile(name);
+        state.research = profile ? { company: name, status: "done", profile } : null;
+        if (profile && !form.website.value) form.website.value = profile.website || "";
+        if (profile && !form.focus.value) form.focus.value = profile.focus || "";
+        form.querySelector('[data-act="research"]').textContent = profile ? "Read again (refresh)" : "Read their website";
+        show();
+      } catch { /* the profile is optional */ }
+    });
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      const fd = new FormData(form);
-      state.buyer = Object.fromEntries(["company", "application", "currentSupplier", "notes"].map((k) => [k, (fd.get(k) || "").trim()]));
+      state.buyer = readForm();
       if (!state.buyer.company) return;
+      const same = state.research && sameCustomer(state.research.company, state.buyer.company);
+      if (state.buyer.website && !same) startResearch(state.buyer, () => {}, false);   // runs while the user continues
       state.done.buyer = true; render();
     });
     box.appendChild(form);
@@ -729,12 +768,54 @@
       <dt>Compare against</dt><dd>${esc(competitorSummary())}</dd>
       <dt>Priorities</dt><dd>${esc(factorSummary())}${state.customFactors.length ? " · Own: " + esc(state.customFactors.join(", ")) : ""}</dd>
       <dt>Buyer</dt><dd>${esc(buyerSummary())}</dd>
-      ${state.buyer.notes ? `<dt>Notes</dt><dd>${esc(state.buyer.notes)}</dd>` : ""}`));
+      ${state.buyer.notes ? `<dt>Notes</dt><dd>${esc(state.buyer.notes)}</dd>` : ""}
+      ${state.research && sameCustomer(state.research.company, state.buyer.company) ? `<dt>Customer profile</dt><dd>${researchStatusText()}</dd>` : ""}`));
     if (p.status === "data-pending") box.appendChild(el("p", { class: "flag flag-missing" }, "Limited data is loaded for this product, so the comparison will be partial."));
     box.appendChild(el("div", { class: "actions" })).appendChild(el("button", {
       class: "btn btn-primary btn-lg", type: "button", onclick: generate,
     }, "Generate comparison"));
     botMsg(box).classList.add("bubble-wide");
+  }
+
+  // ---------- customer website research (one AI call per new customer; saved for later comparisons) ----------
+  const sameCustomer = (a, b) => String(a || "").toLowerCase().replace(/[^a-z0-9]+/g, "") ===
+                                 String(b || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+
+  function researchStatusText() {
+    const r = state.research;
+    if (!r) return "Dani reads the customer's own website once (about one AI call, a few cents) and tailors the business part to it.";
+    if (r.status === "running") return `<span class="spinner-dot"></span> ${esc(r.progress || "Reading the website…")}`;
+    if (r.status === "error") return `<span class="text-warn">${esc(r.progress || "Research failed.")}</span>`;
+    const p = r.profile || {};
+    const when = (p.researched_at || "").slice(0, 10);
+    const lines = [...(p.segments || []), ...(p.machines || [])].map((x) => x.name).slice(0, 5);
+    return `Profile saved${when ? " " + esc(when) : ""}: ${esc(p.message || "")}${lines.length ? " · " + esc(lines.join(", ")) : ""}`;
+  }
+
+  async function startResearch(b, onUpdate, refresh) {
+    state.research = { company: b.company, status: "running", progress: "Starting…" };
+    onUpdate();
+    try {
+      const res = await Api.researchCustomer({ company: b.company, website: b.website, focus: b.focus, refresh });
+      if (res.profile) state.research = { company: b.company, status: "done", profile: res.profile };
+      else state.research.jobId = res.jobId;
+      onUpdate();
+      while (state.research.jobId && state.research.status === "running") {
+        await new Promise((r) => setTimeout(r, 1500));
+        const job = await Api.job(state.research.jobId);
+        state.research.progress = job.progress;
+        if (job.status === "done") state.research = { company: b.company, status: "done", profile: job.profile };
+        else if (job.status === "error" || job.status === "unknown") state.research = { company: b.company, status: "error", progress: job.progress };
+        onUpdate();
+      }
+    } catch (err) {
+      state.research = { company: b.company, status: "error", progress: err.message };
+      onUpdate();
+    }
+  }
+
+  async function researchFinished() {          // a comparison waits for a running website read (max ~2 min)
+    for (let i = 0; i < 80 && state.research?.status === "running"; i++) await new Promise((r) => setTimeout(r, 1500));
   }
 
   // ---------- generate + results ----------
@@ -743,6 +824,7 @@
   async function generate() {
     state.loading = true; state.error = null; render();
     try {
+      await researchFinished();
       state.result = await Api.compare(buildPayload());
     } catch (err) {
       state.error = err.message;
@@ -840,22 +922,47 @@
                        selling_point: "Selling point", transition: "Transition", warning: "Warning" };
 
   /** Approved commercial notes (sales guidelines) + the review queue for pending ones. */
+  const PROFILE_LABEL = { summary: "About", segment: "Market", machine: "Builds", hydraulics: "Hydraulics",
+                          region: "Region", news: "News" };
+
+  /** "Business fit for <customer>": what their website says, why this comparison matters to them,
+   *  and the approved sales-guideline notes that fit THIS comparison and customer (the rest folded away). */
   function commercialHtml(r) {
     const approved = r.commercial || [];
     const pending = r.commercialPending || [];
-    if (!approved.length && !pending.length) return "";
-    const note = (n, extra) => `<li class="com-note${extra ? " is-pending" : ""}">
+    const other = r.commercialOther || [];
+    const business = r.insights?.business || [];
+    const prof = r.customerProfile;
+    if (!approved.length && !pending.length && !other.length && !business.length && !prof) return "";
+    const who = state.buyer.company || prof?.company || "the customer";
+    const profileItem = (it) => {
+      const label = it.kind.startsWith("priority") ? "Priority" : (PROFILE_LABEL[it.kind] || it.kind);
+      return `<li><span class="badge badge-muted">${esc(label)}</span> ${esc(it.text)}${it.date ? ` <span class="hint">(${esc(it.date)})</span>` : ""}${(it.sources || []).map(ref).join("")}</li>`;
+    };
+    const snapshot = prof ? `<div class="biz-block"><div class="biz-label">From their website
+        <span class="hint">· ${esc(prof.website || "")}${prof.researchedAt ? " · read " + esc(prof.researchedAt.slice(0, 10)) : ""}</span></div>
+        <ul>${prof.items.map(profileItem).join("")}</ul></div>`
+      : `<p class="hint">Add ${esc(who)}'s website in the buyer step to tailor this part to their business.</p>`;
+    const bizList = business.length ? `<div class="biz-block"><div class="biz-label">Why it matters to ${esc(who)}</div>
+        <ul>${business.map((it) => `<li>${esc(it.text)}${(it.sources || []).map(ref).join("")}</li>`).join("")}</ul></div>` : "";
+    const note = (n, extra) => `<li class="com-note${extra ? " is-pending" : ""}"${n.why ? ` title="Picked because: ${esc(n.why)}"` : ""}>
       <span class="badge badge-${n.kind === "warning" || n.kind === "transition" ? "warn" : "brand"}">${esc(KIND_LABEL[n.kind] || n.kind)}</span>
       ${esc(n.text)} <span class="hint">· ${esc(n.product)}${n.regions && n.regions !== "all" ? " · " + esc(n.regions) : ""}
       · ${esc(n.source)}${n.page ? ", slide " + esc(n.page) : ""}</span>${(n.sources || []).map(ref).join("")}${extra || ""}</li>`;
     const canEdit = currentUser.role === "editor";
-    return `<section class="insight commercial"><h4>Commercial (approved sales-guideline notes, internal)</h4>
+    const otherHtml = other.length ? `<details class="biz-other"><summary>${other.length} other approved note(s) not specific to this comparison or customer</summary>
+        <ul>${other.map((n) => note({ ...n, product: n.product_id, source: n.source_file })).join("")}</ul></details>` : "";
+    return `<section class="insight commercial"><h4>Business fit for ${esc(who)}</h4>
+      ${snapshot}${bizList}
+      <div class="biz-label">Approved sales-guideline notes <span class="hint">(internal)</span></div>
+      ${approved.length ? "" : '<p class="hint">No approved note matches this comparison and customer.</p>'}
       <ul>${approved.map((n) => note(n)).join("")}
       ${pending.map((n) => note({ ...n, product: n.product_id, source: n.source_file },
         canEdit ? ` <span class="pending-tools" data-id="${esc(n.id)}">· pending ·
             <button class="link-btn" type="button" data-decide="approve">Approve</button>
             <button class="link-btn" type="button" data-decide="reject">Reject</button></span>`
                 : ' <span class="badge badge-muted">pending editor approval</span>')).join("")}</ul>
+      ${otherHtml}
       <button class="link-btn" type="button" data-act="suggest-note">+ Suggest a note</button>
       <div class="suggest-note" hidden>
         <div class="form-grid tight">

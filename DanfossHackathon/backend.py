@@ -371,6 +371,7 @@ from comparison_engine.customer import customer_facts, list_customers, save_cust
 from comparison_engine.system import System, compare_systems, compose_system  # noqa: E402
 from comparison_engine import usage                                              # noqa: E402
 from comparison_engine import commercial                                          # noqa: E402
+from comparison_engine import customer_profile                                    # noqa: E402
 
 
 async def upload_customer_files(customer_name: Optional[str], files: list[UploadFile]) -> dict:
@@ -439,6 +440,7 @@ def brief_text(payload: dict) -> tuple[str, str]:
     context = "; ".join(x for x in [
         f"customer: {buyer.get('company')}" if buyer.get("company") else "",
         f"application: {buyer.get('application')}" if buyer.get("application") else "",
+        f"business focus: {buyer.get('focus')}" if buyer.get("focus") else "",
         f"uses today: {buyer.get('currentSupplier')}" if buyer.get("currentSupplier") else "",
         f"notes: {buyer.get('notes')}" if buyer.get("notes") else "",
         f"must-have topics: {', '.join(must)}" if must else "",
@@ -524,13 +526,28 @@ def decide_commercial(payload: dict, request: Request):
     return {"note": row}
 
 
+def customer_profile_facts(payload: dict) -> tuple[dict | None, list]:
+    """The saved website profile of the buyer (researched earlier, no AI call here) -> (profile, facts P1..)."""
+    profile = customer_profile.load((payload.get("buyer") or {}).get("company", ""))
+    return profile, customer_profile.profile_facts(profile)
+
+
+def note_profile(result, profile: dict | None) -> None:
+    if profile and profile.get("status") == "ok":
+        result.meta["customer_profile"] = {"company": profile.get("company"), "website": profile.get("website"),
+                                           "researched_at": profile.get("researched_at"),
+                                           "pages": len(profile.get("pages", []))}
+
+
 def run_engine(target_id: str, candidates, pool: str, payload: dict, names: dict, pending: dict,
                extra_flags: list) -> dict:
     question, context = brief_text(payload)
     customer = customer_passages(payload, question, context)
+    profile, profile_facts = customer_profile_facts(payload)
     with usage.collect() as calls:
         result = interpret(target_id, candidates, question, context, ask=ENGINE_ASK, use_ai=True, pool=pool,
-                           customer_facts=customer)
+                           customer_facts=customer, profile_facts=profile_facts)
+    note_profile(result, profile)
     for pid, info in names.items():                     # confirmed equivalent pairs from the uploads
         info["knownEquivalent"] = target_id in info.get("equivalentOf", []) or pid in names.get(
             target_id, {}).get("equivalentOf", [])
@@ -750,6 +767,80 @@ def job_status(job_id: str):
 
 
 # =====================================================================
+# Customer research: read the customer's own website ONCE into a verified business profile
+#   POST /api/customers/research {"company", "website", "focus", "refresh"}
+#        -> {"status": "cached", "profile": {...}}   saved earlier: no crawl, no AI call
+#        -> {"jobId": "..."}                         new customer: crawl + ONE AI call in the background
+#   GET  /api/customers/profile?company=...          -> {"profile": {...} | null}
+# The profile is then used by every comparison for that customer (P1, P2 ... facts, relevant notes).
+# =====================================================================
+CUSTOMER_LOCK = threading.Lock()
+CUSTOMER_ASK = None        # tests put a fake AI here
+CUSTOMER_CRAWL = None      # tests put a fake crawler here
+
+
+def _profile_view(profile: dict | None) -> dict | None:
+    """What the website needs (no raw quotes list duplication, no internal paths)."""
+    if not profile:
+        return None
+    keys = ("company", "website", "focus", "researched_at", "status", "message", "summary", "segments",
+            "machines", "priorities", "regions", "hydraulics", "news", "questions", "pages", "warnings", "dropped",
+            "model")
+    return {k: profile.get(k) for k in keys}
+
+
+def run_customer_research(job: dict) -> None:
+    job["status"] = "running"
+    log = lambda line: (job["log"].append(line), job.__setitem__("progress", line))   # noqa: E731
+    try:
+        with CUSTOMER_LOCK, usage.collect() as calls:
+            profile = customer_profile.research(job["company"], job["website"], job["focus"],
+                                                ask=CUSTOMER_ASK, crawl=CUSTOMER_CRAWL, log=log)
+        cost = usage.total(calls)
+        profile["cost"] = cost
+        customer_profile.save(profile)
+        job["profile"] = _profile_view(profile)
+        job["aiCost"] = cost
+        job["status"] = "done" if profile.get("status") == "ok" else "error"
+        job["progress"] = profile.get("message", "")
+    except Exception as e:                                       # bad address, robots.txt, API error ...
+        job["status"] = "error"
+        job["progress"] = f"Research failed: {str(e)[:240]}"
+
+
+@app.post("/api/customers/research")
+def research_customer_site(payload: dict):
+    company = str(payload.get("company") or "").strip()
+    website = str(payload.get("website") or "").strip()
+    focus = str(payload.get("focus") or "").strip()[:300]
+    if not company:
+        raise HTTPException(400, "Enter the customer's name first.")
+    saved = customer_profile.load(company)
+    if saved and not payload.get("refresh") and (not website or website.rstrip("/") == saved.get("website", "").rstrip("/")):
+        return {"status": "cached", "profile": _profile_view(saved)}
+    if not website:
+        raise HTTPException(400, "Enter the customer's website (e.g. https://www.company.com).")
+    if not website.lower().startswith(("http://", "https://")):
+        website = "https://" + website
+    running = next((j for j in JOBS.values() if j.get("type") == "customer" and j["status"] in ("queued", "running")
+                    and j["company"].lower() == company.lower()), None)
+    if running:
+        return {"jobId": running["id"]}
+    if CUSTOMER_ASK is None and not has_api_key():
+        raise HTTPException(400, "No AI key configured (ANTHROPIC_API_KEY in .env) - the website cannot be read.")
+    job = {"id": uuid.uuid4().hex[:12], "type": "customer", "status": "queued", "company": company,
+           "website": website, "focus": focus, "progress": "Waiting to start ...", "log": []}
+    JOBS[job["id"]] = job
+    threading.Thread(target=run_customer_research, args=(job,), daemon=True).start()
+    return {"jobId": job["id"]}
+
+
+@app.get("/api/customers/profile")
+def get_customer_profile(company: str = ""):
+    return {"profile": _profile_view(customer_profile.load(company))}
+
+
+# =====================================================================
 # Web import with the teammates' scraper (scraper/ in the repo root; no AI, no API key)
 #   POST /api/web/discover {"url": "https://manufacturer.com/...", "topic": "valves"} -> candidate documents
 #   POST /api/web/import   {"url": "<chosen document>", "source": "danfoss"|"competitor", ...same target fields as
@@ -876,10 +967,13 @@ def compare_system_endpoint(payload: dict):
     other = compose_system("system:other", other_name, other_brand, fixed, anchor,
                            pool="competitors" if start == "danfoss" else "danfoss")
     question, context = brief_text(payload)
+    profile, profile_facts = customer_profile_facts(payload)
     with usage.collect() as calls:
         result = compare_systems(anchor, other, question, context, ask=ENGINE_ASK,
                                  customer_facts=customer_passages(payload, question, context),
-                                 pool="competitors" if start == "danfoss" else "danfoss")
+                                 pool="competitors" if start == "danfoss" else "danfoss",
+                                 profile_facts=profile_facts)
+    note_profile(result, profile)
 
     def parts(system):
         return " + ".join(f"{names.get(p, {}).get('name') or p.split('|')[-1]} ({r})"
