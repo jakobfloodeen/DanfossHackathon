@@ -249,7 +249,8 @@ def check_interpretation(answer: dict, facts: list[Fact], diffs: list[Diff], tar
     return problems
 
 
-MAX_COUNT = {"talking_points": 3, "tradeoffs": 2, "points": 8, "business_fit": 3}
+MAX_COUNT = {"talking_points": 3, "tradeoffs": 2, "points": 8, "business_fit": 5}
+MAX_WORDS_BUSINESS = 75     # business points connect customer + product + what to say: room for detail
 BUSINESS_ROLES = ("customer", "commercial", "profile")
 OPTIONAL_IN_OLD_ANSWERS = ("business_fit",)               # answers cached before the field existed still pass    # facts ABOUT the customer / sales guidelines, not products
 MAX_WORDS, MAX_WORDS_BEST_MATCH = 45, 55
@@ -259,7 +260,8 @@ def check_length(answer: dict) -> list[str]:
     problems = [f"{key}: {len(answer[key])} items, at most {limit} allowed"
                 for key, limit in MAX_COUNT.items() if len(answer.get(key) or []) > limit]
     for where, text, _, _ in _statements(answer):
-        limit = MAX_WORDS_BEST_MATCH if where == "best_match.why" else MAX_WORDS
+        limit = (MAX_WORDS_BEST_MATCH if where == "best_match.why" else
+                 MAX_WORDS_BUSINESS if where.startswith("business_fit") else MAX_WORDS)
         if len((text or "").split()) > limit:
             problems.append(f"{where}: {len(text.split())} words, keep it under {limit - 15}")
     return problems

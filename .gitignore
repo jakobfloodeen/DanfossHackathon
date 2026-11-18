@@ -6,5 +6,7 @@ __pycache__/
 .cache/
 .pytest_cache/
 # anchored patterns: the app's data folder is DanfossHackathon/data, not data/ at the repo root
+# customers/ = files the CUSTOMER gave us (feedback, specs): confidential, never committed.
+# customer_profiles/ + customer_directory.csv = public website information: committed and shared.
 **/data/customers/
 **/data/usage.csv

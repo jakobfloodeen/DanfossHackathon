@@ -440,7 +440,6 @@ def brief_text(payload: dict) -> tuple[str, str]:
     context = "; ".join(x for x in [
         f"customer: {buyer.get('company')}" if buyer.get("company") else "",
         f"application: {buyer.get('application')}" if buyer.get("application") else "",
-        f"business focus: {buyer.get('focus')}" if buyer.get("focus") else "",
         f"uses today: {buyer.get('currentSupplier')}" if buyer.get("currentSupplier") else "",
         f"notes: {buyer.get('notes')}" if buyer.get("notes") else "",
         f"must-have topics: {', '.join(must)}" if must else "",
@@ -536,7 +535,8 @@ def note_profile(result, profile: dict | None) -> None:
     if profile and profile.get("status") == "ok":
         result.meta["customer_profile"] = {"company": profile.get("company"), "website": profile.get("website"),
                                            "researched_at": profile.get("researched_at"),
-                                           "pages": len(profile.get("pages", []))}
+                                           "pages": profile.get("pages_used") or len(profile.get("pages", [])),
+                                           "questions": profile.get("questions", [])}
 
 
 def run_engine(target_id: str, candidates, pool: str, payload: dict, names: dict, pending: dict,
@@ -767,26 +767,24 @@ def job_status(job_id: str):
 
 
 # =====================================================================
-# Customer research: read the customer's own website ONCE into a verified business profile
-#   POST /api/customers/research {"company", "website", "focus", "refresh"}
-#        -> {"status": "cached", "profile": {...}}   saved earlier: no crawl, no AI call
-#        -> {"jobId": "..."}                         new customer: crawl + ONE AI call in the background
-#   GET  /api/customers/profile?company=...          -> {"profile": {...} | null}
-# The profile is then used by every comparison for that customer (P1, P2 ... facts, relevant notes).
+# Customers: who they are, read from their own website ONCE and kept for every later comparison
+#   GET  /api/customers/search?q=john deer   -> suggestions while typing (names, aliases, misspellings)
+#   GET  /api/customers/profile?company=...   -> {"customer": resolved entry | null, "profile": {...} | null}
+#   POST /api/customers/research {"company", "website"?, "refresh"?}
+#        -> {"status": "cached", "profile"}   saved earlier: no crawl, no AI call
+#        -> {"jobId"}                         crawl + ONE AI call in the background (poll /api/jobs/{id})
+#   POST /api/customers/alias {"alias", "company"} -> remember a spelling ("john deer" -> JOHN DEERE)
 # =====================================================================
 CUSTOMER_LOCK = threading.Lock()
 CUSTOMER_ASK = None        # tests put a fake AI here
 CUSTOMER_CRAWL = None      # tests put a fake crawler here
+PROFILE_KEYS = ("company", "website", "researched_at", "status", "message", "summary", "key_facts", "segments",
+                "machines", "products", "priorities", "hydraulics", "partners", "regions", "news", "questions",
+                "pages", "pages_used", "warnings", "dropped", "model", "cost")
 
 
 def _profile_view(profile: dict | None) -> dict | None:
-    """What the website needs (no raw quotes list duplication, no internal paths)."""
-    if not profile:
-        return None
-    keys = ("company", "website", "focus", "researched_at", "status", "message", "summary", "segments",
-            "machines", "priorities", "regions", "hydraulics", "news", "questions", "pages", "warnings", "dropped",
-            "model")
-    return {k: profile.get(k) for k in keys}
+    return {k: profile.get(k) for k in PROFILE_KEYS} if profile else None
 
 
 def run_customer_research(job: dict) -> None:
@@ -794,13 +792,11 @@ def run_customer_research(job: dict) -> None:
     log = lambda line: (job["log"].append(line), job.__setitem__("progress", line))   # noqa: E731
     try:
         with CUSTOMER_LOCK, usage.collect() as calls:
-            profile = customer_profile.research(job["company"], job["website"], job["focus"],
-                                                ask=CUSTOMER_ASK, crawl=CUSTOMER_CRAWL, log=log)
-        cost = usage.total(calls)
-        profile["cost"] = cost
+            profile = customer_profile.research(job["company"], job["website"], ask=CUSTOMER_ASK,
+                                                crawl=CUSTOMER_CRAWL, log=log)
+        profile["cost"] = usage.total(calls)
         customer_profile.save(profile)
         job["profile"] = _profile_view(profile)
-        job["aiCost"] = cost
         job["status"] = "done" if profile.get("status") == "ok" else "error"
         job["progress"] = profile.get("message", "")
     except Exception as e:                                       # bad address, robots.txt, API error ...
@@ -808,18 +804,44 @@ def run_customer_research(job: dict) -> None:
         job["progress"] = f"Research failed: {str(e)[:240]}"
 
 
+@app.get("/api/customers/search")
+def search_customers(q: str = ""):
+    files = list_customers()
+    hits = customer_profile.find(q, extra_names=list(files))
+    for h in hits:
+        h["files"] = next((f for n, f in files.items() if n.lower() == h["name"].lower()), [])
+    return {"suggestions": hits}
+
+
+@app.get("/api/customers/profile")
+def get_customer_profile(company: str = ""):
+    entry = customer_profile.resolve(company)
+    return {"customer": entry, "profile": _profile_view(customer_profile.load(company))}
+
+
+@app.post("/api/customers/alias")
+def add_customer_alias(payload: dict):
+    alias, company = str(payload.get("alias") or "").strip(), str(payload.get("company") or "").strip()
+    entry = customer_profile.resolve(company)
+    if not (alias and entry):
+        raise HTTPException(400, "Unknown customer.")
+    customer_profile.remember(entry["name"], aliases=[alias])
+    return {"ok": True}
+
+
 @app.post("/api/customers/research")
 def research_customer_site(payload: dict):
-    company = str(payload.get("company") or "").strip()
-    website = str(payload.get("website") or "").strip()
-    focus = str(payload.get("focus") or "").strip()[:300]
-    if not company:
+    typed = str(payload.get("company") or "").strip()
+    if not typed:
         raise HTTPException(400, "Enter the customer's name first.")
+    entry = customer_profile.resolve(typed)
+    company = entry["name"] if entry else typed
+    website = str(payload.get("website") or "").strip() or (entry or {}).get("website", "")
     saved = customer_profile.load(company)
-    if saved and not payload.get("refresh") and (not website or website.rstrip("/") == saved.get("website", "").rstrip("/")):
+    if saved and not payload.get("refresh"):
         return {"status": "cached", "profile": _profile_view(saved)}
     if not website:
-        raise HTTPException(400, "Enter the customer's website (e.g. https://www.company.com).")
+        raise HTTPException(400, f"Dani has no website for {company} yet - paste the address of their site.")
     if not website.lower().startswith(("http://", "https://")):
         website = "https://" + website
     running = next((j for j in JOBS.values() if j.get("type") == "customer" and j["status"] in ("queued", "running")
@@ -829,15 +851,10 @@ def research_customer_site(payload: dict):
     if CUSTOMER_ASK is None and not has_api_key():
         raise HTTPException(400, "No AI key configured (ANTHROPIC_API_KEY in .env) - the website cannot be read.")
     job = {"id": uuid.uuid4().hex[:12], "type": "customer", "status": "queued", "company": company,
-           "website": website, "focus": focus, "progress": "Waiting to start ...", "log": []}
+           "website": website, "progress": "Waiting to start ...", "log": []}
     JOBS[job["id"]] = job
     threading.Thread(target=run_customer_research, args=(job,), daemon=True).start()
-    return {"jobId": job["id"]}
-
-
-@app.get("/api/customers/profile")
-def get_customer_profile(company: str = ""):
-    return {"profile": _profile_view(customer_profile.load(company))}
+    return {"jobId": job["id"], "company": company}
 
 
 # =====================================================================

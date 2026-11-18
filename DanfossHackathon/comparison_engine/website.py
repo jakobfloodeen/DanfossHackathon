@@ -329,6 +329,7 @@ def _profile_block(result: AnalysisResult, by_id: dict, sources: "_Sources") -> 
     info = result.meta.get("customer_profile") or {}
     return {"company": info.get("company", ""), "website": info.get("website", ""),
             "researchedAt": info.get("researched_at", ""), "pages": info.get("pages", 0),
+            "questions": info.get("questions", []),
             "items": [{"id": f.id, "kind": f.attribute, "text": f.value, "date": f.note or "",
                        "sources": sources.ref(f, by_id)} for f in facts]}
 

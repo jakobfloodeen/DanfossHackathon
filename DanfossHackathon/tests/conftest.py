@@ -17,6 +17,8 @@ def _no_real_api(monkeypatch, tmp_path):
     monkeypatch.setenv("CACHE_DIR", str(tmp_path / "cache"))
     monkeypatch.setenv("REPO_DIR", str(DEMO))
     monkeypatch.setenv("CUSTOMER_DIR", str(tmp_path / "customers"))       # never the real customer files
+    monkeypatch.setenv("CUSTOMER_PROFILE_DIR", str(tmp_path / "profiles"))  # never the real customer profiles
+    monkeypatch.setenv("CUSTOMER_DIRECTORY", str(tmp_path / "customer_directory.csv"))
     monkeypatch.setenv("USAGE_FILE", str(tmp_path / "usage.csv"))           # never the real cost log
     monkeypatch.setenv("COMMERCIAL_FILE", str(tmp_path / "commercial.csv")) # tests opt in to commercial notes
     monkeypatch.setenv("DOCUMENTS_FILE", str(tmp_path / "documents.csv"))  # no links unless a test writes some

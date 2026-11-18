@@ -53,8 +53,7 @@ def test_build_keeps_only_verified_statements():
     assert p["priorities"][0]["url"] == "https://agri.example/about"             # statement -> its web page
 
 
-def test_profile_is_saved_reused_and_becomes_citable_facts(monkeypatch, tmp_path):
-    monkeypatch.setenv("CUSTOMER_DIR", str(tmp_path))
+def test_profile_is_saved_reused_and_becomes_citable_facts():
     calls = []
     p = cp.research("Agri Machines", "https://agri.example", ask=lambda *a: calls.append(1) or fake_profile_ai(*a),
                     crawl=lambda url, company: REPORT, log=lambda line: None)
@@ -117,17 +116,17 @@ def test_business_fit_is_tailored_cited_and_sourced_to_the_website(monkeypatch, 
     def ai(system, prompt, schema=None):
         prompts.append(prompt)
         assert "business_fit" in schema["required"]
-        return _answer([{"text": "Their 2028 electric loader plan fits proportional electric control (P4).",
-                         "fact_ids": ["P4", "F1"]}])
+        return _answer([{"text": "Their 2028 electric loader plan fits proportional electric control (P2).",
+                         "fact_ids": ["P2", "F1"]}])
 
     r = interpret("pvg32", ["m4-12"], ask=ai, pool="competitors", data=_data(), use_cache=False,
                   profile_facts=facts)
-    assert "CUSTOMER PROFILE" in prompts[0] and "P4 | priority: electrification" in prompts[0]
+    assert "CUSTOMER PROFILE" in prompts[0] and "P2 | priority: electrification" in prompts[0]
     assert r.status == "ok" and not r.problems
     r.meta["customer_profile"] = {"company": "Agri Machines", "website": "https://agri.example", "pages": 2}
     w = to_website(r)
     biz = w["insights"]["business"]
-    assert biz[0]["text"].endswith("electric control.")                         # "(P4)" removed from the text
+    assert biz[0]["text"].endswith("electric control.")                         # "(P2)" removed from the text
     src = next(s for s in w["sources"] if s["id"] == biz[0]["sources"][-1])
     assert src["kind"] == "profile" and src["url"] == "https://agri.example/about"
     assert src["title"] == "Customer website: About Agri Machines"
@@ -146,7 +145,6 @@ def test_research_endpoint_runs_once_then_serves_the_saved_profile(monkeypatch, 
     import time
     from fastapi.testclient import TestClient
     import backend
-    monkeypatch.setenv("CUSTOMER_DIR", str(tmp_path))
     calls = []
     monkeypatch.setattr(backend, "CUSTOMER_ASK", lambda *a: calls.append(1) or fake_profile_ai(*a))
     monkeypatch.setattr(backend, "CUSTOMER_CRAWL", lambda url, company: REPORT)
@@ -163,3 +161,56 @@ def test_research_endpoint_runs_once_then_serves_the_saved_profile(monkeypatch, 
     again = client.post("/api/customers/research", json={"company": "agri machines"}).json()
     assert again["status"] == "cached" and calls == [1]                          # no second AI call
     assert client.get("/api/customers/profile", params={"company": "Agri Machines"}).json()["profile"]["segments"]
+
+
+def test_excerpts_share_the_budget_across_pages():
+    long_page = [{"id": f"L{i}", "source_id": "S1", "excerpt": f"Block {i} " + "about our loaders " * 20}
+                 for i in range(50)]
+    other = [{"id": "O1", "source_id": "S2", "excerpt": "Our news page: we opened a plant in Brazil in 2025 " * 2}]
+    report = {"sources": [{"id": "S1", "url": "u1", "title": "t1"}, {"id": "S2", "url": "u2", "title": "t2"}],
+              "evidence": long_page + other}
+    ex = cp.excerpts_from_report(report, budget=3000)
+    assert any(e["url"] == "u2" for e in ex)                                  # the short page is not crowded out
+    assert [e["id"] for e in ex] == [f"E{i}" for i in range(1, len(ex) + 1)]
+
+
+def test_names_aliases_and_misspellings_find_the_customer():
+    cp.remember("JOHN DEERE", "https://www.deere.com", "OEM", aliases=["Deere", "John Deer"])
+    cp.remember("AGCO", "https://www.agcocorp.com", "OEM", aliases=["Fendt"])
+    cp.remember("Hydraquip", kind="Distributor")
+    cp.remember("HydraSpecma", kind="Distributor")
+    assert cp.resolve("john deer")["name"] == "JOHN DEERE"                    # listed misspelling
+    assert cp.resolve("jon deere")["name"] == "JOHN DEERE"                    # unlisted typo, one clear candidate
+    assert cp.resolve("fendt")["name"] == "AGCO" and cp.resolve("fendt")["matchedBy"] == "alias"
+    assert cp.resolve("ag") is None and cp.find("ag")[0]["name"] == "AGCO"   # a start is only a suggestion
+    assert cp.resolve("hydra") is None and len(cp.find("hydra")) == 2        # ambiguous: the user picks
+    assert cp.find("palfinger") == []
+
+
+def test_saved_profile_is_found_under_an_alias():
+    cp.remember("JOHN DEERE", "https://www.deere.com", aliases=["Deere"])
+    cp.save(cp.build("JOHN DEERE", "https://www.deere.com", REPORT, ask=fake_profile_ai))
+    assert cp.load("deere")["company"] == "JOHN DEERE"
+    assert cp.find("john d")[0]["hasProfile"]
+
+
+def test_known_customer_needs_no_url_and_search_shows_saved_profile(monkeypatch):
+    import time
+    from fastapi.testclient import TestClient
+    import backend
+    cp.remember("JOHN DEERE", "https://www.deere.example", "OEM", aliases=["John Deer"])
+    crawled = []
+    monkeypatch.setattr(backend, "CUSTOMER_ASK", fake_profile_ai)
+    monkeypatch.setattr(backend, "CUSTOMER_CRAWL", lambda url, company: crawled.append((url, company)) or REPORT)
+    client = TestClient(backend.app)
+    job = client.post("/api/customers/research", json={"company": "john deer"}).json()
+    assert job["company"] == "JOHN DEERE"
+    for _ in range(50):
+        if client.get(f"/api/jobs/{job['jobId']}").json()["status"] in ("done", "error"):
+            break
+        time.sleep(0.05)
+    assert crawled == [("https://www.deere.example", "JOHN DEERE")]
+    hit = client.get("/api/customers/search", params={"q": "john de"}).json()["suggestions"][0]
+    assert hit["name"] == "JOHN DEERE" and hit["hasProfile"] and hit["researchedAt"]
+    assert client.post("/api/customers/alias", json={"alias": "Jon Dere", "company": "JOHN DEERE"}).json()["ok"]
+    assert cp.resolve("jon dere")["matchedBy"] == "alias"

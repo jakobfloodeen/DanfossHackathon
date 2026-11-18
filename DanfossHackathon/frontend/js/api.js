@@ -97,7 +97,7 @@ const Api = (() => {
     async ask(payload) {
       return call("/ask", { method: "POST", body: JSON.stringify(payload) });
     },
-    /** Read the customer's website into a saved profile (once per customer). -> {status:"cached", profile} | {jobId} */
+    /** Read the customer's website into a saved profile (once per customer). -> {status:"cached", profile} | {jobId, company} */
     async researchCustomer(payload) {
       const user = localStorage.getItem("dani-user") || "senior";
       const res = await fetch(cfg.API_BASE + "/customers/research", {
@@ -109,6 +109,13 @@ const Api = (() => {
     },
     async customerProfile(company) {
       return call("/customers/profile?company=" + encodeURIComponent(company));
+    },
+    /** Suggestions while typing a customer name: names, aliases ("Fendt" -> AGCO) and misspellings. */
+    async searchCustomers(q) {
+      return call("/customers/search?q=" + encodeURIComponent(q));
+    },
+    async addCustomerAlias(alias, company) {
+      return call("/customers/alias", { method: "POST", body: JSON.stringify({ alias, company }) });
     },
   };
 })();

@@ -48,7 +48,7 @@
       competitors: { mode: "auto", ids: [], productIds: [] }, // auto = let backend find best matches
       factors: {},                                // { factorId: "nice" | "must" }
       customFactors: [],                          // user-typed factor labels
-      buyer: { company: "", application: "", currentSupplier: "", notes: "", website: "", focus: "" },
+      buyer: { company: "", application: "", currentSupplier: "", notes: "" },
       done: { competitors: false, factors: false, buyer: false },
       log: [],                                    // free-text chat: { stage, role, text }
       loading: false,
@@ -131,8 +131,7 @@
   }
   function buyerSummary() {
     const b = state.buyer;
-    return [b.company, b.application, b.currentSupplier && "uses " + b.currentSupplier, b.focus && "focus: " + b.focus]
-      .filter(Boolean).join(" · ");
+    return [b.company, b.application, b.currentSupplier && "uses " + b.currentSupplier].filter(Boolean).join(" · ");
   }
 
   /** The payload sent to POST /compare and as context for /ask. */
@@ -691,21 +690,13 @@
   function buyerWidget() {
     const b = state.buyer;
     const box = el("div");
-    box.appendChild(el("p", {}, esc(BUYER_PROMPT) + ' <span class="hint">This tailors benefits and switching trade-offs to the customer.</span>'));
+    box.appendChild(el("p", {}, esc(BUYER_PROMPT) + ' <span class="hint">Dani looks the customer up and tailors the business part to them.</span>'));
     const form = el("form", { class: "form-grid" });
     form.innerHTML = `
-      <label class="field span-2"><span>Company / buyer name <span class="req">*</span></span>
-        <input name="company" required value="${esc(b.company)}" placeholder="e.g. AGCO">
-      </label>
-      <label class="field"><span>Company website <span class="opt">(optional)</span></span>
-        <input name="website" value="${esc(b.website || "")}" placeholder="e.g. www.agcocorp.com">
-      </label>
-      <label class="field"><span>Business focus <span class="opt">(optional)</span></span>
-        <input name="focus" value="${esc(b.focus || "")}" placeholder="e.g. electric compact loaders">
-      </label>
-      <div class="span-2 research-row">
-        <button class="btn btn-ghost btn-sm" type="button" data-act="research">Read their website</button>
-        <span class="hint research-status">${researchStatusText()}</span>
+      <div class="field span-2 cust-field"><label for="cust-name">Company / buyer name <span class="req">*</span></label>
+        <input id="cust-name" name="company" required autocomplete="off" value="${esc(b.company)}" placeholder="Start typing, e.g. John Deere">
+        <ul class="cust-suggest" hidden></ul>
+        <div class="cust-panel"></div>
       </div>
       <label class="field">Application
         <select name="application">
@@ -720,43 +711,64 @@
         <textarea name="notes" rows="3" placeholder="Requirements, constraints, volumes, meeting goal…">${esc(b.notes)}</textarea>
       </label>
       <div class="actions span-2"><button class="btn btn-primary" type="submit">Continue</button></div>`;
-    const readForm = () => {
-      const fd = new FormData(form);
-      return Object.fromEntries(["company", "application", "currentSupplier", "notes", "website", "focus"]
-        .map((k) => [k, (fd.get(k) || "").trim()]));
-    };
-    const status = form.querySelector(".research-status");
-    const show = () => { status.innerHTML = researchStatusText(); };
-    form.querySelector('[data-act="research"]').addEventListener("click", async (ev) => {
-      const b2 = readForm();
-      if (!b2.company) { status.textContent = "Enter the customer's name first."; return; }
-      ev.target.disabled = true;
-      await startResearch(b2, show, ev.shiftKey || !!state.research?.profile);   // pressing again = refresh
-      ev.target.disabled = false;
-      ev.target.textContent = state.research?.profile ? "Read again (refresh)" : "Read their website";
+    const input = form.company, list = form.querySelector(".cust-suggest"), panel = form.querySelector(".cust-panel");
+    const showPanel = () => { panel.innerHTML = customerPanelHtml(); wirePanel(); };
+    function wirePanel() {
+      panel.querySelector('[data-act="read-site"]')?.addEventListener("click", () => {
+        const url = panel.querySelector("[name=custUrl]")?.value.trim() || state.customer?.entry?.website || "";
+        startResearch(state.customer?.entry?.name || input.value.trim(), url, false, showPanel);
+      });
+      panel.querySelector('[data-act="reread-site"]')?.addEventListener("click", () =>
+        startResearch(state.customer.entry?.name || input.value.trim(), state.customer.profile?.website || "", true, showPanel));
+      panel.querySelector("[name=custUrl]")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); panel.querySelector('[data-act="read-site"]').click(); }
+      });
+    }
+    let timer = null, picked = false;
+    input.addEventListener("input", () => {
+      picked = false;
+      clearTimeout(timer);
+      timer = setTimeout(async () => {
+        const q = input.value.trim();
+        if (q.length < 2) { list.hidden = true; return; }
+        try {
+          const { suggestions } = await Api.searchCustomers(q);
+          list.innerHTML = suggestions.map((h, i) => `<li><button type="button" data-i="${i}">
+              <strong>${esc(h.name)}</strong>${h.type ? ` <span class="hint">· ${esc(h.type)}</span>` : ""}
+              ${h.matchedBy === "alias" ? ` <span class="hint">· “${esc(h.matched)}”</span>` : ""}
+              ${h.matchedBy === "similar" ? ' <span class="hint">· did you mean?</span>' : ""}
+              <span class="cust-tag">${h.hasProfile ? "profile · " + esc((h.researchedAt || "").slice(0, 10)) : h.files?.length ? "feedback files" : "no profile yet"}</span>
+            </button></li>`).join("");
+          list.hidden = !suggestions.length;
+          list.querySelectorAll("button").forEach((btn) => btn.addEventListener("mousedown", (e) => {
+            e.preventDefault();                                  // keep focus: no blur before the pick
+            const h = suggestions[+btn.dataset.i];
+            if (h.matchedBy === "similar" && q.toLowerCase() !== h.name.toLowerCase())
+              Api.addCustomerAlias(q, h.name).catch(() => {});  // remember this spelling for next time
+            input.value = h.name; picked = true; list.hidden = true;
+            lookUpCustomer(h.name, showPanel);
+          }));
+        } catch { list.hidden = true; }
+      }, 180);
     });
-    form.company.addEventListener("change", async () => {        // a known customer: show the saved profile
-      const name = form.company.value.trim();
-      if (!name) return;
-      try {
-        const { profile } = await Api.customerProfile(name);
-        state.research = profile ? { company: name, status: "done", profile } : null;
-        if (profile && !form.website.value) form.website.value = profile.website || "";
-        if (profile && !form.focus.value) form.focus.value = profile.focus || "";
-        form.querySelector('[data-act="research"]').textContent = profile ? "Read again (refresh)" : "Read their website";
-        show();
-      } catch { /* the profile is optional */ }
+    input.addEventListener("blur", () => {
+      setTimeout(() => { list.hidden = true; }, 150);
+      if (!picked && input.value.trim()) lookUpCustomer(input.value.trim(), (canonical) => {
+        if (canonical && canonical !== input.value.trim()) input.value = canonical;
+        showPanel();
+      });
     });
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      state.buyer = readForm();
+      const fd = new FormData(form);
+      state.buyer = Object.fromEntries(["company", "application", "currentSupplier", "notes"].map((k) => [k, (fd.get(k) || "").trim()]));
       if (!state.buyer.company) return;
-      const same = state.research && sameCustomer(state.research.company, state.buyer.company);
-      if (state.buyer.website && !same) startResearch(state.buyer, () => {}, false);   // runs while the user continues
       state.done.buyer = true; render();
     });
     box.appendChild(form);
     botMsg(box).classList.add("bubble-wide");
+    if (b.company && sameCustomer(state.customer?.typed, b.company)) showPanel();
+    else if (b.company) lookUpCustomer(b.company, showPanel);
   }
 
   function reviewWidget() {
@@ -769,7 +781,7 @@
       <dt>Priorities</dt><dd>${esc(factorSummary())}${state.customFactors.length ? " · Own: " + esc(state.customFactors.join(", ")) : ""}</dd>
       <dt>Buyer</dt><dd>${esc(buyerSummary())}</dd>
       ${state.buyer.notes ? `<dt>Notes</dt><dd>${esc(state.buyer.notes)}</dd>` : ""}
-      ${state.research && sameCustomer(state.research.company, state.buyer.company) ? `<dt>Customer profile</dt><dd>${researchStatusText()}</dd>` : ""}`));
+      ${customerSummaryText() ? `<dt>Customer profile</dt><dd>${esc(customerSummaryText())}</dd>` : ""}`));
     if (p.status === "data-pending") box.appendChild(el("p", { class: "flag flag-missing" }, "Limited data is loaded for this product, so the comparison will be partial."));
     box.appendChild(el("div", { class: "actions" })).appendChild(el("button", {
       class: "btn btn-primary btn-lg", type: "button", onclick: generate,
@@ -777,45 +789,107 @@
     botMsg(box).classList.add("bubble-wide");
   }
 
-  // ---------- customer website research (one AI call per new customer; saved for later comparisons) ----------
-  const sameCustomer = (a, b) => String(a || "").toLowerCase().replace(/[^a-z0-9]+/g, "") ===
-                                 String(b || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+  // ---------- customer lookup + website research (one AI call per new customer; saved for everyone) ----------
+  const sameCustomer = (x, y) => String(x || "").toLowerCase().replace(/[^a-z0-9]+/g, "") ===
+                                 String(y || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+  const SECTION_LABEL = { summary: "What they do", key_facts: "Key facts", segments: "Markets", machines: "Machines",
+    products: "Products", priorities: "Their stated priorities", hydraulics: "Hydraulics & controls",
+    partners: "Partners & suppliers", regions: "Regions", news: "Recent news & plans" };
+  const shortUrl = (u) => String(u || "").replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
 
-  function researchStatusText() {
-    const r = state.research;
-    if (!r) return "Dani reads the customer's own website once (about one AI call, a few cents) and tailors the business part to it.";
-    if (r.status === "running") return `<span class="spinner-dot"></span> ${esc(r.progress || "Reading the website…")}`;
-    if (r.status === "error") return `<span class="text-warn">${esc(r.progress || "Research failed.")}</span>`;
-    const p = r.profile || {};
-    const when = (p.researched_at || "").slice(0, 10);
-    const lines = [...(p.segments || []), ...(p.machines || [])].map((x) => x.name).slice(0, 5);
-    return `Profile saved${when ? " " + esc(when) : ""}: ${esc(p.message || "")}${lines.length ? " · " + esc(lines.join(", ")) : ""}`;
+  /** state.customer = { typed, entry (known customer) | null, profile | null, research: {status, progress} } */
+  async function lookUpCustomer(name, done) {
+    try {
+      const { customer, profile } = await Api.customerProfile(name);
+      const running = state.customer?.research?.status === "running" && sameCustomer(state.customer.typed, name);
+      state.customer = { typed: customer?.name || name, entry: customer, profile,
+                         research: running ? state.customer.research : null };
+      done(customer?.name);
+    } catch { done(); }
   }
 
-  async function startResearch(b, onUpdate, refresh) {
-    state.research = { company: b.company, status: "running", progress: "Starting…" };
+  function itemText(key, it) {
+    if (key === "key_facts") return `${it.label}: ${it.value}`;
+    const main = it.name || it.statement || it.text || "";
+    return it.detail ? `${main} — ${it.detail}` : main;
+  }
+
+  /** The whole saved profile, every statement linked to the page it came from. */
+  function profileHtml(p) {
+    const sec = (key, items) => !items?.length ? "" : `<div class="prof-sec"><div class="biz-label">${esc(SECTION_LABEL[key])}</div><ul>
+      ${items.map((it) => `<li>${key === "priorities" ? `<span class="badge badge-muted">${esc(String(it.topic || "").replace(/_/g, " "))}</span> ` : ""}${esc(itemText(key, it))}${it.date ? ` <span class="hint">(${esc(it.date)})</span>` : ""}
+        ${it.url ? ` <a class="src-link" href="${esc(it.url)}" target="_blank" rel="noopener" title="${esc(it.quote ? "“" + it.quote + "”" : it.title || it.url)}">${esc(it.title || shortUrl(it.url))}</a>` : ""}</li>`).join("")}</ul></div>`;
+    return `<div class="prof">${p.summary ? sec("summary", [p.summary]) : ""}
+      ${["priorities", "hydraulics", "machines", "products", "segments", "news", "partners", "key_facts", "regions"].map((k) => sec(k, p[k])).join("")}
+      ${p.questions?.length ? `<div class="prof-sec"><div class="biz-label">Questions to ask <span class="hint">(suggested by AI, not from the website)</span></div><ul>${p.questions.map((q) => `<li>${esc(q)}</li>`).join("")}</ul></div>` : ""}
+      <div class="hint">${esc(p.message || "")} · ${(p.pages || []).length} page(s) visited${p.dropped?.length ? ` · ${p.dropped.length} AI statement(s) dropped because their quote was not on the page` : ""}</div></div>`;
+  }
+
+  function customerPanelHtml() {
+    const c = state.customer;
+    if (!c) return "";
+    const name = c.entry?.name || c.typed;
+    const r = c.research;
+    if (r?.status === "running")
+      return `<div class="cust-card"><div><span class="spinner-dot"></span> ${esc(r.progress || "Reading the website…")}</div>
+        <div class="hint">This takes 1–3 minutes. You can continue; the comparison waits for it.</div></div>`;
+    const err = r?.status === "error" ? `<div class="text-warn">${esc(r.progress || "Reading the website failed.")}</div>` : "";
+    if (c.profile?.status === "ok") {
+      const p = c.profile;
+      return `<div class="cust-card is-ok">${err}
+        <div><strong>${esc(name)}</strong> · customer profile from <a href="${esc(p.website)}" target="_blank" rel="noopener">${esc(shortUrl(p.website))}</a>
+          · <span class="visited">website last read ${esc((p.researched_at || "").slice(0, 10))}</span></div>
+        <div class="hint">${esc(p.summary?.text || p.message || "")}</div>
+        <details><summary>View the full profile</summary>${profileHtml(p)}</details>
+        <button class="link-btn" type="button" data-act="reread-site">Read the website again</button></div>`;
+    }
+    const known = c.entry?.website;
+    if (known) return `<div class="cust-card">${err}
+        <div>Dani has no profile of <strong>${esc(name)}</strong> yet. Website on file: ${esc(shortUrl(known))}</div>
+        <div class="actions"><button class="btn btn-ghost btn-sm" type="button" data-act="read-site">Read their website</button>
+        <span class="hint">One AI call (well under 1 cent); saved for every later comparison with ${esc(name)}.</span></div></div>`;
+    return `<div class="cust-card">${err}
+        <div>Dani has nothing on <strong>${esc(name)}</strong> yet. Paste their website to read it — they are then added to the customer list.</div>
+        <div class="cust-url"><input name="custUrl" placeholder="e.g. www.${esc(name.toLowerCase().replace(/[^a-z0-9]+/g, ""))}.com">
+        <button class="btn btn-ghost btn-sm" type="button" data-act="read-site">Read website</button></div>
+        <div class="hint">Optional. One AI call (well under 1 cent); the profile is saved for everyone.</div></div>`;
+  }
+
+  async function startResearch(company, website, refresh, onUpdate) {
+    if (!company) return;
+    state.customer = { ...(state.customer || {}), typed: company, research: { status: "running", progress: "Starting…" } };
     onUpdate();
     try {
-      const res = await Api.researchCustomer({ company: b.company, website: b.website, focus: b.focus, refresh });
-      if (res.profile) state.research = { company: b.company, status: "done", profile: res.profile };
-      else state.research.jobId = res.jobId;
+      const res = await Api.researchCustomer({ company, website, refresh });
+      if (res.profile) { state.customer.profile = res.profile; state.customer.research = null; }
+      else state.customer.research.jobId = res.jobId;
       onUpdate();
-      while (state.research.jobId && state.research.status === "running") {
+      while (state.customer.research?.jobId && state.customer.research.status === "running") {
         await new Promise((r) => setTimeout(r, 1500));
-        const job = await Api.job(state.research.jobId);
-        state.research.progress = job.progress;
-        if (job.status === "done") state.research = { company: b.company, status: "done", profile: job.profile };
-        else if (job.status === "error" || job.status === "unknown") state.research = { company: b.company, status: "error", progress: job.progress };
+        const job = await Api.job(state.customer.research.jobId);
+        state.customer.research.progress = job.progress;
+        if (job.status === "done") { state.customer.profile = job.profile; state.customer.research = null; }
+        else if (job.status === "error" || job.status === "unknown") state.customer.research = { status: "error", progress: job.progress };
         onUpdate();
       }
+      const { customer } = await Api.customerProfile(company);   // a new customer is now in the list
+      if (customer) state.customer.entry = customer;
     } catch (err) {
-      state.research = { company: b.company, status: "error", progress: err.message };
+      state.customer.research = { status: "error", progress: err.message };
       onUpdate();
     }
   }
 
-  async function researchFinished() {          // a comparison waits for a running website read (max ~2 min)
-    for (let i = 0; i < 80 && state.research?.status === "running"; i++) await new Promise((r) => setTimeout(r, 1500));
+  function customerSummaryText() {
+    const c = state.customer;
+    if (!c || !sameCustomer(c.typed, state.buyer.company)) return "";
+    if (c.research?.status === "running") return "website is being read…";
+    if (c.profile?.status === "ok") return `from ${shortUrl(c.profile.website)}, read ${(c.profile.researched_at || "").slice(0, 10)}`;
+    return "none (business part will be generic)";
+  }
+
+  async function researchFinished() {          // a comparison waits for a running website read (max ~4 min)
+    for (let i = 0; i < 160 && state.customer?.research?.status === "running"; i++) await new Promise((r) => setTimeout(r, 1500));
   }
 
   // ---------- generate + results ----------
@@ -922,11 +996,14 @@
                        selling_point: "Selling point", transition: "Transition", warning: "Warning" };
 
   /** Approved commercial notes (sales guidelines) + the review queue for pending ones. */
-  const PROFILE_LABEL = { summary: "About", segment: "Market", machine: "Builds", hydraulics: "Hydraulics",
-                          region: "Region", news: "News" };
+  /** Profile fact kinds (P1..) -> the profile sections they came from, in reading order. */
+  const FACT_SECTION = [["summary", "summary"], ["priority", "priorities"], ["hydraulics", "hydraulics"],
+    ["machine", "machines"], ["product", "products"], ["segment", "segments"], ["news", "news"],
+    ["partner", "partners"], ["fact", "key_facts"], ["region", "regions"]];
 
-  /** "Business fit for <customer>": what their website says, why this comparison matters to them,
-   *  and the approved sales-guideline notes that fit THIS comparison and customer (the rest folded away). */
+  /** "Business fit for <customer>": why this comparison matters to them, what their website says (every line
+   *  footnoted), questions for the meeting, and the approved sales-guideline notes that fit THIS comparison and
+   *  customer (the rest folded away). */
   function commercialHtml(r) {
     const approved = r.commercial || [];
     const pending = r.commercialPending || [];
@@ -935,14 +1012,15 @@
     const prof = r.customerProfile;
     if (!approved.length && !pending.length && !other.length && !business.length && !prof) return "";
     const who = state.buyer.company || prof?.company || "the customer";
-    const profileItem = (it) => {
-      const label = it.kind.startsWith("priority") ? "Priority" : (PROFILE_LABEL[it.kind] || it.kind);
-      return `<li><span class="badge badge-muted">${esc(label)}</span> ${esc(it.text)}${it.date ? ` <span class="hint">(${esc(it.date)})</span>` : ""}${(it.sources || []).map(ref).join("")}</li>`;
-    };
-    const snapshot = prof ? `<div class="biz-block"><div class="biz-label">From their website
-        <span class="hint">· ${esc(prof.website || "")}${prof.researchedAt ? " · read " + esc(prof.researchedAt.slice(0, 10)) : ""}</span></div>
-        <ul>${prof.items.map(profileItem).join("")}</ul></div>`
-      : `<p class="hint">Add ${esc(who)}'s website in the buyer step to tailor this part to their business.</p>`;
+    const profileItem = (it) => `<li>${it.kind.startsWith("priority") ? `<span class="badge badge-muted">${esc(it.kind.split(": ")[1].replace(/_/g, " "))}</span> ` : ""}${esc(it.text)}${it.date ? ` <span class="hint">(${esc(it.date)})</span>` : ""}${(it.sources || []).map(ref).join("")}</li>`;
+    const groups = prof ? FACT_SECTION.map(([kind, key]) => [key, prof.items.filter((it) => it.kind.split(":")[0] === kind)])
+      .filter(([, items]) => items.length) : [];
+    const snapshot = prof ? `<div class="biz-block"><div class="biz-label">What ${esc(who)} says about itself
+        <span class="hint">· <a href="${esc(prof.website || "")}" target="_blank" rel="noopener">${esc(shortUrl(prof.website))}</a>${prof.researchedAt ? " · website last read " + esc(prof.researchedAt.slice(0, 10)) : ""}</span></div>
+        <div class="prof-grid">${groups.map(([key, items]) => `<div class="prof-sec"><div class="prof-head">${esc(SECTION_LABEL[key])}</div><ul>${items.map(profileItem).join("")}</ul></div>`).join("")}</div>
+        ${prof.questions?.length ? `<div class="prof-sec"><div class="prof-head">Questions to ask <span class="hint">(suggested by AI)</span></div><ul>${prof.questions.map((q) => `<li>${esc(q)}</li>`).join("")}</ul></div>` : ""}
+      </div>`
+      : `<p class="hint">No customer profile for ${esc(who)} yet — look the customer up in the buyer step to tailor this part to their business.</p>`;
     const bizList = business.length ? `<div class="biz-block"><div class="biz-label">Why it matters to ${esc(who)}</div>
         <ul>${business.map((it) => `<li>${esc(it.text)}${(it.sources || []).map(ref).join("")}</li>`).join("")}</ul></div>` : "";
     const note = (n, extra) => `<li class="com-note${extra ? " is-pending" : ""}"${n.why ? ` title="Picked because: ${esc(n.why)}"` : ""}>
@@ -953,7 +1031,7 @@
     const otherHtml = other.length ? `<details class="biz-other"><summary>${other.length} other approved note(s) not specific to this comparison or customer</summary>
         <ul>${other.map((n) => note({ ...n, product: n.product_id, source: n.source_file })).join("")}</ul></details>` : "";
     return `<section class="insight commercial"><h4>Business fit for ${esc(who)}</h4>
-      ${snapshot}${bizList}
+      ${bizList}${snapshot}
       <div class="biz-label">Approved sales-guideline notes <span class="hint">(internal)</span></div>
       ${approved.length ? "" : '<p class="hint">No approved note matches this comparison and customer.</p>'}
       <ul>${approved.map((n) => note(n)).join("")}
