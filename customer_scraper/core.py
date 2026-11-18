@@ -10,6 +10,7 @@ import json
 import re
 import httpx
 from ._transport import fetch, validate_url
+from . import terms as tdm
 
 USER_AGENT = 'DanfossHackathon-CustomerResearch'
 # Category tags are keyword-based discovery aids, not verified interpretations.
@@ -64,6 +65,7 @@ class CustomerPage(HTMLParser):
         self.heading = ''
         self.heading_parts = None
         self.publication_date = None
+        self.meta = {}                 # tdm-reservation, robots: rights reservations (see terms.py)
 
     def flush(self):
         text = _clean(' '.join(self.parts))
@@ -77,6 +79,8 @@ class CustomerPage(HTMLParser):
             key = (attrs.get('property') or attrs.get('name') or '').lower()
             if key in ('article:published_time', 'datepublished', 'date', 'dc.date.issued'):
                 self.publication_date = self.publication_date or attrs.get('content')
+            if key in ('tdm-reservation', 'robots', 'tdm-policy'):
+                self.meta[key] = attrs.get('content') or ''
         if tag == 'title':
             self.in_title = True
         if tag in ('script', 'style', 'noscript'):
@@ -138,6 +142,7 @@ def _html(data):
         for start in range(0, min(len(block['text']), 12000), 1800):
             blocks.append({**block, 'text': block['text'][start:start+1800],
                            'locator': {'type': 'html_block', 'block': i, 'offset': start}})
+    _html.last_meta = parser.meta      # rights-reservation meta tags of the page just parsed
     return parser.title, parser.publication_date, blocks[:2000], parser.links
 
 
@@ -195,10 +200,45 @@ def _crawl_delay(policy) -> float:
     return delay
 
 
+def _check_site_terms(page_url, links, hosts, policies, warnings, terms):
+    """Robots AI rules, TDMRep and the terms / legal / privacy pages of one site. -> (reason or None, where)."""
+    origin = '{0.scheme}://{0.netloc}'.format(urlsplit(page_url))
+    reason, notes = tdm.robots_ai_check(policies.get(origin), page_url)
+    terms['notes'] += notes
+    if reason:
+        return reason, origin + '/robots.txt'
+    try:
+        data, _, _, _ = fetch(origin + '/.well-known/tdmrep.json', allowed_hosts=hosts)
+        reason = tdm.tdmrep_reservation(data, page_url)
+        terms['checked'].append(origin + '/.well-known/tdmrep.json')
+        if reason:
+            return reason, origin + '/.well-known/tdmrep.json'
+    except Exception:
+        pass                                              # no TDMRep file: the usual case
+    for url in tdm.terms_links(links, page_url, hosts):
+        if not _robots_allowed(url, hosts, policies, warnings):
+            continue
+        try:
+            data, final, content_type, _ = fetch(url, allowed_hosts=hosts)
+            if data.startswith(b'%PDF-'):
+                text = ' '.join(b['text'] for b in _pdf(data, 20)[1])
+            else:
+                text = ' '.join(b['text'] for b in _html(data)[2])
+        except Exception as exc:
+            warnings.append(f'Could not read the terms page {url}: {exc}')
+            continue
+        terms['checked'].append(final)
+        sentence = tdm.find_reservation(text)
+        if sentence:
+            terms['quote'] = sentence
+            return 'terms page prohibits automated reading / data mining', final
+    return None, page_url
+
+
 def research_customer(url: str, *, company_name: str = '', seed_urls=(), topic: str = '',
                       max_pages: int = 10, max_depth: int = 2, max_seconds: float = 60,
                       max_pdf_pages: int = 40, max_evidence: int = 60, collect: str = 'tagged',
-                      link_terms=None, render=None) -> dict:
+                      link_terms=None, render=None, check_terms: bool = True) -> dict:
     """Read approved public company sources and return a JSON-ready evidence pack.
 
     seed_urls explicitly approve extra customer pages/hosts (e.g. investor portal).
@@ -211,6 +251,9 @@ def research_customer(url: str, *, company_name: str = '', seed_urls=(), topic: 
     link_terms: words that make a link worth following (default LINK_TERMS).
     render: optional callable(url) -> HTML bytes, used when a page's raw HTML holds almost no
     text (sites built with JavaScript). The rendered page is parsed like any other page.
+    check_terms: before anything is kept, look for a rights reservation against automated reading /
+    data mining (AI robots.txt rules, TDMRep, meta tags, terms of use / legal / privacy pages; see
+    terms.py). Found -> nothing is kept and report['terms'] says where and why.
     """
     if not (1 <= max_pages <= 30 and 0 <= max_depth <= 3 and 1 <= max_seconds <= 180
             and 1 <= max_pdf_pages <= 100 and 1 <= max_evidence <= 400):
@@ -230,6 +273,8 @@ def research_customer(url: str, *, company_name: str = '', seed_urls=(), topic: 
     visited, resolved, seen_evidence = set(), set(), set()
     sources, evidence, warnings, excluded = [], [], [], []
     policies = {}
+    terms = {'status': 'not_checked', 'checked': [], 'notes': []}
+    terms_checked = set()
     topic_terms = re.findall(r'[\w-]{2,}', topic.lower())
     capped = False
     while queue and len(visited) < max_pages and monotonic() - started < max_seconds:
@@ -281,6 +326,19 @@ def research_customer(url: str, *, company_name: str = '', seed_urls=(), topic: 
             else:
                 warnings.append(f'Unsupported content: {final}')
                 continue
+            if check_terms:
+                reason = tdm.meta_reservation(getattr(_html, 'last_meta', {}) if kind.startswith('html') else {})
+                where = final
+                origin_now = '{0.scheme}://{0.netloc}'.format(urlsplit(final))
+                if not reason and origin_now not in terms_checked:
+                    terms_checked.add(origin_now)
+                    reason, where = _check_site_terms(final, links, hosts, policies, warnings, terms)
+                if reason:
+                    terms.update({'status': 'reserved', 'reason': reason, 'url': where})
+                    warnings.append(f'Stopped: the site reserves itself against automated reading ({reason}) - {where}')
+                    sources, evidence = [], []
+                    queue = []
+                    break
             sources.append({'id': source_id, 'url': final, 'requested_url': current,
                             'title': title or final, 'kind': kind, 'accessed_at': retrieved,
                             'publication_date_raw': publication_date, 'content_sha256': digest,
@@ -335,6 +393,8 @@ def research_customer(url: str, *, company_name: str = '', seed_urls=(), topic: 
             'identity_status': 'provided_by_caller'}, 'generated_at': datetime.now(timezone.utc).isoformat(timespec='seconds'),
             'sources': sources, 'evidence': evidence, 'coverage': coverage,
             'warnings': warnings[:50], 'external_links_not_followed': excluded,
+            'terms': {**terms, 'status': terms['status'] if terms['status'] != 'not_checked' or not check_terms
+                      or not terms_checked else 'no_reservation_found'},
             'crawl': {'pages_attempted': len(visited), 'sources_read': len(sources),
                       'robots_origins_checked': len(policies), 'limited': bool(queue) or capped,
                       'allowed_hosts': sorted(hosts)},

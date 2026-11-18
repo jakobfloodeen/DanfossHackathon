@@ -793,8 +793,14 @@
   const sameCustomer = (x, y) => String(x || "").toLowerCase().replace(/[^a-z0-9]+/g, "") ===
                                  String(y || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
   const SECTION_LABEL = { summary: "What they do", key_facts: "Key facts", segments: "Markets", machines: "Machines",
-    products: "Products", priorities: "Their stated priorities", hydraulics: "Hydraulics & controls",
-    partners: "Partners & suppliers", regions: "Regions", news: "Recent news & plans" };
+    products: "Products & models", priorities: "Their stated priorities", hydraulics: "Hydraulics & controls",
+    partners: "Partners", regions: "Regions", news: "News & expansion — opportunities to follow",
+    used: "What they use today (named on their site)" };
+  const NEWS_LABEL = { new_plant: "New plant", new_facility: "New facility", new_department: "New department",
+    new_market: "New market", investment: "Investment", acquisition: "Acquisition", partnership: "Partnership",
+    new_product: "Launch", electrification_program: "Electrification", other: "News" };
+  const BIZ_KIND = [["opportunity", "Opportunities to follow"], ["fit", "Where the product fits their machines and goals"],
+    ["displace", "Against what they use today"], ["risk", "Check before the meeting"]];
   const shortUrl = (u) => String(u || "").replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
 
   /** state.customer = { typed, entry (known customer) | null, profile | null, research: {status, progress} } */
@@ -810,19 +816,30 @@
 
   function itemText(key, it) {
     if (key === "key_facts") return `${it.label}: ${it.value}`;
+    if (it.supplier && it.quote === it.statement) return `${it.supplier}: “${it.statement}”`;       // found by code
+    if (key === "used") return [it.supplier, it.component, it.machine].filter(Boolean).join(" / ") + ": " + (it.statement || "");
     const main = it.name || it.statement || it.text || "";
-    return it.detail ? `${main} — ${it.detail}` : main;
+    const where = key === "news" && it.location && !main.toLowerCase().includes(it.location.toLowerCase()) ? ` (${it.location})` : "";
+    return (it.detail ? `${main} — ${it.detail}` : main) + where;
   }
 
-  /** The whole saved profile, every statement linked to the page it came from. */
+  /** The whole saved profile, every statement linked to the page it came from. The specific detail first;
+   *  the basics a rep already knows (markets, regions, key facts) on one line at the bottom. */
   function profileHtml(p) {
+    const link = (it) => it.url ? ` <a class="src-link" href="${esc(it.url)}" target="_blank" rel="noopener" title="${esc(it.quote ? "“" + it.quote + "”" : it.title || it.url)}">${esc(it.title || shortUrl(it.url))}</a>` : "";
+    const badge = (key, it) => key === "priorities" ? `<span class="badge badge-muted">${esc(String(it.topic || "").replace(/_/g, " "))}</span> `
+      : key === "news" ? `<span class="badge badge-brand">${esc(NEWS_LABEL[it.kind] || "News")}</span> ` : "";
     const sec = (key, items) => !items?.length ? "" : `<div class="prof-sec"><div class="biz-label">${esc(SECTION_LABEL[key])}</div><ul>
-      ${items.map((it) => `<li>${key === "priorities" ? `<span class="badge badge-muted">${esc(String(it.topic || "").replace(/_/g, " "))}</span> ` : ""}${esc(itemText(key, it))}${it.date ? ` <span class="hint">(${esc(it.date)})</span>` : ""}
-        ${it.url ? ` <a class="src-link" href="${esc(it.url)}" target="_blank" rel="noopener" title="${esc(it.quote ? "“" + it.quote + "”" : it.title || it.url)}">${esc(it.title || shortUrl(it.url))}</a>` : ""}</li>`).join("")}</ul></div>`;
-    return `<div class="prof">${p.summary ? sec("summary", [p.summary]) : ""}
-      ${["priorities", "hydraulics", "machines", "products", "segments", "news", "partners", "key_facts", "regions"].map((k) => sec(k, p[k])).join("")}
-      ${p.questions?.length ? `<div class="prof-sec"><div class="biz-label">Questions to ask <span class="hint">(suggested by AI, not from the website)</span></div><ul>${p.questions.map((q) => `<li>${esc(q)}</li>`).join("")}</ul></div>` : ""}
-      <div class="hint">${esc(p.message || "")} · ${(p.pages || []).length} page(s) visited${p.dropped?.length ? ` · ${p.dropped.length} AI statement(s) dropped because their quote was not on the page` : ""}</div></div>`;
+      ${items.map((it) => `<li>${badge(key, it)}${esc(itemText(key, it))}${it.date ? ` <span class="hint">(${esc(it.date)})</span>` : ""}${link(it)}</li>`).join("")}</ul></div>`;
+    const used = [...(p.supplier_mentions || []), ...(p.installed || [])];
+    const basics = [p.summary?.text, (p.segments || []).map((x) => x.name).join(", "), (p.regions || []).map((x) => x.name).join(", "),
+      (p.key_facts || []).map((x) => `${x.label}: ${x.value}`).join(" · ")].filter(Boolean);
+    return `<div class="prof">
+      ${sec("used", used)}${sec("news", p.news)}${sec("priorities", p.priorities)}${sec("hydraulics", p.hydraulics)}
+      ${sec("products", p.products)}${sec("machines", p.machines)}${sec("partners", p.partners)}
+      ${!used.length ? '<p class="hint">No hydraulic supplier or component is named on the pages read.</p>' : ""}
+      ${basics.length ? `<div class="hint"><b>Basics:</b> ${esc(basics.join(" · "))}</div>` : ""}
+      <div class="hint">${esc(p.message || "")} · ${(p.pages || []).length} page(s) visited${p.dropped?.length ? ` · ${p.dropped.length} AI statement(s) dropped because their quote was not on the page` : ""}${p.terms?.status === "no_reservation_found" ? " · terms checked: no reservation against automated reading" : ""}</div></div>`;
   }
 
   function customerPanelHtml() {
@@ -842,6 +859,14 @@
         <div class="hint">${esc(p.summary?.text || p.message || "")}</div>
         <details><summary>View the full profile</summary>${profileHtml(p)}</details>
         <button class="link-btn" type="button" data-act="reread-site">Read the website again</button></div>`;
+    }
+    if (c.profile && c.profile.status !== "ok") {                // terms reservation, or nothing readable
+      const p = c.profile;
+      return `<div class="cust-card">${err}
+        <div><strong>${esc(name)}</strong> · <span class="text-warn">${esc(p.message || "")}</span></div>
+        ${p.terms?.quote ? `<div class="hint">“${esc(p.terms.quote)}” — <a href="${esc(p.terms.url)}" target="_blank" rel="noopener">${esc(shortUrl(p.terms.url))}</a></div>` : ""}
+        <div class="hint">Checked ${esc((p.researched_at || "").slice(0, 10))}. The comparison's business part stays generic for ${esc(name)}.</div>
+        <button class="link-btn" type="button" data-act="reread-site">Check again</button></div>`;
     }
     const known = c.entry?.website;
     if (known) return `<div class="cust-card">${err}
@@ -995,15 +1020,13 @@
   const KIND_LABEL = { positioning: "Positioning", availability: "Availability", pricing: "Pricing",
                        selling_point: "Selling point", transition: "Transition", warning: "Warning" };
 
-  /** Approved commercial notes (sales guidelines) + the review queue for pending ones. */
-  /** Profile fact kinds (P1..) -> the profile sections they came from, in reading order. */
-  const FACT_SECTION = [["summary", "summary"], ["priority", "priorities"], ["hydraulics", "hydraulics"],
-    ["machine", "machines"], ["product", "products"], ["segment", "segments"], ["news", "news"],
-    ["partner", "partners"], ["fact", "key_facts"], ["region", "regions"]];
+  /** Profile fact kinds (P1..) shown in the result -> section. The basics (markets, regions ...) are left out. */
+  const FACT_SECTION = [["supplier mention", "used"], ["installed", "used"], ["news", "news"],
+    ["priority", "priorities"], ["hydraulics", "hydraulics"], ["product", "products"]];
 
-  /** "Business fit for <customer>": why this comparison matters to them, what their website says (every line
-   *  footnoted), questions for the meeting, and the approved sales-guideline notes that fit THIS comparison and
-   *  customer (the rest folded away). */
+  /** "Business fit for <customer>": why this comparison matters to them (by kind), the specific things their
+   *  website says (every line footnoted), and the approved sales-guideline notes that fit THIS comparison and
+   *  customer (the rest folded away). Approved commercial notes + the review queue for pending ones. */
   function commercialHtml(r) {
     const approved = r.commercial || [];
     const pending = r.commercialPending || [];
@@ -1012,17 +1035,28 @@
     const prof = r.customerProfile;
     if (!approved.length && !pending.length && !other.length && !business.length && !prof) return "";
     const who = state.buyer.company || prof?.company || "the customer";
-    const profileItem = (it) => `<li>${it.kind.startsWith("priority") ? `<span class="badge badge-muted">${esc(it.kind.split(": ")[1].replace(/_/g, " "))}</span> ` : ""}${esc(it.text)}${it.date ? ` <span class="hint">(${esc(it.date)})</span>` : ""}${(it.sources || []).map(ref).join("")}</li>`;
-    const groups = prof ? FACT_SECTION.map(([kind, key]) => [key, prof.items.filter((it) => it.kind.split(":")[0] === kind)])
-      .filter(([, items]) => items.length) : [];
-    const snapshot = prof ? `<div class="biz-block"><div class="biz-label">What ${esc(who)} says about itself
+    const profileItem = (it) => {
+      const [kind, sub] = it.kind.split(": ");
+      const badge = kind === "priority" ? `<span class="badge badge-muted">${esc((sub || "").replace(/_/g, " "))}</span> `
+        : kind === "news" ? `<span class="badge badge-brand">${esc(NEWS_LABEL[sub] || "News")}</span> ` : "";
+      return `<li>${badge}${esc(it.text)}${it.date ? ` <span class="hint">(${esc(it.date)})</span>` : ""}${(it.sources || []).map(ref).join("")}</li>`;
+    };
+    const groups = prof ? FACT_SECTION.reduce((acc, [kind, key]) => {
+      const items = prof.items.filter((it) => it.kind.split(":")[0] === kind);
+      if (items.length) (acc.find((g) => g[0] === key) || acc[acc.push([key, []]) - 1])[1].push(...items);
+      return acc;
+    }, []) : [];
+    const snapshot = prof ? `<div class="biz-block"><div class="biz-label">From ${esc(who)}'s own website
         <span class="hint">· <a href="${esc(prof.website || "")}" target="_blank" rel="noopener">${esc(shortUrl(prof.website))}</a>${prof.researchedAt ? " · website last read " + esc(prof.researchedAt.slice(0, 10)) : ""}</span></div>
         <div class="prof-grid">${groups.map(([key, items]) => `<div class="prof-sec"><div class="prof-head">${esc(SECTION_LABEL[key])}</div><ul>${items.map(profileItem).join("")}</ul></div>`).join("")}</div>
-        ${prof.questions?.length ? `<div class="prof-sec"><div class="prof-head">Questions to ask <span class="hint">(suggested by AI)</span></div><ul>${prof.questions.map((q) => `<li>${esc(q)}</li>`).join("")}</ul></div>` : ""}
+        ${!groups.some(([k]) => k === "used") ? '<p class="hint">No hydraulic supplier or component is named on the pages read.</p>' : ""}
       </div>`
       : `<p class="hint">No customer profile for ${esc(who)} yet — look the customer up in the buyer step to tailor this part to their business.</p>`;
-    const bizList = business.length ? `<div class="biz-block"><div class="biz-label">Why it matters to ${esc(who)}</div>
-        <ul>${business.map((it) => `<li>${esc(it.text)}${(it.sources || []).map(ref).join("")}</li>`).join("")}</ul></div>` : "";
+    const bizList = business.length ? `<div class="biz-block biz-why"><div class="biz-label">Why it matters to ${esc(who)}</div>
+        ${BIZ_KIND.map(([kind, label]) => {
+          const items = business.filter((it) => (it.kind || "fit") === kind);
+          return items.length ? `<div class="prof-head">${esc(label)}</div><ul>${items.map((it) => `<li>${esc(it.text)}${(it.sources || []).map(ref).join("")}</li>`).join("")}</ul>` : "";
+        }).join("")}</div>` : "";
     const note = (n, extra) => `<li class="com-note${extra ? " is-pending" : ""}"${n.why ? ` title="Picked because: ${esc(n.why)}"` : ""}>
       <span class="badge badge-${n.kind === "warning" || n.kind === "transition" ? "warn" : "brand"}">${esc(KIND_LABEL[n.kind] || n.kind)}</span>
       ${esc(n.text)} <span class="hint">· ${esc(n.product)}${n.regions && n.regions !== "all" ? " · " + esc(n.regions) : ""}
@@ -1107,7 +1141,12 @@
     const flags = r.flags || [];
     const com = r.commercial || [];
     const issues = issueSummary(r).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-    return `<div class="print-sheet" aria-hidden="true">
+    const page2 = printBusinessPage(r);
+    // page 1 keeps its own source key; customer-website and sales-guideline sources move to page 2 unless
+    // something on page 1 cites them too
+    const page1Ids = new Set(["differences", "benefits", "tradeoffs"].flatMap((k) => (r.insights?.[k] || []).flatMap((it) => it.sources || [])));
+    const page1Sources = (r.sources || []).filter((s) => !page2 || !["profile", "commercial"].includes(s.kind) || page1Ids.has(s.id));
+    return `<div class="print-sheet" aria-hidden="true"><section class="p-page p-page1">
       <header class="p-head">
         <div><div class="p-brand">Danfoss · Competitor Intelligence</div><h3>${esc(r.title)}</h3>
           <div class="p-sub">Prepared for ${esc(state.buyer.company || "—")}${state.buyer.application ? " · " + esc(state.buyer.application) : ""} · ${esc(new Date().toLocaleDateString())}</div></div>
@@ -1126,11 +1165,51 @@
         ${printList("Switching trade-offs", r.insights?.tradeoffs, PRINT.tradeoffs)}
         ${flags.length ? `<div class="p-block"><h5>Open points – check before quoting</h5><ul>${flags.slice(0, PRINT.openPoints).map(flagText).join("")}
           ${flags.length > PRINT.openPoints ? `<li class="p-more">+${flags.length - PRINT.openPoints} more in the app</li>` : ""}</ul></div>` : ""}
-        ${com.length ? printList("Commercial (approved, internal)", com.map((n) => ({ text: `${KIND_LABEL[n.kind] || n.kind}: ${n.text}`, sources: n.sources })), PRINT.commercial) : ""}
+        ${com.length && !page2 ? printList("Commercial (approved, internal)", com.map((n) => ({ text: `${KIND_LABEL[n.kind] || n.kind}: ${n.text}`, sources: n.sources })), PRINT.commercial) : ""}
       </div>
-      ${printSources(r.sources)}
-      <footer class="p-foot">Superscript numbers = sources below · +N = more stated values in the app · "Not stated" = not in the datasheets, never guessed. Full values, quotes and all other facts: open this comparison in Dani.</footer>
-    </div>`;
+      ${printSources(page1Sources)}
+      <footer class="p-foot">Superscript numbers = sources below · +N = more stated values in the app · "Not stated" = not in the datasheets, never guessed. Full values, quotes and all other facts: open this comparison in Dani.${page2 ? " Business brief for the customer: page 2." : ""}</footer>
+    </section>${page2 ? page2.html : ""}</div>`;
+  }
+
+  /** Page 2: the business brief - why it matters to this customer, what their own website says (what they use
+   *  today, news and expansion, stated priorities) and the approved sales-guideline notes. Not shortened:
+   *  these sentences are the point of the page. Same footnote numbers as in the app. */
+  function printBusinessPage(r) {
+    const business = r.insights?.business || [];
+    const prof = r.customerProfile;
+    const notes = r.commercial || [];
+    if (!business.length && !prof && !notes.length) return null;
+    const who = state.buyer.company || prof?.company || "the customer";
+    const ids = new Set();
+    const sup = (list) => { (list || []).forEach((n) => ids.add(n)); return (list || []).length ? `<sup>${list.join(",")}</sup>` : ""; };
+    const li = (text, sources) => `<li>${esc(text)}${sup(sources)}</li>`;
+    const group = (title, items, max) => items.length ? `<div class="p-block"><h5>${esc(title)}</h5><ul>${items.slice(0, max).join("")}
+      ${items.length > max ? `<li class="p-more">+${items.length - max} more in the app</li>` : ""}</ul></div>` : "";
+    const why = BIZ_KIND.map(([kind, label]) => group(label, business.filter((b) => (b.kind || "fit") === kind).map((b) => li(b.text, b.sources)), 6)).join("");
+    const pick = (kinds) => (prof?.items || []).filter((it) => kinds.includes(it.kind.split(":")[0]))
+      .map((it) => {
+        const [kind, sub] = it.kind.split(": ");
+        const tag = kind === "news" ? `${NEWS_LABEL[sub] || "News"}: ` : kind === "priority" ? `${(sub || "").replace(/_/g, " ")}: ` : "";
+        return li(tag + it.text + (it.date ? ` (${it.date})` : ""), it.sources);
+      });
+    const site = prof ? `${group("What they use today (named on their site)", pick(["supplier mention", "installed"]), 6)}
+      ${group("News & expansion — opportunities to follow", pick(["news"]), 6)}
+      ${group("Their stated priorities", pick(["priority"]), 5)}
+      ${group("Hydraulics & controls", pick(["hydraulics"]), 4)}` : "";
+    const com = group("Approved sales-guideline notes (internal)", notes.map((n) => li(`${KIND_LABEL[n.kind] || n.kind}: ${n.text}`, n.sources)), 5);
+    const html = `<section class="p-page p-page2">
+      <header class="p-head">
+        <div><div class="p-brand">Danfoss · Competitor Intelligence · Business brief</div><h3>${esc(who)} — ${esc(r.title)}</h3>
+          <div class="p-sub">${prof ? `From ${esc(shortUrl(prof.website))}${prof.researchedAt ? ", website last read " + esc(prof.researchedAt.slice(0, 10)) : ""} · ` : ""}${esc(new Date().toLocaleDateString())}</div></div>
+        <div class="p-meta">Every statement cites its source: the customer's own web page, a datasheet page or an approved sales guideline.</div>
+      </header>
+      <div class="p-cols p-cols-2">
+        <div>${why ? `<h4 class="p-h4">Why it matters to ${esc(who)}</h4>${why}` : '<p class="p-sub">No customer-specific points (no customer profile or notes).</p>'}</div>
+        <div>${site}${com}</div>
+      </div>`;
+    const sourcesHtml = printSources((r.sources || []).filter((s) => ids.has(s.id)));
+    return { ids: [...ids], html: html + sourcesHtml + `<footer class="p-foot">Superscript numbers = sources below (the same numbers as in the app and on page 1).</footer></section>` };
   }
 
   /** Keeps the summary on one landscape A4 page: first shrink a little (never below 80 %, so it stays
@@ -1139,25 +1218,28 @@
     const PAGE_W = 1060, PAGE_H = 725;                       // A4 landscape minus 8 mm margins, in CSS px
     const MIN_ZOOM = 0.8;
     document.querySelectorAll(".print-sheet").forEach((sheet) => {
-      const rows = [...sheet.querySelectorAll(".p-table tbody tr")];
-      const note = sheet.querySelector(".p-cut");
-      rows.forEach((tr) => (tr.hidden = false));
-      note.textContent = "";
-      sheet.style.zoom = "";
       sheet.classList.add("is-measuring");
-      // a zoomed sheet is laid out wider (PAGE_W / zoom), so measure at that width
-      const scaledHeight = (z) => { sheet.style.width = PAGE_W / z + "px"; return sheet.scrollHeight * z; };
-      let z = 1;
-      while (z > MIN_ZOOM && scaledHeight(z) > PAGE_H) z = Math.max(MIN_ZOOM, z - 0.02);
-      let cut = 0;
-      for (let i = rows.length - 1; i > 0 && scaledHeight(z) > PAGE_H; i--) {
-        if (rows[i].classList.contains("p-must") || rows[i].classList.contains("p-nice")) break;  // priorities stay
-        rows[i].hidden = true; cut++;
-        note.textContent = `+${cut} lower-priority attribute${cut > 1 ? "s" : ""} not printed – see the app.`;
-      }
+      sheet.querySelectorAll(".p-page").forEach((page) => {   // each printed page is fitted on its own
+        const rows = page.classList.contains("p-page1") ? [...page.querySelectorAll(".p-table tbody tr")] : [];
+        const note = page.querySelector(".p-cut");
+        rows.forEach((tr) => (tr.hidden = false));
+        if (note) note.textContent = "";
+        page.style.zoom = "";
+        // a zoomed page is laid out wider (PAGE_W / zoom), so measure at that width
+        const scaledHeight = (z) => { page.style.width = PAGE_W / z + "px"; return page.scrollHeight * z; };
+        let z = 1;
+        const min = page.classList.contains("p-page2") ? 0.72 : MIN_ZOOM;   // page 2 is text: shrink, never cut
+        while (z > min && scaledHeight(z) > PAGE_H) z = Math.max(min, z - 0.02);
+        let cut = 0;
+        for (let i = rows.length - 1; i > 0 && scaledHeight(z) > PAGE_H; i--) {
+          if (rows[i].classList.contains("p-must") || rows[i].classList.contains("p-nice")) break;  // priorities stay
+          rows[i].hidden = true; cut++;
+          note.textContent = `+${cut} lower-priority attribute${cut > 1 ? "s" : ""} not printed – see the app.`;
+        }
+        page.style.width = "";
+        page.style.zoom = z < 1 ? z.toFixed(2) : "";
+      });
       sheet.classList.remove("is-measuring");
-      sheet.style.width = "";
-      sheet.style.zoom = z < 1 ? z.toFixed(2) : "";
     });
   }
 

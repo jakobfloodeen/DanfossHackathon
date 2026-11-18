@@ -41,7 +41,7 @@ from .repository import load_repository
 from .results import STATUS_MESSAGES, AnalysisResult, comparison_rows, onepager_data
 from .shortlist import shortlist as make_shortlist
 
-PROMPT_VERSION = "8"            # change when the prompt text changes -> old cache entries are not reused
+PROMPT_VERSION = "9"            # change when the prompt text changes -> old cache entries are not reused
 _MEMORY_CACHE: dict = {}
 
 HARD_RULES = """HARD RULES (code checks every one of them; breaking one makes the answer fail):
@@ -74,11 +74,15 @@ HARD_RULES = """HARD RULES (code checks every one of them; breaking one makes th
     code: what markets they serve, what machines they build, what they say their priorities are. Use them to
     tailor the business points and, where it helps, the talking points. Cite them like customer passages
     (never in target_facts / candidate_facts). Never infer budgets, buying intent or current suppliers.
-15. business_fit: 0-5 bullets for a salesperson who knows selling but not hydraulics or this customer. Each
-    bullet names something specific about the customer (their machine, product line, stated priority, market,
-    plan - P / C facts or the brief), the product property that matters for it (F facts, with the value), and
-    what that means in the conversation. Be specific, not generic; up to 60 words each. Every bullet cites at
-    least one P, C or K fact. No customer information at all -> an empty list.
+15. business_fit: 0-6 points - the most important part for the salesperson, who knows selling but not hydraulics
+    or this customer. Skip what any rep knows (their basic markets); use the specific facts. Each point has a kind:
+    "opportunity" = growth Danfoss can follow (new plant, department, market, programme, launch - P news facts);
+    "fit"         = how the product's properties (F facts, with values) serve their machines, models or stated
+                    priorities;
+    "displace"    = what they use today (P supplier mentions / installed, or the brief) and why switching helps;
+    "risk"        = what could block the deal or must be checked first.
+    Each point names the customer's specific fact, the product property that matters, and what to say or do.
+    Up to 60 words each. Every point cites at least one P, C or K fact. No customer information -> [].
 16. Answer with ONE JSON object in the response format you are given (fields: comparable,
     not_comparable_reason, best_match, alternatives, points, application_fit, talking_points, tradeoffs,
     business_fit, verify, overall_confidence), nothing else."""

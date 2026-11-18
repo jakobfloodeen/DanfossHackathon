@@ -137,3 +137,15 @@ This folder has no UI or storage migrations. No git commit or push was performed
 Tests cover synthetic sites, actual extraction of a small generated PDF, robots
 rules, destination controls, and the JSON handoff. Live customer-site coverage has
 not been validated in this workspace; validate your intended URLs locally.
+
+## Rights reservations (terms.py, no AI)
+
+Before anything is kept, `research_customer(..., check_terms=True)` checks whether the site owner reserves the
+site against automated reading / text and data mining (EU DSM Directive art. 4(3); in Denmark ophavsretsloven
+§ 11 b): robots.txt rules naming AI agents that cover our use (anthropic-ai, ClaudeBot, "AI"), TDMRep
+(`/.well-known/tdmrep.json`, `<meta name="tdm-reservation" content="1">`), `<meta name="robots" content="noai">`,
+and the terms of use / legal notice / imprint / privacy pages linked from the start page (a sentence that combines
+scraping / data mining / automated access / AI with a prohibition). A match stops the crawl: no evidence is
+returned and `report["terms"]` names the page and the sentence. Blocks aimed only at other vendors' AI-training
+crawlers (GPTBot, CCBot ...) are reported in `report["terms"]["notes"]`, not treated as a stop. This is a careful
+reading in code that errs on the side of stopping - not legal advice.

@@ -31,7 +31,7 @@ from .results import AnalysisResult
 from .units import UNITS, fmt, unit_key
 
 MAX_MATCHES = 3
-MAX_DIFFERENCES, MAX_BENEFITS, MAX_TRADEOFFS, MAX_BUSINESS = 3, 3, 2, 3
+MAX_DIFFERENCES, MAX_BENEFITS, MAX_TRADEOFFS, MAX_BUSINESS = 3, 3, 2, 6
 SHOWN = {"ok", "converted", "unverified", "conflict", "inferred"}     # a cell that actually has a value
 
 # attribute name contains ... -> the website's priority chip ("factor")
@@ -321,15 +321,19 @@ def _number_cited_sources(attributes: list[dict], insights: dict, items: list[di
     return [{**by_old[old], "id": new} for old, new in new_id.items()]
 
 
+SHOWN_PROFILE = ("supplier mention", "installed", "news", "priority", "hydraulics", "product")
+
+
 def _profile_block(result: AnalysisResult, by_id: dict, sources: "_Sources") -> dict | None:
     """The customer snapshot (from their website) shown above the business points, each line footnoted."""
-    facts = [f for f in result.facts if f.role == "profile"]
-    if not facts:
+    # the basics (markets, regions, summary, key facts) go to the AI but are not repeated on the page: a rep knows
+    # them. Shown: what they use today, growth news, stated priorities, hydraulics, products.
+    facts = [f for f in result.facts if f.role == "profile" and f.attribute.split(":")[0] in SHOWN_PROFILE]
+    if not [f for f in result.facts if f.role == "profile"]:
         return None
     info = result.meta.get("customer_profile") or {}
     return {"company": info.get("company", ""), "website": info.get("website", ""),
             "researchedAt": info.get("researched_at", ""), "pages": info.get("pages", 0),
-            "questions": info.get("questions", []),
             "items": [{"id": f.id, "kind": f.attribute, "text": f.value, "date": f.note or "",
                        "sources": sources.ref(f, by_id)} for f in facts]}
 
@@ -357,7 +361,8 @@ def _insights(result, by_id, sources, names, match_ids) -> dict:
         if fit.get("text") and len(benefits) < MAX_BENEFITS:
             benefits.append(item(fit["text"], fit.get("fact_ids", [])))
         tradeoffs = [item(t["text"], t["fact_ids"]) for t in interp.get("tradeoffs", [])][:MAX_TRADEOFFS]
-        business = [item(t["text"], t["fact_ids"]) for t in interp.get("business_fit") or []][:MAX_BUSINESS]
+        business = [{**item(t["text"], t["fact_ids"]), "kind": t.get("kind", "fit")}
+                    for t in interp.get("business_fit") or []][:MAX_BUSINESS]
         return {"differences": differences, "benefits": benefits, "tradeoffs": tradeoffs, "business": business}
     # no AI: only differences that code computed itself
     first = match_ids[0] if match_ids else None

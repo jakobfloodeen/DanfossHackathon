@@ -40,7 +40,7 @@ def fake_profile_ai(system, prompt, schema=None):
         "regions": [{"name": "Europe", "evidence": "E1", "quote": "across Europe and North America"},
                     {"name": "Asia", "evidence": "E9", "quote": "whatever"}],
         "hydraulics": [], "news": [],
-        "questions": ["Which loader range goes electric first?", "not a question"]})
+        "installed": [], "products": [], "key_facts": [], "partners": []})
 
 
 def test_build_keeps_only_verified_statements():
@@ -49,7 +49,6 @@ def test_build_keeps_only_verified_statements():
     assert [s["name"] for s in p["segments"]] == ["Agriculture"]                 # invented quote dropped
     assert [r["name"] for r in p["regions"]] == ["Europe"]                        # unknown excerpt dropped
     assert len(p["dropped"]) == 2 and "2 dropped" in p["message"]
-    assert p["questions"] == ["Which loader range goes electric first?"]
     assert p["priorities"][0]["url"] == "https://agri.example/about"             # statement -> its web page
 
 
@@ -116,17 +115,17 @@ def test_business_fit_is_tailored_cited_and_sourced_to_the_website(monkeypatch, 
     def ai(system, prompt, schema=None):
         prompts.append(prompt)
         assert "business_fit" in schema["required"]
-        return _answer([{"text": "Their 2028 electric loader plan fits proportional electric control (P2).",
-                         "fact_ids": ["P2", "F1"]}])
+        return _answer([{"kind": "fit", "text": "Their 2028 electric loader plan fits proportional electric "
+                         "control (P1).", "fact_ids": ["P1", "F1"]}])
 
     r = interpret("pvg32", ["m4-12"], ask=ai, pool="competitors", data=_data(), use_cache=False,
                   profile_facts=facts)
-    assert "CUSTOMER PROFILE" in prompts[0] and "P2 | priority: electrification" in prompts[0]
+    assert "CUSTOMER PROFILE" in prompts[0] and "P1 | priority: electrification" in prompts[0]
     assert r.status == "ok" and not r.problems
     r.meta["customer_profile"] = {"company": "Agri Machines", "website": "https://agri.example", "pages": 2}
     w = to_website(r)
     biz = w["insights"]["business"]
-    assert biz[0]["text"].endswith("electric control.")                         # "(P2)" removed from the text
+    assert biz[0]["text"].endswith("electric control.")                         # "(P1)" removed from the text
     src = next(s for s in w["sources"] if s["id"] == biz[0]["sources"][-1])
     assert src["kind"] == "profile" and src["url"] == "https://agri.example/about"
     assert src["title"] == "Customer website: About Agri Machines"
@@ -136,7 +135,7 @@ def test_business_fit_is_tailored_cited_and_sourced_to_the_website(monkeypatch, 
 def test_business_fit_without_customer_fact_is_caught(monkeypatch, tmp_path):
     monkeypatch.setenv("COMMERCIAL_FILE", str(tmp_path / "c.csv"))
     monkeypatch.setenv("CACHE_DIR", str(tmp_path / "cache"))
-    r = interpret("pvg32", ["m4-12"], ask=lambda *a, **k: _answer([{"text": "Great for them.", "fact_ids": ["F1"]}]),
+    r = interpret("pvg32", ["m4-12"], ask=lambda *a, **k: _answer([{"kind": "fit", "text": "Great for them.", "fact_ids": ["F1"]}]),
                   pool="competitors", data=_data(), use_cache=False)
     assert any("business_fit[0]" in p for p in r.problems)
 
@@ -214,3 +213,35 @@ def test_known_customer_needs_no_url_and_search_shows_saved_profile(monkeypatch)
     assert hit["name"] == "JOHN DEERE" and hit["hasProfile"] and hit["researchedAt"]
     assert client.post("/api/customers/alias", json={"alias": "Jon Dere", "company": "JOHN DEERE"}).json()["ok"]
     assert cp.resolve("jon dere")["matchedBy"] == "alias"
+
+
+def test_suppliers_named_with_hydraulics_are_found_by_code_and_sent_first():
+    report = {"sources": [{"id": "S1", "url": "https://x.example/spec", "title": "AL 650e specifications"}],
+              "evidence": [{"id": f"F{i}", "source_id": "S1", "excerpt": "Filler text about our heritage " * 8}
+                           for i in range(40)] +
+                          [{"id": "H", "source_id": "S1", "excerpt": "Work hydraulics: load-sensing Bosch Rexroth "
+                            "M4 control valve with electro-hydraulic joystick. Cab by Parker and Sons Interiors."},
+                           {"id": "G", "source_id": "S1", "excerpt": "In 2026 we opened a new plant in Curitiba, "
+                            "Brazil, for compact loaders."}]}
+    found = cp.supplier_mentions(report)
+    assert [m["supplier"] for m in found] == ["Bosch Rexroth"]          # Parker: not in a hydraulics sentence
+    assert found[0]["url"] == "https://x.example/spec"
+    ex = cp.excerpts_from_report(report, budget=2000)
+    texts = " ".join(e["text"] for e in ex)
+    assert "Rexroth" in texts and "Curitiba" in texts                   # priority blocks survive a small budget
+    facts = cp.profile_facts({**cp.build("X", "https://x.example", {"sources": [], "evidence": []}),
+                              "status": "ok", "supplier_mentions": found})
+    assert facts[0].attribute == "supplier mention" and facts[0].quote.startswith("Work hydraulics")
+
+
+def test_reserved_site_is_not_sent_to_the_ai():
+    report = {"sources": [], "evidence": REPORT["evidence"],
+              "terms": {"status": "reserved", "reason": "terms page prohibits automated reading / data mining",
+                        "url": "https://x.example/terms", "quote": "No scraping."}}
+    p = cp.build("X", "https://x.example", report, ask=lambda *a: 1 / 0)
+    assert p["status"] == "reserved" and "x.example/terms" in p["message"] and cp.profile_facts(p) == []
+
+
+def test_product_names_written_apart_are_not_numbers_and_short_codes_do_not_eat_years():
+    from comparison_engine.guardrails import numbers_in
+    assert numbers_in("Offer PVG 32 or PVG-32 from 2026 on", ["pvg32", "6"]) == ["2026"]

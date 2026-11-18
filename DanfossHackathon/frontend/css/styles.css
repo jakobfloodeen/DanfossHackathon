@@ -281,6 +281,11 @@ table.cmp { border-collapse: collapse; width: 100%; font-size: 14px; }
 .p-sources li { break-inside: avoid; }
 .p-doc { color: #111; overflow-wrap: anywhere; }
 .p-foot { margin-top: 4px; font-size: 6.5pt; color: #666; }
+.p-page2 { break-before: page; page-break-before: always; }
+.p-cols-2 { grid-template-columns: 1.15fr 1fr; gap: 6px 22px; padding-left: 0; }
+.p-cols-2 > div > .p-block { margin-bottom: 5px; }
+.p-h4 { margin: 0 0 3px; font-size: 10pt; }
+.p-page2 .print-sheet li, .p-page2 li { margin-bottom: 2px; }
 
 /* ---------- data management: add cards, upload dialog ---------- */
 .option-add { border-style: dashed; background: transparent; }
@@ -382,6 +387,8 @@ span.ref { color: var(--ink-3); }
 .prof-sec ul { margin: 0; padding-left: 18px; }
 .prof-sec li { margin-bottom: 4px; font-size: 14px; }
 .commercial .prof-sec ul { padding-left: 2px; }
+.commercial .biz-why ul { margin-bottom: 6px; }
+.commercial .biz-why li { margin-bottom: 6px; font-size: 14px; }
 .prof-head { font-size: 13px; font-weight: 600; color: var(--ink); margin: 6px 0 4px; }
 .src-link { font-size: 12px; color: var(--ink-2); margin-left: 4px; }
 .pending-tools { font-size: 12px; color: var(--ink-3); white-space: nowrap; }

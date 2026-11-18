@@ -32,6 +32,10 @@ NEEDS_CHECK = {"unverified", "conflict", "missing", "unknown unit"}
 
 _cited = {"type": "object", "additionalProperties": False, "required": ["text", "fact_ids"],
           "properties": {"text": {"type": "string"}, "fact_ids": {"type": "array", "items": {"type": "string"}}}}
+BUSINESS_KINDS = ["opportunity", "fit", "displace", "risk"]
+_business = {"type": "object", "additionalProperties": False, "required": ["kind", "text", "fact_ids"],
+             "properties": {"kind": {"type": "string", "enum": BUSINESS_KINDS}, "text": {"type": "string"},
+                            "fact_ids": {"type": "array", "items": {"type": "string"}}}}
 _product_choice = {"type": "object", "additionalProperties": False, "required": ["product_id", "why", "fact_ids"],
                    "properties": {"product_id": {"type": "string"}, "why": {"type": "string"},
                                   "fact_ids": {"type": "array", "items": {"type": "string"}}}}
@@ -62,7 +66,7 @@ OUTPUT_SCHEMA = {
         "application_fit": _cited,
         "talking_points": {"type": "array", "items": _cited},
         "tradeoffs": {"type": "array", "items": _cited},
-        "business_fit": {"type": "array", "items": _cited},
+        "business_fit": {"type": "array", "items": _business},
         "verify": {"type": "array", "items": {
             "type": "object", "additionalProperties": False, "required": ["fact_id", "reason"],
             "properties": {"fact_id": {"type": "string"}, "reason": {"type": "string"}}}},
@@ -113,8 +117,10 @@ def numbers_in(text: str, ignore: list[str] = ()) -> list[str]:
     the given product names are ignored - they are names, not claims."""
     s = text or ""
     for name in sorted(ignore, key=len, reverse=True):
-        if name:
-            s = re.sub(re.escape(name), " ", s, flags=re.I)
+        if name:       # "pvg32" also matches "PVG 32" / "PVG-32" (letters and digits written apart)
+            parts = re.split(r"(?<=[A-Za-z])(?=\d)|(?<=\d)(?=[A-Za-z])", name)
+            body = r"[\s-]?".join(re.escape(x) for x in parts)       # whole names only: "6" must not eat "2026"
+            s = re.sub(rf"(?<![A-Za-z0-9]){body}(?![A-Za-z0-9])", " ", s, flags=re.I)
     s = re.sub(r"\b(?:in3|cm3|m3|min-1|1/min|r/min)\b", " ", s, flags=re.I)
     return [m.group().lstrip("+-").rstrip(".,") for m in _NUMBER.finditer(s)]
 
@@ -124,7 +130,8 @@ def _allowed_numbers(fact_ids: list[str], by_id: dict[str, Fact], diffs: list[Di
     cited = [by_id[i] for i in fact_ids if i in by_id]
     for f in cited:
         if f.role in BUSINESS_ROLES:                     # a passage/note: every number in its text counts
-            allowed |= {abs(v) for v in (parse_number(x) for x in numbers_in(f.value or "")) if v is not None}
+            text = f"{f.value or ''} {f.note or ''}" if f.role == "profile" else (f.value or "")   # + news date
+            allowed |= {abs(v) for v in (parse_number(x) for x in numbers_in(text)) if v is not None}
             continue
         for f2 in [f] + [by_id[b] for b in f.based_on if b in by_id]:      # calculated: inputs count too
             for v in (f2.norm_value, parse_number(f2.value)):
@@ -249,7 +256,7 @@ def check_interpretation(answer: dict, facts: list[Fact], diffs: list[Diff], tar
     return problems
 
 
-MAX_COUNT = {"talking_points": 3, "tradeoffs": 2, "points": 8, "business_fit": 5}
+MAX_COUNT = {"talking_points": 3, "tradeoffs": 2, "points": 8, "business_fit": 6}
 MAX_WORDS_BUSINESS = 75     # business points connect customer + product + what to say: room for detail
 BUSINESS_ROLES = ("customer", "commercial", "profile")
 OPTIONAL_IN_OLD_ANSWERS = ("business_fit",)               # answers cached before the field existed still pass    # facts ABOUT the customer / sales guidelines, not products

@@ -213,3 +213,62 @@ class ProfileModeTests(unittest.TestCase):
                                   render=lambda url: self.ABOUT.decode())
         self.assertEqual(r['sources'][0]['kind'], 'html_rendered')
         self.assertIn('compact wheel loaders', ' '.join(e['excerpt'] for e in r['evidence']))
+
+
+class TermsCheckTests(unittest.TestCase):
+    """Rights reservations against automated reading / data mining stop the crawl (terms.py, no AI)."""
+    HOME = (b'<title>Example</title><p>Example Machines designs compact wheel loaders for farms and builders, '
+            b'sold through dealers in Europe.</p><a href="/about-us">About us</a>'
+            b'<footer><a href="/legal/terms-of-use">Terms of use</a><a href="/privacy">Privacy</a></footer>')
+    ABOUT = b'<title>About</title><p>We build loaders in Denmark and Brazil since 1950, with 2,000 employees today.</p>'
+
+    def run_site(self, terms_page, robots=b'User-agent: *\nAllow: /', extra=None):
+        pages = {'https://customer.example/': self.HOME, 'https://customer.example/about-us': self.ABOUT,
+                 'https://customer.example/legal/terms-of-use': terms_page,
+                 'https://customer.example/privacy': b'<p>We process personal data lawfully. We do not use '
+                 b'automated decision-making or profiling.</p>', **(extra or {})}
+
+        def fetch(url, allowed_hosts=None):
+            if url.endswith('/robots.txt'):
+                return robots, url, 'text/plain', False
+            if url not in pages:
+                raise httpx.HTTPStatusError('404', request=httpx.Request('GET', url),
+                                            response=httpx.Response(404, request=httpx.Request('GET', url)))
+            return pages[url], url, 'text/html', False
+        with patch.object(c, 'fetch', side_effect=fetch):
+            return research_customer('https://customer.example/', collect='all', link_terms=c.PROFILE_LINK_TERMS)
+
+    def test_terms_prohibiting_scraping_stop_everything(self):
+        r = self.run_site(b'<p>You may not use any robot, spider, scraper or other automated means to access '
+                          b'this website for any purpose without our express written permission.</p>')
+        self.assertEqual(r['terms']['status'], 'reserved')
+        self.assertTrue(r['terms']['url'].endswith('/legal/terms-of-use'))
+        self.assertIn('automated means', r['terms']['quote'])
+        self.assertEqual(r['evidence'], [])
+        self.assertEqual(r['sources'], [])
+
+    def test_ordinary_terms_and_gdpr_wording_do_not_stop(self):
+        r = self.run_site(b'<p>All content is provided as is. Trademarks belong to their owners.</p>')
+        self.assertEqual(r['terms']['status'], 'no_reservation_found')
+        self.assertIn('https://customer.example/privacy', r['terms']['checked'])   # "automated decision" ignored
+        self.assertTrue(r['evidence'])
+
+    def test_tdm_reservation_meta_and_tdmrep_and_ai_robots(self):
+        meta_home = self.HOME.replace(b'<title>', b'<meta name="tdm-reservation" content="1"><title>')
+        r = self.run_site(b'<p>ok</p>', extra={'https://customer.example/': meta_home})
+        self.assertEqual(r['terms']['status'], 'reserved')
+        r = self.run_site(b'<p>ok</p>', extra={'https://customer.example/.well-known/tdmrep.json':
+                                               b'[{"location": "/*", "tdm-reservation": 1}]'})
+        self.assertIn('tdmrep', r['terms']['reason'])
+        r = self.run_site(b'<p>ok</p>', robots=b'User-agent: ClaudeBot\nDisallow: /\n\nUser-agent: *\nAllow: /')
+        self.assertIn('ClaudeBot', r['terms']['reason'])
+        r = self.run_site(b'<p>ok</p>', robots=b'User-agent: GPTBot\nDisallow: /\n\nUser-agent: *\nAllow: /')
+        self.assertEqual(r['terms']['status'], 'no_reservation_found')
+        self.assertTrue(r['terms']['notes'])                                          # reported, not a stop
+
+    def test_reservation_sentences(self):
+        from customer_scraper.terms import find_reservation
+        self.assertTrue(find_reservation('Text and data mining within the meaning of § 44b UrhG is reserved.'))
+        self.assertTrue(find_reservation('Die Nutzung durch Crawler ist ohne Zustimmung untersagt.'))
+        self.assertIsNone(find_reservation('Our robots weld frames with high precision in Brazil.'))
+        self.assertIsNone(find_reservation('We do not use automated decision-making as defined in GDPR art. 22.'))

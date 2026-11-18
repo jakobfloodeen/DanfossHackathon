@@ -535,8 +535,7 @@ def note_profile(result, profile: dict | None) -> None:
     if profile and profile.get("status") == "ok":
         result.meta["customer_profile"] = {"company": profile.get("company"), "website": profile.get("website"),
                                            "researched_at": profile.get("researched_at"),
-                                           "pages": profile.get("pages_used") or len(profile.get("pages", [])),
-                                           "questions": profile.get("questions", [])}
+                                           "pages": profile.get("pages_used") or len(profile.get("pages", []))}
 
 
 def run_engine(target_id: str, candidates, pool: str, payload: dict, names: dict, pending: dict,
@@ -779,8 +778,8 @@ CUSTOMER_LOCK = threading.Lock()
 CUSTOMER_ASK = None        # tests put a fake AI here
 CUSTOMER_CRAWL = None      # tests put a fake crawler here
 PROFILE_KEYS = ("company", "website", "researched_at", "status", "message", "summary", "key_facts", "segments",
-                "machines", "products", "priorities", "hydraulics", "partners", "regions", "news", "questions",
-                "pages", "pages_used", "warnings", "dropped", "model", "cost")
+                "machines", "products", "priorities", "hydraulics", "installed", "supplier_mentions", "partners",
+                "regions", "news", "pages", "pages_used", "warnings", "dropped", "terms", "model", "cost")
 
 
 def _profile_view(profile: dict | None) -> dict | None:
