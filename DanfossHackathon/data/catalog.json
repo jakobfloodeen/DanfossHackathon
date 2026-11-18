@@ -173,7 +173,7 @@
     {
       "id": "hydac",
       "name": "HYDAC",
-      "hasData": false
+      "hasData": true
     },
     {
       "id": "kawasaki",
@@ -262,6 +262,34 @@
             "ok": 67,
             "unverified": 1,
             "at": "2026-11-15T09:44:45+00:00"
+          }
+        }
+      ],
+      "status": "active"
+    },
+    {
+      "id": "hydac-lx-6",
+      "competitorId": "hydac",
+      "name": "LX-6",
+      "categoryId": "proportional",
+      "equivalentOf": [
+        "pvg32"
+      ],
+      "datasets": [
+        {
+          "name": "lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf",
+          "fileId": "0e9b46d868fe9bc6",
+          "source": "competitor",
+          "competitorId": "hydac",
+          "pages": 36,
+          "uploadedAt": "2026-11-18T15:21:27+00:00",
+          "facts": {
+            "status": "done",
+            "csv": "hydac-lx-6__0e9b46d868fe9bc6.csv",
+            "facts": 174,
+            "ok": 165,
+            "unverified": 9,
+            "at": "2026-11-18T15:21:41+00:00"
           }
         }
       ],

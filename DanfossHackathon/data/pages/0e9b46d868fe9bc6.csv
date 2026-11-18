@@ -1,0 +1,2002 @@
+source_file,page,text
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,1,"X-Series
+Load-Sensing Sectional
+Control Valves
+LX-6
+Nominal pressure: 350 bar
+Nominal flow rate
+l Pump port: 250 l/min
+l Working ports: 160 l/min
+with compensator and load holding
+function
+02.01
+/ 2.282.5
+NE
+Table of contents
+Product features 2
+General information and functional description 2
+l Overview 2
+Technical data 4
+Modular structure 5
+Example of block specification and type code 6
+Inlet plates 7
+l Inlet plate CL17 7
+l Universal inlet plate UL17 / UL17F 8
+l Option blocks for inlet plate UL17F 9
+Working sections 11
+l Working sections B6 / LS6 / LS6F 11
+l Main spool and pressure compensator 12
+l LS pressure limitation 16
+l Workport valves 17
+l Operation units 18
+l Spring caps 20
+l Option blocks for working section LS6F 21
+End plates 24
+l End plate ER1 25
+l End plates ER2 / ER27 / ER2F 25
+l Option blocks for end plate ER2F 26
+Solenoid valves and coils 27
+Connection type, fastening and tie rods 28
+Installation, usage and maintenance information 28
+Dimensions 29
+Type code 32
+Ordering examples 35
+Standard program
+1"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,2,"02.01
+/ 2.282.5
+NE
+Product features
+l Load pressure independent flow control with l Adjustable load sense pressure limitation (mechanically or
+electro proportionally) causes the compensator to block flow
+- Open Center (OC) system for fixed displacement pump
+to the working ports A or B independently
+- Closed Center (CC) system for variable displacement pump
+l Flow-optimized valve design l Direct-mounted option blocks for remote control
+of LS and pilot oil supply
+l High mechanical and electrical resolution
+l End plates with additional pilot oil
+l Compact size and low weight
+supply options
+l Modular design up to 8 working sections
+l Areas of application:
+l Types of operation (with/without hand lever): - Cranes - Forestry
+- Hydraulic - Lifting platforms - Municipal vehicles
+- Electrohydraulic (on/off, proportional) - Drilling machinery - Truck applications
+- Construction - Stationary applications
+l Application-specific main spools with adjustable stroke limiter
+- Agriculture
+l Shock/anti-cavitation valves for protection of actuators
+General information
+and functional description
+The LX-6 is a proportional directional control valve according The pressure compensator 2.7 keeps the flow rate to the
+to the load-sensing principle pre compensated. actuator constant, even if the system pressure varies.
+The nominal flow rate to the working ports A and B is 160 l/min. Pressure changes at the pump or working ports A and B
+The main spool 2.1 determines the flow direction and are compensated for each working section individually.
+magnitude of flow rate. The maximum operating pressure can be adjusted by
+Pressure control valves 2.4.3 and 2.4.4 are providing shifting LS pressure limitation for working ports A and B separately.
+pressure to the left and right side of the main spool 2.1 to Shock / anti-cavitation valves 2.3.2 protect the working
+control its position. The level of electric current determines the ports A and B from pressure peaks. Anti-cavitation valves 2.3.1
+level of pilot pressure and therefore the position of the main protect the system from cavitation.
+spool.
+Shuttle valves are integrated into the working sections to
+Adjustable stroke limiters 2.4.1 and 2.4.2 can be set mechanically signal the highest load pressure for the valve stack to the inlet
+to limit the maximum flow rate to the working ports A and B. plate or variable displacement pump.
+Overview
+2.3.1 2.3.2 2.4.3 2.4.4
+A B
+2.4.2
+T T
+2.4.1
+2.1
+P
+2.7
+2.7 Pressure compensator 2.4.1 Stroke limiter port A (clockwise rotation)
+2.1 Main spool 2.4.2 Stroke limiter port B (counterclockwise rotation)
+2.3.1 Workport valve port A (anti-cavitation valve) 2.4.3 Pressure control valve port A
+2.3.2 Workport valve port B (shock / anti-cavitation valve) 2.4.4 Pressure control valve port B
+2"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,3,"02.01
+/ 2.282.5
+NE
+Overview
+2.0 2.5 2.3.1 2.2.1 2.6
+1.3
+1.0
+3.0
+1.2 2.2.2
+Ports
+P Pump 1.1 2.3.2
+MP Pump measuring port
+T Tank
+LS Load-sensing
+A, B Working ports 2.4
+C Pilot oil supply 2.4.1 2.4.2
+Z Pilot drain
+MY Pilot pressure measuring port (port B)
+1.3 1.0 1.2 2.0 2.4 2.2.2 2.2.1 3.1 3.0
+MY A B MY A B MY A B PC
+Z
+LS
+Z Z 3.2
+C
+C
+LS
+A A
+L1
+B B
+P
+LX
+A A
+B B
+1.1 LS
+LS
+LX
+P
+MP T
+Z LALBLR LS
+P T LS
+2.7 2.5 2.1 2.3.1 2.3.2
+2.8 2.6
+1.0 Inlet plate 2.4 Operation unit
+1.1 Main axis of 3-way flow controller or pump pressure limiter 2.4.1 Stroke limiter of main spool port A
+1.2 Pilot pressure relief valve of main axis 1.1 2.4.2 Stroke limiter of main spool port B
+1.3 Option block for inlet plate 2.5 Spring cap
+2.0 Working section 2.6 Option block for working section
+2.1 Main spool 2.7 Pressure compensator
+2.2.1 LS pressure limitation port A 2.8 LS shuttle valve
+2.2.2 LS pressure limitation port B 3.0 End plate
+2.3.1 Workport valve port A 3.1 Filter element
+2.3.2 Workport valve port B 3.2 Pressure reducing valve for internal pilot oil supply
+3"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,4,"02.01
+/ 2.282.5
+NE
+Technical data
+General data and operating conditions
+No. of working sections: 1–81)
+Installation position: Optional
+Mass in kg: Inlet plate CL17 / UL17 / UL17F 6.1 / 6.0 / 5.9
+Option block UD1 / UW 1... 0.4 / 1.1
+Working section B6 / LS 6 / LS6F 5.1 / 4.7 / 4.6
+Operation unit H... / E... 0.4 / 0.9
+Hand lever 1 / 2 / 3 0.1
+Option block LD1 / LW... / LW1... 0.3 / 1.2 / 1.6
+End plate ER1 / ER 2 / ER27 / ER2F 4.0 / 3.9 / 4.2 / 3.9
+Option block E1C 0.7
+Tie rod for working sections 2 / 4 / 6 / 8 0.3 / 0.5 / 0.7 / 0.8
+Connection type (thread type): BSPP (acc. to ISO 1179-1); SAE (acc. to ISO 11926-1 or SAE J1626)
+Ambient temperature range: -20 to +60 °C1)
+Hydraulic fluid temperature range: -20 to +80 °C1)
+Painting: Standard primer and top coat RAL 9005 on inquiry
+Hydraulic data
+Nominal flow rate P / A, B 250 l/min / 160 l/min
+Nominal pressure 350 bar
+Max. operating P / A, B 350 bar / 420 bar
+pressure at port:
+T 30 bar for external drained tank line Z
+10 bar for internal connection Z → T
+Z Drained to tank
+Max. pilot pressure at port C / X, Y 30 bar
+Pilot pressure range 6.5 to 20 bar hydraulic
+4.5 to 20 bar electrohydraulic
+Required control Δp at the control block 17 bar
+Hydraulic fluid Mineral oil (HL/HLP) acc. to DIN 51524, other hydraulic fluids on inquiry
+Viscosity range 10 – 400 mm2/s
+Max. permitted degree of contamination 20/18/15 acc. to ISO 4406 (c)
+of the hydraulic fluid Please contact HYDAC Filtration Technology to ensure system cleanliness
+Electrical data
+Supply voltages 12 V DC / 24 V DC
+Solenoid data See section “Operation units” and “Solenoid valves and coils”
+Connector type and IP protection class AMP Junior Timer, 2-pin, axial / up to IP6K62)
+(with mating connector mounted and locked) Deutsch DT04, 2-pin, axial / up to IPX9K2)
+Amplifiers and control devices See Product Catalogue 18.500 – Control Technology for Mobile Machines
+1) Deviation of data on inquiry only
+2) Mating plug-in connectors are not included
+! The technical data and characteristic curves were determined at a viscosity of 32 mm²/s
+4"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,5,"02.01
+/ 2.282.5
+NE
+Modular structure
+The LX-6 can be customised to different applications and machines.
+The principle sectional design and modular structure consists of an inlet plate, max. 8 working sections and an end plate.
+A complete control block is defined by a type code system.
+Setup with left hand inlet plate
+1.4 2.6
+1.3
+1.2
+1.1
+2.1
+2.2
+2.3
+3.1
+3.2
+3.3
+3.4
+3.5
+2.4
+2.5
+2.7
+Type code structure
+General LX-6 _ _ / B 0
+Connection type B (BSPP) or S (SAE)
+No. of working sections (01-08)
+Inlet plate UL17F / ... / UW1... 1.1 Inlet plate CL17
+1.2 Inlet plate UL17
+1.3 Inlet plate UL17F
+1.4 Option block UD1, UW1...
+Working section LS6F / ... / LW... 2.1 Working section B6
+2.2 Working section LS6
+. 2.3 Working section LS6F
+. 2.4 Hydraulic operation HY
+. 2.5 Electrohydraulic operation E1Y, EY, E
+. 2.6 Spring cap
+2.7 Option block LD1, LW..., LW1...
+End plate ER2F / ... / E1C... 3.1 End plate ER1
+3.2 End plate ER2
+3.3 End plate ER27
+3.4 End plate ER2F
+3.5 Option block E1C
+5"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,6,"02.01
+/ 2.282.5
+NE
+Example of block specifications and type code
+Example: control block for hydraulic system with variable displacement pump (CC system)
+Type code Control block specification
+Valve type LX-603 LX-6 with 3 working sections
+LX-603 / B0 B0 BSPP connection type, valve series 0
+Left hand inlet plate for CC systems,
+Inlet plate CL17
+w/o primary pressure limiter
+CL17 / 300 / V2D 300 LS pressure relief valve set to 300 bar
+LS unloading valve (normally open)
+V2D
+with 24 V solenoid and connector type Deutsch DT04-2P
+Working section 1 B6 Basic section type w/o LS or workport valves
+B6 / CS160-160RN / EYHS2D-1 / C1E - Main spool type CS (closed in neutral position)
+- Flow rate at working port A and B 160 l/min
+CS – RN
+- Pressure compensator with load holding function,
+spring type N
+- Electrohydraulic operation and measuring port MY
+- Hand lever axis and stroke limiter
+EYHS2D-1
+- 24 V solenoid and connector type Deutsch DT04-2P
+- Hand lever type 1
+C1E Spring cap for electrohydraulic operation
+Working sections 2 and 3 LS6 Working section with LS and workport valves
+LS6 / CR050-050RG / 200 – P / 250 – P / EYHS2D-1 / C1E - Main spool type CR (unloaded in neutral position)
+- Flow rate at working port A and B 50 l/min
+CR – RG
+- Pressure compensator with load holding function,
+spring type G
+200 – P LS pressure limitation port A 200 bar, port B plug screw
+250 – P Shock valve port A 250 bar, port B plug screw
+- Electrohydraulic operation and measuring port MY
+- Hand lever axis and stroke limiter
+EYHS2D-1
+- 24 V solenoid and connector type Deutsch DT04-2P
+- Hand lever type 1
+C1E Spring cap for electrohydraulic operation
+Right hand end plate with internal pilot oil supply
+End plate ER2
+and external drained tank line
+ER2 / 0 0 No options (standard)
+MY A B MY A B MY A B PC
+Z
+C
+A A
+B B
+A A
+B B
+LS
+MP
+P T LS
+6"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,7,"02.01
+/ 2.282.5
+NE
+Inlet plate CL17
+Type code
+1 Basic type
+C Closed Center system for variable displacement pump
+CL17 / 300 / V2D
+L Left hand side
+1 2 3
+1 Version
+7 Port size P / T
+CL17/_ _ _/_ _ _
+2 LS pressure relief valve
+Pressure setting in bar,
+1 _ _ _
+3-digit, max. 350 bar
+Z
+C
+P Plug screw
+2
+3 Option valve for LS circuit1)
+P Plug screw
+3
+V_ _ LS unloading
+Normally open (Manual
+emergency operation)
+W_ _ LS unloading
+Normally closed (Manual
+LS emergency operation)
+LX
+P
+MP T P0A_ _ Electro-proportional
+pressure adjustment
+P T LS Pressure stage A: 350 bar
+12 V: Imax = 1,500 mA
+24 V: Imax = 750 mA
+CL17/P/P CL17/250/W2A CL17/300/P0A1D The electro-proportional pressure relief valve P0A is
+! not suitable for acting as an LS unloading valve.1)
+Solenoid (supply voltage, connector type)
+1_ 12 V
+Z Z Z
+C C C
+2_ 24 V
+_A AMP Junior Timer
+_D Deutsch DT04-2P
+Example configurations
+CL17/P/P
+l Basic type CL17
+l w/o LS pressure relief valve (plug screw)
+l w/o LS option valve (plug screw)
+CL17/300/P0A1D
+l Basic type CL17
+LS LS LS
+LX LX LX l LS pressure relief valve set to 300 bar
+P P P
+MP T MP T MP T l LS option valve type P0A, electro-proportional
+pressure adjustment (pressure stage A: 350 bar)
+P T LS P T LS P T LS
+l 12 V solenoid and connector type Deutsch DT04-2P
+! Unloading the LS circuit with the option valves V and W 3
+will not block the flow to the working ports A and
+B completely when the main spool is out of neutral position.
+Regardless of viscosity or parallel operation, the working
+pressure during blocking can be up to 15 bar depending
+on the selected pressure compensator spring type.
+For working sections without pressure compensator
+(load holding function only), the stand-by pressure of the variable
+displacement pump has to be taken into account.
+1) See section “Solenoid valves and coils”
+7"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,8,"02.01
+/ 2.282.5
+NE
+Universal inlet plate UL17 / UL17F
+Type code
+1 Basic type
+U Universal plate for OC and CC systems
+UL17 / 250 / F
+L Left hand side
+UL17F / 300 / P / UW1V2D
+1 2 3 4 1 Version
+7 Port size P / T
+F Flange interface for option blocks
+UL17/ _ _ _ / F UL17/ _ _ _ /P 2 Pilot pressure relief valve of main axis
+Pressure setting in bar,
+_ _ _
+3-digit, max. 350 bar
+1
+Z Z
+C C
+P Plug screw
+2
+3 Logic of main axis
+F 3-way flow controller for fixed displacement pump
+P Pump pressure relief valve
+for variable displacement pump
+4 Option block for basic type UL17F
+Characteristic curves (measured at 32 mm²/s)
+3 3 3 3
+∆p in bar
+20
+LS LS
+LX LX
+P P
+MP T MP T
+P T LS P T LS 15
+10
+UL17F/ _ _ _ /P/...
+5
+Flange channels
+Z Pilot drain
+LS Load-sensing
+L1 Load signal 1 4 Z C Z 0 0 20 40 60 80 100 120 140 160 180 200 220 240 260
+P Pump Q in l/min
+LX Load signal X1) LS Open Center circulation pressure P → T
+L1
+P ∆p in bar
+340
+LX 320
+300
+280
+260
+240
+220
+200
+180
+160
+140
+LS 120
+LX 100
+P
+MP T 80
+60
+P T LS 40
+20
+0
+0 20 40 60 80 100 120 140 160 180 200 220 240 260
+Q in l/min
+1) Separate, internal channel for optional functions Pressure relief function P → T
+8"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,9,"02.01
+/ 2.282.5
+NE
+Option blocks for inlet plate UL17F
+Type code
+UL17F / 300 / P / UW1V2D
+Dummy plate
+UD1
+UD Basic type
+Flange channels
+Z
+Z Pilot drain 1 Version 1
+LS Load-sensing
+LS
+L1 Load signal 1
+P Pump L1
+LX Load signal X P
+LX
+LS option valves1)
+UW1 Basic type
+UW1V_ _
+V_ _ LS unloading
+UW1W_ _ Normally open
+(Manual emergency operation)
+LS LS
+Z
+Z Z W_ _ LS unloading
+C Normally closed
+(Manual emergency operation)
+LS
+LS
+L1 L1 P0A_ _ Electro-proportional
+pressure adjustment
+P
+P Pressure stage A: 350 bar
+LX LX 12 V: Imax = 1,500 mA
+24 V: Imax = 750 mA
+UW1P0A_ _ The electro-proportional pressure relief valve P0A
+! is not suitable for acting as an LS unloading valve.1)
+LS
+Solenoid (supply voltage, connector type)
+Z
+1_ 12 V
+LS 2_ 24 V
+L1
+_A AMP Junior Timer
+LS
+P LX
+_D Deutsch DT04-2P
+P
+LX MP T
+Unloading the LS circuit with the option valves V and
+!
+P T LS W will not block the flow to the working ports A and B
+completely when the main spool is out of neutral position.
+Regardless of viscosity or parallel operation, the working
+pressure during blocking can be up to 15 bar depending
+on the selected pressure compensator spring type.
+For working sections without pressure compensator
+Example configurations (load holding function only), the stand-by pressure of the
+variable displacement pump or circulation pressure of the
+UW1W2A fixed displacement pump has to be taken into account.
+l Basic type UW1
+l LS option valve type W, normally closed
+l 24 V solenoid and connector type AMP Junior Timer
+UW1P0A1D
+l Basic type UW1
+l LS option valve type P0A, electro-proportional
+pressure adjustment (pressure stage A: 350 bar)
+l 12 V solenoid and connector type Deutsch DT04-2P
+1) See section “Solenoid valves and coils”
+9"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,10,"02.01
+/ 2.282.5
+NE
+Option blocks for inlet plate UL17F
+UW1M_ _ _ W_ _ UW1M_ _ _ V_ _ Switchable LS pressure limitation for LS circuit1)
+UW1M Basic type
+Pressure setting in bar,
+LS LS _ _ _
+3-digit, max. 350 bar
+Z
+Z Z
+C
+LS
+LS V_ _ Normally open (Manual
+L1 emergency operation)
+L1
+P
+P
+LX LX W_ _ Normally closed (Manual
+emergency operation)
+Solenoid (supply voltage, connector type)
+1_ 12 V
+2_ 24 V
+_A AMP Junior Timer
+LS
+LX _D Deutsch DT04-2P
+P
+MP T
+P T LS
+Example configurations
+UW1M200W2A
+l Basic type UW1M
+l LS pressure relief valve set to 200 bar
+l LS option valve type W, normally closed
+l 24 V solenoid and connector type AMP Junior Timer
+1) See section “Solenoid valves and coils”
+10"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,11,"02.01
+/ 2.282.5
+NE
+Working sections B6 / LS6 / LS6F
+B6 / ... LS6 / ... LS6F / ...
+A B A B A B
+1
+Z Z Z
+C C C
+3 A A
+B B
+5
+(b) (b) (b)
+(0) (0) (0)
+2
+A A
+(a) (a) (a)
+4
+B B
+LS LS LS
+LX LX LX
+P P P
+T T T
+Z LA LB LR LS
+6 7 Flange channels
+Z Pilot drain
+LA Load signal port A
+LB Load signal port B
+LR Load signal port A and B
+LS L oad-Sensing
+(LS circuit)
+Type code
+B6 / CR160-160RN / EYHS2D-1 / C1E
+LS6 / CR160-160RN / 250 – P / 300 – P / EYHS2D-1 / C1E
+LS6F / CR160-160RN / 250 – P / 300 – P / EYHS2D-1 / C1E / LWRV2D
+1 2 3 4 5 6 7
+1 Basic type
+B6 Basic section type w/o LS pressure limitation
+and workport valves
+LS6 Working section with LS pressure limitation
+and workport valves
+LS6F Working section with LS pressure limitation
+and workport valves
+Flange interface for option blocks
+Port size 6 for working ports A / B
+2 Main spool and pressure compensator
+3 LS pressure limitation
+4 Workport valves
+5 Operation unit
+6 Spring cap
+7 Option block for basic type LS6F
+11"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,12,"02.01
+/ 2.282.5
+NE
+Main spool and pressure compensator
+Type code
+LS6F / CR160-160RN / 250 – P / 300 – P / EYHS2D-1 / C1E / LWRV2D
+2.1 Basic type of main spool
+Examples 2.2 Max. flow at port A to actuator in l/min
+CR 160 - 160 R N
+2.3 Characteristic curve and overlap
+MS 180 - 180 L
+2.4 Max. flow at port B to actuator in l/min
+2.1 2.2 2.3 2.4 2.5 2.6
+2.5 Basic type of pressure compensator / load holding function
+2.6 Pressure compensator spring type
+Basic type of main spool
+Cylinder as actuator
+CS 4/3 directional valve closed in neutral position
+CS CR CT CC
+CR 4/3 directional valve unloaded in neutral position
+(b) CT 4/3 directional valve closed in neutral position
+20 bar return orifice for A and B → T
+P A P A P A P A to support system stability
+(0) CC 4/3 directional valve unloaded in neutral position
+T B T B T B T B 20 bar return line orifice for port A and B → T
+to support system stability
+(a)
+Motor as actuator
+MS 4/3 directional valve open in neutral position
+MS
+(b)
+P A
+(0)
+T B
+(a)
+Regeneration function
+RS 4/3 directional valve closed in neutral position
+RS RR Regeneration function in spool position (a)
+RR 4/3 directional valve unloaded in neutral position
+(b)
+Regeneration function in spool position (a)
+P A P A
+(0)
+T B T B
+(a)
+! Other spool types and configurations on inquiry
+12"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,13,"02.01
+/ 2.282.5
+NE
+Characteristic curves (measured at 32 mm²/s)
+∆p in bar
+8
+6
+CS
+MS
+4
+2
+0
+0 20 40 60 80 100 120 140 160 180 200
+Q (A/B) in l/min
+Differential pressure A/B → T
+CS: Cylinder spool type – nominal control edge size: 08
+MS: Motor spool type – nominal control edge size: 08
+13"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,14,"02.01
+/ 2.282.5
+NE
+Main spool and pressure compensator
+Type code
+LS6F / CR160-160RN / 250 – P / 300 – P / EYHS2D-1 / C1E / LWRV2D
+CR 160 - 160 R N
+2.1 2.2 2.3 2.4 2.5 2.6
+Main spool flow range
+Symmetrical spools 2.2 2.4 2.5 2.6
+Max. flow rate to actuator in l/min (Port A - Port B) Pressure Pressure com-
+compensator pensator spring
+Type Type Identifier
+180 - 180 150 - 150 125 - 125 090 - 090 062 - 062 045 - 045 030 - 030 020 - 020 R Y Yellow
+170 - 170 138 - 138 116 - 116 085 - 085 058 - 058 042 - 042 028 - 028 019 - 019 R W Blue
+160 - 160 130 - 130 110 - 110 080 - 080 055 - 055 040 - 040 027 - 027 018 - 018 R N None
+- - 100 - 100 072 - 072 050 - 050 036 - 036 025 - 025 016 - 016 R G Green
+Nominal control edge size
+08 - 08 07 - 07 06 - 06 05 - 05 04 - 04 03 - 03 02 - 02 01 - 01
+Asymmetrical spools (on inquiry)
+The main spool for asymmetrical flow rates can only be defined within one row in the table above.
+The higher flow rate must be assigned to working port A (e.g. 160 – 130, 100 – 036, 150 – 090).
+Characteristic curve and overlap 2.3
+- Progressive/positive (standard)
+Characteristic curves for nominal flow rates of main spool (measured at 32 mm²/s)
+Q (A/B) in l/min
+180
+170
+160 08
+150
+140
+130 07
+120
+110 06
+100
+90
+80 05
+70
+60
+04
+50
+40 03
+30
+02
+20
+01
+10
+0
+500 600 700 800 900 1,000 1,100 1,200 1,300 1,400 1,500 12 V: l in mA
+250 300 350 400 450 500 550 600 650 700 750 24 V: l in mA
+6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 Hydraulic in bar
+1 2 3 4 5 6 7 8 9 10 Stroke in mm
+Example:
+Max. flow to the actuator at working port A and B: 120 l/min
+1. See table above: nominal control edge size 06 – 06 with pressure compensator spring Y → Q = 125 – 125 l/min
+2. Setting to final target value 120 l/min by stroke limiter
+14"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,15,"02.01
+/ 2.282.5
+NE
+Main spool and pressure compensator
+Type code
+LS6F / CR160-160RN / 250 – P / 300 – P / EYHS2D-1 / C1E / LWRV2D
+CR 160 - 160 R N
+2.1 2.2 2.3 2.4 2.5 2.6
+Flow control by section pressure compensator
+Figure A Main spool in neutral position Figure B Main spool out of neutral position
+(Type CR – A/B unloaded to T) (P → B, A → T)
+A B A B
+T T T T
+P P
+2.6 2.1 2.5
+P is not connected to the working ports A and B when the main spool 2.1 is in neutral position(Fig. A). The compensator spool 2.5
+is moved to left against the compensator spring 2.6 by pump pressure and blocks flow to the main spool.
+When the main spool 2.1 is operated out of the neutral position (Fig. B), the load pressure (LS pressure) of the working port A or B
+is connected to the spring chamber of the pressure compensator and moves the compensator spool to the right into a corresponding
+controlled position.
+The flow rate through the main spool (= metering orifice) is kept constant by the pressure compensator when sections are in parallel
+operation with different load or pump pressures.
+The characteristic flow rate curve of a main spool can be adapted and optimized to each application by using the different pressure
+compensator spring types Y, B, N or G.
+Pump pressure compensation (measured at 32 mm²/s) Basic types of pressure compensator / load holding function
+R Pressure compensator spool - released
+Q (A/B) in l/min
+180 with load holding function (standard type)
+170 ! The load holding function is not
+160 free of leak oil, the hydraulic
+schematic / symbol is simplified
+150
+140 The pressure compensator R must always be
+indicated in the type code with the corresponding
+130
+compensator spring type Y, B, N or G.
+120
+110 L Load holding function only
+100
+The load holding function is not
+!
+90 free of leak oil, the hydraulic
+80 schematic / symbol is simplified.
+70
+60 Different load or pump pressures are not
+50 compensated when sections are in parallel operation.
+40 The flow rate to the actuator depends on the pressure
+30 difference between pump pressure and load (LS pressure).
+Main spool definition and detailed system setup on inquiry.
+20
+10 The pressure compensator spring 2.6 is not indicated
+for the load holding function in the type code.
+0
+0 40 80 120 160 200 240 280 320 360 Example: MS180-180L
+∆p (P - A/B) in bar
+15"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,16,"02.01
+/ 2.282.5
+NE
+LS pressure limitation
+Type code
+LS6F / CR160-160RN / 250 – P / 300 – P / EYHS2D-1 / C1E / LWRV2D
+250 – P
+3.1 3.2
+Adjustable LS pressure limitation by blocking the sectional flow
+rate to the working ports A and B. 3.1 LS pressure limitation port A
+For LS option valves and electro-proportional pressure adjustment, 3.2 LS pressure limitation port B
+see section “Option blocks for working section LS6F”.
+Basic type
+Pressure setting in bar, 3-digit
+_ _ _
+A B Minimum setting: 050 bar
+Maximum setting: 320 bar
+Z P Plug screw
+C
+3.1 A
+3.2 B
+Load pressure compensation / limitation
+(measured at 32 mm²/s)
+Q (A/B) in l/min
+180
+170
+160
+A
+150
+140
+B
+130
+120
+LS
+LX 110
+P
+100
+T
+90
+80
+70
+60
+! The max. pressure setting in the inlet plate has to be 50
+min. 20 bar higher than the LS pressure limitation 40
+in the working section.
+30
+20
+10
+0
+0 40 80 120 160 200 240 280 320 360
+p (A/B) in bar
+16"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,17,"02.01
+/ 2.282.5
+NE
+Workport valves
+Type code
+LS6F / CR160-160RN / 250 – P / 300 – P / EYHS2D-1 / C1E / LWRV2D
+300 – P
+4.1 4.2
+Fixed shock/anti-cavitation valves protect working ports A and
+B against pressure peaks and cavitation. Anti-cavitation valves 4.1 Workport valve port A
+protect the system against cavitation.
+4.2 Workport valve port B
+! Shock/anti-cavitation valves are only for reduction of pressure
+peaks and should not be used as pressure relief valves. Basic type
+! The setting for shock/anti-cavitation valves are fixed ex works. Shock/anti-cavitation valve
+_ _ _
+The pressure setting is defined at a flow rate of 10 l/min. Pressure setting in bar, 3-digit (fixed)
+See table on next page for settings
+A Anti-cavitation valve
+A B
+Z
+C
+P Plug screw
+A
+B
+Characteristic curves (measured at 32 mm²/s)
+∆p (A/B) in bar
+400
+380
+A 360
+4.1 340
+B 320
+4.2 300
+LS 280
+LX
+P 260
+T
+240
+220
+200
+180
+! In case of shock/anti-cavitation valves for all working
+160
+ports, the LS pressure relief valve in the inlet plate CL17 or
+140
+UL17/.../F has to be defined min. 20 bar below the highest
+shock relief valve setting. 120
+100
+80
+60
+40
+20
+0
+0 10 20 30 40 50 60 70 80
+Q (A/B) in l/min
+Shock function A/B → T
+17"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,18,"02.01
+/ 2.282.5
+NE
+Workport valves
+! The maximum pressure setting for the shock/anti-cavitation
+Characteristic curves (measured at 32 mm²/s)
+valves depends on the chosen pressure settings for the LS
+limitations port A and B. To avoid interaction recommended
+∆p in bar
+values are shown in the following table. 15
+T he values listed in the table are calculated according
+to the following guidelines: S
+10
+Shock valve setting p < 150 bar: p – p > 20 bar
+shock shock LS A
+S hock valve setting p ≥ 150 bar: p – p > 30 bar
+shock shock LS
+5
+0
+0 10 20 30 40 50 60 70 80 90 100 110 120 130 140 150
+Q (A/B) in l/min
+Anti-cavitation function T → A/B
+S: Shock/anti-cavitation valve
+A: Anti-cavitation valve
+Shock / anti-cavitation valve pressure settings (fixed)
+Settings bar 050 065 080 100 125 140 150 160 175 190 200 210 230 240 250 265 280 300 320 350 380
+Tolerance range ± bar 5 5 5 5 7 7 7 7 10 10 10 10 10 10 10 12 12 12 12 12 15
+Max. LS pressure cut-off bar - 050 060 080 105 120 120 130 145 160 170 180 200 210 220 235 250 270 290 320 320
+(Min./max. LS pressure limitation setting: 050/320 bar)
+Operation units
+Type code
+LS6F / CR160-160RN / 250 – P / 300 – P / EYHS2D-1 / C1E / LWRV2D
+5.1 Basic type
+E Y H S 2D - 1
+H Y S 5.2 Hand lever axis/main spool stroke limiter
+5.1 5.2 5.3 5.4 5.3 Electrical supply voltage, connector type
+5.4 Hand lever
+Basic types 5.1
+HY Unit for hydraulic operation:
+HY E1Y EY
+Port X: spool position (a)
+X Y MY MY MY Port Y: spool position (b)
+Pilot pressure measuring port MY: spool position (b)
+E1Y Unit for electrohydraulic operation, on/off:
+orifice setup 1 (orifice 1,0 mm)
+Pilot pressure measuring port MY: spool position (b)
+EY Unit for electrohydraulic operation, proportional:
+Pilot pressure measuring port MY: spool position (b)
+(b) (b) (b) E Unit for electrohydraulic operation,
+proportional
+(0) (0) (0)
+(a) (a) (a)
+18"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,19,"02.01
+/ 2.282.5
+NE
+Operation units
+Technical data for electrohydraulic pilot valves (on/off and proportional)
+General Pressure control valve (proportional)
+Supply voltage V DC 12 24 Supply voltage V DC 12 24
+Coil resistance Ω 4.7 20.8 Max. control current mA 1,500 750
+at 20 °C (±5%)
+PWM frequency Hz 100 ... 150
+Duty cycle % 100 (recommended)1)
+Connector type and IP protection class
+1) The PWM frequency is to be optimized depending
+(with mating connector mounted and locked)
+on the application
+AMP Junior Timer, up to IP6K62)
+2) Mating plug-in connectors are not included
+2-pin, axial
+Deutsch DT04, up to IPX9K2)
+! Standards ISO 13732-1 and ISO 4413 must be observed
+2-pin, axial
+in regard to the surface temperatures occurring on the coils.
+Protective screen µm 125
+Hand lever axis/main spool stroke limiter 5.2
+- w/o hand lever axis – w/o stroke limiter
+(n/a)
+– H S HS
+H Hand lever axis – w/o stroke limiter
+S Stroke limiter – w/o hand lever axis
+HS Hand lever axis – stroke limiter
+(b) (b) (b) (b)
+Interface of hand lever axis and hand lever:
+Hexagon WAF9
+Stroke limiter must be used for the fine adjustment
+(0) (0) (0) (0) ! of max. flow rates to the working ports A and B.
+(see section “Main spool and pressure compensator”).
+Dimension X for max. spool stroke:
+(a) (a) (a) (a) See section “Dimensions”
+Electrical supply voltage, connector type 5.3
+1_ 12 V
+2_ 24 V
+_A AMP Junior Timer
+_D Deutsch DT04-2P
+Electrohydraulic operation can be overruled by
+!
+mechanical operation .
+The hand lever is directly connected to the main spool
+and follows the movement of the spool.
+Hand lever 5.4
+1 / 2 / 3 / 3_ - w/o hand lever (n/a)
+1 Standard lever
+2 Standard lever, short for emergency operation
+3 Universal clamp without hand lever
+(b)
+ca
+. 3 0 ° 1 9 .5 3_ Universal clamp with hand lever (standard length)
+° Interface of hand lever axis and hand lever:
+(0) Hexagon WAF9
+ca.
+30° !
+T
+an
+h
+d
+e
+f
+h
+o
+a
+ll
+n
+o
+d
+w s
+le
+t
+v
+h
+e
+e
+r i
+m
+s
+o
+d
+v
+ir
+e
+e
+m
+ct
+e
+ly
+n t
+c o
+o
+n
+f
+n
+th
+e
+e
+c t
+s
+e
+p
+d
+o
+t
+o
+o
+l.
+the main spool
+(a) A hand lever can only be specified in combination with
+a hand lever axis type H 5.2 .
+19"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,20,"02.01
+/ 2.282.5
+NE
+Operation units
+Standard lever Standard lever, short Universal clamp
+(Emergency operation) with hand lever
+3_
+1 2
+31 32 33
+Left Top Right
+Universal clamp
+3
+3x M8x1.25 / 8 deep
+Spring caps
+20
+002
+39
+75
+75
+412
+75
+Ø25
+169.5 169.5
+Possible hand lever positions: see section “Dimensions”
+Actuating torque on execution: - Hydraulic: min. 5 – 19 Nm
+- Electrohydraulic: min. 3 – 19 Nm
+Type code
+LS6F / CR160-160RN / 250 – P / 300 – P / EYHS2D-1 / C1E / LWRV2D
+C1 E
+6.1 6.2
+6.1 Basic type
+C1_ C1 Type 1 (standard)
+w/o pilot pressure measuring port MX:
+spool position (a)
+(b) 6.2 Main spool spring package
+The spring package must be specified
+!
+according to the operation unit 5.1 .
+(0)
+H Hydraulic operation type HY
+E Electrohydraulic operation type E1Y, EY, E
+(a)"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,21,"02.01
+/ 2.282.5
+NE
+Option blocks for working section LS6F
+Type code
+LS6F / CR160-160RN / 250 – P / 300 – P / EYHS2D-1 / C1E / LWRV2D
+LW R V 2D ! The LS option blocks can be used only in
+combination with the sectional pressure
+7.1 7.2 7.3 7.4
+compensator type R
+Flange channels
+Dummy plate
+Z Pilot drain LD1
+LD Basic type
+LA Load signal port A
+LB Load signal port B Z LA LB LR LS 1 Version 1
+LR L oad signal port A and B
+LS L oad-Sensing
+(LS circuit)
+LS option valves1)
+MY A B Unloading the load signal or LS circuit with
+!
+the option valves V and W will not block the flow
+to the working ports A and B completely
+when the main spool is out of neutral position.
+Regardless of viscosity or parallel operation, the
+Z
+working pressure during blocking can be up to
+C
+15 bar depending on the selected pressure
+compensator spring type.
+A
+7.1 Basic type LW
+B
+7.2 Flange channel
+A Load signal port A
+B Load signal port B
+R Load signal port A and B
+A S Load-Sensing (LS circuit)
+7.3 Solenoid valve
+B
+V LS unloading
+LS Normally open (Manual
+LX emergency operation)
+P
+T
+Z LA LB LR LS W LS unloading
+Normally closed (Manual
+emergency operation)
+P0A Electro-proportional
+pressure adjustment
+Pressure stage A: 350 bar
+12 V: Imax = 1,500 mA
+24 V: Imax = 750 mA
+7.2 7.1 The electro-proportional pressure relief valve P0A is
+! not suitable for acting as an unloading valve1)
+7.4 Solenoid (supply voltage, connector type)
+Z LA LB LR LS
+1_ 12 V
+2_ 24 V
+_A AMP Junior Timer
+_D Deutsch DT04-2P
+7.4 7.3
+1) See section “Solenoid valves and coils”
+21"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,22,"02.01
+/ 2.282.5
+NE
+Option blocks for working section LS6F
+Example configurations
+LWRV2A LWRP0A1D
+LWRV2A
+Z LA LB LR LS Z LA LB LR LS l Basic type LW
+l Load signal port A and B
+l LS option valve type V, normally open
+l 24 V solenoid and connector type AMP Junior Timer
+LWRP0A1D
+l Basic type LW
+l Load signal port A and B
+l LS option valve type P0A, electro-proportional
+pressure adjustment (pressure stage A: 350 bar)
+l 12 V solenoid and connector type Deutsch DT04-2P
+Type code
+LS6F / CR160-160RN / 250 – P / 300 – P / EYHS2D-1 / C1E / LW1V-V2D
+LW1 V - V 2D ! The LS option blocks can be used only in
+combination with the sectional pressure
+7.1 7.2 7.3 7.4 compensator type R
+7.1 Basic type LW1
+LW1 V - V_ _ LW1 V - W_ _
+7.2 Solenoid valve for load signal port A
+Z LA LB LR LS Z LA LB LR LS
+7.3 Solenoid valve for load signal port B
+V LS unloading
+Normally open (Manual
+emergency operation)
+W LS unloading
+Normally closed (Manual
+emergency operation)
+7.4 Solenoid (supply voltage, connector type)
+1_ 12 V
+2_ 24 V
+LW1 W - V_ _ LW1 W - W_ _
+_A AMP Junior Timer
+Z LA LB LR LS Z LA LB LR LS
+_D Deutsch DT04-2P
+22"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,23,"02.01
+/ 2.282.5
+NE
+Option blocks for working section LS6F
+Type code
+LS6F / CR160-160RN / 250 – P / 300 – P / EYHS2D-1 / C1E / LWRM100-V2D
+LW R M_ _ _ -V 2D ! The LS option blocks can be used only in
+combination with the sectional pressure
+7.1 7.2 7.3 7.4 7.5 compensator type R
+Switchable LS pressure limitation (2. pressure stage)1)
+LWRM_ _ _-V_ _
+7.1 Basic type LWM
+Z LA LB LR LS
+7.2 Flange channel
+7.2 7.1
+A Load signal port A
+B Load signal port B
+7.5 7.4
+R Load signal port A and B
+S Load-Sensing (LS circuit)
+7.3 7.3 LS pressure limitation
+_ _ _ LS pressure setting in bar, 3-digit
+Minimum setting: 050 bar
+Maximum setting: 320 bar
+7.4 Solenoid valve
+LWBM200-V1A LWSM250-W2D
+V Normally open (Manual
+emergency operation)
+Z LA LB LR LS Z LA LB LR LS
+W Normally closed (Manual
+emergency operation)
+7.5 Solenoid (supply voltage, connector type)
+1_ 12 V
+2_ 24 V
+_A AMP Junior Timer
+_D Deutsch DT04-2P
+Example configurations
+LWBM200-V1A
+l Basic type LWM
+l Load signal port B
+l LS pressure limitation set to 200 bar
+l LS option valve type V, normally open
+l 12 V solenoid and connector type AMP Junior Timer
+LWSM250-W2D
+l Basic type LWM
+l Load-Sensing (LS circuit)
+l LS pressure limitation set to 250 bar
+l LS option valve type W, normally closed
+l 24 V solenoid and connector type Deutsch DT04-2P
+1) See section “Solenoid valves and coils”
+23"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,24,"02.01
+/ 2.282.5
+NE
+End plates
+ER1 ER2/0 ER27/0 ER2F/0/...
+PC PC PC
+Z Z Z Z
+1.2 1.2
+Z Z Z Z
+C C C C
+C C C C
+1.1
+C
+1.3
+CX
+Z
+LS LS LS LS
+LS LS LS LS
+LX LX LX P LX
+P P P P
+1.3
+T T T T
+T
+Flange channels
+C Pilot oil
+CX Pilot oil X
+Z Pilot drain
+Type code
+1 Basic type
+1.1 ER End plate, right hand side
+ER1 ...
+ER2 ... / 0 1.2 1 w/o or external pilot oil supply
+ER27 ... / 0 2 Internal pilot oil supply (channel P)
+ER2F ... / 0 / E1C2D / *
+1.3 7 Port size P / T
+1 2 3 4 5
+F Flange interface for option blocks
+2 Configuration1)
+ER 1
+3 Options1)
+ER 2 F
+4 Option block for basic type ER2F
+1.1 1.2 1.3
+Reference to clear text
+5
+Special, customer-specific information
+1) Can also be retrofitted
+24"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,25,"02.01
+/ 2.282.5
+NE
+End plate ER1
+Type code
+1 Basic type
+ER1 End plate, right hand side
+ER1 ... w/o or external pilot oil supply
+1 2 2 Configuration
+- Standard (n/a)
+ER1 ER1Z ER1ZEC 2.1 Z Internal connection Z → T with check valve
+Port Z with plug screw
+For configuration Z, the max. permitted operating
+Z Z Z ! pressure at port T is 10 bar.
+2.1 2.2 E External LS signal input
+Z Z Z Port LS open
+C C C Internal LS-unloading with plug screw
+C C C
+2.3 C Port C with plug screw
+2.3 w/o pilot oil supply for manual and hydraulic
+operation units only
+The individual configurations Z, E and C can be combined
+as follows: ZE, ZC, EC, ZEC
+Example configurations
+ER1
+l Basic type ER1
+2.1
+l Standard configuration
+2.2
+ER1Z
+LS LS LS l Basic type ER1
+LS LS LS l Internal connection Z → T with check valve
+LX LX LX 2.2
+P P P Port Z with plug screw
+T T T
+End plates ER2, ER27, and ER2F
+Type code 1 Basic type
+ER2 End plate, right hand side
+ER2 ... / 0 Internal pilot oil supply (channel P)
+1 2 3 ER27 Same as ER2, with additional P / T ports
+Port size 7
+ER2F Same as ER2, with flange interface
+for option blocks
+ER2/... ER27ZE/...
+PC PC 2 Configuration
+– Standard (n/a)
+Z Z
+2.1 Z Internal connection Z → T with check valve
+2.1 Port Z with plug screw
+Z Z
+C C For configuration Z, the max. permitted operating
+!
+pressure at port T is 10 bar.
+C C
+2.2 E External LS signal input
+Port LS open
+Internal LS-unloading with plug screw
+The individual configurations Z and E can also
+be combined: ZE
+Example configurations (Options 3 see next page)
+ER2/...
+l Basic type ER2
+2.1
+l Standard configuration
+2.2
+ER27ZE/...
+LS LS l Basic type ER27
+LS LS l Internal connection Z → T with check valve
+LX LX P 2.2
+Port Z with plug screw
+P P
+T T l External LS signal input, Port LS open
+T
+Internal LS-unloading with plug screw
+25"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,26,"02.01
+/ 2.282.5
+NE
+End plate ER2
+Type code
+3 Options at port PC and C
+0 w/o options (standard)
+ER2 ... / 0
+Port PC and C with plug screw
+1 2 3
+PC
+Z
+P1 ER2/... C1
+PC
+Z
+C
+3.1 Z Z C
+Z Z
+C C 3.1 Options at port PC
+C 3.2 (Port C with plug screw)
+P1 Cut-off valve, mechanical with knurled screw
+Port PC not usable.
+!
+Operation of cut-off valve < 50 bar system pressure.
+P2 C2
+P2 Check valve
+PC Port PC with plug screw
+3.2 Options at port C
+Z (Port PC with plug screw)
+C1 Cut-off valve, mechanical with knurled screw
+Z
+C ! Port C not usable.
+C
+C2 Check valve
+LS Port C with plug screw
+LS
+LX The individual options can be combined as follows:
+P
+T P1C2, P2C1, P2C2
+Example: ER2/P1C2
+Option blocks for end plate ER2F
+Type code
+Pilot oil option valve1)
+E1 Basic type
+ER2F ... / 0 / E1C2D
+C_ _ Pilot oil unloading
+Normally open
+(Manual emergency operation)
+PC
+Solenoid (supply voltage, connector type)
+Z 1_ 12 V
+2_ 24 V
+Z E1C _ _
+C _A AMP Junior Timer
+C
+_D Deutsch DT04-2P
+C
+CX
+CX
+Z
+LS
+LS
+LX P
+T
+1) See section “Solenoid valves and coils”
+26"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,27,"02.01
+/ 2.282.5
+NE
+Solenoid valves and coils
+Electrohydraulic pilot valves (on/off and proportional): see section “Operation units”
+Option valves for connecting plate CL17 and option blocks:
+On/Off valves:
+With manual emergency operation (push-button)
+Valve type V W C
+Design Poppet valve Poppet valve Spool valve
+Nominal voltage UN V DC 12 24 12 24 12 24
+Nominal current IN A 1.50 0.80 2.20 1.10 1.50 0.80
+Min. current Imin A 1.05 0.56 1.54 0.77 1.05 0.56
+Nominal power PN W 18 19 26 26.7 18 19
+Response time On: ms 40 30 85
+Off: ms 60 40 80
+Max. permitted voltage deviation from UN % ±15
+Duty cycle at 115% UN % 100
+Ambient temperature range2) °C -20 to +60
+Max. permitted coil temperature3) °C 180
+Insulation class as per EN 60085 H
+Integrated free-wheeling diode Yes Yes Yes
+Coil length X mm 40 50 40
+Connector type and IP protection class AMP Junior Timer, 2-pin – axial / up to IP6K64)
+(with mating connector mounted) Deutsch DT04, 2-pin – axial / up to IPX9K4)
+Valve body and coil surface protection Zinc-Nickel (ZnNi)
+Characteristic curve (measured at 32 mm²/s)
+LS pressure limiting function p/l (rising curve)
+Proportional pressure relief valve: bleed
+screw below coil nut (torque 2.5 + 0.5 Nm) p (A/B) in bar
+360
+Valve type P_ _
+340
+Nominal voltage UN V DC 12 24
+320
+Coil resistance at +20 °C (±5%) Ω 4.1 17.6
+300
+Max. control current Imax mA 1,500 750
+280
+PWM frequency (recommended)1) Hz 150 – 200
+260
+Duty cycle at Imax % 100
+240
+Ambient temperature range2) °C -20 to +60
+220
+Max. permitted coil temperature3) °C 180
+200
+Insulation class as per EN 60085 H
+Coil length X mm 50 180
+Connector type and IP protection class (with mating connector mounted) 160
+AMP Junior Timer, 2-pin – axial up to IP6K64) 140
+Deutsch DT04, 2-pin – axial up to IPX9K4) 120
+Valve body and coil surface protection Zinc-Nickel (ZnNi) 100
+80
+! In order to achieve optimal function, any trapped air should
+be vented with the bleed screw. Recommended installation 60
+position downwards (suspended for self-ventilation)
+40
+20
+AMP Junior Timer, axial Deutsch DT04, axial
+0
+400 500 600 700 800 900 1,000 1,100 1,200 1,300 1,400 1,500
+12 V: l in mA
+200 250 300 350 400 450 500 550 600 650 700 750
+24 V: l in mA
+1) The PWM frequency is to be optimized depending on the application
+2) Deviation of data on inquiry only
+3) Standards ISO 13732-1 and ISO 4413 must be observed in regard
+to the surface temperatures occurring on the coils
+4) Mating plug-in connectors are not included
+27
+X
+5.63Ø
+X
+5.63Ø
+! The electro-proportional pressure relief valve P_ _
+is not suitable for acting as an LS unloading valve."
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,28,"02.01
+/ 2.282.5
+NE
+Connection type, fastening and tie rods
+Type code 1 Valve type
+2 Specification type
+LX-6 03 / B 0
+_ _ Complete control block
+1 2 3 4
+No. of working sections (01-08)
+0X Single modules
+(inlet plate, working section,
+! Only use of fittings with deformable seal materials
+end plate, option block)
+3 Connection type
+B BSPP acc. to ISO 1179-1
+S SAE acc. to ISO 11926-1 or SAE J1626
+4 Valve series
+Countersink Countersink
+Connection type B S
+Ø in mm Ø in mm
+Inlet plate CL17 P Pump G 1 50 1 5/16-12 UN SAE 16 49
+UL17 T Tank G 1 50 1 5/16-12 UN SAE 16 49
+UL17F MP Pump measuring port G 1/4 25 9/16-18 UNF SAE 6 25
+LS Load-sensing G 1/4 25 9/16-18 UNF SAE 6 25
+Working section B6 A/B Working ports G 3/4 38 1 1/16-12 UN SAE 12 38
+LS6 X Hydraulic operation port (spool position a) G 1/4 25 7/16-20 UNF SAE 4 21
+LS6F Y Hydraulic operation port (spool position b) G 1/4 25 7/16-20 UNF SAE 4 21
+MY Pilot pressure measuring port (spool position b) G 1/8 15 G 1/8 - 15
+End plate ER1 PC Pump measuring port (for options) G 1/4 25 9/16-18 UNF SAE 6 25
+ER2 C Pilot oil supply G 1/4 25 9/16-18 UNF SAE 6 25
+ER27 Z Tank, depressurized G 1/4 25 9/16-18 UNF SAE 6 25
+ER2F LS External Load-Sensing input G 1/4 25 9/16-18 UNF SAE 6 25
+P Pump G 1 50 1 5/16-12 UN SAE 16 49
+T Tank G 1 50 1 5/16-12 UN SAE 16 49
+Option blocks UW1… LS Load-sensing G 1/4 25 9/16-18 UNF SAE 6 25
+E1C… CX Pilot oil supply X G 1/4 25 9/16-18 UNF SAE 6 25
+Fastening:
+The control block must be mounted at three fixation points without tensioning. see also section “Dimensions”
+Fastening thread B S
+Inlet plate CL17
+UL17 2 x 13 mm deep M10x1.5 7/16-20 UNF SAE 4
+UL17F
+End plate ER1
+ER2
+1 x 13 mm deep M10x1.5 7/16-20 UNF SAE 4
+ER27
+ER2F
+Fastening screws: Tie rod:
+l Minimum screw-in depth: 10 mm M10 tie rod with flange nut WAF 16, M = 40 ±2 Nm
+Z
+l Recommended screw clamp length: ≥30 mm ! Only use of genuine LX-6 tie rod kits.
+Property class 10.9
+Fastening torque Nm 72
+±3
+Installation, usage, and maintenance information
+Installation, adjustment, maintenance must be done by authorized and trained staff.
+The use of this product outside the specified technical limits, use of non specified fluids and/or
+use of not genuine spare parts will cause the expiration of the warranty.
+28"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,29,"02.01
+/ 2.282.5
+NE
+Dimensions
+29
+211
+All dimensions in mm, subject to change.
+Example for control block with Closed Center inlet plate and end plate with P/T ports (see also section “Modular structure”)
+Connector types: Deutsch DT04, 2-pin, axial
+1.1 Inlet plate CL17
+2.1 Working section B6
+2.2 Working section LS6
+2.3 Working section LS6F
+2.4 Hydraulic operation HY
+2.5 Electrohydraulic operation E1Y, EY, E
+2.6 Spring cap C1E
+2.7 Option block LW.../LW...M...1)
+3.3 End plate ER27
+LA LS pressure limitation port A
+LB LS pressure limitation port B
+SA Secondary valves port A
+SB Secondary valves port B
+4.0 Type plate
+4.1 3x M10x1.5 – 12 deep for crane gear
+1) Option block LW1... not shown
+672
+5.15
+5.011
+733
+211
+5.29
+712
+25
+501
+15
+5.23
+5.82
+68
+61
+5.82
+5.911
+84
+258
+30
+186 31 17.5
+123.5
+31 144 48.5
+54.5
+48 23.5
+26.5
+27.5 13.5
+20.5
+26
+24
+18
+19
+MY
+1.1 2.1 2.2 2.3 2.7 3.3
+2.6
+SA
+LA
+4.1 4.1
+LB 4.1
+Standard lever, short
+(Emergency operation)
+SB
+MY LS pressure relief valve
+Pilot valve Stroke limiter port A (Dimension X for max. stroke: 25) 2.5 2.4
+port A clockwise rotation for limitation
+Pilot valve Stroke limiter port B (Dimension X for max. stroke: 13)
+port B counterclockwise rotation for limitation
+4.0
+X"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,30,"02.01
+/ 2.282.5
+NE
+Dimensions
+307
+31 3x 48 = 144 48.5
+175
+48 23.5
+123.5 31
+27.5 13.5
+Pilot pressure relief valve 51.5
+of main axis
+74 24
+44
+30
+672
+703
+211
+5.29
+5.68
+25
+02
+15
+19
+5.82
+5.71 68
+5.911
+30.5
+20.5
+602
+5.99
+5.82
+All dimensions in mm, subject to change.
+Example for control block with universal inlet plate and option blocks (see also section “Modular structure”)
+Connector types: AMP Junior Timer, 2-pin, axial
+1.3 Inlet plate UL17F1)
+1.4 Option block UW1...
+2.1 Working section B6
+2.2 Working section LS6
+3.5
+2.3 Working section LS6F
+2.5 Electrohydraulic operation E1Y, EY, E MY
+2.6 Spring cap C1E
+2.7 Option block LW.../LW...M...2)
+3.4 End plate ER2F3)
+17.5
+3.5 Option block E1C...
+1.4 1.3 2.1 2.2 2.3 2.7 3.4
+2.6
+4.1
+4.1
+MY 2.5
+4.0 Type plate
+4.1 3x M10x1.5 – 12 deep for crane gear
+4.0
+1) Inlet plates UL17F and UL17 have the same dimensions
+2) Option block LW1... not shown
+3) End plates ER2F, ER2, and ER1 have the same dimensions"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,31,"02.01
+/ 2.282.5
+NE
+Dimensions
+All dimensions in mm, subject to change.
+Hand lever: neutral positions and max. travel (see also section “Operation units”)
+Neutral positions: for all hand lever types 1 – 3: Max. travel for port A / port B
+ca
+1 9 .5 ° port B . 3 0 ° 1 9 .5 °
+4
+3
+.5
+°
+port A
+ca.
+30°
+80°
+Control block fastening points (3x M10x1.5 – 13 deep)
+The fastening points are equal for all types of inlet and end plates
+L1
+25 159
+48
+31
+5.61
+5.601
+5.85
+Shown: Standard lever, short (emergency operation) – Type 2
+No. of working sections 1 2 3 4 5 6 7 8
+L1 mm 88 136 184 232 280 328 376 424"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,32,"02.01
+/ 2.282.5
+NE
+Type code
+Structure and sequence: 1. General (control block always defined from left to right)
+2. Inlet plate
+3. Working section 1
+Working section 2
+Working section n
+4. End plate
+1. General
+Valve type: LX-6 03 / B 0
+Pos. 1 2 3 4
+Pos./designation: Type code: Description/function Comment:
+1 Load-sensing valve series LX-6 Load-sensing X-series Size 6
+2 No. of working sections 1) _ _ 2-digit, 01–08 Max. 8 working sections
+Specification/identification of single modules 0X Inlet plate, working section, end plate or option block
+3. Connection thread B BSPP acc. to ISO 1179-1
+S SAE acc. to ISO 11926-1 or SAE J1626
+4 Valve series 0 Unchanged installation and connection dimensions
+2. Inlet plate
+Type: CL17 / P / V2D
+UL17 / 250 / F
+UL17F / 350 / P / UW1V2A
+Pos. 1 2 3 4
+Pos./designation: Type code: Description/function Comment:
+1 Basic type
+Standard for variable displacement pump CL17 CC system Left 1 version 7 port size P/T Port size 7:
+Universal for fixed
+UL17 Universal Left 1 version 7 port size P/T BSPP: G1; SAE: 1 5/16-12 UN
+and variable displacement pump
+Universal like UL17 with option block UL17F Flange interface for option block
+2 Pressure relief valve
+_ _ _ Pressure setting in bar, 3-digit (mechanically adjustable) Max. 350 bar
+P Plug screw w/o pressure relief valve
+3 LS option valves
+! For basic type CL17 only P Plug screw w/o LS option valve
+V _ _ LS unloading Valve type: V Normally open
+W _ _ LS unloading Valve type: W Normally closed
+P0A _ _ Electro-prop. pressure adjustment Valve type: P Rising curve
+Orifice setup: 1.0 mm Pressure stage A: 350 bar
+Supply voltage DC 1 _ 12 V
+2 _ 24 V
+Connector type _ A AMP – Junior Timer, 2-pin, axial
+_ D Deutsch – DT04, 2-pin, axial
+Logic of main axis
+! For basic types UL17 and UL17F only F Flow controller (3-way) For fixed displacement pump
+P Pump pressure relief valve (pilot-operated) For variable displacement pump
+4. Option blocks
+! For basic type UL17F only UD1 Dummy plate 1 version
+For logic of main axis F or P UW1V _ _ LS unloading L1 channel Valve type V Normally open
+For channel: UW1W _ _ LS unloading L1 channel Valve type W Normally closed
+L1 Load signal 1 UW1P0A _ _ Electro-proport. press. adjust. L1 channel Valve type P Rising curve
+Orifice setup: 1.0 mm Pressure stage A: 350 bar
+UW1M _ _ _ V _ _ Second pressure stage L1 channel Valve type V Second pressure level when de-energized
+(On/Off) Mechanically adjust. in bar, 3-digit
+UW1M _ _ _ W _ _ Second pressure stage L1 channel Valve type W Second pressure level when energized
+(On/Off) Mechanically adjust. in bar, 3-digit
+Supply voltage DC 1 _ 12 V
+2 _ 24 V
+Connector type _ A AMP – Junior Timer, 2-pin, axial
+_ D Deutsch – DT04, 2-pin, axial
+1) Deviation of data on inquiry only
+32"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,33,"02.01
+/ 2.282.5
+NE
+Type code
+3. Working sections
+Type Working section 1 B6 / CR 160 – 160 RN / EYHS2A - 1 / C1E
+Working section 2 LS6 / CS 150 – 035 RN / 300 – 200 / P – P / EYHS2A / C1E
+Working section 3 LS6F / CR 060 – 060 RY / 300 – 300 / 350 – 350 / HYHS - 1 / C1H / LWRV2A
+Working section 4 / – / – / ...
+Pos. 1 2 3 4 5 6 7 8 9 10
+Pos./designation: Type code: Description/function Comment:
+1. Basic type
+Basic section w/o option valves B6 Basic section 6 port size A/B Port size 6:
+Section like B6 with option valves LS6 Like B6 with LS pressure limitation and Shock/anti-cavitation valves BSPP: G3/4, SAE: 1 1/16-12 UN
+Section like LS6 with option block LS6F Like LS6 with Flange interface for option block
+2 Main spool
+CS Cylinder spool Standard Pos. 0: A, B closed
+CR Cylinder spool Released Pos. 0: A, B unloaded to T
+MS Motor spool Standard Pos. 0: A, B open to T
+For other types, see section
+...
+“Main spool and pressure compensator”
+3 Max. flow rate to actuator A B See section “Main spool valve
+1) _ _ _ - _ _ _ Maximum flow to port A / B in l/min, 3-digit and pressure compensator”
+4 Pressure compensator axis (spool + spring)
+Pressure compensator – released RY Released pressure compensator Y spring identifier yellow 9.5 – 11.5 bar
+with load holding function (standard) RB B spring identifier blue 8.0 – 10.0 bar
+RN N spring identifier unmarked 7.0 – 9.0 bar (nominal)
+RG G spring identifier green 5.5 – 7.5 bar
+Load holding function L Load holding function only w/o pressure compensation Use of compensator spring type G
+5. LS pressure limitation A B
+! For basic types LS6 and LS6F only _ _ _ - _ _ _ Pressure setting for port A / B in bar, 3-digit (mechanically adjustable) Min. 050 bar, max. 320 bar
+P Plug screw w/o LS pressure limitation
+U Unloading - permanent 3/3 directional valve function
+6 Workport valves A B
+! For basic types LS6 and LS6F only _ _ _ - _ _ _ Shock/anti-cavitation valve for port A / B in bar, 3-digit See section “Workport valves”
+A Anti-cavitation valve
+P Plug screw w/o workport valves
+7 Operation units
+HY H hydraulic MY port Pilot pressure MY – spool position (b)
+E1Y E1 electrohydraulic on/off, orifice setup 1 MY port orifice 1.0 mm
+EY E electrohydraulic proportional MY port
+Other options: n/a w/o hand lever axis - w/o stroke limiter
+_ H Hand lever axis
+_ S Stroke limiter
+_ HS Hand lever axis and Stroke limiter
+! For operation unit E... only
+Supply voltage DC 1 _ 12 V
+2 _ 24 V
+Connector type _ A AMP – Junior Timer, 2-pin, axial
+_ D Deutsch – DT04, 2-pin, axial
+8. Hand lever type Hand lever does not come assembled
+! For operation option _H only n/a No hand lever
+Standard lever 1 Standard See section “Operation units”
+Standard lever, short 2 Standard for emergency operation
+Universal clamp without hand lever 3 For application-specific solutions
+Universal clamp with standard lever 31 Lever orientation: left
+32 Lever orientation: top
+33 Lever orientation: right
+9. Spring caps
+Standard for operation unit H... C1H C standard cap 1 version H hydraulic Pilot pressure range: 6.5 – 20 bar
+Standard for operation unit E... C1E C standard cap 1 version E electrohydraulic Pilot pressure range: 4.5 – 20 bar
+1) Deviation of data on inquiry only
+33"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,34,"02.01
+/ 2.282.5
+NE
+Type code
+10 Option blocks
+! For basic type LS6F only LD1 Dummy plate 1 version
+For channel: LW _ V _ _ LS unloading LWA, LWB, LWR or LWS channel Normally open
+LA Load signal port A Valve type V
+LB Load signal port B LW _ W _ _ LS unloading LWA, LWB, LWR or LWS channel Normally closed
+Valve type W
+LR Load signal port A and B
+LW _ P0A _ _ Electro-prop. pres. adj. LWA, LWB, LWR or LWS channel Rising curve
+or
+Orifice setup: 1.0 mm Pressure stage A: 350 bar Valve type P
+LS L oad Sensing
+(LS circuit) LW _ M _ _ _ V _ _ Second pressure stage LWA, LWB, LWR or LWS channel Second pressure level
+(On/Off) Mech. adjustable in bar, 3-digit Valve type V when de-energized
+LW _ M _ _ _ W _ _ Second pressure stage LWA, LWB, LWR or LWS channel Second pressure level
+(On/Off) Mech. adjustable in bar, 3-digit Valve type W when energized
+For channel: LW1 basic type Load signal port A - Load signal port B Valve type V and W selected
+LA and LB LW1 V - V _ _ Valve type V – normally open Valve type W – normally closed as desired
+Supply voltage DC 1 _ 12 V
+2 _ 24 V
+Connector type _ A AMP – Junior Timer, 2-pin, axial
+_ D Deutsch – DT04, 2-pin, axial
+4. End plate
+Type: ER2 / 0
+ER2F ZE / 0 / E1C2A / *
+Pos. 1 2 3 4 5
+Pos./designation: Type code: Description/function Comment
+1 Basic type
+Standard with/without external pilot oil supply ER1 End plate Right 1 external pilot oil supply
+Standard with internal pilot oil supply ER2 2 internal pilot oil supply from channel P
+Port size 7:
+End plate like ER2 with ports P/T ER27 7 port size P/T
+BSPP: G1; SAE: 1 5/16 - 12 UN
+End plate like ER2 with option block ER2F F flange interface for option block
+2 Configuration
+For all basic types n/a Standard External depressurized drain line to Tank Port Z open
+For ports: Z, LS No external LS signal input Port LS closed
+Z Internal connection Z → T with check valve Port Z closed
+E External LS signal input / internal LS-unloading with plug screw Port LS open
+For basic type ER1 only C w/o external pilot oil supply for manual and hydraulic operations only Port C closed
+3 Options
+! For basic type ER2... only 0 Standard w/o options Ports PC and C closed
+For ports: PC and C P1 Port PC: Cut-off valve, mechanical with knurled screw Port PC not usable
+P2 Port PC: Check valve Port PC closed ex works
+C1 Port C: Cut-off valve, mechanical with knurled screw Port C not usable
+C2 Port C: Check valve Port C closed ex works
+4 Option blocks
+! For basic type ER2F only E1C _ _ E1 Basic type Pilot oil unloading Valve type C Normally open
+Supply voltage DC 1 _ 12 V
+2 _ 24 V
+Connector type _ A AMP – Junior Timer, 2-pin, axial
+_ D Deutsch – DT04, 2-pin, axial
+5 Reference to clear text * Special, customer-specific information/data in attached clear text
+34"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,35,"02.01
+/ 2.282.5
+NE
+Ordering examples
+Example for control block with Closed Center inlet plate and end plate with P/T ports
+(see also section “Dimensions”)
+MY A B MY A B X Y MY A B PC
+Z
+Z
+C
+C
+A A
+B B
+A A
+B B
+LS
+LS
+LX P
+P
+MP T
+Z L A LB L R LS T
+P T LS
+General LX-603/B0
+Inlet plate CL17/300/V1D
+Working section 1 B6/MS100-100RG/E1YHS1D-2/C1E
+Working section 2 LS6/CS160-160RN/P - 200/A - 250/EYHS1D-2/C1E
+Working section 3 LS6F/CR135-040RB/250 - 250/280 - 280/HYHS-2/C1H/LWAV1D
+End plate ER27/C2
+Example for control block with universal inlet plate and option blocks (see also section “Dimensions”)
+MY A B MY A B MY A B PC
+Z
+LS
+Z Z
+C
+LS C
+A A
+L1
+C
+P B B
+CX
+LX CX
+Z
+A A
+B B
+LS
+LS
+LX
+P
+MP T
+Z LA L B LR LS
+P T LS
+General LX-603/B0
+Inlet plate UL17F/300/F/UW1V2A
+Working section 1 B6/CS070-070RG/EYHS2A/C1E
+Working section 2 LS6/CC160-055RN/P - P/350 - 350/EYHS2A/C1E
+Working section 3 LS6F/CT150-150RY/250 - 250/P - P/EYHS2A/C1E/LWRP0A2A
+End plate ER2FE/0/E1C2A
+35"
+lx-6-load-sensing-sectional-control-valves-1000450941-en.pdf,36,"02.01
+/ 2.282.5
+NE
+Note
+The information in this brochure
+relates to the operating conditions
+and applications described.
+For applications and operating conditions
+not described. please contact the relevant
+technical department.
+Subject to technical and other changes.
+Head Office Industriegebiet
+HYDAC INTERNATIONAL 66280 Sulzbach/Saar
+GMBH Germany
+Tel.: +49 6897 509-01
+Fax: +49 6897 509-300
+E-mail: mobilevalves@hydac.com
+Internet: www.hydac.com
+36"

@@ -28,7 +28,7 @@ UNITS = {
     "kg": ("mass", 1), "lb": ("mass", 0.453592), "lbs": ("mass", 0.453592), "g": ("mass", 0.001),
     # length -> mm
     "mm": ("length", 1), "cm": ("length", 10), "m": ("length", 1000), "in": ("length", 25.4),
-    "inch": ("length", 25.4),
+    "inch": ("length", 25.4), "µm": ("length", 0.001), "um": ("length", 0.001),
     # counts
     "count": ("count", 1), "pcs": ("count", 1), "sections": ("count", 1),
     # temperature (°C only - °F would need an offset, not a factor) and viscosity
@@ -43,7 +43,7 @@ UNITS = {
     "cm3/min": ("leakage", 1), "cc/min": ("leakage", 1), "ml/min": ("leakage", 1),
     "in3/min": ("leakage", 16.3871),
     # power, torque, frequency, angle (pumps, motors, actuators)
-    "kw": ("power", 1), "hp": ("power", 0.7457), "nm": ("torque", 1), "n•m": ("torque", 1), "n·m": ("torque", 1),
+    "kw": ("power", 1), "w": ("power", 0.001), "hp": ("power", 0.7457), "nm": ("torque", 1), "n•m": ("torque", 1), "n·m": ("torque", 1),
     "lbf•in": ("torque", 0.112985), "lbfin": ("torque", 0.112985), "hz": ("frequency", 1), "°": ("angle", 1),
     # percentages (hysteresis, efficiency): only ever compared with other percentages
     "%": ("percent", 1),
