@@ -79,7 +79,15 @@
                   "source": "danfoss",
                   "competitorId": null,
                   "pages": 240,
-                  "uploadedAt": "2026-11-14T12:15:09+00:00"
+                  "uploadedAt": "2026-11-14T12:15:09+00:00",
+                  "facts": {
+                    "status": "done",
+                    "csv": "pvg32__5da6ac546351fc1b.csv",
+                    "facts": 81,
+                    "ok": 81,
+                    "unverified": 0,
+                    "at": "2026-11-18T15:29:43+00:00"
+                  }
                 }
               ]
             },

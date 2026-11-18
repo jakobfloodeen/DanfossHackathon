@@ -45,8 +45,11 @@ def test_system_values_are_calculated_by_code():
 
 
 def test_missing_input_is_never_guessed():
-    data = build_system_data([DANFOSS])
-    p = rows_of(data, "system:danfoss", "system__max_pressure_continuous").iloc[0]
+    # Kawasaki KMP's leaflet does not state a continuous pressure (PVG 32 used to be the example, until its
+    # datasheet was extracted and the value became known)
+    kmp = System("system:kmp", "KMP system", "Kawasaki", {"pump": "Danfoss|DEMO pump 75", "valve": "kawasaki-kmp"})
+    data = build_system_data([kmp])
+    p = rows_of(data, "system:kmp", "system__max_pressure_continuous").iloc[0]
     assert p["status"] == "missing" and "cannot calculate: valve.max_pressure_continuous not stated" in p["quote"]
 
 

@@ -1,0 +1,90 @@
+product_id,brand,product_name,family,attribute,value,unit,source_file,page,quote,status,condition,fact_type
+pvg32,Danfoss,PVG 32,valves,valve_type,"hydraulic load-sensing proportional valve, modular",,BC152886483664en-001602.pdf,7,"PVG is a hydraulic, load-sensing proportional valve",ok,,feature
+pvg32,Danfoss,PVG 32,valves,platform_compatibility,interfaces to other valve families in one valve stack,,BC152886483664en-001602.pdf,7,The PVG 32 is a member of the PVG product platform and interfaces to other valve families,ok,,feature
+pvg32,Danfoss,PVG 32,valves,rated_flow_per_section,125,l/min,BC152886483664en-001602.pdf,7,PVG 32 controls work port flow up to 125 l/min,ok,up to; work port,spec
+pvg32,Danfoss,PVG 32,valves,max_pressure_work_port,420,bar,BC152886483664en-001602.pdf,7,up to 420 bar [6090 psi] bar,ok,up to; work port,spec
+pvg32,Danfoss,PVG 32,valves,benefit,low pressure drop design improves machine performance and efficiency,,BC152886483664en-001602.pdf,7,with a low pressure drop design improves the machine performance and efficiency,ok,,claim
+pvg32,Danfoss,PVG 32,valves,load_independent_flow_control,yes,,BC152886483664en-001602.pdf,7,Load-independent flow control:,ok,,feature
+pvg32,Danfoss,PVG 32,valves,platform_compatibility,combination with the rest of the PVG family via an interface module,,BC152886483664en-001602.pdf,7,"Possible combination with the rest of the PVG family, when using an interface module",ok,,feature
+pvg32,Danfoss,PVG 32,valves,max_work_sections,12,,BC152886483664en-001602.pdf,7,Up to 12 basic modules per PVG 32 valve group,ok,basic modules per valve group,spec
+pvg32,Danfoss,PVG 32,valves,benefit,reliable regulation characteristics across the entire flow range,,BC152886483664en-001602.pdf,7,Reliable regulation characteristics across the entire flow range,ok,,claim
+pvg32,Danfoss,PVG 32,valves,ls_relief_valves_ports_ab,load sense relief valves for A and B port,,BC152886483664en-001602.pdf,7,Load sense relief valves for A and B port enables reduced energy loss at target pressure,ok,,feature
+pvg32,Danfoss,PVG 32,valves,port_connection_options,several connection thread options and flange mount,,BC152886483664en-001602.pdf,7,Several options for connection threads and flange mount,ok,,feature
+pvg32,Danfoss,PVG 32,valves,benefit,"compact design, easy installation and serviceability",,BC152886483664en-001602.pdf,7,"Compact design, easy installation and serviceability",ok,,claim
+pvg32,Danfoss,PVG 32,valves,benefit,energy-saving,,BC152886483664en-001602.pdf,7,• Energy-saving,ok,,claim
+pvg32,Danfoss,PVG 32,valves,benefit,low weight,,BC152886483664en-001602.pdf,7,• Low weight,ok,,claim
+pvg32,Danfoss,PVG 32,valves,pressure_relief_inlet,built-in pressure relief valve,,BC152886483664en-001602.pdf,7,Built-in pressure relief valve,ok,,feature
+pvg32,Danfoss,PVG 32,valves,circuit_type,open center,,BC152886483664en-001602.pdf,7,Open center systems with fixed displacement pumps,ok,with fixed displacement pumps,feature
+pvg32,Danfoss,PVG 32,valves,circuit_type,closed center,,BC152886483664en-001602.pdf,7,Closed center systems with variable displacement pumps,ok,with variable displacement pumps,feature
+pvg32,Danfoss,PVG 32,valves,pilot_oil_supply_inlet,integrated,,BC152886483664en-001602.pdf,7,Integrated pilot oil supply,ok,,feature
+pvg32,Danfoss,PVG 32,valves,spool_options_work_section,interchangeable spools,,BC152886483664en-001602.pdf,7,Interchangeable spools,ok,,feature
+pvg32,Danfoss,PVG 32,valves,pressure_compensator_work_section,built-in compensator for load independent flow (version),,BC152886483664en-001602.pdf,7,Built-in compensator for load independent flow,ok,,feature
+pvg32,Danfoss,PVG 32,valves,load_holding_check_valve_work_section,built-in in P-channel (version),,BC152886483664en-001602.pdf,7,Built-in load holding check valve in P-channel,ok,,feature
+pvg32,Danfoss,PVG 32,valves,shock_suction_valves_ports_ab_work_section,integrated shock/suction valve (version),,BC152886483664en-001602.pdf,7,Integrated shock/suction valve,ok,,feature
+pvg32,Danfoss,PVG 32,valves,actuation_options,"manual (lever, friction detent), hydraulic, electro-hydraulic (ON/OFF, ratiometric, CAN bus, PWM proportional)",,BC152886483664en-001602.pdf,8,"• Manual control
+‒ with lever
+‒ with friction detent
+• Hydraulic control
+• Electro-hydraulic
+‒ ON/OFF control
+‒ Ratiometric proportional control
+‒ CAN bus proportional control
+‒ PWM proportional control",ok,,feature
+pvg32,Danfoss,PVG 32,valves,continuous_pressure,300,bar,BC152886483664en-001602.pdf,12,"Maximum pressure Port P, A/B continuous with PVS 300 bar [4351 psi]",ok,"port P, A/B; with PVS end plate",spec
+pvg32,Danfoss,PVG 32,valves,continuous_pressure,350,bar,BC152886483664en-001602.pdf,12,"Port P, A/B continuous with PVSI 350 bar [5075 psi]",ok,"port P, A/B; with PVSI end plate",spec
+pvg32,Danfoss,PVG 32,valves,max_pressure_intermittent,400,bar,BC152886483664en-001602.pdf,12,Port P intermittent 400 bar [5800 psi],ok,port P,spec
+pvg32,Danfoss,PVG 32,valves,max_pressure_intermittent,420,bar,BC152886483664en-001602.pdf,12,Port A/B intermittent 420 bar [6090 psi],ok,port A/B,spec
+pvg32,Danfoss,PVG 32,valves,max_pressure_port_t,25,bar,BC152886483664en-001602.pdf,12,"Port T, static/dynamic 25/40 bar [365/580 psi]",ok,static,spec
+pvg32,Danfoss,PVG 32,valves,max_pressure_port_t,40,bar,BC152886483664en-001602.pdf,12,"Port T, static/dynamic 25/40 bar [365/580 psi]",ok,dynamic,spec
+pvg32,Danfoss,PVG 32,valves,max_inlet_flow,140,l/min,BC152886483664en-001602.pdf,12,Oil flow rated Port P with PVP inlet 140 l/min [37 US gal/min],ok,port P with PVP inlet,spec
+pvg32,Danfoss,PVG 32,valves,max_inlet_flow_mid_inlet,230,l/min,BC152886483664en-001602.pdf,12,Port P with PVPM/PVPVM mid inlet 230 l/min [61 US gal/min],ok,port P with PVPM/PVPVM mid inlet,spec
+pvg32,Danfoss,PVG 32,valves,rated_flow_per_section,100,l/min,BC152886483664en-001602.pdf,12,Port A/B with pressure 100 l/min [26.4 US gal/min],ok,port A/B with pressure compensator (page 54 gives 125 l/min for the compensated PVB),spec
+pvg32,Danfoss,PVG 32,valves,rated_flow_per_section,125,l/min,BC152886483664en-001602.pdf,12,Port A/B without pressure 125 l/min [33 US gal/min],ok,port A/B without pressure compensator,spec
+pvg32,Danfoss,PVG 32,valves,spool_travel,7,mm,BC152886483664en-001602.pdf,12,"Spool travel, standard ± 7 mm [± 0.28 in]",ok,plus/minus; standard,spec
+pvg32,Danfoss,PVG 32,valves,spool_proportional_range,4.8,mm,BC152886483664en-001602.pdf,12,"Spool travel, float position Proportional range ± 4.8 mm",ok,plus/minus; float position spool,spec
+pvg32,Danfoss,PVG 32,valves,spool_float_position,8,mm,BC152886483664en-001602.pdf,12,Float position ± 8 mm [± 0.32 in],ok,plus/minus,spec
+pvg32,Danfoss,PVG 32,valves,spool_deadband,1.5,mm,BC152886483664en-001602.pdf,12,"Dead band, flow control spools Standard ± 1.5 mm",ok,plus/minus; standard flow control spools,spec
+pvg32,Danfoss,PVG 32,valves,spool_deadband,0.8,mm,BC152886483664en-001602.pdf,12,Linear characteristic ± 0.8 mm [± 0.03 in],ok,plus/minus; linear characteristic spools,spec
+pvg32,Danfoss,PVG 32,valves,max_internal_leakage_ab_t,20,cm3/min,BC152886483664en-001602.pdf,12,"A/B → T, PVB without PVLP 20 cm3/min [1.85 in3/min]",ok,"PVB without PVLP, at 100 bar and 21 mm2/s",spec
+pvg32,Danfoss,PVG 32,valves,max_internal_leakage_ab_t,25,cm3/min,BC152886483664en-001602.pdf,12,"A/B → T, PVB with PVLP 25 cm3/min [2.15 in3/min]",ok,"PVB with PVLP, at 100 bar and 21 mm2/s",spec
+pvg32,Danfoss,PVG 32,valves,max_internal_leakage_ab_t,1,cm3/min,BC152886483664en-001602.pdf,12,"A/B → T, PVBZ with PO check 1 cm3/min [0.06 in3/min]",ok,"PVBZ with PO check valves, at 200 bar and 21 mm2/s",spec
+pvg32,Danfoss,PVG 32,valves,max_internal_leakage_ab_t,6,cm3/min,BC152886483664en-001602.pdf,12,"A/B → T, PVBZ with PO check 6 cm3/min [0.37 in3/min]",ok,"PVBZ with PO check valves and PVLP, at 200 bar and 21 mm2/s",spec
+pvg32,Danfoss,PVG 32,valves,oil_temperature_recommended,30 to 60,°C,BC152886483664en-001602.pdf,12,Recommended temperature 30 to 60 °C [86 to 140 °F],ok,inlet temperature,spec
+pvg32,Danfoss,PVG 32,valves,oil_temperature_min,-30,°C,BC152886483664en-001602.pdf,12,Minimum temperature -30 °C [-22 °F],ok,inlet temperature,spec
+pvg32,Danfoss,PVG 32,valves,oil_temperature_max,90,°C,BC152886483664en-001602.pdf,12,Maximum temperature 90 °C [194 °F],ok,inlet temperature,spec
+pvg32,Danfoss,PVG 32,valves,ambient_temperature,-30 to 60,°C,BC152886483664en-001602.pdf,12,Ambient temperature -30 to 60 °C [-22 to 140 °F],ok,,spec
+pvg32,Danfoss,PVG 32,valves,oil_viscosity_operating_range,12 to 75,mm2/s,BC152886483664en-001602.pdf,12,Oil viscosity Operating range 12 to 75 mm2/s,ok,,spec
+pvg32,Danfoss,PVG 32,valves,oil_viscosity_min,4,mm2/s,BC152886483664en-001602.pdf,12,Minimum viscosity 4 mm2/s [39 SUS],ok,,spec
+pvg32,Danfoss,PVG 32,valves,oil_viscosity_max,460,mm2/s,BC152886483664en-001602.pdf,12,Maximum viscosity 460 mm2/s [2128 SUS],ok,,spec
+pvg32,Danfoss,PVG 32,valves,oil_cleanliness_iso4406,23/19/16,,BC152886483664en-001602.pdf,12,Filtration / maximum contamination according to ISO 4406 23/19/16,ok,maximum contamination,spec
+pvg32,Danfoss,PVG 32,valves,pilot_oil_consumption,0.5,l/min,BC152886483664en-001602.pdf,12,Oil consumption in pilot oil reduction valve 0.5 l/min,ok,pilot oil reduction valve,spec
+pvg32,Danfoss,PVG 32,valves,weight_inlet_element,3.1,kg,BC152886483664en-001602.pdf,14,Weight: 3.1 kg [6.9 lb],ok,PVP inlet module,dimension
+pvg32,Danfoss,PVG 32,valves,weight_work_section,3.05,kg,BC152886483664en-001602.pdf,46,Weight: 3.05 kg [6.73 lb],ok,PVB basic module,dimension
+pvg32,Danfoss,PVG 32,valves,max_pressure_continuous,350,bar,BC152886483664en-001602.pdf,47,350 bar [5076 psi]* 420 bar [6090 psi]** 125 l/min [33 US gal/min],ok,"uncompensated PVB, A/B port; with PVSI end plate",spec
+pvg32,Danfoss,PVG 32,valves,max_pressure_continuous,300,bar,BC152886483664en-001602.pdf,47,With PVS end plate max. 300 bar [4351 psi],ok,"uncompensated PVB, A/B port; with PVS end plate",spec
+pvg32,Danfoss,PVG 32,valves,max_pressure_intermittent,420,bar,BC152886483664en-001602.pdf,47,350 bar [5076 psi]* 420 bar [6090 psi]** 125 l/min [33 US gal/min],ok,"uncompensated PVB, A/B port; at max. 250,000 cycles, with PVSI end plate",spec
+pvg32,Danfoss,PVG 32,valves,rated_flow_per_section,125,l/min,BC152886483664en-001602.pdf,47,350 bar [5076 psi]* 420 bar [6090 psi]** 125 l/min [33 US gal/min],ok,"uncompensated PVB, A/B port",spec
+pvg32,Danfoss,PVG 32,valves,ls_shuttle_network,integrated,,BC152886483664en-001602.pdf,47,Integrated LS shuttle network,ok,,feature
+pvg32,Danfoss,PVG 32,valves,shock_suction_valves_ports_ab,optional (PVLP),,BC152886483664en-001602.pdf,47,Optional shock/anti-cavitation valve facility (PVLP),ok,uncompensated PVB,feature
+pvg32,Danfoss,PVG 32,valves,oil_cleanliness_iso4406,23/19/16,,BC152886483664en-001602.pdf,47,Fluid cleanliness 23/19/16 (according to ISO 4406),ok,mechanical activation,spec
+pvg32,Danfoss,PVG 32,valves,oil_cleanliness_iso4406,18/16/13,,BC152886483664en-001602.pdf,47,Fluid cleanliness 18/16/13 (according to ISO 4406),ok,PVE activation,spec
+pvg32,Danfoss,PVG 32,valves,work_port_size,G1/2,,BC152886483664en-001602.pdf,48,"G1/2""",ok,A/B port option,feature
+pvg32,Danfoss,PVG 32,valves,work_port_size,7/8–14 UNF,,BC152886483664en-001602.pdf,49,157B6410 7/8–14 UNF — — Yes,ok,A/B port option,feature
+pvg32,Danfoss,PVG 32,valves,pressure_compensator,integrated compensator with bleed-off,,BC152886483664en-001602.pdf,54,Integrated compensator with bleed-off,ok,compensated PVB,feature
+pvg32,Danfoss,PVG 32,valves,max_pressure_continuous,350,bar,BC152886483664en-001602.pdf,54,350 bar [5067 psi] 420 bar [6090 psi] 125 l/min [33 US gal/min],ok,"compensated PVB, A/B port",spec
+pvg32,Danfoss,PVG 32,valves,max_pressure_intermittent,420,bar,BC152886483664en-001602.pdf,54,350 bar [5067 psi] 420 bar [6090 psi] 125 l/min [33 US gal/min],ok,"compensated PVB, A/B port",spec
+pvg32,Danfoss,PVG 32,valves,rated_flow_per_section,125,l/min,BC152886483664en-001602.pdf,54,350 bar [5067 psi] 420 bar [6090 psi] 125 l/min [33 US gal/min],ok,"compensated PVB, A/B port",spec
+pvg32,Danfoss,PVG 32,valves,rated_flow_per_section,130,l/min,BC152886483664en-001602.pdf,54,* With turbo function spool @ max rated flow of 130 l/min is possible,ok,"compensated PVB, A/B port; with turbo function spool",spec
+pvg32,Danfoss,PVG 32,valves,work_port_size,M22x1.5,,BC152886483664en-001602.pdf,56,157B6850 M22x1.5 Yes Yes,ok,A/B port option,feature
+pvg32,Danfoss,PVG 32,valves,total_length,119,mm,BC152886483664en-001602.pdf,222,Length 119 167 215 263 311 359 407 455 503 551 599 647,ok,1 PVB 32 module(s),dimension
+pvg32,Danfoss,PVG 32,valves,total_length,167,mm,BC152886483664en-001602.pdf,222,Length 119 167 215 263 311 359 407 455 503 551 599 647,ok,2 PVB 32 module(s),dimension
+pvg32,Danfoss,PVG 32,valves,total_length,215,mm,BC152886483664en-001602.pdf,222,Length 119 167 215 263 311 359 407 455 503 551 599 647,ok,3 PVB 32 module(s),dimension
+pvg32,Danfoss,PVG 32,valves,total_length,263,mm,BC152886483664en-001602.pdf,222,Length 119 167 215 263 311 359 407 455 503 551 599 647,ok,4 PVB 32 module(s),dimension
+pvg32,Danfoss,PVG 32,valves,total_length,311,mm,BC152886483664en-001602.pdf,222,Length 119 167 215 263 311 359 407 455 503 551 599 647,ok,5 PVB 32 module(s),dimension
+pvg32,Danfoss,PVG 32,valves,total_length,359,mm,BC152886483664en-001602.pdf,222,Length 119 167 215 263 311 359 407 455 503 551 599 647,ok,6 PVB 32 module(s),dimension
+pvg32,Danfoss,PVG 32,valves,total_length,407,mm,BC152886483664en-001602.pdf,222,Length 119 167 215 263 311 359 407 455 503 551 599 647,ok,7 PVB 32 module(s),dimension
+pvg32,Danfoss,PVG 32,valves,total_length,455,mm,BC152886483664en-001602.pdf,222,Length 119 167 215 263 311 359 407 455 503 551 599 647,ok,8 PVB 32 module(s),dimension
+pvg32,Danfoss,PVG 32,valves,total_length,503,mm,BC152886483664en-001602.pdf,222,Length 119 167 215 263 311 359 407 455 503 551 599 647,ok,9 PVB 32 module(s),dimension
+pvg32,Danfoss,PVG 32,valves,total_length,551,mm,BC152886483664en-001602.pdf,222,Length 119 167 215 263 311 359 407 455 503 551 599 647,ok,10 PVB 32 module(s),dimension
+pvg32,Danfoss,PVG 32,valves,total_length,599,mm,BC152886483664en-001602.pdf,222,Length 119 167 215 263 311 359 407 455 503 551 599 647,ok,11 PVB 32 module(s),dimension
+pvg32,Danfoss,PVG 32,valves,total_length,647,mm,BC152886483664en-001602.pdf,222,Length 119 167 215 263 311 359 407 455 503 551 599 647,ok,12 PVB 32 module(s),dimension

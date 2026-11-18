@@ -121,12 +121,9 @@ Write **one CSV per uploaded file** into `DanfossHackathon/data/repository/`. Th
 | `status` | `ok` only if `comparison_engine.quotes.verify_quote(quote, page_text)` is True, else `unverified`; `missing` when the datasheet doesn't state it (value empty) |
 
 Before saving: `comparison_engine.validate_csv(df)` must return `[]`.
-Until the converter is ready, two seed files are in `data/repository/`:
-`kawasaki-kmp_KPES_leaflet.csv` (quotes verified by code against the uploaded leaflet) and
-`pvg32_from_website_mockdata.csv` (values from the official PVG 32 Technical Information as transcribed in
-`frontend/js/mock-data.js`; status `unverified` because the PDF is not in the repo to check quotes).
-Delete them when the converter produces real files for these products (the KPES seed was removed after the real KMP
-leaflet was imported and extracted). The `DEMO_*.csv` pump files are made-up
+The two early seed files (`kawasaki-kmp_KPES_leaflet.csv` and `pvg32_from_website_mockdata.csv`) were removed once
+the converter produced real files for these products: the KMP leaflet was imported and extracted, and the PVG 32
+Technical Information was extracted on its technical pages (7-8, 12, 14, 46-49, 54-56, 222). The `DEMO_*.csv` pump files are made-up
 demo data (clearly marked in the app) so the system comparison can be shown before real pump datasheets exist.
 
 ## `data/documents.csv` (online links, filled automatically by the web import)
