@@ -1,0 +1,3354 @@
+source_file,page,text
+D7700_2-en.pdf,1,"Proportional directional spool valve type PSL, PSV
+size 2 and EDL
+Product documentation
+Series connection
+Operating pressure p PSL/PSV: 420 bar
+max
+Operating pressure (Valve section) p EDL: 320 bar
+max
+Flow rate (Pump) Q : 100 l/min
+max
+Flow rate (Consumer) Q PSL/PSV: 60 l/min
+max
+Flow rate (Consumer) Q EDL: 48 l/min
+max
+D 7700-2
+02-202 6 -1.3 en"
+D7700_2-en.pdf,2,"© by HAWE Hydraulik SE.
+The reproduction and distribution of this document, as well as the use and communication of its contents to others without explicit
+authorization, is prohibited.
+Offenders will be held liable for the payment of damages.
+All rights reserved in the event of patent or utility model applications.
+Brand names, product names and trademarks are not specifically indicated. In particular with regard to registered and protected names
+and trademarks, usage is subject to legal provisions.
+HAWE Hydraulik respects these legal provisions in all cases.
+HAWE Hydraulik cannot provide individual guarantees that the stated circuits or procedures (including in part) are not subject to the
+intellectual property rights of third parties.
+Printing date / document generated on: 2026-05-15
+2/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,3,"Table of Contents
+1 Introductory description of proportional directional spool valves type PSL, PSV size 2 and EDL..............................6
+1.1 Configuration example PSL 2...............................................................................................................................7
+1.2 Configuration example PSL 2 in conjunction with PSL 5, PSL 3 and EDL 2..................................................................8
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 3/187"
+D7700_2-en.pdf,4,"2 Available versions...........................................................................................................................................10
+2.1 Connection block..............................................................................................................................................11
+2.1.1 Basic version...................................................................................................................................................13
+2.1.2 Ports for P and R.............................................................................................................................................13
+2.1.3 Connection block basic types.............................................................................................................................14
+2.1.4 Additional elements for 3-way controller.............................................................................................................20
+2.1.5 LS damping elements........................................................................................................................................20
+2.1.6 Internal control oil supply.................................................................................................................................21
+2.1.7 LS relief or LS pressure limitation......................................................................................................................21
+2.1.8 System pressure limitation.................................................................................................................................22
+2.1.9 Size................................................................................................................................................................22
+2.1.10 Variants and potential combinations...................................................................................................................23
+2.2 Valve section PSL and EDL................................................................................................................................24
+2.2.1 PSL Directional valve section.............................................................................................................................28
+2.2.1.1 Consumer ports................................................................................................................................................28
+2.2.1.2 2-way controller...............................................................................................................................................28
+2.2.1.3 2-way controller spring.....................................................................................................................................32
+2.2.1.4 2-way controller damping..................................................................................................................................32
+2.2.1.5 Circuit symbol..................................................................................................................................................33
+2.2.1.6 Flow rate.........................................................................................................................................................36
+2.2.1.7 LS pressure limitation.......................................................................................................................................38
+2.2.1.8 Electric LS relief or LS pressure limitation...........................................................................................................40
+2.2.1.9 LS port for external limitation...........................................................................................................................42
+2.2.1.10 LS orice.........................................................................................................................................................43
+2.2.1.11 Shuttle valve...................................................................................................................................................43
+2.2.1.12 Additional functions.........................................................................................................................................44
+2.2.1.13 Actuation........................................................................................................................................................45
+2.2.1.14 Additional elements for actuation......................................................................................................................50
+2.2.1.15 Switching position monitoring, displacement transducer.......................................................................................52
+2.2.2 EDL directional valve section.............................................................................................................................54
+2.2.2.1 Consumer ports................................................................................................................................................54
+2.2.2.2 2-way controller...............................................................................................................................................54
+2.2.2.3 -way controller spring.......................................................................................................................................54
+2.2.2.4 Circuit symbol..................................................................................................................................................55
+2.2.2.5 Flow rate.........................................................................................................................................................55
+2.2.2.6 LS pressure limitation.......................................................................................................................................56
+2.2.2.7 LS port for external limitation...........................................................................................................................57
+2.2.2.8 LS orice.........................................................................................................................................................57
+2.2.2.9 Shuttle valve...................................................................................................................................................57
+2.2.2.10 Actuation........................................................................................................................................................58
+2.2.3 Ancillary block.................................................................................................................................................59
+2.2.4 Intermediate plate (on the consumer side)..........................................................................................................65
+2.3 Series intermediate plate..................................................................................................................................70
+2.4 End plate........................................................................................................................................................78
+2.5 Solenoid voltage and solenoid version................................................................................................................82
+2.5.1 PSV/PSL standard solenoid versions....................................................................................................................82
+2.5.2 PSV/PSL Solenoid versions for potentially explosive atmospheres............................................................................84
+2.5.3 EDL solenoid versions.......................................................................................................................................84
+2.6 Additional versions...........................................................................................................................................85
+2.6.1 Sealing............................................................................................................................................................85
+2.6.2 Paint nish......................................................................................................................................................85
+4/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,5,"3 Parameters.....................................................................................................................................................86
+3.1 General data....................................................................................................................................................86
+3.2 Pressure and volumetric ow.............................................................................................................................87
+3.3 Weight............................................................................................................................................................87
+3.4 Characteristic lines...........................................................................................................................................89
+3.4.1 Connection block..............................................................................................................................................89
+3.4.2 Directional valve section PSL/PSV.......................................................................................................................91
+3.4.3 EDL directional valve section.............................................................................................................................94
+3.5 Electrical data..................................................................................................................................................96
+3.5.1 PSL/PSV Electro-hydraulic actuation with standard solenoid...................................................................................96
+3.5.2 PSL/PSV Electro-hydraulic actuation with solenoid for potentially explosive atmospheres............................................98
+3.5.3 EDL actuation with standard solenoid.................................................................................................................98
+3.5.4 Switching position monitoring, displacement transducer......................................................................................100
+3.5.5 Electric LS relief or LS pressure limitation.........................................................................................................103
+3.5.6 Electric LS relief or LS pressure limitation for potentially explosive atmospheres......................................................104
+3.5.7 Additional valves............................................................................................................................................104
+4 Dimensions...................................................................................................................................................105
+4.1 Connection block............................................................................................................................................105
+4.2 Valve section.................................................................................................................................................116
+4.2.1 PSL/PSV directional valve section.....................................................................................................................116
+4.2.2 EDL directional valve section...........................................................................................................................132
+4.2.3 Ancillary block...............................................................................................................................................135
+4.2.4 Intermediate plate..........................................................................................................................................157
+4.3 Series intermediate plate.................................................................................................................................167
+4.4 End plate.......................................................................................................................................................173
+5 Installation, operation and maintenance information......................................................................................180
+5.1 Intended use..................................................................................................................................................180
+5.2 Assembly information......................................................................................................................................180
+5.2.1 Attachment....................................................................................................................................................180
+5.2.2 Piping...........................................................................................................................................................181
+5.2.2.1 Reux piping routed externally to the tank.......................................................................................................181
+5.2.3 Converting the connection block from PSL to PSV...............................................................................................182
+5.2.4 Changing the valve spool................................................................................................................................184
+5.3 Operating instructions.....................................................................................................................................185
+5.4 Maintenance information.................................................................................................................................185
+6 Other information.........................................................................................................................................186
+6.1 Accessories, spare and individual parts..............................................................................................................186
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 5/187"
+D7700_2-en.pdf,6,"1
+Introductory description of proportional directional spool valves type PSL,
+PSV size 2 and EDL
+Proportional directional spool valves are a type of directional valve. They control the
+direction of movement and the velocity of individual or multiple hydraulic consumers
+actuated simultaneously. Control is independent of the load and continuous.
+The proportional directional spool valve type PSL is suitable for constant pump
+systems and type PSV is for variable pump systems. The ow rates and load pressures
+for the individual consumers can be individually adjusted. The proportional
+directional spool valve type PSL and PSV can be adapted to various control tasks,
+e.g. for safety functions. All sizes can be combined with each other.
+The proportional directional spool valve type PSL, PSV and PSV is used in mobile
+hydraulics, can be combined for a wide range of tasks and enables sensitive
+movements.
+The proportional directional spool valve type EDL is actuated directly. It can be
+exibly combined with PSL 2.
+Features and advantages
+■ Universally usable product for various ow rates and functions
+■ Extensive modular system with many variants and combination options
+■ Compact and lightweight design Proportional directional spool valve Type PSL 2
+■ Precise and sensitive control
+■ Robust and long-lived design for pressures up to 420 bar
+■ Highest energy efficiency thanks to low Sp and low-energy solutions
+■ Suitable for use in potentially explosive areas
+Intended applications
+■ Loading cranes
+■ Lifting platforms
+■ Municipal trucks
+■ Construction machines
+■ Drilling equipment
+■ Machines for forestry and agricultural purposes
+Proportional directional spool valve Type EDL
+6/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,7,"1.1 Configuration example PSL 2
+PSL 31/420-2
+- A2 H 25/40 A250 B300 /EA/WA/2 AN275 BN 320
+- A2 L 10/16 A150 B150 FP22 /EA/ZVV/2
+- A2 L 6/6 A200 B120 S1 /EA/2 AL-0-D 8-250
+- E4 - G 24
+b b b
+1 Connection block
+2 Valve section or Series intermediate plate
+a a a
+3 Intermediate plate
+4 Ancillary block
+Vmm 5 End plate
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 7/187"
+D7700_2-en.pdf,8,"1.2 Configuration example PSL 2 in conjunction with PSL 5, PSL 3 and EDL 2
+PSV 51/300-5
+- ZPL 55/9
+- A2 H 160/160/EA/5
+- ZPL 531
+- A2 H 80/80/EA/3
+- ZPL 32
+- A2 H 40/40/EA/2
+- DA2 H 40/40/EI/2
+- E 1-DT 24
+8/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,9,"b b b
+a a a
+1 PSL 5 connection block
+2 Series intermediate plate
+3 PSL 5 valve section
+4 PSL 3 valve section
+5 PSL 2 valve section
+6 EDL 2 valve section
+7 Ancillary block
+8 PSL 2 end plate
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 9/187"
+D7700_2-en.pdf,10,"2
+Available versions
+Ordering example
+PSL 31/420-2 Connection block (see Chapter 2.1)
+-A2 H 25/40 A250 B300 /EA/WA/2 AN 275 BN 320 Valve section (see Chapter 2.2)
+-A2 L 10/16 A150 B150 FP3 /EA/ZVV/2 Valve section with intermediate plate (see Chapter 2.2.4) and Ancillary block
+-A2 L 6/6 A200 B120 S1 /EA/2 AL 180 Valve section with ancillary block (see Chapter 2.2.3)
+-ZPL 22/15/R1 Series intermediate plate (see Chapter 2.3)
+-E4 G 24 End plate with solenoid version and solenoid voltage (see Chapter 2.4, ""End
+plate"" and Chapter 2.5, ""Solenoid voltage and solenoid version"")
+1 Connection block
+2 Valve section or series intermediate plate
+3 Ancillary block
+4 End plate
+5 Solenoid voltage and solenoid version
+A single manifold can merge up to 14 valve sections of size 2.
+This number can be increased by combining with PSL 5 or PSL 3. In this case, transition plates are used and each size has its own
+tension rod.
+Limits to the maximum possible number of valve sections result from:
+a) tension rod strength
+b) internal control oil supply for the electro-hydraulic actuation
+c) the available control pressure difference for supply to the rear valve sections
+10/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,11,"2.1 Connection block
+Connection blocks come in two basic variants:
+■ PSL: Connection block with integrated 3-way controller for use in Open Center systems with constant pumps
+■ PSV: Connection block without 3-way controller for use in Closed Center systems with variable pumps or for simultaneous supply of
+two or more manifolds from a shared constant pump
+Ordering example
+PSL 3 H G 1 F /420 -2
+2.1.9 ""Size""
+2.1.8 ""System pressure limitation""
+2.1.7 ""LS relief or LS pressure limitation""
+2.1.6 ""Internal control oil supply""
+2.1.5 ""LS damping elements""
+2.1.4 ""Additional elements for 3-way controller""
+Basic type ■ 2.1.1 ""Basic version""
+■ 2.1.2 ""Ports for P and R""
+■ 2.1.3 ""Connection block basic types""
+PSL PSV
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 11/187"
+D7700_2-en.pdf,12,"Depending on the configuration, the connection blocks incorporate:
+a. A 3-way controller for Open Center systems with constant pump
+b. A pressure-limiting valve to ensure maximum system pressure
+c. A valve for LS relief or LS pressure limitation
+d. A damping element to attenuate LS signal oscillation
+e. A pressure reducing valve for internal control oil supply to the downstream valve sections
+f. Various additional elements (e.g. idle circulation valve, power-beyond function, P-line shut-off, mechanical locking of the 3-way controller)
+12/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,13,"2.1.1 Basic version
+Type Description
+PSL Connection block with integrated 3-way controller for use in Open Center systems with constant pumps
+Connection block without 3-way controller for use in Closed Center systems with variable pumps or for simultaneous
+PSV
+supply of two or more manifolds from a shared constant pump
+NOTICE
+For instructions on how to convert the connection block from PSL to PSV, see Chapter 5.2.3
+2.1.2 Ports for P and R
+Coding Description of P and R port
+3 G 1/2 (ISO 228-1)
+4 G 3/4 (ISO 228-1)
+UNF 2 SAE-8 or 3/4-16 UNF-2B (SAE J 514)
+UNF 4 SAE-12 or 1 1/16-12 UN-2B (SAE J 514)
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 13/187"
+D7700_2-en.pdf,14,"2.1.3 Connection block basic types
+PSL connection blocks
+Type Description
+PSL 3…/D…-3 Standard connection block with integrated 3-way controller.
+PSL UNF 2…/D…-2
+Pressure-limiting valve: direct actuation
+PSL 3U.../...-2 Additional idle circulation valve for automatic reduction of circulation pressure.
+PSL UNF 2U…/…-2
+In order to reliably close the idle circulation valve, the LS pressure must be at least 20 bar. If the LS pressure then
+falls below 25% of the pump pressure, the valve returns to idle circulation and the P gallery is relieved to the reux.
+Electro-hydraulic actuation with internal control oil supply requires a pump ow rate of at least 60 l/min; otherwise,
+there will not be enough pilot pressure available to actuate the spools.
+Pressure-limiting valve: pilot-controlled
+PSL 3 Z.../D...-2 Additional release valve for quick release of pressure in neutral position.
+PSL UNF 2 Z.../D...-2
+Once all valve sections signal an LS pressure below around 1/3 of the 3-way controller’s spring cavity pressure, the
+release valve opens to the reux. The LS pressure in the 3-way controller’s spring cavity is released to R. Common
+applications include systems that are susceptible to vibration and combinations with load-holding valves.
+Pressure-limiting valve: direct actuation
+NOTICE
+A spacer plate ZPL 22/7 is included below; this is not included in the order coding.
+PSL 3 Y…/D…-2 Special version with an additional connection suitable for pressure loads for the 3-way controller's outow (power
+beyond function).
+You can connect a second manifold to the F port. The rst manifold’s valve sections are prioritised. The second
+manifold's valve sections are supplied with the remaining ow rate.
+Pressure-limiting valve: direct actuation
+14/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,15,"Type Description
+PSL 3 C…D/…-2 Additional integrated copier valve (LS booster valve)
+PSL 3 CR…D/…-2
+Via the optional blocking of the 3-way controller (Chapter 2.1.4), this connection block can also be operated with a
+variable pump as a closed-centre load-sensing valve (like PSV). In this case, the copier valve amplies the externally
+reported LS signal and can thus compensate for losses in the LS line or at the pump controller.
+There are two versions:
+■ C: xed ■ CR: manually adjustable
+selectable LS pressure increases selectable LS pressure settings
+- 2 bar - 5 to 15 bar
+- 10 bar
+- 15 bar
+- 20 bar
+Ordering example:
+PSL 3 CR 10 T B 1/D...-2
+Version
+LS pressure increase
+Pressure limitation: directly actuated
+NOTICE
+Depending on the LS damping element (Chapter 2.1.5), the copied pressure may increase further. The
+stronger the damping, the higher the increase.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 15/187"
+D7700_2-en.pdf,16,"PSV connection blocks
+Type Description
+PSV 3…-2 Standard connection block without 3-way controller.
+PSV UNF 2…-2
+Pressure-limiting valve: without
+PSV 3…/D…-2 Standard connection block without 3-way controller.
+PSV UNF 2…/D…-2
+Pressure-limiting valve: direct actuation
+PSV 4 N…/…/…-2 Special version with additional P channel shut-off to safely shut off pump and consumer from one another and
+PSV UNF 4 N…/…/…-2 prevent undesired movements.
+The P channel incorporates a piston controlled by a 2/2-way directional valve. In the de-energised state, the piston
+safely shuts off the P channel. The P channel is opened by actuating the 2/2-way directional valve.
+■ PSV (UNF) N.. : 2/2-way directional valve type EM 11 S as per D 7490/1
+■ PSV (UNF) NM.. : with wing bolt for mechanical locking (EM 11 S-…M)
+■ PSV (UNF) NP.. : with button for manual override (EM 11 ST)
+Also available with external hydraulic actuation. The P-channel lock is open unless min. pump pressure is present.
+■ PSV 4 N 7490 105 E...: without EM, with external hydraulic connection
+Optionally, an additional LS release valve is available to depressurise the LS signal and switch the pump to standby
+pressure.
+■ PSV (UNF) 4 N V: LS relief, closed when unpowered (EM 11 V as per D 7490/1)
+■ PSV (UNF) 4 N Z: LS relief, open when unpowered (EM 11 S as per D 7490/1)
+■ PSV (UNF) 4 N ZM: LS relief, open when unpowered, with wing bolt for mechanical locking (EM 11 S-...-M)
+■ PSV (UNF) 4 N ZP: LS relief, open when unpowered, with button for manual override (EM 11 ST)
+The LS pressure-limiting valve can optionally be deselected.
+■ PSV (UNF) 4 N../ X-3
+Only possible in conjunction with LS damping (see Chapter 2.1.5)
+Ordering example: PSV 4 N B 61ZM/220/200-2
+– Setting for main pressure-limiting valve: 220 bar
+– Setting for LS pressure-limiting valve: 200 bar
+NOTICE
+If a P channel shut-off is being used, there will be an additional pressure drop in the P channel. This may
+mean that the nominal value is no longer reached in the downstream sections.
+The undershooting of the nominal value depends on the
+■ control pressure difference in the variable pump’s pump controller,
+■ position of the valve section in the manifold and
+■ ow rate through the P channel shut-off.
+The nominal value may fall short of Qnominal by up to 30%, see Chapter 2.2.1.6.
+16/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,17,"Type Description
+PSV 3X…-2 Special version
+■ without 3-way controller
+■ without pressure-limiting valve
+■ Without pressure reducing valve for internal control oil supply (only possible for E0A, E0H, E0Z, E0AR, E0K)
+■ without interface for LS pressure-limiting valve or LS release valve
+Only for EDL valve sections or PSL/PSV with actuations A, H and P.
+Damping in LS: Standard - none
+B4, B5, …: with orice # 0.4, 0.5, …; e.g. PSV 3X B5-2
+NOTICE
+No retrotting on electro-hydraulic actuation E.. possible.
+PSV E0-2 Initial plate without its own functions and connections.
+– For the combination with EDL and middle input block ZPL 22 P6R6, see Chapter 2.3, ""Series intermediate plate""
+or an end plate (see Chapter 2.4, ""End plate"") with P and R connection.
+Operating pressure max. 250 bar!
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 17/187"
+D7700_2-en.pdf,18,"Circuit symbols
+PSL 3.../D...-2 PSL 3U.../...-2 PSL 3 Z.../D...-2 PSL 3 Y.../D...-2
+PSL UNF 2.../D...-2 PSL UNF 2U.../...-2
+PSV 3...-2 PSL 3 C... D/...-2 PSV 3.../D...-2 PSV 3X...-2
+PSV UNF 2...-2 PSL 3 CR... D/...-2 PSV UNF 2.../D...-2
+18/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,19,"PSV 4 N.../.../...-2 PSV 4 N...Z/.../...-2 PSV E0-2
+PSV UNF 4 N.../.../...-2 PSV UNF 4 N...Z/.../...-2
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 19/187"
+D7700_2-en.pdf,20,"2.1.4 Additional elements for 3-way controller
+Coding Description
+without coding Standard version
+3-way controller with 9 bar circulation pressure
+H Special version
+3-way controller with higher circulation pressure (9 bar)
+T, TR Special version for mechanical locking of the 3-way controller
+■ T: tool adjustable
+■ TR: manually adjustable using turning knob
+HT, HTR Special version
+3-way controller with higher circulation pressure (14 bar) and mechanical locking
+■ HT: tool adjustable
+■ HTR: manually adjustable using turning knob
+NOTICE
+Only available for connection block PSL 3 Z…/D…-2.
+2.1.5 LS damping elements
+Coding Description Circuit symbol
+without coding ■ For PSL and PSM: as for coding S
+-
+■ For PSV: without LS damping
+B # 0.8 mm orice
+B 4 # 0.4 / 0.5 / 0.6 / 0.7 mm orice
+B 5
+B 6
+B 7
+B 55 Two # 0.5 mm orices in series
+S Pre-load and damper valve (pre-load pressure: 25 bar)
+W Pre-load and damper valve with increased throttle effect (pre-load pressure: 25 bar)
+E Damper valve without pre-load valve
+Because there is no pre-load valve, LS relief with all directional spool valves in neutral
+position occurs with a slight delay, system pressure drops only slowly.
+Common applications include consumers with a tendency to oscillate at low frequencies.
+G Damper valve with increased throttle effect without pre-load valve
+(Throttle cross-section smaller than for coding E)
+Because there is no pre-load valve, LS relief with all directional spool valves in neutral
+position occurs with a slight delay, system pressure drops only slowly.
+Common applications include consumers with a tendency to oscillate at low frequencies.
+20/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,21,"2.1.6 Internal control oil supply
+Coding Description Circuit symbol
+without coding Without internal control oil supply
+For valve sections with manual, hydraulic or pneumatic actuation. Or for external control
+oil supply (required pilot pressure: 20 to 40 bar).
+1, 2 With internal control oil supply
+For valve sections with electro-hydraulic actuation. Optionally, a small quantity of control
+oil can be siphoned from the Z port to supply externally connected additional valves. In
+this case, the maximum permissible ow rate is 2 l/min.
+■ 1: 20 bar pilot pressure
+■ 2: 40 bar pilot pressure
+2.1.7 LS relief or LS pressure limitation
+For the connection blocks with EM 2… interface:
+■ PSL 3…/D…-2, PSL UNF 2…/D…-2
+■ PSL 3 U…/…-2, PSL UNF 2U…/…-2
+■ PSL 3 Y…/…-2 PSV 3…-2, PSV UNF 2…-2
+■ PSV 3…/D…-2
+■ PSV UNF 2…/D…-2
+Coding Description Circuit symbol
+without coding Without LS relief or LS pressure limitation
+ZA LS relief, open when unpowered
+ZAM
+■ ZA: EM 11 S as per D 7490/1
+ZAP
+■ ZAM: with wing bolt for mechanical locking (EM 11 S-…-M)
+■ ZAP: with button for manual override (EM 11 ST)
+Contains adapter for EM 2.. hole to EM ..
+VA LS relief, closed when unpowered (EM 11 V as per D 7490/1)
+Contains adapter for EM 2.. hole to EM ..
+Z Proportional LS pressure limitation with ascending characteristic line
+ZM
+■ Z: EM 21 DSE as per D 7490/1 E
+ZP
+■ ZM: with wing bolt for mechanical locking (EM 21 DSE-…-M)
+■ ZP: with button for manual override (EM 21 DSET)
+V Proportional LS pressure limitation with descending characteristic line (EM 21 DE as per
+D 7490/1)
+NOTICE
+LS relief valves and LS pressure-limiting valves of types ZA, ZAM, ZAP, VA, F…, D… Z, ZM, ZP and V require the intake to
+be limited by means of LS damping, in order to ensure reliable release/pressure limitation, see Chapter 2.1.5, ""LS damping
+elements""
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 21/187"
+D7700_2-en.pdf,22,"For the connection blocks with WN hole pattern interface:
+■ PSL 3 Z…/D…-2
+Coding Description Circuit symbol
+without coding Without LS relief or LS pressure limitation
+F LS relief, open when unpowered (WN 1 F as per D 7470 A/1)
+D LS relief, closed when unpowered (WN 1 D as per D 7470 A/1)
+2.1.8 System pressure limitation
+Coding Description
+without coding Without pressure-limiting valve
+/D... With pressure-limiting valve
+Pressure setting in bar (adjustment range 50 to 420 bar).
+Directly actuated.
+/... With pressure-limiting valve
+(Adjustment range 50 to 420 bar)
+Pilot control of the 3-way controller via a pilot valve.
+/.../... With pressure-limiting valve and LS pressure-limiting valve (only for PSV 4 N and PSV UNF 4 N)
+The rst value is the setting for the main pressure-limiting valve, the second value is the setting for the
+LS pressure-limiting valve.
+2.1.9 Size
+Coding Description
+-2 Size 2
+For size 3, see D 7700-3, and for size 5, see D 7700-5
+22/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,23,"2.1.10 Variants and potential combinations
+PSL connection blocks
+Type P and R port as per Max. recommended Pressure-limiting valve
+ISO 228-1 or SAE J 514 ow rate
+(l/min) direct actuation pilot-controlled
+PSL 3…/D…-2 G 1/2 80 o
+PSL 3 U…/…-2 G 1/2 100 o
+PSL 3 Z…/D…-2 G 1/2 80 o
+PSL 3 Y…/D…-2 G 1/2 80 o
+PSL UNF 2…/D…-2 SAE-8 (3/4-16 UNF 2B) 80 o
+PSL UNF 2U …/…-2 SAE-8 (3/4-16 UNF 2B) 100 o
+PSV connection blocks
+Type P and R port as per Max. recommended Pressure-limiting valve
+ISO 228-1 or SAE J 514 ow rate
+(l/min) without direct actuation
+PSV 3…-2 G 1/2 80 o
+PSV 3…/D...-2 G 1/2 80 o
+PSV 4N…/.../...-2 G 3/4 100 o
+PSV 3 X…-2 G 1/2 80 o
+PSV UNF 2…-2 SAE-8 (3/4-16 UNF 2B) 80 o
+PSV UNF 2…/D…-2 SAE-8 (3/4-16 UNF 2B) 80 o
+PSV UNF 4 N.../…/...-2 SAE-12 (1 1/16-12 UN-2B) 100 o
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 23/187"
+D7700_2-en.pdf,24,"2.2 Valve section PSL and EDL
+A directional valve section is always provided with a ange surface for configuring an ancillary block or an intermediate plate and
+ancillary block.
+PSL EDL
+■ Chapter 2.2.1, ""PSL Directional valve section "" ■ Chapter 2.2.2, ""EDL directional valve section""
+■ Chapter 2.2.3, ""Ancillary block"" ■ Chapter 2.2.3, ""Ancillary block""
+■ Chapter 2.2.4, ""Intermediate plate (on the consumer side)"" ■ Chapter 2.2.4, ""Intermediate plate (on the consumer side)""
+Valve section with ancillary block
+PSL EDL
+b
+a
+24/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,25,"Valve section with intermediate plate and ancillary block
+PSL EDL
+b
+a
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 25/187"
+D7700_2-en.pdf,26,"Depending on the configuration, the directional valve sections incorporate
+PSL EDL
+b
+a
+a. Valve spool for controlling proportional ow rate
+2-way controller (pressure compensator) for controlling a constant pressure difference using the valve spool, irrespective of the load pressure and pump
+b.
+pressure
+c. Fixed LS pressure-limiting valves
+d. Shuttle valve for linking the LS line to additional valve sections
+e. Actuation for the control piston
+f. Additional connections for external LS pressure limitation
+g. Electric LS pressure-limiting valves for relief or electro-proportional limitation of the LS pressure
+h. LS orice for damping the LS signal
+26/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,27,"PSL EDL
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 27/187"
+D7700_2-en.pdf,28,"2.2.1 PSL Directional valve section
+Ordering example
+SL 2 -A R2 H 40/40 A200 B300 F3 9 W1 L /EA1 WA /ZDRH /2
+2.2.3 ""Ancillary block""
+2.2.4 ""Intermediate plate (on the consumer side)""
+2.2.1.15 ""Switching position monitoring, displacement
+transducer""
+Actuation ■ 2.2.1.13 ""Actuation""
+■ 2.2.1.14 ""Additional elements for actuation""
+2.2.1.12 ""Additional functions""
+2.2.1.11 ""Shuttle valve""
+2.2.1.10 ""LS orice""
+LS pressure limitation ■ 2.2.1.7 ""LS pressure limitation""
+■ 2.2.1.8 ""Electric LS relief or LS pressure limitation""
+■ 2.2.1.9 ""LS port for external limitation""
+Valve spool ■ 2.2.1.5 ""Circuit symbol""
+■ 2.2.1.6 ""Flow rate""
+Valve section, 2-way controller ■ 2.2.1.2 ""2-way controller""
+■ 2.2.1.3 ""2-way controller spring""
+■ 2.2.1.4 ""2-way controller damping""
+2.2.1.1 ""Consumer ports""
+2.2.1.1 Consumer ports
+Coding Description
+A Spool block without integrated thread for combining with an ancillary block (Chapter 2.2.3) or an intermediate plate
+(Chapter 2.2.4)
+2.2.1.2 2-way controller
+Coding Description Circuit symbol
+without coding Standard 2-way controller
+1 Without 2-way controller -
+R 2-way controller with check valve function
+In the event of a shortage in supply, the controller prevents return ow from the load line
+(A or B-line) to the P-line.
+Only in conjunction with 2-way controller spring coding 2 and 5, Chapter 2.2.1.3
+28/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,29,"Coding Description Circuit symbol
+D 2-way controller with release of pressure
+The controller prevents pressure creep in the P-line between the 2-way controller and valve
+spool.
+Typical applications
+■ Consumers with very low load pressures and without additional check valves.
+■ When using standard 2-way controllers, phantom movements may occur here. The
+D-controller can prevent this because the pressure is relieved towards T.
+■ In applications with check valves, the D-controller prevents undesired check valve
+intervention.
+B 2-way controller with release of pressure and check valve function
+Check valve function:
+In the event of a shortage in supply, the controller prevents return ow from the load line
+(A or B-line) to the P channel.
+Release of pressure:
+The controller prevents pressure creep in the P channel between the 2-way controller and
+valve spool.
+Typical applications
+■ Consumers with very low load pressures and without additional check valves.
+■ When using standard 2-way controllers, phantom movements may occur here. The
+D-controller can prevent this because the pressure is relieved towards T.
+■ In applications with check valves, the D-controller prevents undesired check valve
+intervention.
+Only in conjunction with 2-way controller spring coding 2 and 5, Chapter 2.2.1.3
+NOTICE
+2-way controller depicted with applicable LS pressure.
+For B and R: LS > P
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 29/187"
+D7700_2-en.pdf,30,"Coding Description Circuit symbol
+8 Pre-selector valve section without 2-way controller • 8
+81
+The pre-selector valve section shuts off the P-line in neutral position. Once the pre-
+selector valve is activated, it supplies either the downstream valve sections (switching
+position b) or a second manifold connected to port A (switching position a).
+■ 8: LS signal is signalled from port A (switching position a) and the following valve
+section (switching position b). Standard configuration if an open-centre valve (PSL) is
+used on port A.
+■ 81: LS signal is only signalled by the downstream valve sections (switching position b).
+Is used if a Closed Center LS valve (PSV) is connected to port A; the LS signal is then
+usually signalled externally to the variable pump.
+Typical applications
+■ Loading cranes, concrete line pumps, lifting platforms, etc.
+■ Here, the pre-selector valve is used to switch between crane or mast operation and
+outrigger operation.
+■ The pre-selector valve can further also be used as a P-line shut-off in safety
+functions.
+• 81
+Only in conjunction with
+■ PSL connection block with 3-way controller spring coding H (Chapter 2.1.4) or
+PSV connection block
+■ Circuit symbol L or H (Chapter 2.2.1.5)
+■ Actuation coding E… (Chapter 2.2.1.13)
+NOTICE
+When using a pre-selector valve, there is an additional pressure drop in the P-line
+that can lead to the downstream sections no longer reaching the nominal value.
+The undershooting of the nominal value depends on the
+a) control pressure difference of the 3-way controller (PSL) or variable pump’s
+pump controller (PSV),
+b) position of the valve section in the manifold and
+c) ow rate through the pre-selector valve or P-line shut-off.
+The nominal value may fall short of Qnominal by up to 30%, Chapter 2.2.1.6.
+30/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,31,"Coding Description Circuit symbol
+A8...L1 Pre-selector valve with additional LS pressure increase for the downstream valve sections. • A8..L1/../2 CDSV 1 A-..
+The pre-selector valve shuts off the P channel in neutral position. Once activated, it
+supplies either the downstream valve sections (switching position b) or a second manifold
+connected to port A (switching position a).
+In the switching position b, P is switched to LS. The LS pressure can be set via a CDSV 1 A
+(as per D 7876) that is installed in the ancillary block.
+In P, the LS pressure set on the CDSV plus the standby pressure of the pump is already
+present when the pre-selector valve is switched and no LS is reported by the downstream
+valve sections. In the case of fast switching operations, a negative impact on the load can
+b
+therefore be prevented before the pump responds to the LS signal.
+The ancillary block in which the CDSV is installed is available in two versions:
+■ /2 CDSV 1 A-…: adjustment range of 100 - 420 bar
+■ /2 XCDSV 1: prepared for use with CDSV
+a
+Ordering example: -A8 L 40/40 L1/EA/2 CDSV 1 A-200
+Typical applications
+■ Loading cranes, concrete line pumps, lifting platforms, etc.
+■ Here, the pre-selector valve is used to switch between crane or mast operation and
+outrigger operation. • A8..L1/../2 XCDSV 1
+■ The pre-selector valve can further also be used as a P-line shut-off in safety
+functions.
+Not in conjunction with
+■ Shuttle valve W3
+(In the case of a sub-optimal shuttle valve position relating to the downstream valve
+sections, the LS could be relieved via the end plate in R)
+b
+a
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 31/187"
+D7700_2-en.pdf,32,"2.2.1.3 2-way controller spring
+Coding Description
+without coding Without coding for configurations without 2-way controller
+(coding 1 or 8 Chapter 2.2.1.2)
+2 Standard version (6 bar spring)
+5 Heavy-duty version (9 bar spring)
+Only possible in conjunction with PSL connection block with 3-way controller spring coding H (Chapter 2.1.4 ) or with
+PSV connection block
+7 Heavy-duty version (13 bar spring)
+Only possible in conjunction with PSV connection block
+2.2.1.4 2-way controller damping
+Coding Description Circuit symbol
+without coding Standard version
+(damping with # 0.4 mm orice)
+S Special version with closing damping
+Only in conjunction with standard 2-way controller (without coding)
+Chapter 2.2.1.2
+Sample application:
+Hydraulic motors with a small number of pistons or low rotation speed, leading to oscillat-
+ing changes in the requested ow rate.
+X Special version without damping
+Only in conjunction with standard 2-way controller (without coding) or 2-way controller
+with check valve function (coding R)
+Chapter 2.2.1.2
+NOTICE
+2-way controller depicted with applicable LS pressure.
+32/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,33,"2.2.1.5 Circuit symbol
+Coding Description Circuit symbol
+L, M, F, H Standard spool valve with low return pressure L M F H
+J, B, R, O Standard spool valve with constant return pressure of 20 bar J B R O
+Common applications:
+Stabilising cylinders with dragging loads, especially when
+used with load-holding valves or when used without addition-
+al check valves.
+I, Y, V Standard spool valve with high reux at < 1/3 spool stroke I Y V
+and rapid subsequent return pressure drop.
+Common applications:
+Controlled deceleration of winches, slewing gear or other
+rotating consumers.
+1 Circuit symbols L, M, F, H
+2 Circuit symbols J, B, R, O
+SpA/B return pressure (bar) 3 Circuit symbols I, Y, Z, V
+NOTICE
+The return pressure is in relation to the nominal ow rate. It may be higher or lower than shown in the diagram depending on
+the cylinder ratio or 2-way controller spring.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 33/187"
+D7700_2-en.pdf,34,"Coding Description Circuit symbol
+LW, MW, HW, JW, OW Special version with broad tting tolerance. LW MW HW JW OW
+■ Advantage: reduces risk of jamming spool valve in systems
+prone to soiling.
+■ Drawback: higher spool valve leak rate
+LB Special version with minimal release of pressure from A and B-line when spool valve in idle position. LB
+Sample application:
+Combined with load-holding valves that require closed spool valve in neutral position due to safety require-
+ments, e.g. lifting platform. In this case, the LB spool valve prevents pressure from being trapped between
+the load-holding valve and spool valve.
+G 3/3-way directional spool valve for single-acting cylinders
+The G spool valve can be combined with any valve section, port B is sealed with a tapped plug when doing
+G
+so.
+No LS signal is produced when load drops. If used in conjunction with electro-hydraulic actuation and a PSL
+connection block with standard 3-way controller spring, this can result in the internally generated pilot
+pressure not being sufcient for the full spool valve stroke, Chapter 2.1.4.
+Load reduction is throttled using the spool valve’s meter-out edge. If desired, the maximum reduction rate
+can be capped using a separate ow control valve (e.g. type SB as per D 6920).
+To obtain pressure-compensated load reduction, you can alternatively also use an NX spool valve.
+X Special spool valve in conjunction with P d A in neutral position X W
+W
+Common applications:
+Fan drives, generator drives or other consumers requiring a specic ow rate when unpowered
+for safety reasons.
+■ X: 2/2-way directional spool valve
+Maximum ow rate in neutral position. By shifting the spool valve to switching position b,
+the ow rate can be reduced to zero proportionally. W
+Interme-
+■ W: 4/2-way directional spool valve
+diate
+In neutral position, the maximum ow rate is towards A-side. By shifting the spool valve to
+position
+switching position b, the direction is reversed and the ow rate is towards B-side. Decelerat-
+ing consumer to zero as well as proportional ow rate control are only possible to a limited
+degree. This makes the W spool valve suitable primarily for applications with constant
+speed.
+LS is signalled in both switching positions.
+Combination options:
+Only with actuation concepts Chapter 2.2.1.13 that have stroke limitation.
+Available versions:
+■ X 40
+■ W 30/30
+34/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,35,"Coding Description Circuit symbol
+NX 3/3-way directional spool valve for single-acting cylinders with outow pressure
+compensator and releasable check valve for pressure-compensated load reduction
+and load holding without leaking seating.
+The NX spool valve is combined with a valve section designed specifically for this
+purpose and cannot be used with any other valve sections.
+When the load drops, the pilot pressure (Z) is used to open the releasable check
+valve. At the same time, Z is switched to LS to increase the pressure level of the
+pilot control as required.
+Ordering example:
+b
+SL 2-A2 NX 25/25 /EA 22 HRPH 3 V
+Ancillary block a
+Spool valve
+Only in conjunction with
+■ Ancillary block coding, /2.. HRP 3 V, (Chapter 2.2.3)
+■ Internal control oil supply coding 2 (Chapter 2.1.6)
+NOTICE
+■ For instructions on how to replace the valve spool, Chapter 5.2.4.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 35/187"
+D7700_2-en.pdf,36,"2.2.1.6 Flow rate
+Coding Coding Flow rate (Qnominal in l/min)
+2-way controller With maximum spool valve actuation
+spring, see
+3 6 10 16 25 40
+Chapter 2.2.1.3
+2 3 6 10 16 25 40
+5 4 9 14 22 34 54
+7 5 10 15 24 37 59
+Flow rate for coding 1 and 8
+On valve sections without a 2-way controller (coding 1 or 8, see Chapter 2.2.1.2, ""2-way controller""), it is possible to calculate the ow
+rate using the following formula:
+QA/B = ow rate to port A or B
+Qnominal = Nominal ow rate of valve spool at pressure difference of 6 bar
+Spcontroller= control pressure difference of the 3-way controller (PSL) or variable pump’s pump controller (PSV)
+Example:
+■ PSL connection block, standard 3-way controller spring (9 bar)
+■ PSL connection block, 3-way controller with heavy-duty spring (14 bar)
+NOTICE
+The calculated values are rough reference values!
+They apply only to the highest-load consumer. If multiple consumers are being actuated in parallel, the pressure difference may
+be considerably greater at the lower-load consumers.
+Flow rate for all codings
+NOTICE
+When using a pre-selector valve (coding 8 as per Chapter 2.2.1.2) or a P channel shut-off (coding PSV 4 N or PSV UNF 4 N as per
+Chapter 2.1.1 there is an additional pressure drop in the P channel that can result in the downstream valve sections no longer
+reaching the nominal value.
+The undershooting of the nominal value depends on
+■ the control pressure difference of the 3-way controller (PSL, Open Center) or variable pump’s pump controller (PSV, Closed
+Center)
+■ the position of the valve section in the valve bank
+■ the ow rate through the pre-selector valve or P channel shut-off
+The nominal value may fall short of Qnominal by up to 30%, Chapter 2.2.1.6.
+36/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,37,"Flow rate coding
+Spool valves are dened using two ow rate codings in the order coding. The rst number denes the nominal ow rate on the A-side
+(QA) and the second number denes the nominal ow rate on the B-side (QB). The shape of the spool valve’s two meter-out edges is
+dened by the circuit symbol, see Chapter 2.2.1.5, ""Circuit symbol"".
+Ordering example: L 40/25, J 40/16, H 40/40, O 25/10
+Flow rate setting value
+The valve spools’ sizes are designed to make actual ow rate slightly higher than Qnominal in practice. If the actuation includes a
+mechanical spool stroke limitation, this is set to the nominal ow rate as standard
+(see Chapter 2.2.1.13, ""Actuation"")
+If the spool stroke should not be limited or should be set to a lower value, this can be specied in the type designation using two
+separate bracket values.
+Not possible in conjunction with CAN actuation, see Chapter 2.2.1.13, ""Actuation"".
+Ordering example: SL 2-A2 L 25/40/EA (22/35)
+Setting values: A – 22 l/min, B – 35 l/min
+Ordering example: SL 3-A2 L 25/400/EA (20/-)
+Setting values: A – 20 l/min, B – no stroke limitation
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 37/187"
+D7700_2-en.pdf,38,"Flow rate coding with larger or smaller meter-out edges
+For J and O spool valves, the meter-out edge can also be customised. In such a case, the order coding has 4 digits and looks like this:
+QA d R – QP d A / QP d B – QB d R. Choosing a smaller key gure increases return pressure. A larger key gure reduces return pressure.
+Ordering example: J 25/40-16, O 25-16/40-25
+1 Outow edge two numbers smaller
+2 Outow edge one number smaller
+3 Standard version
+4 Outow edge one number larger
+NOTICE
+The return pressure is in relation to the nominal ow rate. It may be higher or lower than shown in the diagram depending on
+the cylinder ratio or 2-way controller spring.
+2.2.1.7 LS pressure limitation
+Coding Description View
+without coding Without LS pressure limitation -
+AB Without LS pressure limitation, but prepared for later conversion to coding A.., B.. or
+A.. B..
+A.. LS pressure limitation for A-side
+(Adjustment range: 50 to 400 bar)
+B.. LS pressure limitation for B-side
+(Adjustment range: 50 to 400 bar)
+A.. B.. LS pressure limitation for A and B-side with two separate pressure settings
+(Adjustment range: 50 to 400 bar)
+38/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,39,"Circuit symbols
+without coding AB A..
+b b b
+a a a
+B.. A.. B..
+b b
+a a
+NOTICE
+LS pressure limitation is only available in conjunction with a 2-way controller (Chapter 2.2.1.2).
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 39/187"
+D7700_2-en.pdf,40,"2.2.1.8 Electric LS relief or LS pressure limitation
+Coding Description
+without coding Without electric LS relief or LS pressure limitation
+FP.. Electro-proportional LS pressure limitation with ascending characteristic line
+FPH..
+Pressure ranges for A and for B-side
+■ 1 = 10 to 100 bar ■ 4 = 30 to 250 bar
+■ 2 = 15 to 150 bar ■ 6 = 40 to 350 bar
+INFORMATION
+The rst number applies to A-side. The second number applies to B-side.
+Ordering example: FP12
+■ FPH..: additionally with button for manual override
+Only in conjunction with actuation coding LS DBV… (Chapter 2.2.1.13)
+FPC-S.. Electro-proportional LS pressure limitation
+FPC-R../.. Limits the pressure for A and B-side.
+Different pressure values in A and B are controlled electrically.
+■ FPC-S..:
+– ascending characteristic line / normally open (PMVE 1 S… according to D 8143)
+■ FPC-R../..:
+– falling characteristic line / normally closed (PMVE 1 R according to D 8143)
+– with additional mechanical pmax setting (75 – 100 % from pressure range)
+Pressure stage
+■ A = up to 50 bar
+■ B = up to 100 bar
+■ C = up to 150 bar
+■ D = up to 200 bar
+■ E = up to 250 bar
+■ F = up to 300 bar
+■ G = up to 350 bar
+■ H = up to 420 bar
+Only in conjunction with:
+Consumer ports LS pressure limitation Actuation
+(Chapter 2.2.1.1) (Chapter 2.2.1.7) (Chapter 2.2.1.13)
+SL 2-A.. AB, A..B.., A.., B.. with E
+FPCX Prepared for electro-proportional LS pressure release FPC-S.. and FPC-R../..
+Only in conjunction with:
+Consumer ports LS pressure limitation Actuation
+(Chapter 2.2.1.1) (Chapter 2.2.1.7) (Chapter 2.2.1.13)
+SL 2-A.. AB, A..B.., A.., B.. with E
+40/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,41,"Circuit symbols
+without coding FP.., FPH..
+b b
+a a
+FPC-S.. FPC-R../.. FPCX
+b b b
+a a a
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 41/187"
+D7700_2-en.pdf,42,"NOTICE
+Electric LS relief or LS pressure limitation is only available in conjunction with a 2-way controller, Chapter 2.2.1.2
+NOTICE
+Even with LS relief, pressure in consumer line A or B cannot be reduced completely to 0 bar. The remaining minimum pressure in
+A or B (pmin, A/B) is the sum of:
+a) control pressure in the 2-way controller (Sp2-way controller)
+b) internal dynamic pressure in block (SpBlock)
+c) Tank or return pressure (depending on the end plate used)
+Resulting minimum pressures, without tank or return pressure
+FP…: approx. 40 bar
+FPC…: approx. 13 bar
+NOTICE
+The electrical LS relief or LS pressure limitation cannot be combined with circuit symbols with a wide tting tolerance,
+Chapter 2.2.1.5
+2.2.1.9 LS port for external limitation
+Coding Description
+without coding Without LS port for external limitation
+S1 U and W port for connecting external pilot valve
+S1 UNF
+■ U port = LSA
+■ W port = LSB
+■ S1: G 1/8 (ISO 228-1)
+■ S1 UNF: SAE-2 or 5/16-24 UNF-2B (SAE J 514)
+Only in conjunction with
+■ LS pressure limitation coding AB, A..B.., A.., B.. (Chapter 2.2.1.7)
+Circuit symbols
+without coding S1, S1 UNF
+b b
+a a
+42/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,43,"NOTICE
+An LS port for external limitation is only possible in conjunction with a 2-way controller (Chapter 2.2.1.2).
+NOTICE
+Even with LS relief, pressure in consumer line A or B cannot be reduced completely to 0 bar. The remaining minimum pressure in
+A or B (pmin, A/B) is the sum of:
+a) control pressure in the 2-way controller (Sp2-way controller)
+b) internal dynamic pressure in block (SpBlock)
+c) Return pressure (preux).
+pmin,A/B = Sp2-way controller + SpBlock + preux
+Sp 2-way controller: see Chapter 2.2.1.3
+SpBlock for coding S1 = 5 bar
+2.2.1.10 LS orice
+Coding Description Circuit symbol
+without coding Standard version with # 0.6 mm orice
+2.2.1.11 Shuttle valve
+Coding Description Circuit symbol
+without coding Standard version
+W3 Special version without ball
+Only useful in manifold’s nal valve section in case the downstream LS-line is not relieved
+by the end plate.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 43/187"
+D7700_2-en.pdf,44,"2.2.1.12 Additional functions
+Coding Description Circuit symbol
+L Valve section with additional LS port facing ancillary block.
+The LS signal is picked up downstream of the LS orice.
+Combination options
+■ The additional LS port is required for the intermediate plate (on the consumer side)
+ZN.../ ZNX.... b
+■ In conjunction with other ancillary blocks or intermediate plates, the LS port is closed.
+a
+FL Valve section with additional 1-, 2-, X- and Z-port facing ancillary block
+The Z port can be used to realise additional functions for an ancillary block or intermedi-
+ate plate.
+The LS signal is picked up downstream of the LS orice.
+b
+Only in conjunction with
+■ Ancillary blocks /2 FL and /UNF 2 FL (Chapter 2.2.3)
+■ Intermediate plate /ZFL A-B-6 B-B-6 (Chapter 2.2.4)
+Alternatively only available as a single valve section without ancillary block.
+a
+NOTICE
+■ Only with return pressure < 10 bar (similar to end plate E 4)
+■ For Z, approximately 2 l/min are available. It must be ensured that sufcient
+hydraulic uid is available for the actuations.
+44/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,45,"2.2.1.13 Actuation
+Actuation types
+The different actuation types can be combined with one another.
+Coding Description Circuit symbol
+Electro-hydraulic actuation prepared
+E0 Prepared for electro-hydraulic actuation -
+Manual actuation
+A Manual actuation with spring return E0A E0C E0AR
+Only in conjunction with actuation variants:
+■ EA, EACAN(L), EMA, EMACAN(L)
+■ E0A, E0ZA, EAR, E0AR
+■ EHA, E0HA
+EHACAN, E0ZA, E0ZMA
+C Manual actuation, infinitely variable
+Only in conjunction with actuation variants:
+■ C, E0C
+R Actuation supplement for a 3-stage detent for switching position 0, a
+E0K
+or b.
+Without stroke limitation.
+With spring return.
+No ow rate setting possible.
+Only in conjunction with actuation variants:
+■ AR, E0AR
+■ EAR, ER
+K Joystick actuation K
+Combined manual actuation for two adjacent valve sections with
+shared 2-axis actuation.
+Only in conjunction with actuation variants:
+■ E0K
+NOTICE
+If the subsequent valve section is also to be equipped with a
+manual actuation, a ZPL 22 must be installed directly after the
+E0K actuation to avoid a collision between the hand levers.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 45/187"
+D7700_2-en.pdf,46,"Coding Description Circuit symbol
+Electro-hydraulic actuation
+E Electro-hydraulic actuation.
+EI
+EM ■ E: with stroke limitation E EA EI ER EM
+■ EI: no stroke limitation
+EM UNF
+■ EM: with measurement tting, with stroke limitation on spring
+housing and lever housing
+■ EM: G 1/8 (ISO 228-1)
+■ EM UNF: SAE-4 or 7/16-20UNF-2B (SAE J 514)
+Only in conjunction with actuation variants:
+■ E, EA, EMA
+■ ECAN(L), EICAN(L), EACAN(L), EMACAN(L), EHACAN(L)
+■ EHA
+■ ER, EAR
+■ EI
+Coding Description Circuit symbol
+CAN actuation
+CAN Directly mounted CAN controls as per D 7700 CAN
+CANL
+■ CAN: CAN actuation with integrated displacement transducer for spool valve position
+control. The spool valve characteristic line is linearised and hysteresis is minimised. EACAN ECANL
+■ CANL: CAN Lite actuation without integrated displacement transducer. Spool valve
+position is controlled; start and end point are calibrated.
+Only in conjunction with actuation variants:
+■ EACAN(L)
+■ EMACAN(L)
+■ EICAN(L)
+■ EHACAN
+NOTICE
+When using CAN actuation, the nominal ow rate may be undershot under certain
+circumstances. To enable optimum control, an additional tolerance for the
+mechanical travel stop has been programmed.
+Coding Description Circuit symbol
+Hydraulic actuation
+HA Combination of hydraulic and manual actuation with control pressure connections on the
+HA UNF spring housing and lever housing. EHA
+With stroke limitation.
+Ports 1 and 2 in spool valve axis.
+■ HA: G 1/8 (ISO 228-1)
+■ HA UNF: SAE-4 or 5/16-24 UNF-2B (SAE J 514)
+Only in conjunction with actuation variants:
+■ E0HA
+■ EHA
+■ EHACAN
+46/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,47,"Coding Description Circuit symbol
+Z Hydraulic actuation with pilot pressure ports in the spool block beneath spring housing. EOZM EOZMA
+Z UNF
+■ Z: G 1/8 (ISO 228-1)
+■ Z UNF: SAE-2 or 5/16-24 UNF-2B (SAE J 514)
+Only in conjunction with actuation variants:
+■ E0Z
+■ E0ZI
+■ E0ZA, E0ZA UNF
+■ E0ZMA UNF
+Coding Description Circuit symbol
+Pneumatic actuation
+P Pneumatic actuation with pilot pressure ports on lever housing. P
+Suitable for switching the valve spool on/off.
+Ports 1 and 2: M10x1 with 24° sealing bevel
+Pilot pressure required: approx. 6–13 bar
+Pmax: 15 bar
+Only in conjunction with actuation variants:
+■ E0P
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 47/187"
+D7700_2-en.pdf,48,"Actuation combinations
+Actuation combined with = coding
+manual + electro-hydraulic -- = EA, EMA(UNF)
+manual + hydraulic -- = E0HA(UNF), E0ZA, E0ZMA
+electro-hydraulic + 3-stage detent -- = ER
+electro-hydraulic + manual + 3-stage detent = EAR
+electro-hydraulic + hydraulic -- = EHA(UNF)
+EMA EAR EHA (UNF) E0A E0HA (UNF) E0P E0Z (UNF)
+E0A8
+2
+1
+E0ZA (UNF) E0MZA (UNF) EICAN EICANL EIMCAN EIMCANL EACAN
+CAN CAN CAN
+EACANL EMACAN EMACANL EHACAN EHACANL
+CAN CAN CAN CAN CAN
+48/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,49,"Combination with hydraulic joysticks
+with closed centre position with open centre position
+b b
+a a
+There are two # 0.8 mm orices between the electro-hydraulic actuation’s pilot valves and the pilot pressure ports 1 and 2. The control
+oil ow for the hydraulic joystick needs to be sufficiently large to compensate for bypass leakage through the orice.
+For joysticks with open centre position, pilot pressure ports 1 and 2 are connected to the tank when the joystick is in neutral position.
+Electro-hydraulic actuation would then result in the entire control oil ow escaping that way, and no pressure would be built up to shift
+the valve spool. For this reason, additional check valves need to be added to the control lines in this case.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 49/187"
+D7700_2-en.pdf,50,"2.2.1.14 Additional elements for actuation
+Coding Description
+without coding Standard version
+Hand lever straight approx. 122 mm
+1 Add-on for manual actuation
+2
+■ 1: Without hand lever
+3
+■ 2: Hand lever straight approx. 78 mm
+4
+005 ■ 3: Hand lever straight approx. 174 mm
+015 ■ 4: Hand lever straight approx. 92 mm
+025 ■ 005: Hand lever 5° curved approx. 122 mm
+030 ■ 015: Hand lever 15° curved approx. 120 mm
+■ 025: Hand lever 25° curved approx. 115 mm
+■ 030: Hand lever 30° curved approx. 114 mm
+Ordering example: SL 2-A2 H 40/25 A150 B200/EA025/2
+S Reinforced version of spring housing made from steel (seaworthy version).
+Not in conjunction with the actuations as per coding
+■ C
+■ R
+■ CAN
+■ CANL
+8 Additional description for stronger or weaker spring package
+9
+■ 8: Actuation torques as for E actuation
+■ 9: Actuation torques as for H actuation
+Ordering example: SL 2-A2 H 40/25 A150 B200/EA9/2
+BE... Add-on for actuation E0Z, E0ZA.
+With restrictor check valve type BE 0-… as per D 7555 B in the ports.
+Ordering example: SL 2-A2 H16/16/E0Z BE0606
+00 Add-on for actuation with E
+04 Additional damping in the electro-hydraulic pilot control.
+05
+■ 04: 0.4 mm orice
+06
+■ 05: 0.5 mm orice
+07
+■ 06: 0.6 mm orice
+■ 07: 0.7 mm orice
+Ordering example:
+SL 2-A2 H16/16/E0Z 07 (if A and B are the same, 0.7 mm orice here)
+SL 2-A2 H16/16/E0Z 0705 (if A and B are different, 0.7 mm orice here in A and 0.5 mm orice in B)
+50/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,51,"Coding Description
+H Push buttons for the solenoid versions with manual override H, see Chapter 2.5.1, ""PSV/PSL standard solenoid versions
+""
+Colours:
+■ Side A: white
+■ Side B: black
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 51/187"
+D7700_2-en.pdf,52,"2.2.1.15 Switching position monitoring, displacement transducer
+Coding Description Circuit symbol
+U Comparator for monitoring spool valve position.
+■ In neutral position: A and B on
+■ P d A: A on, B off
+■ P d B: A off, B on
+■ Voltage U: 10 - 32 V DC
+Connector types: DT, M12, X
+Ordering example: SL 2 A2 H16/16/EAU
+Only in conjunction with
+■ Actuation coding E, EI, EA, E0Z, E0ZI, E0ZA, E0A, E0C and E0K Chapter 2.2.1.13
+WA Integrated displacement transducer (Hall sensor) for spool valve position monitoring with
+analogue output signal.
+Connector types: DT, X, G, C
+Ordering example: SL 2 A2 H16/16/EAWA mm
+V
+NOTICE
+Not possible in the rst valve section if an LS pressure limitation or LS release
+valve with coding V, Z or ZM is selected in the connection block. The electric eld
+of the solenoid inuences the displacement transducer.
+Only in conjunction with
+■ Actuation coding E is the stroke limitation only possible for consumer A.
+Chapter 2.2.1.13
+Only in conjunction with the ancillary blocks - /2 AL-0-..-BL-0-.. - /UNF 2 AL-0-..-
+BL-0-.., because this results in a collision.
+VCHO Contact switch for monitoring spool valve position.
+VCHO2K
+Direction detection direction A (S2) and B (S1) as normally open contact (NO)
+■ VCHO: With connector, without cable
+■ VCHO2K: With connector and 2 m cable
+Ordering example: SL 2-A2 H16/16/EAVCHO
+Only in conjunction with
+■ Actuation coding EA, EAR, ER, E0ZA, E0A, E0C and E0AR (Chapter 2.2.1.13)
+52/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,53,"Coding Description Circuit symbol
+VCHC Contact switch for monitoring spool valve position.
+VCHC2K
+Direction detection direction A (S2) and B (S1) as normally closed contact (NC)
+■ VCHC: With connector, without cable
+■ VCHC2K: With connector and 2 m cable
+Contact switch type V 4 N 4 Sk 2 ® with lever AR 1 and Hirschmann connector by
+BURGESS.
+Ordering example: SL 2-A2 H16/16/EAVCHC
+Only in conjunction with
+■ Actuation coding EA, EAR, ER, E0ZA, E0A, E0C and E0AR (Chapter 2.2.1.13)
+VCHOC Contact switch for monitoring spool valve position.
+VCHOC2K
+Direction detection direction A (S2) as normally open contact (NO) and B (S1) as
+normally closed contact (NC)
+■ VCHOC: With connector, without cable
+■ VCHOC2K: With connector and 2 m cable
+Contact switch type V 4 N 4 Sk 2 ® with lever AR 1 and Hirschmann connector by
+BURGESS.
+Ordering example: SL 2-A2 H16/16/EAVCHOC
+Only in conjunction with
+■ Actuation coding EA, EAR, ER, E0ZA, E0A, E0C and E0AR (Chapter 2.2.1.13)
+A detailed description of the electric parameters is available in Chapter 3.5.4, ""Switching position monitoring, displacement transduc-
+er"".
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 53/187"
+D7700_2-en.pdf,54,"2.2.2 EDL directional valve section
+Ordering example
+EDL 2 -DA 2 H25/25 C 150 X W3 /E /ZDRH /2
+2.2.3 ""Ancillary block""
+2.2.4 ""Intermediate plate (on the consumer side)""
+2.2.2.10 ""Actuation""
+2.2.2.9 ""Shuttle valve""
+■ 2.2.2.6 ""LS pressure limitation""
+■ 2.2.2.7 ""LS port for external limitation""
+■ 2.2.2.4 ""Circuit symbol""
+■ 2.2.2.5 ""Flow rate""
+■ 2.2.2.2 ""2-way controller""
+■ 2.2.2.3 ""-way controller spring""
+2.2.2.1 ""Consumer ports""
+2.2.2.1 Consumer ports
+Coding Description
+DA Spool block without integrated threads for combining with a Ancillary block or a Intermediate plate (on the consumer
+side)
+2.2.2.2 2-way controller
+Coding Description Circuit symbol
+2 Standard 2-way controller
+2.2.2.3 -way controller spring
+Coding Description
+2 Standard version (approx. 6 bar spring)
+7 Heavy-duty version (approx. 13 bar spring)
+– Only possible in conjunction with PSV connection block
+54/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,55,"2.2.2.4 Circuit symbol
+Coding Description Circuit symbol
+L, F, H Standard spool valve with low return pressure L F H
+J Standard spool valve with constant return pressure of approx. 20 bar J
+– Max. ow rate: 25 l/min
+Common applications: Stabilising cylinders with dragging loads, especially
+when used without additional check valves.
+2.2.2.5 Flow rate
+Coding Coding for ow rate (Qnominal in l/min)
+2-way controller With maximum spool valve actuation
+spring, as per
+3 6 10 16 25 40
+Chapter 2.2.2.3
+2 3 6 10 16 25 40
+7 4 7 12 19 29 48
+NOTICE
+■ The specied nominal ow rates correspond to the setting values during actuation E. During actuation EI, the max. ow
+rates can be higher.
+■ The maximum reux ow rate must not exceed 80 l/min.
+■ The ow rates for the consumer ports A and B can be selected in accordance with the table, e.g. 40/25, 16/16. This enables
+optimal adaptation to the respective consumer while exploiting the full functional lift.
+In addition, there is the option of stroke limitation.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 55/187"
+D7700_2-en.pdf,56,"2.2.2.6 LS pressure limitation
+Coding Description Circuit symbol
+without coding Without LS pressure limitation -
+C... LS pressure limitation for A and B-side with a single shared pressure setting for both
+sides (adjustment range: 50 to 320 bar)
+Only in conjunction with:
+Consumer ports LS pressure limitation LS port for external
+(Chapter 2.2.2.1) limitation
+(Chapter 2.2.2.7)
+EDL 2-DA... C... X
+NOTICE
+When using the LS pressure limitation, the solenoid versions G..., X... , L...
+can only be used to a limited extent. To avoid a collision, the solenoids must
+be rotated 180° so that the connector points towards the ancillary block.
+Depending on the ancillary block, a collision can also occur there. In this
+case, only the solenoid versions DT... and AMP... can be used.
+56/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,57,"2.2.2.7 LS port for external limitation
+Coding Description
+without coding Without LS port for external limitation
+X Port for an external pilot valve
+■ X port = LS A/B
+■ G 1/8 (ISO 228-1)
+Only in conjunction with:
+Consumer ports LS pressure limitation LS port for external limitation
+(Chapter 2.2.2.1) (Chapter 2.2.2.6)
+EDL 2-DA... C... X
+2.2.2.8 LS orice
+Coding Description Circuit symbol
+without coding Standard version with # 0.6 mm orice
+2.2.2.9 Shuttle valve
+Coding Description Circuit symbol
+without coding Standard version
+W3 Special version without ball
+– Required in the last valve section if an E 0 end plate is used. This relieves the load on
+the downstream LS gallery through the spool.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 57/187"
+D7700_2-en.pdf,58,"2.2.2.10 Actuation
+Coding Description Circuit symbol
+E Electrical actuation
+■ A-side and B-side
+■ with stroke limitation
+EI Electrical actuation
+■ A-side and B-side
+■ with emergency override
+■ Without stroke limitation
+AEI Electrical actuation
+■ A-side only
+■ with emergency override
+■ Without stroke limitation
+BEI Electrical actuation
+■ B-side only
+■ with emergency override
+■ Without stroke limitation
+AEEI Electrical actuation
+■ A-side only
+■ with emergency override
+■ with stroke limitation
+BEEI Electrical actuation
+■ B-side only
+■ with emergency override
+■ with stroke limitation
+58/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,59,"2.2.3 Ancillary block
+Depending on their version, the ancillary blocks comprise different kinds of additional valves (e.g. shock valves, releasable check valves,
+load-holding valves or electrically actuated 2/2-way directional seated valves). They can be ange-mounted either on a valve section
+with ange surface (coding A as per Chapter 2.2.1.1) or on an intermediate plate (Chapter 2.2.4).
+Ports A and B as per ISO 228-1 or SAE J 514 or JIS B 2351:
+■ /2: G 3/8
+■ /22: G 3/8 (more distance between consumer ports A and B)
+■ /3: G 1/2
+■ /4: G 3/4
+■ /UNF 1: 7/16-20 UNF-2B (SAE-4)
+■ /UNF 12: 9/16-18 UNF-2B (SAE-6)
+■ /UNF 2: 3/4-16 UNF-2B (SAE-8)
+■ /JIS 2: JIS G 3/8
+■ /M 222: M22x1.5 and G 3/8
+Coding Description Circuit symbol
+/2 No additional function
+/22
+/3
+/UNF 1
+/UNF 12
+/UNF 2
+/JIS 2
+/2 M Additional measurement ttings a and b G 1/4.
+/UNF 2 M
+/2 M-.. Connection A - B via orice.
+/UNF 2 M-.. Additional measurement ttings a and b G 1/4.
+Ordering example: SL 2-/ M-06
+/M 222 Consumer ports A and B in M22x1.5.
+Additional A and B ports laterally G 3/8.
+/2 FL No additional function.
+/UNF 2 FL
+For the valve section with additional function FL, see Chapter 2.2.1.12, ""Additional
+functions""
+/2 AS.. BS.. Fixed shock valve in A and B.
+/22 AS.. BS.. (Adjustment range: 40 to 420 bar)
+/UNF 2 AS.. BS..
+The shock valves are each connected to their opposite side.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 59/187"
+D7700_2-en.pdf,60,"Coding Description Circuit symbol
+/2 AS..R BS..R Adjustable shock valve in A and B.
+(Adjustment range: 40 to 420 bar)
+The shock valves are each connected to their opposite side.
+If the pressure setting is changed, the spring must be adjusted according to the pressure
+range.
+■ Pressure ranges in which the different springs can be used:
+– 20 - 59 bar
+– 60 - 149 bar
+– 150 - 209 bar
+– 210 - 279 bar
+– 280 - 420 bar
+/2 AN.. BN.. Fixed shock and anti-cavitation valves in A and B.
+/22 AN.. BN.. (Adjustment range: 40 to 420 bar)
+/UNF 2 AN.. BN..
+The shock and anti-cavitation valves are each connected to the reux.
+Common applications:
+Pressure safeguard in hydraulic cylinders.
+■ /22 AN.. BN..: Greater distance between consumer ports A and B than for coding /2
+/22 AN.. Fixed shock valve in A and anti-cavitation valves B.
+/UNF 2 AN..
+■ /22 AN..: Greater distance between consumer ports A and B
+/22 BN.. Fixed shock valve in B and anti-cavitation valves A.
+/UNF 2 BN..
+■ /22 AN..: Greater distance between consumer ports A and B
+2 ANV..BNV.. Shock and anti-cavitation valve in A and B
+■ Permanently set pressure
+■ Available pressure settings for A or B:
+– 80 bar – 250 bar
+– 100 bar – 280 bar
+– 120 bar – 300 bar
+– 150 bar – 325 bar
+– 180 bar – 350 bar
+– 200 bar – 380 bar
+– 220 bar
+2 ANV.. Shock and anti-cavitation valve in A
+■ Permanently set pressure
+■ Available pressure settings:
+– 80 bar – 250 bar
+– 100 bar – 280 bar
+– 120 bar – 300 bar
+– 150 bar – 325 bar
+– 180 bar – 350 bar
+– 200 bar – 380 bar
+– 220 bar
+60/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,61,"Coding Description Circuit symbol
+2 BNV.. Shock and anti-cavitation valve in B
+■ Permanently set pressure
+■ Available pressure settings:
+– 80 bar – 250 bar
+– 100 bar – 280 bar
+– 120 bar – 300 bar
+– 150 bar – 325 bar
+– 180 bar – 350 bar
+– 200 bar – 380 bar
+– 220 bar
+2 M ANV..BNV.. Shock and anti-cavitation valve in A and B
+/UNF 2 M ANV..BN-
+■ Permanently set pressure
+V..
+■ Available pressure settings for A or B:
+– 80 bar – 250 bar
+– 100 bar – 280 bar
+– 120 bar – 300 bar
+– 150 bar – 325 bar
+– 180 bar – 350 bar
+– 200 bar – 380 bar
+– 220 bar
+Measurement ttings in A and B: G 1/4
+2 M ANV.. Shock and anti-cavitation valve in A
+/UNF 2 M ANV..
+■ Permanently set pressure
+■ Available pressure settings:
+– 80 bar – 250 bar
+– 100 bar – 280 bar
+– 120 bar – 300 bar
+– 150 bar – 325 bar
+– 180 bar – 350 bar
+– 200 bar – 380 bar
+– 220 bar
+Measurement ttings in A and B: G 1/4
+2 M BNV.. Shock and anti-cavitation valve in B
+/UNF 2 M BNV..
+■ Permanently set pressure
+■ Available pressure settings:
+– 80 bar – 250 bar
+– 100 bar – 280 bar
+– 120 bar – 300 bar
+– 150 bar – 325 bar
+– 180 bar – 350 bar
+– 200 bar – 380 bar
+– 220 bar
+Measurement ttings in A and B: G 1/4
+2 ANV BNV Anti-cavitation valve at A and B
+/UNF 2 ANV BNV
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 61/187"
+D7700_2-en.pdf,62,"Coding Description Circuit symbol
+/2 A HN Manual short-circuit valve for connection A to B.
+Manual drain valve A to R.
+/2 B HN Manual short-circuit valve for connection A to B.
+Manual drain valve B to R.
+/2 AL-0-..-BL-0-.. Load-holding valves (type LHT 20 as per D 7918).
+/2 ALX-0-..-BLX-0-..
+■ /2 AL-0-..-BL-0-..: Load-holding valves at A and B
+/UNF 2 AL-0-..-
+■ /2 AL-0-..: Load-holding valve in A
+BL-0-..
+/UNF 2 ALX-0-..- ■ /3 BL-0-..: Load-holding valve in B
+BLX-0-.. ■ AL or BL: Pressure setting adjustable from the outside using a tool
+■ ALX or BLX: xed
+/2 AL-0-..
+/2 ALX-0-..
+/(UNF) 2 AL-0..BL-0-.. /(UNF) 2 AL-0-.. /(UNF) 2 BL-0-..
+/UNF 2 AL-0-..
+/(UNF) 2 ALX-0-..-BLX-0-.. /(UNF) 2 ALX-0-.. /(UNF) 2 BLX-0-..
+/UNF 2 ALX-0-..
+/2 BL-0-..
+/2 BLX-0-..
+/UNF 2 BL-0-..
+/UNF 2 BLX-0-..
+Ordering example:
+/2 AL - 0 - A 8 - 400
+Pressure setting in bar
+Geometric pilot ratio
+Flow rate
+■ Geometric pilot ratio: Coding 0 Coding 4, 8
+- 1:∞ (coding 0)
+- 1:4 (coding 4)
+- 1:8 (coding 8)
+For coding 0, the load pressure has no effect, and the load-holding valve is opened by the pilot pressure alone. In this
+case, the load-holding valve does not have an overpressure function.
+The pressure setting corresponds to the pilot pressure and is limited to max. 100 bar.
+■ Flow rate:
+Coding A AB B C D E
+Qmax (l/min) 28 20 14 10 6 3
+62/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,63,"Coding Description Circuit symbol
+/2 DRH Releasable check valves (type DRH 2 as per D 6110)
+/UNF 2 DRH
+■ /2 DRH: releasable check valves in A and B
+■ /2 DRH A: releasable check valve in A
+■ /2 DRH B: releasable check valve in B
+Pressure required for releasing:
+/2 DRH A ■ 0.4-fold of shut-off pressure + 3 bar
+/UNF 2 DRH A
+/2 DRH B
+/UNF 2 DRH B
+/3 AVT Electrically actuated 2/2-way directional seated valve closed in neutral position. /3 AVT
+/3 AVPT (Type according to D 7490/1)
+With manual override function.
+On/off actuated (with type EM 22 V)
+■ /3 AVT: Check valve at A
+■ /3 BVT: Check valve at B
+Proportional (with type EMP 21 V)
+/3 AVPT
+■ /3 AVPT: Check valve at A
+■ /3 BVPT: Check valve at B
+NOTICE
+The actuation of the override function is only possible up to approx. 100 bar.
+/3 BVT /3 BVT
+/3 BVPT
+/3 BVPT
+/32 DFA Differential function (regeneration function)
+– The differential circuit makes it possible to reach considerably greater cylinder
+extension speeds at the same pump ow rate.
+– The force available becomes lower because the pressure applied on the cylinder’s piston
+and rod side is the same; only the effective areas differ. Therefore, the differential
+/32 DFB
+function is suitable for loads that pull on the cylinder.
+■ /32 DFA:Cylinder’s piston side on A-side, rod side on B-side
+■ /32 DFB: Cylinder’s piston side on B-side, rod side on A-side
+Formula for calculating the required pump ow rate (Qpump) as a function of desired ow
+rate for cylinder extension (Qpiston) and cylinder ratio (9).
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 63/187"
+D7700_2-en.pdf,64,"Coding Description Circuit symbol
+/2.. HRPH 3 V Output controller for proportional lowering speed independent of load pressure in single-
+acting cylinders combined with a releasable check valve for seat-tight load holding.
+With the 2-way regulator spring, the Sp and therefore the ow rate can be increased.
+Only in conjunction with
+■ Circuit symbol NX
+Ordering example:
+/22 HRPH 3 V
+■ 2-way controller without coding
+■ 2-way controller spring
+64/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,65,"2.2.4 Intermediate plate (on the consumer side)
+Coding Description Circuit symbol
+/Z 20 Connection to A and B via 3 orices, height: 20 mm
+Ordering example: SL 2-/Z 20-12-20-12 (orices 1.2 mm, 2.0 mm, 1.2 mm)
+/Z 40 Spacer plate, height 40 mm, for compensating height differences relative to adjacent valve
+sections.
+/Z AN BN Anti-cavitation valves in A and B.
+/Z2A BVE 1 R B.. Additional port S in A or B.
+■ /Z2A BVE 1 R B.. and /Z2B BVE 1 R B..: closed when unpowered
+■ /Z2A BVE 1 S B.. and /Z2B BVE 1 S B..: open when unpowered
+Selectable orices for volume limitation:
+/Z2A BVE 1 S B..
+- #d: 0.4 / 0.5 / 0.6 / 0.7 / 0.8 / 0.9 / 1.0 / 1.2 / 1.5 mm
+- Qmax = 15 l/min
+/Z2B BVE 1 R B..
+Ordering example: /Z2A BVE 1 R B 0.8
+/Z2B BVE 1 S B..
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 65/187"
+D7700_2-en.pdf,66,"Coding Description
+/Z AL.. BL.. Load-holding valves (type LHT 20 as per D 7918).
+/Z ALX.. BLX..
+■ /Z AL.. BL..: Load-holding valves at A and B ■ /Z AL or /Z BL: Pressure setting adjustable from the
+/Z AL-..
+/Z ALX-.. ■ /Z AL-..: Load-holding valve in A outside using a tool
+■ /Z BL-..: Load-holding valve in B ■ /Z ALX or /Z BLX: xed
+/Z BL-...
+/Z BLX-..
+/Z AL.. BL.. /Z AL.. /Z BL..
+Ordering example:
+/ZAL - 0 - A 8 - 400
+Pressure setting in bar
+Geometric pilot ratio
+Flow rate
+Bypass orice
+■ Inow orice D1: Coding 0 Coding 4, 8
+- # 0.4 mm
+■ Bypass orice D2:
+- 0 = sealed
+- # 0.3 / 0.4 / 0.5 / 0.6 / 0.7 mm
+■ Geometric pilot ratio:
+- 1:∞ (coding 0)
+- 1:4 (coding 4)
+- 1:8 (coding 8)
+For coding 0, the load pressure has no effect, and the load-holding valve is opened by the pilot pressure alone.
+In this case, the load-holding valve does not have an overpressure function.
+The pressure setting corresponds to the pilot pressure and is limited to max. 100 bar.
+Actual pilot ratio depends on bypass orice:
+Coding 0 3 4 5 6 7
+Bypass orice # (mm) sealed 0.3 0.4 0.5 0.6 0.7
+Actual pilot ratio at 1:4 1:4 1:3.04 1:2.0 1:1.16 1:0.66 1:0.39
+at 1:8 1:8 1:6.08 1:4.0 1:2.32 1:0.77 1:0.47
+Flow rate:
+Coding A AB B C D E
+Qmax (l/min) 28 20 14 10 6 3
+Anti-cavitation valve in A and B.
+66/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,67,"Coding Description Circuit symbol
+/ZDR Electrically actuated 2/2-way directional seated valve as short-circuit valve.
+Qmax = 20 l/min
+■ /ZDR: closed in neutral position (type BV 1 R)
+■ /ZDS: open in neutral position (type BV 1 S)
+/ZDS
+The maximum switchable pressure depends on the actuating solenoid:
+■ G, L, L5K, L10K: 400 bar
+■ DT, AMP, M, F, S: 250 bar
+Not in conjunction with ancillary block types /(UNF)(2)2 AS…BS…,
+/2 AS…R BS…R, /(UNF)(2)2 AN…BN…, /(UNF 2) 22 AN…, /(UNF 2) 22 BN…,
+/(UNF) 2 AL-0-…-BL-0-…, /(UNF) 2 ALX-0-…-BLX-0-…, /(UNF) 2 AL-0-…,
+/(UNF) 2 ALX-0-…, /(UNF) 2 BL-0-…, /(UNF) 2 BLX-0-…
+/ZDRH Releasable check valves in A and B. (Type DRH 2 as per D 6110)
+Pressure required for releasing:
+■ 0.4-fold of shut-off pressure + 3 bar
+/ZFL A-B-6 B-B-6 Intermediate plate for oating position option.
+In combination with a H-spool valve (Chapter 2.2.1.5), a oat position can be realised
+with this intermediate plate. To open the oat position, both solenoid coils of the
+actuation must be controlled simultaneously with the same mA value. Additional channels
+from the actuation then open the load-holding valves in A and B. Through the spool valve
+(A and B open to R), both sides of the consumer are connected to each other via the Ordering example:
+reux. SL 2-A2 H 40/40 FL/
+EI9/ZFL A-B-6 B-B-6/2
+Because both solenoid coils of the actuation (Chapter 2.2.1.13) are controlled simultane-
+ously, the permissible ambient temperature at 100% duty cycle is reduced depending on
+the current value:
+■ With electro-hydraulic actuation (Chapter 2.2.1.13):
+– 50 °C Ambient temperature: Imax 1000 mA
+– 60 °C Ambient temperature: Imax 900 mA
+– 70 °C Ambient temperature: Imax 850 mA
+■ With CAN actuation (Chapter 2.2.1.13):
+– 50 °C Ambient temperature: Imax 730 mA
+– 60 °C Ambient temperature: Imax 670 mA
+– 70 °C Ambient temperature: Imax 630 mA
+Only in conjunction with:
+b
+■ Additional function (Chapter 2.2.1.12), Coding FL
+■ Circuit symbol (Chapter 2.2.1.5), Coding H
+■ Electro-hydraulic actuation (Chapter 2.2.1.13), Coding EI, EICAN, EICANL
+■ Internal control oil supply (Chapter 2.1.6), Coding 2
+■ Additional elements for actuation (Chapter 2.2.1.14), Coding 9 a
+Max. Operating pressure 350 bar
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 67/187"
+D7700_2-en.pdf,68,"Coding Description Circuit symbol
+/ZN.. Shock and anti-cavitation valves with electrically adjustable pressure limitation.
+/ZNX..
+The opening pressure of the shock valve can be congured using the electric LS pressure limitation.
+It opens upon the selected shock valve minimum pressure and congured LS pressure limitation (EM 21 D...).
+/ZN /ZNA /ZNB
+1 LS pressure limitation
+2 Pressure limitation
+3 Shock valve
+Ordering example:
+/ZN A 250 PV 15
+Shock valve minimum pressure
+LS pressure limitation
+Pressure limitation
+Protected against shock
+LS signal hole
+■ LS signal hole to the valve ■ LS pressure limitation
+- : open PV: closed when unpowered (EM 21 DE)
+X: sealed PZ: open when unpowered (EM 21 DSE)
+■ Protection against shock
+- : Shock protection in A and B PV PZ
+A: Shock protection in A
+B: Shock protection in B
+■ LS pressure limitation
+max. 400 bar ■ Shock valve minimum pressure
+xed 10, 15, 20, 25 or 30 bar: xed
+Only in conjunction with valve sections that contain the additional function L.
+Cannot be combined with LS pressure limitation in the valve section.
+68/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,69,"Coding Description Circuit symbol
+/ZVV Electrically actuated 2/2-way directional seated valve from A to R or B to R
+ZVV
+/ZVX
+/ZXV Ordering example:
+/ZSS
+/ZSX
+/ZXS /Z PV PV
+/ZPVPV
+/ZPVX B-side
+/ZXPV
+ZPSPS
+A-side
+/ZPSPS
+/ZPSX
+/ZXPS ■ V: Check valve, closed in neutral position (EM 22 V as per D 7490/1)
+■ S: Check valve, open in neutral position (EM 22 S as per D 7490/1)
+■ PV: Proportional check valve, closed in neutral position (EMP 22 V as per D 7490/1)
+■ PS: Proportional check valve, closed in neutral position (EMP 22 S as per D 7490/1)
+■ X: Without check valve, connection sealed
+/Z1VV Electrically actuated 2/2-way directional seated valve in A or B
+/Z1VX (previously
+Z1VV
+ZVX) Ordering example:
+/Z1XV (previously
+ZXV)
+/Z1SS /Z1 PV PV
+/Z1SX
+/Z1XS
+B-side
+/Z1PVPV
+Z1PSPS
+A-side
+/Z1PVX (previously
+ZVPX)
+/Z1XPV (previously ■ V: Check valve, closed in neutral position (EM 22 V as per D 7490/1)
+ZXVP) ■ S: Check valve, open in neutral position (EM 22 S as per D 7490/1)
+/Z1PSPS ■ PV: Proportional check valve, closed in neutral position (EMP 22 V as per D 7490/1)
+/Z1PSX
+■ PS: Proportional check valve, closed in neutral position (EMP 22 S as per D 7490/1)
+/Z1XPS
+■ X: Without check valve, connection open
+/ZRT Intermediate plate with shared manual drain valve at A and B
+■ /ZRT: Actuation of drain valve on the lever housing side.
+■ /ZRT-180: Actuation of drain valve on the spring hood side
+Check valves RK 0 as per D 7445
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 69/187"
+D7700_2-en.pdf,70,"2.3 Series intermediate plate
+Coding Description
+ZPL 22/7 Spacer plate.
+ZPL 22/15
+■ ZPL 22/7: 7 mm
+ZPL 22
+■ ZPL 22/15: 15 mm
+■ ZPL 22: 39.3 mm
+ZPL 22/7 EX Spacer plate, 7 mm.
+If used with solenoid see Chapter 2.5.2, "" PSV/PSL Solenoid versions for potentially explosive atmospheres""
+■ G.. M2FP..
+■ G.. TEX455FM
+this intermediate plate has to be applied upstream and downstream of the valve section for mechanical protection
+purposes.
+70/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,71,"Coding Description
+ZPL 22/7/XPLS Locks the P channel and the LS gallery.
+ZPL 22/7/XRT Locks the R channel and the T channel.
+NOTICE
+If the ZPL 22/7/XRT is used together with an LS relief or LS pressure limitation as per Chapter 2.1.7 or 2.2.1.8
+an additional T port for the relief must be provided.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 71/187"
+D7700_2-en.pdf,72,"Coding Description
+ZPL 22/15/R1 Check valve in R channel.
+ZPL 22/15/R2 Qmax in R: 20 l/min
+■ ZPL 22/15/R1: Locking direction from connection block toward end plate
+■ ZPL 22/15/R2: Locking direction from end plate toward connection block
+ZPL 22/15/R1 ZPL 22/15/R2
+ZPL 22/15/XR Locks the R channel
+72/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,73,"Coding Description
+ZPL 22 P6R6 Middle input block for installation of EDL 2 valve sections on both sides.
+Connection block without 3-way controller for use in closed-centre systems with variable pumps or for simultaneous
+supply of two or more manifolds with a shared constant pump.
+Only possible in conjunction with connection plate PSV E0-2 connection plate.
+see Chapter 2.1, ""Connection block""
+ZPL 2-CWL Transition plate to CWL as per D 7953 CWL.
+Pmax: 315 bar
+The control oil in the T channel of the PSL/PSV valve sections is returned to the R channel internally.
+The LS gallery is connected to the R channel by means of a ow control valve (setting value: 0.6 l/min). As a result,
+the LS of the CWL valve sections is relieved when in neutral position.
+Width: 49.5 mm
+NOTICE
+Internal control oil recirculation through R line is permissible only for return pressures < 10 bar.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 73/187"
+D7700_2-en.pdf,74,"Coding Description
+ZPL 2-CWS BV 1 Z Transition plate to CWS as per D 7951 CWS.
+Pmax: 315 bar
+The control oil in the T channel of the PSL/PSV valve sections is returned to the R channel internally.
+Since CWS does not signal LS, it is generated through actuation of BV 1 Z from the P channel. When in neutral
+position, it connects LS to the T channel.
+Width: 49.5 mm
+NOTICE
+Internal control oil recirculation through R line is permissible only for return pressures < 10 bar.
+ZPL 2-SWS2 Transition plate to SWS as per D 7951.
+ZPL 2-SWS2/RB
+ZPL 2-SWS2 ZPL 2-SWS2/RB
+74/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,75,"Coding Description
+ZPL 2 P3R3 Additional P and R ports.
+Ports P and R: G 1/2 (ISO 228-1)
+ZPL 2 VZ/BVE1 ZT Intermediate plate to shut off the P channel and the control pressure Z.
+In neutral position, the control pressure is blocked by the BVE 1 and the P channel is closed.
+The following valve sections are non-functional. If BVE 1 is actuated, the P channel and the control pressure Z are
+released to the subsequent valve sections.
+■ Additional measuring connection MP (from P after the lock)
+Ordering example:
+ZPL 2 VZ BVE1 Z T1 A
+Coil alignment
+Manual override
+Seated valve as per D 7921
+Intermediate plate with ancillary block
+■ Manual override
+■ T: With detent
+■ T1: without detent
+■ Coil alignment
+■ - : Connection socket faces away from the valve
+■ A: Connection socket in the direction of the valve
+see Chapter 4, ""Dimensions""
+NOTICE
+The following valve section can only be selected with the hand lever 030, see Chapter 2.2.1.14, ""Additional
+elements for actuation"". This means there is no collision with the contained BVE 1. If a straight hand lever is
+to be used, at least one ZPL 22/7 spacer plate, see Chapter 2.3, ""Series intermediate plate"" must be inserted.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 75/187"
+D7700_2-en.pdf,76,"Coding Description
+ZPL 2-Z2 P channel interruption and P port for additional pump circuit.
+G 3/8 (ISO 228-1)
+ZPL LS/… LS limitation for downstream spool valve sections.
+Additional LS port: G 1/4 (ISO 228-1)
+Pressure ranges:
+– B: from 315 bar
+– C: up to 315 bar
+Ordering example: -ZPL LS/C 250
+76/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,77,"Coding Description
+A1 RR…/…/… Intermediate plate with 2/2-way directional seated valves (type EM 31… / EMP 31… as per D 7490/1) for lifting and
+lowering of single-acting cylinders.
+Ordering example:
+A1 RR PVPV/3
+A1 RR PV/PV /3
+Connecting thread of ancillary block
+■ /3: G 1/2
+■ /4: G 3/4
+Directional seated valve (lifting/lowering)
+■ /V: EM 31 V
+■ /S: EM 31 S
+■ /PV: EMP 31 V
+■ /PV70: EMP 31 V70
+■ /PV80: EMP 31 V80
+Designation
+■ A: Interface for ancillary block
+■ 1: Without 2-way controller
+Sp P d H (lifting) Sp H d P (lowering)
+Cannot be combined with ancillary blocks see Chapter 2.2.3, ""Ancillary block"".
+NOTICE
+If a valve section with manual operation A is to be installed downstream of this ZPL, a SL 2-ZPL 22/7 spacer
+plate, see Chapter 2.3, ""Series intermediate plate"" must be installed so that there are no collisions.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 77/187"
+D7700_2-en.pdf,78,"2.4 End plate
+End plates are the nal element in a manifold and close off the valve bank.
+Depending on the version, the end plates feature ports themselves (e.g. P, R or LS port) or additional valves (e.g. ow control valve or
+pressure reducing valves) for supplying downstream valves.
+Coding Description
+E 1, E 1 UNF T port for external recirculation of control oil to tank.
+E 17, E 17 UNF
+■ E 17, E 17 UNF: with additional P and R port
+E 4, E 4 UNF T-line internally linked with R-line for internal recirculation of control oil through R line.
+E 19, E 19 UNF
+■ E 19, E 19 UNF: with additional P and R port
+E 2, E 2 UNF With additional Y port for connecting a downstream manifold’s LS signal. T port for external recirculation of control oil
+E 18, E 18 UNF to tank.
+■ E 18, E 18 UNF: with additional P and R port
+E 5, E 5 UNF With additional Y port for connecting a downstream manifold’s LS signal. T-line internally linked with R-line for internal
+E 20, E 20 UNF recirculation of control oil through R line.
+■ E 20, E 20 UNF: with additional P and R port
+E 3 With integrated 3/2-way directional valve (WN 1 H as per D 7470 A/1) to switch P to LS when required and shut off the
+E 6 PSL connection block’s unpressurised circulation.
+■ E 3: T port for external recirculation of control oil to tank
+■ E 6: T-line internally linked with R-line for internal recirculation of control oil through R-line
+E 0 End plate for EDL valve sections, without additional function.
+Not suitable in conjunction with PSL/PSV size 2.
+■ Only in conjunction with the shuttle valve W3 in the last valve section.
+■ Can only be used with max. 3 valve sections, as there are no mounting holes.
+NOTICE
+Operating pressure max. 250 bar!
+NOTICE
+Internal control oil recirculation through R line is permissible only for return pressures < 10 bar.
+78/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,79,"Circuit symbols
+E 1, E 1 UNF E 2, E 2 UNF E 3 E 4, E 4 UNF E 5, E 5 UNF E 6
+E 17, E 17 UNF E 18, E 18 UNF E 19, E 19 UNF E 20, E 20 UNF E 0
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 79/187"
+D7700_2-en.pdf,80,"Coding Description
+E 4 PMZ1-…-… Like E 4 but with a mounted proportional pressure reducing valve of type PMZ 1 as per D 7625 up to approx. 30 bar.
+Typical application is for supply to a brake.
+Ordering example:
+E 4 PMZ1 -30 -AMP 24 K 4
+Solenoid version and solenoid voltage
+Coding PM - round insert assembly
+Designation
+E 19 UNF-...-ADM 22 T-line internally linked with R-line for internal recirculation of control oil through R line.
+P...-... With additional P and R port.
+The mounted pressure reducing valve ADM 22 P as per D 7120 is upstream of two optional valves type NBVP 16 as per
+D 7765 N. This means the pressure is set for consumers A and B.
+■ pmax A, B: 250 bar
+■ Qmax A, B: 20 l/min
+Combination:
+Z Y X
+Ordering example:
+E 19 UNF -Z X -ADM 22 P 150 -DT 12 -AMP 24 K
+Solenoid version, if different from actuation
+Solenoid version actuations at PSL
+Pressure setting ADM 22 P
+Pressure reducing valve
+Seated valve NBVP 16 - consumer B
+Seated valve NBVP 16 - consumer A
+Designation / basic version
+80/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,81,"Circuit symbols
+E 4 PMZ1-…-… E 19 UNF-...-
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 81/187"
+D7700_2-en.pdf,82,"2.5 Solenoid voltage and solenoid version
+2.5.1 PSV/PSL standard solenoid versions
+Coding Electrical connection Nominal Protection Valve section with Can be combined with
+voltage class electro-hydraulic certain additional valves
+(IEC 60529) actuation
+EM, FP,
+(EI, EA, EH, EHA etc.) WN BVE
+EMP FPH
+AMP 12 K 4 AMP Junior Timer 12 V DC IP 67 4-pin, connector position
+o o
+AMP 24 K 4 24 V DC front
+AMP 12 H 4 12 V DC 4-pin, connector position
+o o
+AMP 24 H 4 24 V DC side (bottom)
+AMP 12 H 4 T 12 V DC 4-pin, connector position
+AMP 24 H 4 T 24 V DC side (bottom), o o
+with override
+AMP 12 K 12 V DC 3-pin, connector position
+o o
+AMP 24 K 24 V DC front
+DT 12 Deutsch 12 V DC IP 69k 4-pin, connector position
+o o
+DT 24 (DT 04-4P) 24 V DC side (bottom)
+DT 12 T 12 V DC 4-pin, connector position
+DT 24 T 24 V DC side (bottom), o o
+with override
+DT 12 TH 12 V DC 4-pin, connector position
+DT 24 TH 24 V DC side (bottom), o o
+with override button
+DT 12 K 12 V DC 4-pin, connector position
+o o
+DT 24 K 24 V DC front
+S 12 Bayonet coupling PA6 12 V DC IP 67 3-pin, connector position
+o o o o
+S 24 Schlemmer 24 V DC front
+S 12 T 12 V DC 3-pin, connector position
+o o o o
+S 24 T 24 V DC front, with override
+G 12 EN 175 301-803 A 12 V DC IP 65 3-pin, connector position
+o o o o
+G 24 24 V DC side (bottom)
+■ G: with male connector
+X 12 (MSD 3-309 as per D 7163) 12 V DC
+o o o o
+X 24 ■ X: without male connector 24 V DC
+L 12 ■ L: with male connector with LED 12 V DC
+o o o o
+L 24 (SVS 296365 as per D 7163) 24 V DC
+L5K 12 ■ L5K: with male connector with 12 V DC
+o o o o
+L5K 24 LED and 5 m cable 24 V DC
+L10K 12 (L5K-VZP as per 12 V DC
+o o o o
+L10K 24 D 7163 Erg. 78/1) 24 V DC
+G 12 T ■ L10K: with male connector with 12 V DC 3-pin, connector position
+o o o o
+G 24 T LED and 10 m cable 24 V DC side (bottom), with
+(L10K-VZP as per override
+X 12 T 12 V DC
+D 7163 Erg. 78/1) o o o o
+X 24 T 24 V DC
+L 12 T 12 V DC
+o o o o
+L 24 T 24 V DC
+L5K 12 T 12 V DC
+o o o o
+L5K 24 T 24 V DC
+L10K 12 T 12 V DC
+o o o o
+L10K 24 T 24 V DC
+82/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,83,"Coding Electrical connection Nominal Protection Valve section with Can be combined with
+voltage class electro-hydraulic certain additional valves
+(IEC 60529) actuation
+EM, FP,
+(EI, EA, EH, EHA etc.) WN BVE
+EMP FPH
+G 12 TH EN 175 301-803 A 12 V DC IP 65 3-pin, connector position
+o o o o
+G 24 TH 24 V DC side (bottom), with
+■ G: with male connector
+override button
+X 12 TH (MSD 3-309 as per D 7163) 12 V DC
+o o o o
+X 24 TH ■ X: without male connector 24 V DC
+L 12 TH ■ L: with male connector with LED 12 V DC
+o o o o
+L 24 TH (SVS 296365 as per D 7163) 24 V DC
+L5K 12 TH ■ L5K: with male connector with 12 V DC
+o o o o
+L5K 24 TH LED and 5 m cable 24 V DC
+L10K 12 TH (L5K-VZP as per 12 V DC
+o o o o
+L10K 24 TH D 7163 Erg. 78/1) 24 V DC
+G 12 DS * ■ L10K: with male connector with 12 V DC 3-pin, connector position
+G 24 DS * LED and 10 m cable 24 V DC side (bottom), deep-sea
+(L10K-VZP as per version (coil and connector
+X 12 DS * 12 V DC
+D 7163 Erg. 78/1) socket not potted)
+X 24 DS * 24 V DC
+G 12 H 4 12 V DC 4-pin, connector position
+o o o o
+G 24 H 4 24 V DC side (bottom)
+X 12 H 4 12 V DC
+o o o o
+X 24 H 4 24 V DC
+L 12 H 4 12 V DC
+o o o o
+L 24 H 4 24 V DC
+X 12 C 4 EN 175 301-803 C 12 V DC IP 65 3-pin, connector position
+X 24 C 4 24 V DC front
+DTL 12 MIL-DTL-38999 series III 12 V DC IP 67 4-pin, connector position
+o
+DTL 24 24 V DC side (bottom)
+DTL 12 MIL-DTL-38999 series III 12 V DC IP 67 4-pin, connector position
+DTL 24 24 V DC side (bottom), with manual
+override
+ITT 12 VG 95234 MIL 12 V DC IP 67 4-pin, connector position
+o
+ITT 24 24 V DC side (bottom)
+* (available upon request only)
+Electrical connection for additional valves:
+■ WN: see D 7470 A/1 ■ EM 31, EMP 31: see D 7490/1
+■ BVE: see D 7921 ■ SWS: see D 7951
+■ EM 21: see D 7490/1 E ■ PM 1, PMZ 1: see D 7625
+Different types of plug (e.g. EA actuation with AMP 24 K 4 and WN valve with G 24) are available upon request.
+Electrical connection for electro-proportional LS pressure limitation coding FP.., FPH..:
+Only twin solenoids with manual override (coding -…T or -…TH) are possible.
+If a twin solenoid without manual override was chosen for the valve section’s electro-hydraulic actuation, the same twin solenoid type
+is automatically used for the LS pressure limitation’s electro-proportional actuation, but with additional manual override. If the twin
+solenoid type is not possible with manual override, coding -G…T is used by default.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 83/187"
+D7700_2-en.pdf,84,"2.5.2 PSV/PSL Solenoid versions for potentially explosive atmospheres
+Coding Description
+G 24 TEX 4 55 FM Explosion-proof solenoid with cable
+G 24 TEX 4 55 FM-10 m
+■ No additional specification: with 3 m cable
+■ 10 m: with 10 m cable
+In the case of PSL valve banks, ZPL 22/7 EX are also required as mechanical protection plates. They are inserted
+downstream of the connection block and upstream of the end plate. A ZPL 52 (D 7700-5) or ZPL 32 (D 7700-3)
+replaces the protection plate on size combinations.
+Information on the solenoid is provided in the operating instructions B ATEX
+2.5.3 EDL solenoid versions
+Coding Electrical connection Nominal voltage Protection class
+G 12 EN 175 301-803 A 12 V DC IP 65
+G 24 24 V DC
+■ G: with male connector
+X 12 (MSD 3-309 as per D 7163)
+X 24 ■ X: without male connector
+L 12 ■ L: with male connector with LED
+L 24 (SVS 296365 as per D 7163)
+AMP 12 AMP Junior Timer 12 V DC IP 65
+AMP 24 24 V DC
+DT 12 Deutsch (DT 04-2P) 12 V DC IP 69 K
+DT 24 24 V DC
+84/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,85,"2.6 Additional versions
+2.6.1 Sealing
+Coding Description
+Sealed-pmax Pressure-limiting valve on connection block is provided with a wire seal as per the
+pressure setting
+Sealed All pressure-limiting valves are provided with a wire seal as per the pressure setting
+2.6.2 Paint nish
+Coding Description
+-painted RAL 9005 Colour
+GLOSS 20-40 Gloss level
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 85/187"
+D7700_2-en.pdf,86,"3
+Parameters
+3.1 General data
+Designation Proportional directional spool valves PSL, PSV, EDL
+Design Manifold with up to 14 valve sections
+Material Steel; Nitrocarburised surfaces (anti-corrosion), Hardened and ground functional inner parts, Surfaces of the
+solenoids electro-galvanised
+If the valve is exposed to corrosive factors, we recommend an additional coating or housing.
+Attachment Mounting thread M8, see Chapter 4, ""Dimensions""
+Installation position As desired
+Ports/connections ■ P = Pump
+■ R = Reux
+■ A, B = Consumers
+■ LS, DW, U, W, X, XH, Y = load pressure signals
+■ M = Pressure gauge connection for pump pressure
+■ a, b = Pressure gauge connection for consumer pressure
+■ Z = Pilot pressure
+■ T = Tank line for control oil
+Connecting thread:
+■ P, R, A, B = as per type designation
+■ M, LS, DW, Z = G 1/8, G 1/4 (ISO 228-1) or SAE-4, or 7/16-20 UNF-2B (SAE J 514)
+■ Y, T = G 1/8, (ISO 228-1)
+■ U, W, X, XH = G 1/8 (ISO 228-1)
+■ a, b = G 1/4 or G 1/8 (ISO 228-1)
+Hydraulic uid Hydraulic uid, according to DIN 51524 Parts 1 to 3; ISO VG 10 to 68 according to DIN ISO 3448
+Viscosity range: 4 - 1500 mm2/s
+Optimal operating range: approx. 10 - 500 mm2/s
+Also suitable for biologically degradable hydraulic uids type HEPG (polyalkylene glycol) and HEES (synthetic
+ester) at operating temperatures up to approx. +70°C.
+Not suitable for HETG such as rapeseed oil and water-glycol solutions, e.g. HFA and HFC.
+Cleanliness level ISO 4406
+20/17/14
+Temperatures Environment: approx. -40 to +80 °C, hydraulic uid: -25 to +80 °C, pay attention to the viscosity range.
+Start temperature: down to -40 °C is permissible (take account of the start viscosities!), as long as the
+steady-state temperature is at least 20 K higher during subsequent operation.
+Biologically degradable hydraulic uids: note manufacturer specifications. With consideration for the seal
+compatibility, not above +70°C.
+NOTICE
+Observe restrictions on electronic components and explosion-proof solenoids.
+86/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,87,"3.2 Pressure and volumetric ow
+Operating pressure PSL/PSV ■ pmax = 420 bar (ports P, P1, P2, A, B, LS, M, Y)
+■ Pilot pressure Ò 40 bar (port Z)
+■ Return pressure Ò 50 bar (ports R, R1, T) for high return pressures, T port should be routed to the tank
+separately (end plate E 1, E 2, E 3, etc. see Chapter 2.4, ""End plate"")
+Operating pressure EDL ■ pmax = 320 bar; ports P, A, B, LS, M, Y
+(valve section) ■ The pressure achievable at the consumer side of the directional spool valves is lower by the amount of the
+internal control pressure drop at the 3-way controller PSL (see Chapter 3.4, ""Characteristic lines"") or at the
+pump controller (PSV).
+■ Return connection R(R1) Ò 50 bar
+Flow rate PSL/PSV ■ Qmax connection block: see Chapter 3.4, ""Characteristic lines""
+■ Qmax consumer: see Chapter 2.2.1.6, ""Flow rate""
+Flow rate EDL ■ Max. consumer ow rates see Chapter 2.2.2.5, ""Flow rate""
+3.3 Weight
+Connection block Type
+PSL 3 = 1.7 kg
+PSL 3 Z = 2.0 kg
+PSV 3 = 1.7 kg
+PSV 4 = 2.0 kg
+PSV 3X-2 = 1.7 kg
+PSV E0-2 = 0.3 kg
+Supplement
+F, D, PA, PB, PC, PD + 0.6 kg
+Directional valve section Valve section with actuation
+Coding
+SL 2... A, E, E0A = 1.6 kg
+SL 2... EA = 1.9 kg
+SL 2... EHA = 1.8 kg
+SL 2... HA = 2.2 kg
+DA... E, EI = 2.5 kg
+DA... AE, AEI, BE, BEI = 1.9 kg
+Supplement:
+SL 2... A...B...FP(H) 1(2, 3), S1 + 0.4 kg
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 87/187"
+D7700_2-en.pdf,88,"Ancillary block Coding
+/(UNF) 2, /(UNF) 3 = 0.25 kg
+/(UNF) 2 AS.. BS.., /3 = 0.3 kg
+/(UNF) 2 AN.. BN.. = 0.4 kg
+/(UNF) 2 AL-0-.. BL-0-.. = 0.6 kg
+/(UNF) 2 ALX-0-.. BLX-0-.. = 0.6 kg
+/(UNF) 2 DRH, /ZDRH = 0.3 kg
+/ZSS, /ZVV, /3 AVT, /3 BVT = 1.0 kg
+/ZDR, /ZDS, /Z 2 A(B).. = 1.0 kg
+/32 DFA, /32 DFB = 0.6 kg
+/Z 40 = 0.5 kg
+/Z AL.. BL.. = 0.6 kg
+End plate Coding
+E 1(UNF), E 2(UNF), E 4(UNF), E 5(UNF) = 0.5 kg
+E 3, E 6 = 1.1 kg
+E 17(UNF), E 18(UNF), E 19(UNF), E 20(UNF) = 1.0 kg
+E 0 = 0.3 kg
+88/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,89,"3.4 Characteristic lines
+Viscosity of the hydraulic uid approx. 60 mm2/s
+3.4.1 Connection block
+Pressure-limiting valve (P d R)
+PSL 3../D..-2 PSL 3 U…/…-2
+PSL UNF 2../D..-2 PSL UNF 2 U…/…-2
+PSV 3../D..-2
+PSV UNF 2../D..-2
+PSV 4 N...
+Q ow rate (l/min); Sp pressure difference (bar) Q ow rate (l/min); Sp pressure difference (bar)
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 89/187"
+D7700_2-en.pdf,90,"Circulation pressure (P d R) in PSL connection blocks
+Q ow rate (l/min); Sp pressure difference (bar)
+1 PSL 3H/..., PSL UNF 2H...
+2 PSL 3..., PSL UNF 2...
+3 PSL 3U/..., PSL UNF 2U...
+Electro-proportional LS pressure limitation
+see Chapter 2.1.7, ""LS relief or LS pressure limitation""
+Coding V, Z, ZM, ZP
+I control current (A) at 24 V DC or 12 V DC; Sp pressure difference LS - R (bar)
+90/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,91,"3.4.2 Directional valve section PSL/PSV
+Pressure difference P d A/B and A/B d R
+Q ow rate (l/min); Sp pressure difference (bar)
+1 1 P d A/B in valve section with 2-way controller, see Chapter 2.2.1.2, ""2-way controller"", without coding)
+2 2 P d A/B in valve section without 2-way controller, see Chapter 2.2.1.2, ""2-way controller"", coding 1)
+3 3 A/B d R in spool valve coding L, M, F, H, see Chapter 2.2.1.5, ""Circuit symbol"")
+Control characteristic line for consumer ow rate
+see Chapter 2.2.1.6, ""Flow rate""
+(reference values measured with 2-way controller and standard 2-way controller spring)
+Switching angle (°) Switching angle (°)
+phydr. Pilot pressure (bar) for hydraulic actuation
+Switching angle (°) for manual actuation with hand lever
+QA/B ow rate (l/min)
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 91/187"
+D7700_2-en.pdf,92,"2-way controller
+see Chapter 2.2.1.2, ""2-way controller""
+Sp load pressure (bar); QA/B ow rate (l/min)
+LS pressure-limiting valves
+see Chapter 2.2.1.7, ""LS pressure limitation""
+Q ow rate (l/min); Sp pressure difference LS - R (bar)
+92/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,93,"Electro-proportional LS pressure limitation
+see Chapter 2.2.1.8, ""Electric LS relief or LS pressure limitation""
+I control current (A) at 24 V DC or 12 V DC; Sp pressure difference LS - T (bar)
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 93/187"
+D7700_2-en.pdf,94,"3.4.3 EDL directional valve section
+Viscosity of the hydraulic uid approx. 60 mm2/s
+Pressure-limiting valve in the middle input block type ZPL 22 P6R6
+Q ow rate (l/min); Sp pressure setting (bar)
+Directional spool valve
+Pd A(B), A(B) d R
+Q ow rate (l/min); Sp pressure setting (bar)
+94/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,95,"2-way inow controller
+Sp load pressure (bar); QA/B ow rate (l/min)
+LS pressure limitation
+Coding C ...
+Control characteristic line for consumer ow rate
+(reference values, example for directional spool valve variant with inow controller type EDL 2 - D. 2...)
+I control current (A); QA/B consumer ow rate (l/min) I control current (A); QA/B consumer ow rate (l/min)
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 95/187"
+D7700_2-en.pdf,96,"3.5 Electrical data
+3.5.1 PSL/PSV Electro-hydraulic actuation with standard solenoid
+Proportional solenoid, produced and tested in accordance with DIN VDE 0580
+Twin solenoid with anchor chambers sealed on the outside and connected to the tank channel. The anchors in the anchor chambers are
+thereby lubricated by the hydraulic uid and protected against corrosion without the need for maintenance.
+Nominal voltage UN 12 V DC 24 V DC
+Resistance R20 6.3 Ω 27.0 Ω
+Current, cold I20 1.9 A 0.9 A
+Limit current IG 1.26 A 0.63 A
+Limit power PG 15.1 W 15.1 W
+Duty cycle S1 (100%)
+Dither frequency 40 - 70 Hz (recommended value 55 Hz)
+Dither amplitude
+20% ≤ AD ≤ 50%
+I stroke characteristic curve
+I/IG control current; spool stroke (%)
+Ports
+96/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,97,"Electrical connection
+Coding Specification Connection Plug
+AMP 12 (24) K AMP Junior Timer
+3-pin
+IP 67 (IEC 60529)
+AMP 12 (24) K 4 AMP Junior Timer
+AMP 12 (24) H 4 4-pin
+AMP 12 (24) H 4 T IP 67 (IEC 60529)
+DT 12 (24) German (DT04 – 4p)
+DT 12 (24) T 4-pin
+DT 12(24) K IP 69k (IEC 60529)
+S 12 (24) Bayonet coupling PA6 Schlemmer
+S 12 (24) T 3-pin
+IP 67 (IEC 60529)
+X 12 (24) EN 175 301-803 A
+G 12 (24) 3-pin
+L 12 (24) IP 65 (IEC 60529)
+X 12 (24) T
+G 12 (24) T
+L 12 (24) T
+X 12 (24) TH
+G 12 (24) TH
+L 12 (24) TH
+X 12 (24) DS
+G 12 (24) DS
+X 12 (24) H 4 EN 175 301-803 A
+G 12 (24) H 4 4-pin
+L 12 (24) H 4 IP 65 (IEC 60529)
+X 12 (24) C4 EN 175 301-803 C
+G 12 (24) C4 3-pin
+IP 65 (IEC 60529)
+ITT 12 (24) VG 95234 MIL
+4-pin
+IP 67 (IEC 60529)
+DTL 12 (24) MIL-DTL 38999 series III
+DTL 12 (24) T 4-pin
+IP 67 (IEC 60529)
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 97/187"
+D7700_2-en.pdf,98,"3.5.2 PSL/PSV Electro-hydraulic actuation with solenoid for potentially explosive atmospheres
+NOTICE
+When using solenoids for potentially explosive atmospheres: observe operating instructions B ATEX and the separate operating
+instructions for the respective solenoid.
+Refer to the applicable operating instructions for operating thresholds, classifications, electrical parameters and electrical
+connections.
+Coding Operating instructions with declaration of conformity
+G 24 TEX 4 55 FM ■ B ATEX
+G 24 TEX 4 55 FM-10 m ■ B 28/2012 (EX04)
+3.5.3 EDL actuation with standard solenoid
+Actuation E, EI
+Solenoid, produced and tested in accordance with DIN VDE 0580
+Single-action solenoid with anchor chambers sealed on the outside and connected to the return duct. The anchors in the anchor
+chambers are thereby lubricated by the hydraulic uid and protected against corrosion without the need for maintenance.
+Nominal voltage UN 12 V DC 24 V DC
+Coil resistance R20 5.5 Ω 22 Ω
+Current, cold I20 2.18 A 1.10 A
+Limit current IG (Ilim) 1.56 A 0.78 A
+Power, cold P20 = UN x I20 26 W 26 W
+Limit power PG = UN x IG 19 W 19 W
+Cut-off energy WA Ò 0.3 Ws Ò 0.3 Ws
+Relative duty cycle
+(reference temperature S1 S1
+T11 = 50°C)
+Required dither frequency 40 ... 70 Hz (recommended value: 55 Hz)
+Dither amplitude
+20% Ò A D Ò 50%
+98/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,99,"I stroke characteristic curve
+Viscosity of the hydraulic uid approx. 60 mm2/s
+I/IG control current; spool stroke (%)
+Electrical connection
+X 12, X 24 AMP 12, AMP 24 DT 12, DT 24
+EN 175 301-803 A AMP Junior Timer
+Coil a (1) coil b (2) IP 65 (IEC 60529) IP 65 (IEC 60127) IP 69K (IEC 60529)
+The specifications regarding the IP protection class apply for versions featuring a properly assembled male connector.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 99/187"
+D7700_2-en.pdf,100,"3.5.4 Switching position monitoring, displacement transducer
+Coding VCHO, VCHC, VCHOC
+Connection socket G 4 A 5 M ® Hirschmann
+compatible connector G 4 W 1 F ® Hirschmann
+Resistance load up to 5 A
+30 V DC
+Inductive load 3 A
+Protection class IP 65 (IEC 60529)
+Labelling ■ VCHO: NO
+■ VCHC: NC
+■ VCHOC: NOC
+VCHO VCHC VCHOC
+Contact switch S2 = towards A
+Contact switch S1 = towards B
+100/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,101,"Coding WA
+Coding Electrical connection Protection class (IEC 60529)
+WA EN 175 301-803 A IP 65
+WA-AMP AMP Junior Timer IP 67
+WA-DT German (DT 04-4P) IP 69k
+WA-C EN 175 301-803 C IP 65
+Pin assignment: Sensor assignment:
+1 = Uoutput
+2 = +UB (5 to 10 V)
+3 = GND
+Earth = not assigned
+WA WA-AMP WA-DT WA-C
+UB = supply voltage
+UB max = 76%
+UB min = 24%
+Accuracy +/- 9% (of UB)
+x spool stroke; UB signal voltage (V)
+Use stabilised, smoothed DC voltage only.
+NOTICE
+The displacement transducer will be destroyed by strong magnetic elds.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 101/187"
+D7700_2-en.pdf,102,"Coding U
+Protection class
+Coding Electrical connection Protection class (IEC 60529)
+U EN 175 301-803 A IP 65 (plugged in)
+U-DT Deutsch (DT 04-4P) IP 67 (plugged in)
+IP 66 (plugged in)
+U-M M12x1.5 IP 67 (plugged in)
+IP 66 (plugged in)
+Pin assignment
+Signal Description Pin assignment
+U U-DT U-M
+GND 0 V DC PE ( ) 2 3
+A_Out PNP positive-switching 1 3 2
+B_Out PNP positive-switching 2 4 4
++UB 10 ... 32 V DC 3 1 1
+Open-Collector:
+Imax = 10 mA
+short-circuit-proof
+Status table
+Running no. Spool valve action Signal outputs PNP transistor with open collector:
+OUTA OUTB
+1 Neutral position in centre ON ON
+2 P d B OFF ON
+3 P d A ON OFF
+U U-DT U-M
+102/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,103,"3.5.5 Electric LS relief or LS pressure limitation
+Electro-proportional LS pressure limitation coding FP.., FPH..
+Nominal voltage UN 12 V DC 24 V DC
+Resistance R20 6.3 Ω 27.0 Ω
+Current, cold I20 1.9 A 0.9 A
+Limit current IG 1.26 A 0.63 A
+Limit power PG 15.1 W 15.1 W
+Duty cycle S1 (100%)
+Dither frequency 40 - 70 Hz (recommended value 55 Hz)
+Dither amplitude
+20% ≤ AD ≤ 50%
+Electrical connection
+Coding Specification Connection Plug
+DT 12 (24) T German (DT04 – 4p)
+4-pin
+IP 69k (IEC 60529)
+S 12 (24) T Bayonet coupling PA6 Schlemmer
+3-pin
+IP 67 (IEC 60529)
+X 12 (24) T EN 175 301-803 A
+G 12 (24) T 3-pin
+L 12 (24) T IP 65 (IEC 60529)
+X 12 (24) TH
+G 12 (24) TH
+L 12 (24) TH
+DTL 12 (24) T MIL-DTL 38999 series III
+4-pin
+IP 65 (IEC 60529)
+NOTICE
+Duty cycle applies separately for a single twin solenoid coil. If both coils are powered simultaneously, only 50% is permitted as
+duty cycle.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 103/187"
+D7700_2-en.pdf,104,"NOTICE
+■ Only twin solenoids with manual override (coding T or -TH) are possible.
+■ If a twin solenoid without manual override was chosen for the valve section’s electro-hydraulic actuation, the same twin
+solenoid type is automatically used for the LS pressure limitation’s electro-proportional actuation, but with additional
+manual override.
+■ If the twin solenoid type is not possible with manual override, coding -G..T is used by default.
+3.5.6 Electric LS relief or LS pressure limitation for potentially explosive atmospheres
+NOTICE
+When using solenoids for potentially explosive atmospheres: observe operating instructions B ATEX and the separate operating
+instructions for the respective solenoid.
+Refer to the applicable operating instructions for operating thresholds, classifications, electrical parameters and electrical
+connections.
+Coding Operating instructions with declaration of conformity
+G 24 TEX 4 55 FM ■ B ATEX
+G 24 TEX 4 55 FM-10 m ■ B 22/2011 (EX11)
+G 24 M2FP ■ B ATEX
+G 24 M2FP-10 m ■ B 04/2005 (EX05)
+3.5.7 Additional valves
+The types of plugs available are described in Chapter 2.5, ""Solenoid voltage and solenoid version"". Refer to the respective additional
+valve’s data sheet for electrical parameters.
+104/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,105,"4
+Dimensions
+All dimensions in mm, subject to change.
+4.1 Connection block
+see Chapter 2.1.3, ""Connection block basic types""
+PSL 3…/D…-2, PSV 3…/D…-2, PSL UNF 2…/D…-2, PSV UNF 2…/D...-2
+1 Internal control oil supply coding 1 or without coding
+2 1 Internal control oil supply coding 2
+3 LS damping
+4 Pressure-limiting valve
+5 optional ZM
+6 Valve section
+7 End plate
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 105/187"
+D7700_2-en.pdf,106,"Ports (ISO 228-1 or SAE J 514)
+Coding a Type P, R LS, M Z
+PSL 3../D..-2
+without coding 6.5 G 1/2 G 1/4 G 1/8
+PSV 3../D..-2
+1 6.5
+PSL UNF 2../D..-2
+3/4-16 UNF-2B 7/16-20 UNF-2B 7/16-20 UNF-2B
+2 18.4 PSV UNF 2../D..-2
+PSV 3…-2
+PSV UNF 2…-2
+1 Internal control oil supply coding 1 or without coding
+2 Internal control oil supply coding 2
+3 LS damping
+4 Valve section
+5 End plate
+Coding a Ports (ISO 228-1 or SAE J 514)
+without coding 6.5 Type P, R LS, M Z
+1 6.5 PSV 3…-2 G 1/2 G 1/4 G 1/8
+2 18.4 PSV UNF 2…-2 3/4-16 UNF-2B 7/16-20 UNF-2B 7/16-20 UNF-2B
+106/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,107,"PSL 3U…/…-2
+PSL UNF 2U…/…-2
+1 Internal control oil supply coding 1 or without coding
+2 Internal control oil supply coding 2
+3 LS damping
+4 Pressure-limiting valve
+5 Valve section
+6 End plate
+Type Ports (ISO 228-1 or SAE J 514)
+Coding a
+P, R LS, M Z
+without coding 6.5
+PSL 3U…/…-2 G 1/2 G 1/4 G 1/8
+1 6.5
+PSL UNF 2U…/…-2 3/4-16 UNF-2B 7/16-20 UNF-2B 7/16-20 UNF-2B
+2 18.4
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 107/187"
+D7700_2-en.pdf,108,"PSL 3 Z…/D…-2
+1 Internal control oil supply coding 1 or without coding
+2 Internal control oil supply coding 2
+3 LS damping
+4 Pressure-limiting valve
+5 3-way controller’s spring housing
+6 Valve section
+7 End plate
+Coding a Type Ports (ISO 228-1)
+without coding 6.5 P, R LS, M, Z
+1 6.5 PSL 3 Z…/D…-2 G 1/2 G 1/4
+2 18.4
+108/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,109,"3-way controller’s spring housing
+without coding Coding H
+3-way controller’s spring housing with locking tapped plug
+Coding T Coding TR
+Coding HT Coding HTR
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 109/187"
+D7700_2-en.pdf,110,"PSL 3Y.../D...-2
+1 Internal control oil supply coding 1 or without coding
+2 Internal control oil supply coding 2
+3 LS damping
+4 Pressure-limiting valve
+5 Valve section
+6 End plate
+Coding a Type Ports (ISO 228-1)
+without coding 6.5 P, R, F LS, M
+1 6.5 PSL 3Y…/…-2 G 1/2 G 1/4
+2 18.4
+110/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,111,"PSL 3 C... D/...-2
+PSL 3 CR... D/...-2
+1 Internal control oil supply coding 1 or without coding
+2 Internal control oil supply coding 2
+3 LS damping
+4 Pressure-limiting valve
+5 3-way controller’s spring housing
+6 Version
+7 Valve section
+8 End plate
+Coding a
+without coding 6.5
+1 6.5
+2 18.4
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 111/187"
+D7700_2-en.pdf,112,"Adjustment
+xed Manually adjustable
+112/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,113,"PSV 4N…/…/…-2
+PSV UNF 4N…/…/…-2
+1 Internal control oil supply coding 1 or without coding
+2 Internal control oil supply coding 2
+3 Only included with optional variant V or Z
+4 LS damping
+5 Pressure-limiting valve
+6 Valve section
+7 End plate
+Coding a Type Ports (ISO 228-1 or SAE J 514)
+without coding 6.5 P, R LS, M Z
+1 6.5 PSV 4N…/…/…-2 G 3/4 G 1/4 G 1/8
+2 18.4 PSV UNF 4N…/…/…-2 11/16-12 UNF-2B 7/16-20 UNF-2B 7/16-20 UNF-2B
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 113/187"
+D7700_2-en.pdf,114,"PSV 3X…-2
+1 LS damping
+2 Valve section
+3 End plate
+Type Ports (ISO 228-1)
+P, R LS, M
+PSV 3X…-2 G 1/2 G 1/4
+PSV E0-2
+1 End plate
+2 Directional spool valve
+114/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,115,"Additional valves for LS relief or LS pressure limitation on connection block
+see Chapter 2.1.7, ""LS relief or LS pressure limitation""
+without coding Coding VA, ZA Coding ZAM Coding ZAP
+Coding V, Z Coding ZM Coding ZP
+Only for PSL 3 Z…/D…-2:
+without coding Coding F, D
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 115/187"
+D7700_2-en.pdf,116,"4.2 Valve section
+4.2.1 PSL/PSV directional valve section
+Directional valve section without integrated threads for combining with an ancillary block
+Coding A… see Chapter 2.2.1.1, ""Consumer ports""
+Pre-selector directional valve section with integrated ports
+Coding 8… see Chapter 2.2.1.2, ""2-way controller"")
+116/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,117,"Directional valve section with manual actuation
+Actuation E0A, E0C
+1 Switching position 0, a and b
+2 Alternative mounting position for hand lever (thread M6, 8.5 mm deep)
+3 Travel stop for ow limitation at A (adjustable via grub screw M5)
+4 Intermediate sheet to act as stop for stroke limitation
+5 Travel stop for ow limitation at B (adjustable via grub screw M5)
+6 Ancillary blocks
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 117/187"
+D7700_2-en.pdf,118,"Lever straight Lever for angle
+Coding a Coding a b 1
+without coding 122 005 31 122 5°
+1 -- 015 31 120 15°
+2 78 025 31 115 25°
+3 174 030 49 114 30°
+4 92
+118/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,119,"Actuation E0AR
+1 Switching position 0, a and b
+2 Alternative mounting position for hand lever (thread M6, 8.5 mm deep)
+3 Travel stop for ow limitation at A (adjustable via grub screw M5)
+4 Intermediate sheet to act as stop for stroke limitation
+5 Travel stop for ow limitation at B (adjustable via grub screw M5)
+6 Ancillary blocks
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 119/187"
+D7700_2-en.pdf,120,"Actuation E0K
+1 Ancillary blocks
+120/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,121,"Directional valve section with electro-hydraulic actuation
+Actuation EA
+1 Switching position 0, a and b
+2 Alternative mounting position for hand lever (thread M6, 8.5 mm deep)
+3 Travel stop for ow limitation at A (adjustable via grub screw M5)
+4 Intermediate sheet to act as stop for stroke limitation
+5 Travel stop for ow limitation at B (adjustable via grub screw M5)
+6 Ancillary blocks
+7 Male connector can be mounted offset by 180°
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 121/187"
+D7700_2-en.pdf,122,"Actuation E
+1 Travel stop for ow limitation at A
+2 Travel stop for ow limitation at B
+3 Ancillary blocks
+4 Male connector can be mounted offset by 180°
+Actuation EI
+1 Ancillary blocks
+2 Male connector can be mounted offset by 180°
+122/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,123,"Solenoid versions
+Coding Coding
+AMP 12(24) K4 AMP 12 H 4
+Coding Coding Coding
+DT 12(24) DT 12(24) T S 12(24)
+Coding Coding Coding
+G(X) 12(24) G(X) 12(24) T G(X) 24 C4
+Coding Coding Coding
+DTL 12(24) DTL 12(24) T ITT 12(24)
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 123/187"
+D7700_2-en.pdf,124,"Coding
+G 24 TEX 4 55FM
+124/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,125,"Directional valve section with hydraulic actuation
+Actuation E0HA (UNF)
+1 Switching position 0, a and b
+2 Alternative mounting position for hand lever (thread M6, 8.5 mm deep)
+3 Travel stop for ow limitation at A (adjustable via grub screw M5)
+4 Intermediate sheet to act as stop for stroke limitation
+5 Travel stop for ow limitation at B (adjustable via grub screw M5)
+6 Ancillary blocks
+Coding a Coding Ports (ISO 228-1 or SAE J 514)
+E0HA 34.5 1, 2
+E0HA UNF 39.5 E0HA G 1/8
+E0HA UNF SAE-2 (5/16-24 UNF-2B)
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 125/187"
+D7700_2-en.pdf,126,"Actuation EHA (UNF)
+1 Switching position 0, a and b
+2 Alternative mounting position for hand lever (thread M6, 8.5 mm deep)
+3 Travel stop for ow limitation at A (adjustable via grub screw M5)
+4 Intermediate sheet to act as stop for stroke limitation
+5 Travel stop for ow limitation at B (adjustable via grub screw M5)
+6 Ancillary blocks
+Coding a Coding Ports (ISO 228-1 or SAE J 514)
+EHA 34.5 1, 2
+EHA UNF 39.5 EHA G 1/8
+EHA UNF SAE-2 (5/16-24 UNF-2B)
+126/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,127,"Actuation E0Z (UNF)
+1 Travel stop for ow limitation at A
+2 Travel stop for ow limitation at B
+3 Ancillary blocks
+4 Port W/1
+5 Port U/2
+Coding Ports (ISO 228-1 or SAE J 514)
+W/1, U/2
+E0Z G 1/8
+E0Z UNF SAE-2 (5/16-24 UNF-2B)
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 127/187"
+D7700_2-en.pdf,128,"Directional valve section with pneumatic actuation
+Actuation P
+1 Ancillary blocks
+Coding Ports (ISO 228-1)
+1, 2
+P G 1/8
+128/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,129,"Switching position monitoring, displacement transducer
+Coding VC
+Coding WA Coding U
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 129/187"
+D7700_2-en.pdf,130,"Directional valve section with LS pressure limitation
+Coding A.., B.., A.. B..
+130/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,131,"Directional valve section with electric LS relief or LS pressure limitation
+Coding FP
+Coding FPH
+Directional valve section with LS port for external limitation
+Coding S1
+Coding Ports (ISO 228-1)
+U/1, W/2
+S1 G 1/8
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 131/187"
+D7700_2-en.pdf,132,"4.2.2 EDL directional valve section
+Actuations
+Coding E Coding EI
+1 Male connector can be mounted offset by 180°
+2 Ancillary blocks
+132/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,133,"Coding AEI Coding BEI
+1 Male connector can be mounted offset by 180°
+2 Ancillary blocks
+Coding AEEI Coding BEEI
+1 Male connector can be mounted offset by 180°
+2 Ancillary blocks
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 133/187"
+D7700_2-en.pdf,134,"Additional solenoid versions
+Coding AMP 12, AMP 24 Coding DT 12, DT 24
+LS pressure limitation and load-signal outlet X
+Coding C ... X
+1 LS pressure limitation
+2 Ancillary blocks
+Port (ISO 228-1)
+X G 1/8
+134/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,135,"4.2.3 Ancillary block
+see Chapter 2.2.3, ""Ancillary block""
+/2, /22, /3
+/UNF 1, /UNF 12, /UNF 2
+/JIS 2
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x g -A2-70
+Coding H L a b c e f g
+/2 16 63 17.5 17.75 21.5 45.25 8.25 16
+/22 24.5 68 21 13 18 55 5.25 25
+/3 28 80 17.5 28.5 17.5 56 -- 28
+/UNF 1
+/UNF 12 16 63 17.5 17.75 21.5 45.25 8.25 16
+/UNF 2
+/JIS 2 25 80 17.5 26.25 21.5 53.75 -- 25
+Coding Connections (ISO 228-1 or SAE J 514 or JIS B 2351)
+A, B
+/2, /22 G 3/8
+/3 G 1/2
+/UNF 1 7/16-20 UNF-2B (SAE-4)
+/UNF 12 9/16-18 UNF-2B (SAE-6)
+/UNF 2 3/4-16 UNF-2B (SAE-8)
+/2 FL G 3/8
+/UNF 2 FL 3/4-16 UNF-2B (SAE-8)
+/JIS 2 JIS G 3/8
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 135/187"
+D7700_2-en.pdf,136,"/2 M
+/UNF 2 M
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x 24 -A2-70
+Coding Ports (ISO 228-1 or SAE J 514)
+A, B
+/2 M G 3/8
+/UNF 2 M 3/4-16 UNF-2B (SAE-8)
+136/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,137,"/M 222
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x 35 -A2-70
+Coding Ports
+A, B
+/M 222 M22x1.5
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 137/187"
+D7700_2-en.pdf,138,"/2(22) AS..BS.., /UNF 2 AS..BS..
+/2(22) AN..BN.., /UNF 2 AN..BN..
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x g -A2-70
+Coding H L a b c e f g
+/2 AS.. BS..
+39.5 83 17.5 27.5 21.5 55.25 1.75 40
+/UNF 2 AS..BS..
+/22 AS..BS.. 39 105 20.2 22.5 19.5 83.5 1.75 39
+/2 AN..BN..
+29.5 103 17.5 37.75 21.5 65.25 11.75 40
+/UNF 2 AN..BN..
+Coding Ports (ISO 228-1 or SAE J 514)
+A, B
+/2 AS..BS..
+/22 AS..BS.. G 3/8
+/2 AN..BN..
+/UNF 2 AS..BS..
+3/4-16 UNF-2B (SAE-8)
+/UNF 2 AN..BN..
+138/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,139,"/2 ANV...BNV..., /2 ANV BNV
+/2 ANV..., /2 BNV...
+/2 ANV, /2 BNV
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x 40 -A2-70
+Coding a b
+/2 ANV... BNV... 7.5 7.5
+/2 ANV BNV 8 8
+/2 ANV... BNV 7.5 8
+/2 ANV BNV... 8 7.5
+/2 ANV... 7.5 7.5
+/2 ANV 8 7.5
+/2 BNV... 7.5 7.5
+/2 BNV 7.5 8
+Coding Connections (ISO 228-1)
+A, B
+/2 ANV... BNV...
+/2 ANV BNV
+/2 ANV...
+G 3/8
+/2 ANV
+/2 BNV...
+/2 BNV
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 139/187"
+D7700_2-en.pdf,140,"/2 M ANV... BNV... , /2 M ANV BNV
+/2 M ANV..., /2 BNV...
+/2 M ANV, /2 BNV
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x 50 -A2-70
+Coding a b
+/2 M ANV... BNV... 7.5 7.5
+/2 M ANV BNV 8 8
+/2 M ANV... BNV 7.5 8
+/2 M ANV BNV... 8 7.5
+/2 M ANV... 7.5 7.5
+/2 M ANV 8 7.5
+/2 M BNV... 7.5 7.5
+/2 M BNV 7.5 8
+Coding Connections (ISO 228-1)
+A, B
+/2 M ANV... BNV...
+/2 M ANV BNV
+/2 M ANV...
+G 3/8
+/2 M ANV
+/2 M BNV...
+/2 M BNV
+140/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,141,"/UNF 2 M ANV... BNV... , /UNF 2 M ANV BNV
+/UNF 2 M ANV..., /UNF 2 BNV...
+/UNF 2 M ANV, /UNF 2 BNV
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x 50 -A2-70
+Coding a b
+/UNF 2 M ANV... BNV... 7.5 7.5
+/UNF 2 M ANV BNV 8 8
+/UNF 2 M ANV... BNV 7.5 8
+/UNF 2 M ANV BNV... 8 7.5
+/UNF 2 M ANV... 7.5 7.5
+/UNF 2 M ANV 8 7.5
+/UNF 2 M BNV... 7.5 7.5
+/UNF 2 M BNV 7.5 8
+Coding Connections (SAE J 514)
+A, B
+/UNF 2 M ANV... BNV...
+/UNF 2 M ANV BNV
+/UNF 2 M ANV...
+3/4-16 UNF-2B (SAE-8)
+/UNF 2 M ANV
+/UNF 2 M BNV...
+/UNF 2 M BNV
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 141/187"
+D7700_2-en.pdf,142,"/22 AN..BN..
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x 45 -A2-70
+Coding Ports (ISO 228-1 )
+A, B
+/22 AN..BN.. G 3/8
+142/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,143,"/22 AN..
+/UNF 2 AN..
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x g -A2-70
+Coding H L a b c e f g
+/22 AN.. 39 110 19.5 13.75 21 74.25 19.5 39
+/UNF 2 AN.. 39.5 103 17.5 37.75 21.5 65.25 11.75 40
+Coding Ports (ISO 228-1 or SAE J 514)
+A, B
+/22 AN.. G 3/8
+/UNF 2 AN.. 3/4-16 UNF-2B (SAE-8)
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 143/187"
+D7700_2-en.pdf,144,"/22 BN..
+/UNF 2 BN..
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x g -A2-70
+Coding H L a b c e f g
+/22 BN.. 39 110 18 35.75 19.5 96.25 11 39
+/UNF 2 BN.. 39.5 103 17.5 37.75 21.5 65.25 11.75 40
+Coding Ports (ISO 228-1 or SAE J 514)
+A, B
+/22 BN.. G 3/8
+/UNF 2 BN.. 3/4-16 UNF-2B (SAE-8)
+144/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,145,"/2 AS..R BS..R
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x 40 -A2-70
+Coding Ports (ISO 228-1)
+A, B
+/2 AS..R BS..R G 3/8
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 145/187"
+D7700_2-en.pdf,146,"/2 A HN /2 B HN
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x 25 -A2-70
+3 Drain screw
+Coding Ports (ISO 228-1)
+A, B
+/2 A HN
+G 3/8
+/2 B HN
+146/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,147,"/2 AL-0.. - BL-0..
+/UNF 2 AL-0.. - BL-0..
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x g -A2-70
+Coding H b e g
+/2 AL-0.. - BL-0.. 39.5 25.25 51.75 40
+/UNF 2 AL-0.. - BL-0.. 44.5 23.5 52.5 45
+Coding Ports (ISO 228-1 or SAE J 514)
+A, B
+/2 AL-0.. - BL-0.. G 3/8
+/UNF 2 AL-0.. - BL-0.. 3/4-16 UNF-2B (SAE-8)
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 147/187"
+D7700_2-en.pdf,148,"/2 ALX-0.. - BLX-0..
+/UNF 2 ALX-0.. - BLX-0..
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x g -A2-70
+Coding H b e g
+/2 ALX-0.. - BLX-0.. 39.5 25.25 51.75 40
+/UNF 2 ALX-0.. - BLX-0.. 44.5 23.5 52.5 45
+Coding Ports (ISO 228-1 or SAE J 514)
+A, B
+/2 ALX-0.. - BLX-0.. G 3/8
+/UNF 2 ALX-0.. - BLX-0.. 3/4-16 UNF-2B (SAE-8)
+148/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,149,"/2 AL-0..
+/UNF 2 AL-0..
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x g -A2-70
+Coding H b e g
+/2 AL-0.. 39.5 25.25 51.75 40
+/UNF 2 AL-0.. 44.5 23.5 52.5 45
+Coding Ports (ISO 228-1 or SAE J 514)
+A, B
+/2 AL-0.. G 3/8
+/UNF 2 AL-0.. 3/4-16 UNF-2B (SAE-8)
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 149/187"
+D7700_2-en.pdf,150,"/2 BL-0..
+/UNF 2 BL-0..
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x g -A2-70
+Coding H b e g
+/2 BL-0.. 39.5 25.25 51.75 40
+/UNF 2 BL-0.. 44.5 23.5 52.5 45
+Coding Ports (ISO 228-1 or SAE J 514)
+A, B
+/2 BL-0.. G 3/8
+/UNF 2 BL-0.. 3/4-16 UNF-2B (SAE-8)
+150/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,151,"/2 ALX-0..
+/UNF 2 ALX-0..
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x g -A2-70
+Coding H b e g
+/2 ALX-0.. 39.5 25.25 51.75 40
+/UNF 2 ALX-0.. 44.5 23.5 52.5 45
+Coding Ports (ISO 228-1 or SAE J 514)
+A, B
+/2 ALX-0.. G 3/8
+/UNF 2 ALX-0.. 3/4-16 UNF-2B (SAE-8)
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 151/187"
+D7700_2-en.pdf,152,"/2 BLX-0..
+/UNF 2 BLX-0..
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x g -A2-70
+Coding H b e g
+/2 BLX-0.. 39.5 25.25 51.75 40
+/UNF 2 BLX-0.. 44.5 23.5 52.5 45
+Coding Ports (ISO 228-1 or SAE J 514)
+A, B
+/2 BLX-0.. G 3/8
+/UNF 2 BLX-0.. 3/4-16 UNF-2B (SAE-8)
+152/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,153,"/2 DRH, /2 DRH A, /2 DRH B
+/UNF 2 DRH, /UNF 2 DRH A, /UNF 2 DRH B
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x 46 -A2-70
+Coding a c e
+/2 DRH A
+22 17 76
+/2 DRH B
+/UNF 2 DRH A
+21.5 17.5 73.5
+/UNF 2 DRH B
+Coding Ports (ISO 228-1 or SAE J 514)
+A, B
+/2 DRH
+/2 DRH A G 3/8
+/2 DRH B
+/UNF 2 DRH
+/UNF 2 DRH A 3/4-16 UNF-2B (SAE-8)
+/UNF 2 DRH B
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 153/187"
+D7700_2-en.pdf,154,"/3 AVT/3 AVPT
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x 55 -A2-70
+Coding h
+/3 AVT 70.5
+/3 AVPT 74
+Coding Ports (ISO 228-1)
+A, B
+/3 AVT
+G 1/2
+/3 AVPT
+154/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,155,"/3 BVT
+/3 BVPT
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x 55 -A2-70
+Coding h
+/3 BVT 70.5
+/3 BVPT 74
+Coding Ports (ISO 228-1)
+A, B
+/3 BVT
+G 1/2
+/3 BVPT
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 155/187"
+D7700_2-en.pdf,156,"/32 DFA
+1 Directional valve section
+2 Cylinder screw ISO 4762-M6x 60 -A2-70
+Coding Ports (ISO 228-1)
+A B
+/32 DFA G 1/2 G 3/8
+/32 DFB
+1 Directional valve section
+2 Cylinder screws ISO 4762-M6x 60 -A2-70
+Coding Ports (ISO 228-1)
+A B
+/32 DFB G 3/8 G 1/2
+156/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,157,"4.2.4 Intermediate plate
+/Z20
+1 Ancillary block
+2 Directional valve section
+/Z40
+1 Ancillary block
+2 Directional valve section
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 157/187"
+D7700_2-en.pdf,158,"/Z2A BVE 1 R(S) B
+1 Ancillary block
+2 Directional valve section
+/Z2B BVE 1 R(S) B
+1 Ancillary block
+2 Directional valve section
+Coding Connections (ISO 228-1 )
+S
+/Z2A BVE 1 R(S) B
+G 3/8
+/Z2B BVE 1 R(S) B
+158/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,159,"/Z AL...BL...
+1 Ancillary block
+2 Directional valve section
+/Z ALX...BLX...
+1 Ancillary block
+2 Directional valve section
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 159/187"
+D7700_2-en.pdf,160,"/Z AL-...
+1 Ancillary block
+2 Directional valve section
+/Z BL-...
+1 Ancillary block
+2 Directional valve section
+160/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,161,"/Z ALX-...
+1 Ancillary block
+2 Directional valve section
+/Z BLX-...
+1 Ancillary block
+2 Directional valve section
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 161/187"
+D7700_2-en.pdf,162,"/ZDR
+/ZDS
+1 Ancillary block
+2 Directional valve section
+/ZDRH
+1 Ancillary block
+2 Directional valve section
+162/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,163,"/ZN...
+/ZNX...
+1 Ancillary block
+2 Directional valve section
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 163/187"
+D7700_2-en.pdf,164,"/ZSS, /ZVV
+1 Ancillary block
+2 Directional valve section
+/ZVX, /ZPVX
+/Z1SX, /Z1PSX, /Z1VX, /Z1PVX
+1 Ancillary block
+2 Directional valve section
+164/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,165,"/ZXV, /ZXPV
+/Z1XS, /Z1XPS, /Z1XV, /Z1XPV
+Coding a
+EM 22 12
+1 Ancillary block
+2 Directional valve section EMP 22 15
+/Z1SS, /Z1PSPS, /Z1VV, /Z1PVPV
+Coding a
+EM 22 12
+1 Ancillary block
+2 Directional valve section EMP 22 15
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 165/187"
+D7700_2-en.pdf,166,"/ZFL A-B-6 B-B-6
+1 Ancillary block
+2 Directional valve section
+166/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,167,"4.3 Series intermediate plate
+see Chapter 2.3, ""Series intermediate plate""
+ZPL 22
+ZPL 22/7
+ZPL 22/15
+Coding a
+ZPL 22 39.5
+ZPL 22/7 7
+ZPL 22/15 14.5
+ZPL 22/7 EX ZPL 22/7/XRT
+ZPL 22/15/R1
+ZPL 22/15/R2
+ZPL 22/15/XR
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 167/187"
+D7700_2-en.pdf,168,"ZPL 22 P6R6
+Connections (ISO 228-1)
+M, LS G 1/4
+R, P G 1 1/4
+168/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,169,"ZPL 2-SWS 2 ZPL LS/...
+ZPL 2-SWS 2/RB
+1 Tapped plug for ZPL 2-SWS 2/RB
+ZPL 2 P3R3 ZPL 2-Z2
+Coding Connections (ISO 228-1)
+T LS R, P P2
+ZPL 2-SWS 2
+G 1/8 -- -- --
+ZPL 2-SWS 2/RB
+ZPL LS/... -- G 1/4 -- --
+ZPL 2 P3R3 -- -- G 1/2 --
+ZPL 2-Z2 -- -- -- G 3/8
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 169/187"
+D7700_2-en.pdf,170,"A1 RR ../../3
+A1 RR ../../4
+1 Drain screw
+Coding Connections (ISO 228-1)
+H, R
+A1 RR ../../3 G 1/2
+A1 RR ../../4 G 3/4
+170/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,171,"ZPL 2 VZ/BVE 1 ZT
+Connections (ISO 228-1)
+MP G 1/4
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 171/187"
+D7700_2-en.pdf,172,"ZPL 2 VZ/BVE 1 ZT.A
+Connections (ISO 228-1)
+MP G 1/4
+172/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,173,"4.4 End plate
+see Chapter 2.4, ""End plate""
+E 1, E 1 UNF
+■ T - open, Y - sealed
+E 2, E 2 UNF
+■ T - open, Y - open
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 173/187"
+D7700_2-en.pdf,174,"E 4, E 4 UNF
+■ T - sealed, Y - sealed
+E 5, E 5 UNF
+■ T - sealed, Y - open
+Coding Connections (ISO 228-1 or SAE J 514)
+T, Y
+E 1, E 2, E 4, E 5 G 1/8
+E 1 UNF, E 2 UNF,
+SAE-4 (7/16-UNF-2B)
+E 4 UNF, E 5 UNF
+174/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,175,"E 3
+■ T - open
+E 6
+■ T - sealed
+Coding Connections (ISO 228-1)
+T
+E 3, E 6 G 1/8
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 175/187"
+D7700_2-en.pdf,176,"E 17, E 17 UNF
+■ T - open, Y - sealed, P - open, R - open
+E 18, E 18 UNF
+■ T - open, Y - open, P - open, R - open
+E 19, E 19 UNF
+■ T - sealed, Y - sealed, P - open, R - open
+176/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,177,"E 20, E 20 UNF
+■ T - sealed, Y - open, P - open, R - open
+Coding a Connections (ISO 228-1 or SAE J 514)
+T, Y P, R
+E 17, E 18,
+12.5 G 1/8 G 3/8
+E 19, E 20
+E 17 UNF, E 18 UNF,
+16 SAE-4 (7/16 UNF-2B) SAE-8 (3/4-16 UNF-2B)
+E 19 UNF, E 20 UNF
+E 4 PMZ1-...
+Connections (ISO 228-1)
+A, T G 1/8
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 177/187"
+D7700_2-en.pdf,178,"E 19 UNF - ADM 22 P
+Connections (SAE J 514)
+C, T SAE-4 (7/16-20 UNF-2B)
+A, B SAE-6 (9/16-18 UNF-2B)
+P, R SAE-8 (3/4-16 UNF-2B)
+178/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,179,"E 0
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 179/187"
+D7700_2-en.pdf,180,"5
+Installation, operation and maintenance information
+Observe the document B 5488 “General operating instructions for assembly, commissioning, and maintenance.”
+5.1 Intended use
+This product is intended exclusively for hydraulic applications (uid technology).
+The user must observe the safety measures and warnings in this document.
+Essential requirements for the product to function correctly and safely:
+All information in this documentation must be observed. This applies in particular to all safety measures and warnings.
+The product must only be assembled and put into operation by specialist personnel.
+The product must only be operated within the specied technical parameters described in detail in this document.
+All components must be suitable for the operating conditions when using an assembly.
+The operating instructions for the components, assemblies and the specic complete system must also always be observed.
+If the product can no longer be operated safely:
+1. Remove the product from operation and mark it accordingly.
+✓ It is then not permitted to continue using or operating the product.
+5.2 Assembly information
+The product must only be installed in the complete system with standard and compliant connection components (screw ttings, hoses,
+pipes, xtures etc.).
+The product must be shut down correctly prior to disassembly (in particular in combination with hydraulic accumulators).
+DANGER
+Sudden movement of the hydraulic drives when disassembled incorrectly
+Risk of serious injury or death
+Depressurise the hydraulic system.
+Perform safety measures in preparation for maintenance.
+5.2.1 Attachment
+The valve bank must be mounted to the frame or base of the machine in such a way that no stress is induced. Three screws and elastic
+washers between the bank and the frame are recommended for attachment.
+180/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,181,"5.2.2 Piping
+All ttings used must utilise deformable seals. The recommended tightening torque values must not be exceeded.
+5.2.2.1 Reux piping routed externally to the tank
+If the reux line from the consumer is routed externally back to the tank, this may impair the lm of lubrication between the spool
+block and spool valve between R(B) and Z(B).
+This could lead to a higher level of wear if the following conditions are also fullled:
+■ A consumer is actuated on a sustained basis for longer than 10 minutes.
+■ These three configurations apply
+without LS pressure limitation (Chapter 2.2.1.7)
+without LS relief or LS pressure limitation coding (Chapter 2.2.1.8)
+without LS port for external limitation (Chapter 2.2.1.9)
+Recommendation for improving the lubrication in this case:
+■ Pre-load the reux in PSL/PSV(max. 5 bar)
+■ Valve section with one of these three functions
+LS pressure limitation
+■ AB
+■ A..B..
+■ B..
+LS relief or LS pressure limitation
+■ F0
+■ F..
+LS port for external limitation
+■ S
+■ S1
+■ X
+■ On valve sections (Chapter 2.2.1.3) with code 8 and code 81, do not use dither.
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 181/187"
+D7700_2-en.pdf,182,"5.2.3 Converting the connection block from PSL to PSV
+The connection blocks of type PSL 3…/D…-2 or PSL UNF 3…/D…-2 can be converted into a connection block for a control pump
+system (Closed Center). For this purpose, the components listed below must be installed as shown.
+The connection blocks of type PSV 3…/D…-2 or PSV UNF 3…/…-2 can be converted into a connection block for a constant pump
+system (Open Center). For this purpose, the components listed below must be installed as shown.
+PSL 3…/D…-2 PSV 3…/D…-2
+PSL UNF 3…/D…-2 PSV UNF 3…/…-2
+182/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,183,"Position PSL 3…/D…-2 PSV 3…/D…-2
+1 Screw 7997 019 --
+2 -- Screw 7997 019
+3 Dampening screw S Dampening screw B
+4 Filter screw 7700 794 Filter screw 7700 794
+5 Tapped plug --
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 183/187"
+D7700_2-en.pdf,184,"5.2.4 Changing the valve spool
+The valve spools are not specially adapted to a spool block. This means that spool valves can be exchanged at any time to bring them in
+line with any changes in consumer requirements.
+In doing so, the following must be observed:
+1 End plate side
+2 Connection block side
+3 Metering ports
+Changing the valve spool
+1. Unscrew screws 1 (ISO 4762--M4x12-8.8-A2-70)), remove spring housing
+2. Unscrew screw 2 M4x30
+3. Take off spring package with spring plates 3
+4. Screws 4 (ISO 4762-M4x35-8.8-A2-70) are to be unscrewed
+5. Pull the lever housing out of the spool block together with the valve spool 5 6
+6. Remove lock washer DIN 6799-3.2 and bolt 7 8
+7. Proceed in reverse order to reassemble with (new) valve spool
+INFORMATION
+When assembled, the valve spool’s metering ports must always face towards the end plate!
+Exception: Valve spools with coding 40 do not have metering ports and can be installed any way around.
+184/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,185,"5.3 Operating instructions
+Observe product configuration and pressure/ow rate.
+The statements and technical parameters in this document must be strictly observed.
+The instructions for the complete technical system must also always be followed.
+NOTICE
+Read the documentation carefully before usage.
+The documentation must be accessible to the operating and maintenance staff at all times.
+Keep documentation up to date after every addition or update.
+CAUTION
+Overloading components due to incorrect pressure settings.
+Risk of minor injury. Parts may burst or y off, and uncontrolled leakage of hydraulic uid.
+■ Pay attention to the maximum operating pressure of the pump, valves and ttings.
+■ Always monitor the pressure gauge when setting and changing the pressure.
+Purity and ltering of the hydraulic uid
+Fine contamination can significantly impair the function of the product. Contamination can cause irreparable damage.
+Examples of ne contamination include:
+■ Swarf
+■ Rubber particles from hoses and seals
+■ Dirt due to assembly and maintenance
+■ Mechanical debris
+■ Chemical ageing of the hydraulic uid
+NOTICE
+New hydraulic uid from the manufacturer may not have the required purity.
+Damage to the product is possible.
+Filter new hydraulic uid to a high quality when lling.
+Do not mix hydraulic uids. Always use hydraulic uid that is from the same manufacturer, of the same type, and with the
+same viscosity properties.
+For smooth operation, pay attention to the cleanliness level of the hydraulic uid (cleanliness level see Chapter 3, ""Parameters"").
+Additionally applicable document: D 5488/1 oil recommendations
+5.4 Maintenance information
+Check regularly (at least once a year) by visual inspection whether the hydraulic connections or the surfaces of the valve blocks are
+damaged. If damage or external leakages are found, shut down and repair the system.
+Clean the surface of the device regularly (at least once a year) (dust deposits and dirt).
+HAWE Hydraulik SE D 7700-2 - 02-2026 - 1.3 185/187"
+D7700_2-en.pdf,186,"6
+Other information
+6.1 Accessories, spare and individual parts
+Seal kits
+Connection block DS 7700-21
+Valve section DS 7700-22
+186/187 D 7700-2 - 02-2026 - 1.3 HAWE Hydraulik SE"
+D7700_2-en.pdf,187,"3.1-6202-20
+2-0077
+D
+References
+Additional versions
+■ Proportional directional spool valves types PSL/PSV/PSM, size 3: D 7700-3
+■ Proportional directional spool valve, type PSL, PSM and PSV size 5: D 7700-5
+■ Proportional directional spool valve type PSLF, PSVF and SLF: D 7700-F
+■ Proportional directional spool valve banks type PSLF and PSVF size 7: D 7700-7F
+■ Actuation for proportional directional spool valves type PSL/PSV: D 7700 CAN
+■ Valve bank (directional spool valve) type CWS: D 7951 CWS
+HAWE Hydraulik SE
+Einsteinring 17 | 85609 Aschheim/Munich | P.O. Box 11 55 | 85605 Aschheim | Germany
+Phone +49 89 379100-1000 | info@hawe.de | www.hawe.com
+hawe.com/contact"

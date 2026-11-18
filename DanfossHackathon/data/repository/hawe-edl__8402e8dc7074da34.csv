@@ -1,0 +1,71 @@
+product_id,brand,product_name,family,attribute,value,unit,source_file,page,quote,status,condition,fact_type
+hawe-edl,HAWE Hydraulik,EDL,valves,max_operating_pressure_valve_section,320,bar,D7700_2-en.pdf,1,Operating pressure (Valve section) p EDL: 320 bar,ok,"p max, EDL valve section",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,max_flow_port_ab,48,l/min,D7700_2-en.pdf,1,Flow rate (Consumer) Q EDL: 48 l/min,ok,"Q max, consumer, EDL",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,max_pump_flow,100,l/min,D7700_2-en.pdf,1,Flow rate (Pump) Q : 100 l/min,ok,"Q max, pump flow of the valve bank (connection block)",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,actuation,directly actuated,,D7700_2-en.pdf,6,The proportional directional spool valve type EDL is actuated directly.,ok,,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,platform_compatibility,can be combined with PSL 2,,D7700_2-en.pdf,6,exibly combined with PSL 2.,ok,,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,load_independent_flow_control,yes (control independent of the load and continuous),,D7700_2-en.pdf,6,Control is independent of the load and continuous.,ok,"general data for PSL, PSV and EDL",feature
+hawe-edl,HAWE Hydraulik,EDL,valves,benefit,compact and lightweight design,,D7700_2-en.pdf,6,Compact and lightweight design,ok,"general data for PSL, PSV and EDL",claim
+hawe-edl,HAWE Hydraulik,EDL,valves,benefit,precise and sensitive control,,D7700_2-en.pdf,6,Precise and sensitive control,ok,"general data for PSL, PSV and EDL",claim
+hawe-edl,HAWE Hydraulik,EDL,valves,benefit,highest energy efficiency thanks to low Δp and low-energy solutions,,D7700_2-en.pdf,6,Highest energy efficiency thanks to low Sp and low-energy solutions,ok,"general data for PSL, PSV and EDL",claim
+hawe-edl,HAWE Hydraulik,EDL,valves,typical_applications,loading cranes,,D7700_2-en.pdf,6,Loading cranes,ok,"general data for PSL, PSV and EDL",feature
+hawe-edl,HAWE Hydraulik,EDL,valves,typical_applications,lifting platforms,,D7700_2-en.pdf,6,Lifting platforms,ok,"general data for PSL, PSV and EDL",feature
+hawe-edl,HAWE Hydraulik,EDL,valves,typical_applications,municipal trucks,,D7700_2-en.pdf,6,Municipal trucks,ok,"general data for PSL, PSV and EDL",feature
+hawe-edl,HAWE Hydraulik,EDL,valves,typical_applications,construction machines,,D7700_2-en.pdf,6,Construction machines,ok,"general data for PSL, PSV and EDL",feature
+hawe-edl,HAWE Hydraulik,EDL,valves,typical_applications,drilling equipment,,D7700_2-en.pdf,6,Drilling equipment,ok,"general data for PSL, PSV and EDL",feature
+hawe-edl,HAWE Hydraulik,EDL,valves,typical_applications,machines for forestry and agricultural purposes,,D7700_2-en.pdf,6,Machines for forestry and agricultural purposes,ok,"general data for PSL, PSV and EDL",feature
+hawe-edl,HAWE Hydraulik,EDL,valves,consumer_ports,"DA: spool block without threads, combined with an ancillary block or intermediate plate",,D7700_2-en.pdf,54,DA Spool block without integrated threads for combining with a Ancillary block,ok,,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,pressure_compensator,standard 2-way controller,,D7700_2-en.pdf,54,2 Standard 2-way controller,ok,,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,compensator_spring_pressure,6,bar,D7700_2-en.pdf,54,2 Standard version (approx. 6 bar spring),ok,approx.; standard spring 2,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,compensator_spring_pressure,13,bar,D7700_2-en.pdf,54,7 Heavy-duty version (approx. 13 bar spring),ok,"approx.; heavy-duty spring 7, only with PSV connection block",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,spool_types,"L, F, H standard spool with low return pressure; J with constant return pressure approx. 20 bar",,D7700_2-en.pdf,55,"L, F, H Standard spool valve with low return pressure L F H",ok,,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,max_flow_j_spool,25,l/min,D7700_2-en.pdf,55,Max. ow rate: 25 l/min,ok,spool J,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,spool_flow_options,"3, 6, 10, 16, 25, 40",,D7700_2-en.pdf,55,2 3 6 10 16 25 40,ok,"Q nominal in l/min per port, controller spring 2, max. spool actuation",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,spool_flow_options,"4, 7, 12, 19, 29, 48",,D7700_2-en.pdf,55,7 4 7 12 19 29 48,ok,"Q nominal in l/min per port, controller spring 7, max. spool actuation",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,max_flow_port_ab,40,l/min,D7700_2-en.pdf,55,2 3 6 10 16 25 40,ok,"Q nominal, controller spring 2 (standard), max. spool actuation, actuation E",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,max_flow_port_ab,48,l/min,D7700_2-en.pdf,55,7 4 7 12 19 29 48,ok,"Q nominal, controller spring 7 (heavy-duty, PSV only), max. spool actuation, actuation E",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,max_reflux_flow,80,l/min,D7700_2-en.pdf,55,The maximum reux ow rate must not exceed 80 l/min.,ok,,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,asymmetric_flow,"A and B flow selectable separately, e.g. 40/25",,D7700_2-en.pdf,55,"The ow rates for the consumer ports A and B can be selected in accordance with the table, e.g. 40/25",ok,,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,stroke_limitation,option,,D7700_2-en.pdf,55,"In addition, there is the option of stroke limitation.",ok,,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,ls_pressure_limitation,option C: one shared setting for A and B,,D7700_2-en.pdf,56,LS pressure limitation for A and B-side with a single shared pressure setting for both,ok,,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,ls_pressure_limitation_range,50 to 320,bar,D7700_2-en.pdf,56,(adjustment range: 50 to 320 bar),ok,"LS pressure limitation C, shared for A and B",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,external_ls_port,"X: port for an external pilot valve, G 1/8 (ISO 228-1)",,D7700_2-en.pdf,57,X Port for an external pilot valve,ok,,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,port_size_x,G 1/8,,D7700_2-en.pdf,57,G 1/8 (ISO 228-1),ok,LS port X for external limitation,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,ls_orifice,0.6,mm,D7700_2-en.pdf,57,Standard version with # 0.6 mm orice,ok,standard LS orifice,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,shuttle_valve_options,standard; W3 without ball (last section with E 0 end plate),,D7700_2-en.pdf,57,W3 Special version without ball,ok,,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,actuation_options,"electrical: A and B side with stroke limitation (E) or emergency override (EI); A-only or B-only versions (AEI, BEI, AEEI, BEEI)",,D7700_2-en.pdf,58,E Electrical actuation,ok,,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,manual_override,"emergency override with actuation EI, AEI, BEI, AEEI, BEEI",,D7700_2-en.pdf,58,■ with emergency override,ok,,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,supply_voltage,12,V,D7700_2-en.pdf,84,AMP 12 AMP Junior Timer 12 V DC IP 65,ok,DC; EDL solenoid,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,supply_voltage,24,V,D7700_2-en.pdf,84,DT 24 24 V DC,ok,DC; EDL solenoid,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,connector_options,"EN 175 301-803 A, AMP Junior Timer, Deutsch DT 04-2P",,D7700_2-en.pdf,84,DT 12 Deutsch (DT 04-2P) 12 V DC IP 69 K,ok,EDL solenoid versions,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,protection_class,IP 65,,D7700_2-en.pdf,84,G 12 EN 175 301-803 A 12 V DC IP 65,ok,EN 175 301-803 A connector,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,protection_class,IP 65,,D7700_2-en.pdf,84,AMP 12 AMP Junior Timer 12 V DC IP 65,ok,AMP Junior Timer connector,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,protection_class,IP 69 K,,D7700_2-en.pdf,84,DT 12 Deutsch (DT 04-2P) 12 V DC IP 69 K,ok,Deutsch DT 04-2P connector,feature
+hawe-edl,HAWE Hydraulik,EDL,valves,max_work_sections,14,,D7700_2-en.pdf,86,Design Manifold with up to 14 valve sections,ok,"valve sections per manifold; general data for PSL, PSV and EDL",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,material,"steel, nitrocarburised surfaces, hardened and ground inner parts",,D7700_2-en.pdf,86,"Material Steel; Nitrocarburised surfaces (anti-corrosion), Hardened and ground functional inner parts",ok,"general data for PSL, PSV and EDL",feature
+hawe-edl,HAWE Hydraulik,EDL,valves,installation_position,as desired,,D7700_2-en.pdf,86,Installation position As desired,ok,"general data for PSL, PSV and EDL",feature
+hawe-edl,HAWE Hydraulik,EDL,valves,mounting_thread,M8,,D7700_2-en.pdf,86,Attachment Mounting thread M8,ok,"general data for PSL, PSV and EDL",feature
+hawe-edl,HAWE Hydraulik,EDL,valves,hydraulic_fluid,"DIN 51524 parts 1 to 3, ISO VG 10 to 68; HEPG and HEES up to approx. 70 °C",,D7700_2-en.pdf,86,"Hydraulic uid Hydraulic uid, according to DIN 51524 Parts 1 to 3; ISO VG 10 to 68",ok,"general data for PSL, PSV and EDL",feature
+hawe-edl,HAWE Hydraulik,EDL,valves,oil_viscosity_range,4 - 1500,mm2/s,D7700_2-en.pdf,86,Viscosity range: 4 - 1500 mm2/s,ok,"general data for PSL, PSV and EDL",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,oil_viscosity_operating_range,10 - 500,mm2/s,D7700_2-en.pdf,86,Optimal operating range: approx. 10 - 500 mm2/s,ok,"approx.; optimal; general data for PSL, PSV and EDL",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,oil_cleanliness_iso4406,20/17/14,,D7700_2-en.pdf,86,"Cleanliness level ISO 4406
+20/17/14",ok,"general data for PSL, PSV and EDL",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,ambient_temperature,-40 to 80,°C,D7700_2-en.pdf,86,Environment: approx. -40 to +80 °C,ok,"approx.; general data for PSL, PSV and EDL",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,oil_temperature_range,-25 to 80,°C,D7700_2-en.pdf,86,hydraulic uid: -25 to +80 °C,ok,"general data for PSL, PSV and EDL",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,start_temperature_min,-40,°C,D7700_2-en.pdf,86,Start temperature: down to -40 °C is permissible,ok,"steady-state at least 20 K higher; general data for PSL, PSV and EDL",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,max_operating_pressure_valve_section,320,bar,D7700_2-en.pdf,87,"pmax = 320 bar; ports P, A, B, LS, M, Y",ok,"p max, EDL valve section, ports P, A, B, LS, M, Y",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,max_pressure_port_t,50,bar,D7700_2-en.pdf,87,Return connection R(R1) Ò 50 bar,ok,"at most; return connection R (R1), EDL",spec
+hawe-edl,HAWE Hydraulik,EDL,valves,weight_work_section,2.5,kg,D7700_2-en.pdf,87,"DA... E, EI = 2.5 kg",ok,"EDL section DA with actuation E, EI (without ancillary block)",dimension
+hawe-edl,HAWE Hydraulik,EDL,valves,weight_work_section,1.9,kg,D7700_2-en.pdf,87,"DA... AE, AEI, BE, BEI = 1.9 kg",ok,"EDL section DA with one-sided actuation AE, AEI, BE, BEI (without ancillary block)",dimension
+hawe-edl,HAWE Hydraulik,EDL,valves,coil_resistance_edl_standard_solenoid_actuation_e_ei,5.5,Ω,D7700_2-en.pdf,98,Coil resistance R20 5.5 Ω 22 Ω,ok,12 V DC; R20,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,coil_resistance_edl_standard_solenoid_actuation_e_ei,22,Ω,D7700_2-en.pdf,98,Coil resistance R20 5.5 Ω 22 Ω,ok,24 V DC; R20,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,current_cold_edl_standard_solenoid_actuation_e_ei,2.18,A,D7700_2-en.pdf,98,"Current, cold I20 2.18 A 1.10 A",ok,12 V DC,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,current_cold_edl_standard_solenoid_actuation_e_ei,1.10,A,D7700_2-en.pdf,98,"Current, cold I20 2.18 A 1.10 A",ok,24 V DC,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,limit_current_edl_standard_solenoid_actuation_e_ei,1.56,A,D7700_2-en.pdf,98,Limit current IG (Ilim) 1.56 A 0.78 A,ok,12 V DC,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,limit_current_edl_standard_solenoid_actuation_e_ei,0.78,A,D7700_2-en.pdf,98,Limit current IG (Ilim) 1.56 A 0.78 A,ok,24 V DC,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,power_cold_edl_standard_solenoid_actuation_e_ei,26,W,D7700_2-en.pdf,98,"Power, cold P20 = UN x I20 26 W 26 W",ok,12 V and 24 V DC,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,limit_power_edl_standard_solenoid_actuation_e_ei,19,W,D7700_2-en.pdf,98,Limit power PG = UN x IG 19 W 19 W,ok,12 V and 24 V DC,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,duty_cycle_edl_standard_solenoid_actuation_e_ei,S1,,D7700_2-en.pdf,98,(reference temperature S1 S1,ok,"relative duty cycle, reference temperature 50 °C",feature
+hawe-edl,HAWE Hydraulik,EDL,valves,dither_frequency_edl_standard_solenoid_actuation_e_ei,40 to 70,Hz,D7700_2-en.pdf,98,Required dither frequency 40 ... 70 Hz (recommended value: 55 Hz),ok,required; recommended 55 Hz,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,dither_amplitude_edl_standard_solenoid_actuation_e_ei,20 to 50,%,D7700_2-en.pdf,98,20% Ò A D Ò 50%,ok,,spec
+hawe-edl,HAWE Hydraulik,EDL,valves,protection_class,IP 69K,,D7700_2-en.pdf,99,IP 69K (IEC 60529),ok,"Deutsch DT 12 / DT 24, with properly assembled male connector",feature
