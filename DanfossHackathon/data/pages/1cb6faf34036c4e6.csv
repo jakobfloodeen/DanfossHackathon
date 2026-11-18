@@ -1,0 +1,199 @@
+source_file,page,text
+AI555477735052en-000101.pdf,1,"Data Sheet
+CVG8 Compact Valve Group
+General description CVG8 is an electrical direct actuated hydraulic, load-sensing proportional valve, designed especially for a
+more competitive solution for a small flow (<40 lpm) application.
+The CVG8 valve design includes a modular concept that enables machine designers to specify a valve
+solution across multiple production lines as a result in optimized and custom valve solutions across multiple
+applications.
+Features of CVG8 - Load-independent flow control
+- Oil flow to an individual function is independent of the load pressure of this function.
+- Oil flow to one function is independent of the load pressure of other functions.
+- Good regulation characteristics
+- Energy-saving
+- Up to 8 basic modules per valve
+- Low weight
+- Compact design and installation
+- Manual override option
+CVG8 Modules CVP8, Pump side modules
+- Built-in pressure relief valve
+- Pressure gauge connection
+- Versions:
+• Close center version for system with variable displacement pump, with PVPX
+• Close center version for system with variable displacement pump, without PVPX
+• Open center version for system with fixed displacement pump, with PVPX
+• Open center version for system with fixed displacement pump, without PVPX
+CVB8 , Bas ic m o dules
+- Solenoid actuation
+- Different interchangeable spool variants
+- Interface plate to PVG32
+- Integrated pressure compensator in P channel
+- Depending on requirements the basic model can be supplied with:
+• Shock/suction valves for A and B ports.
+• Ls pressure limiting valves individually adjustable for ports A and B.
+Actuation modules
+- 12V Deutsch, prop. / On-off
+- 24V Deutsch, prop. / On-off
+© Danfoss | November 2024 AI555477735052en-000101 1"
+AI555477735052en-000101.pdf,2,"Data Sheet
+CVG8 Compact Valve Group
+Technical Data
+The characteristics in this datasheet are typical measured valves. During measuring a mineral based hydraulic oil with a viscosity of 22
+± 2 cSt at approx. 50oC.
+Hydraulic
+Port P/A/B(continuous) 350 bar [5076 psi]
+Max. pressure Port P/A/B(intermittent) 400 bar [5800 psi]
+Port T 100 bar [1450 psi]
+Max. rated flow Port P 60 l/min [15.8 gal]
+Max. rated flow Port A / B 40 l/min [10.6 gal]
+Spool travel Proportional range ±2.2 mm [±0.1 in]
+Dead band Standard ±0.6 mm [±0.03 in]
+Max. internal leakage at A/B to T without shock valve 45 cm3/min [2.7 in3/min]
+100 bar [1450 psi] A/B to T with shock valve 50 cm3/min [3 in3/min]
+Maximum 90oC [194°F]
+Oil temperature (Inlet)
+Minimum -20oC [-4°F]
+Recommend Ambient Temperature -20 to 50oC [-4°F to 122°F]
+Filtration Max. contamination (ISO 4406) 20/18/10 20/18/10
+Operating Range 12 - 75 mm2/s [65 - 347 SUS]
+Oil Viscosity Minimum 4 mm2/s [39 SUS]
+Maximum 460 mm2/s [2128 SUS]
+Electrical (Proportional)
+Voltage Type PWM 140 Hz (optional 80 Hz)
+Voltage Tolerance -10% +10% Rated Voltage
+→
+Insulation Class H
+Connector Type Deu (IPX67)
+Coil Wire Temperature- Max (Recommended) 150oC
+Anbiemt Temperature -20oC ~ 90oC
+Rated Voltage 12 V 24 V
+The Maximum Current Allowable for The Operating Current 1.76 A 900 mA
+Current Control Range at rated voltage (20oC) 850 mA ~ 1600 mA 425 mA ~ 800 mA
+Coil Resistance (20oC) 3.7 Ω 14.2 Ω
+Electrical (On/Off)
+Rated voltage 12 V 24 V
+Voltage Tolerance -10% +10% Rated Voltage
+→
+Insulation class H
+Connector type Deu (IPX67)
+Coil Wire Temperature- Max (Recommended) 150oC
+Anbiemt Temperature -20oC ~ 90oC
+Coil Resistance (20oC) 7.2 Ω 28.8 Ω
+2 | © Danfoss | November 2024 AI555477735052en-000101"
+AI555477735052en-000101.pdf,3,"Data Sheet
+CVG8 Compact Valve Group
+fi
+CVG8 Structure & Schematic Con guration
+10 9 7 5 6
+11
+8
+1 2 3
+1 2 3 4 5 6
+11
+10
+7
+9
+8
+1. CVP8 Open Center, Intet Module 7. Ls Relief Valve (Optional)
+2. CVB8, Basic Module 8. PVPX-Electrical LS Unloading Valve (Optional)
+3. CVBS8, Main Spool 9. Relief Valve with filter
+4. Actuator, PWM Signal, Proportional Control 10. CVM-K
+5. PVLP-Shock and Suction Valve (Optional) 11. CVM-Z
+6. CVS, End plate
+© Danfoss | November 2024 AI555477735052en-000101 3"
+AI555477735052en-000101.pdf,4,"Data Sheet
+CVG8 Compact Valve Group
+CVG Components List
+Name Part No Description
+11329735 CVP8-OC
+CVP, 11329718 CVP8-OC-PVPX
+Inlet Module 11329736 CVP8-CC
+11329730 CVP8-CC-PVPX
+11329756 CVB8
+CVB, 11329745 CVB8 w. LS A/B
+Basic Module 11329746 CVB8 w. PVLP
+11329755 CVB8 w. LS A/B + PVLP
+11340937 Proportional-12VDC-DT
+11340938 Proportional-24VDC-DT
+CVE, ACTUATOR
+11341395 On/Off-12VDC-DT
+11341396 On/Off-24VDC-DT
+11329690 CVM8-Z, handle type
+CVM
+11335546 CVM8-K, Knob type
+CVMD 11268696 Cover, when no actuator needed
+Interface plate 11329741 For PVB32 and CVB
+11329747 CVS8
+CVS, End Plate 11312463  CVS8 with Lx
+11329740 CVS8 for assembly with PVG32
+11329772 CVBS8-Spool-O4/FC4/FC4/O4-N
+11329766 CVBS8-Spool-C4/FC4/FC4/C4-N
+11329771 CVBS8-Spool-O8/FC8/FC8/O8-N
+11329765 CVBS8-Spool-C8/FC8/FC8/C8-N
+11329770 CVBS8-Spool-O12/FC12/FC12/O12-N
+11329764 CVBS8-Spool-C12/FC12/FC12/C12-N
+CVBS,
+11329769 CVBS8-Spool-O16/FC16/FC16/O16-N
+Spool
+11329763 CVBS8-Spool-C16/FC16/FC16/C16-N
+11329768 CVBS8-Spool-O25/FC25/FC25/O25-N
+11329762 CVBS8-Spool-C25/FC25/FC25/C25-N
+11329767 CVBS8-Spool-O40/FC40/FC40/O40-N
+11329720 CVBS8-Spool-C40/FC40/FC40/C40-N
+11337783 CVBS8-SPOOL-O6/FC6/FC4/O4-STD
+11329778 CVBS8-Spool-O4/FC4/FC4/O4-CVM
+11329760 CVBS8-Spool-C4/FC4/FC4/C4- CVM
+11329777 CVBS8-Spool-O8/FC8/FC8/O8- CVM
+11329759 CVBS8-Spool-C8/FC8/FC8/C8- CVM
+11329751 CVBS8-Spool-O12/FC12/FC12/O12- CVM
+11329758 CVBS8-Spool-C12/FC12/FC12/C12- CVM
+CVBS,
+11329750 CVBS8-Spool-O16/FC16/FC16/O16- CVM
+CVM Spool
+11329776 CVBS8-Spool-C16/FC16/FC16/C16- CVM
+11329749 CVBS8-Spool-O25/FC25/FC25/O25- CVM
+11329775 CVBS8-Spool-C25/FC25/FC25/C25- CVM
+11329748 CVBS8-Spool-O40/FC40/FC40/O40- CVM
+11329774 CVBS8-Spool-C40/FC40/FC40/C40- CVM
+11332132 CVBS8-SPOOL-O8/FC8/FC16/O8-CVM
+4 | © Danfoss | November 2024 AI555477735052en-000101"
+AI555477735052en-000101.pdf,5,"Data Sheet
+CVG8 Compact Valve Group
+11180767 PVPX-Assembly-NO-1x2 DEUTSCH -24V
+11180769 PVPX-Assembly-NC-1x2 DEUTSCH -24V
+PVPX*
+11180766 PVPX-Assembly-NO-1x2 DEUTSCH -12V
+11180768 PVPX-Assembly-NC-1x2 DEUTSCH -12V
+11300298 1 CVB
+11300279 2 CVB
+11300280 3 CVB
+CVAS, 11300271 4 CVB
+Assembly Kit 11300302 5 CVB
+11300303 6 CVB
+11300304 7 CVB
+11300305 8 CVB
+11329782 CVG SHOCK VALVE 80BAR
+11329761 CVG SHOCK VALVE100BAR
+11329792 CVG SHOCK VALVE150BAR
+11329793 CVG SHOCK VALVE210BAR
+PVLP/A
+11329794 CVG SHOCK VALVE250BAR
+Shock/Suction valve
+11329795 CVG SHOCK VALVE300BAR
+11329796 CVG SHOCK VALVE320BAR
+11329783 CVG SHOCK VALVE350BAR
+11329784 CVG PLVA ANTI CAVITATION VALVE
+*Same PVPX with PVG32.
+Flowrate – Current curve diagram
+© Danfoss | November 2024 AI555477735052en-000101 5"
+AI555477735052en-000101.pdf,6,"CVG8 Valve Assembly Dimension
+1 CVB 2 CVB 3 CVB 4 CVB 5 CVB 6 CVB 7 CVB 8 CVB
+L1 mm 134 158 206 255 279 328 376 400
+[in] [5.3] [6.2] [8.1] [10.0] [11.0] [12.9] [14.8] [15.7]
+L2 mm 93.5 133.5 173.5 213.5 253.5 293.5 333.5 373.5
+[in] [3.7] [5.3] [6.8] [8.4] [10] [11.6] [13.1] [14.7]
+Danfoss can accept no responsibility for possible errors in catalogues, brochures and other printed material. Danfoss reserves the right to alter its products without notice. This also applies to products
+agreed.
+All trademarks in this material are property of the respective companies. Danfoss and the Danfoss logotype are trademarks of Danfoss A/S. All rights reserved.
+AI555477735052en-000101
+6 | © Danfoss | November 2024"

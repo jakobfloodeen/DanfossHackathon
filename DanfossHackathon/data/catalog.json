@@ -17,6 +17,31 @@
           "prompt": "Which Danfoss valve is the starting point?",
           "children": [
             {
+              "id": "cvg-8",
+              "label": "CVG 8",
+              "desc": "1 dataset(s) loaded",
+              "status": "active",
+              "datasets": [
+                {
+                  "name": "AI555477735052en-000101.pdf",
+                  "fileId": "1cb6faf34036c4e6",
+                  "source": "danfoss",
+                  "competitorId": null,
+                  "pages": 6,
+                  "uploadedAt": "2026-11-18T14:54:33+00:00",
+                  "facts": {
+                    "status": "done",
+                    "csv": "cvg-8__1cb6faf34036c4e6.csv",
+                    "facts": 87,
+                    "ok": 71,
+                    "unverified": 16,
+                    "at": "2026-11-18T14:54:34+00:00"
+                  }
+                }
+              ],
+              "type": "product"
+            },
+            {
               "id": "pvg16",
               "type": "product",
               "label": "PVG 16",
@@ -78,14 +103,6 @@
               "label": "PVG 256",
               "desc": "No datasheet uploaded yet",
               "status": "data-pending"
-            },
-            {
-              "id": "cvg-8",
-              "label": "CVG 8",
-              "desc": "No datasheet uploaded yet",
-              "status": "data-pending",
-              "datasets": [],
-              "type": "product"
             }
           ]
         },

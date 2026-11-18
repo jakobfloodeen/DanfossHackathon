@@ -1,0 +1,88 @@
+product_id,brand,product_name,family,attribute,value,unit,source_file,page,quote,status,condition,fact_type
+cvg-8,Danfoss,CVG 8,valves,valve_type,"electrical direct actuated, load-sensing proportional valve",,AI555477735052en-000101.pdf,1,"CVG8 is an electrical direct actuated hydraulic, load-sensing proportional valve",ok,,feature
+cvg-8,Danfoss,CVG 8,valves,target_application,small flow (<40 lpm) applications,,AI555477735052en-000101.pdf,1,more competitive solution for a small flow (<40 lpm) application,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,modular_concept,modular concept for custom valve solutions across production lines,,AI555477735052en-000101.pdf,1,The CVG8 valve design includes a modular concept,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,load_independent_flow_control,yes,,AI555477735052en-000101.pdf,1,Load-independent flow control,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,benefit,good regulation characteristics,,AI555477735052en-000101.pdf,1,Good regulation characteristics,ok,,claim
+cvg-8,Danfoss,CVG 8,valves,benefit,energy-saving,,AI555477735052en-000101.pdf,1,- Energy-saving,ok,,claim
+cvg-8,Danfoss,CVG 8,valves,max_work_sections,8,,AI555477735052en-000101.pdf,1,Up to 8 basic modules per valve,ok,basic modules per valve,spec
+cvg-8,Danfoss,CVG 8,valves,benefit,low weight,,AI555477735052en-000101.pdf,1,- Low weight,ok,,claim
+cvg-8,Danfoss,CVG 8,valves,benefit,compact design and installation,,AI555477735052en-000101.pdf,1,Compact design and installation,ok,,claim
+cvg-8,Danfoss,CVG 8,valves,manual_override,option,,AI555477735052en-000101.pdf,1,Manual override option,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,pressure_relief_cvp8_pump_side_module,built-in pressure relief valve,,AI555477735052en-000101.pdf,1,Built-in pressure relief valve,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,pressure_gauge_connection_cvp8_pump_side_module,yes,,AI555477735052en-000101.pdf,1,Pressure gauge connection,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,circuit_type,closed center,,AI555477735052en-000101.pdf,1,"Close center version for system with variable displacement pump, with PVPX",ok,"for system with variable displacement pump, with or without PVPX",feature
+cvg-8,Danfoss,CVG 8,valves,circuit_type,open center,,AI555477735052en-000101.pdf,1,"Open center version for system with fixed displacement pump, with PVPX",ok,"for system with fixed displacement pump, with or without PVPX",feature
+cvg-8,Danfoss,CVG 8,valves,actuation_cvb8_basic_module,solenoid,,AI555477735052en-000101.pdf,1,- Solenoid actuation,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,spool_options_cvb8_basic_module,different interchangeable spool variants,,AI555477735052en-000101.pdf,1,Different interchangeable spool variants,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,platform_compatibility,interface plate to PVG32,,AI555477735052en-000101.pdf,1,Interface plate to PVG32,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,pressure_compensator_cvb8_basic_module,integrated pressure compensator in P channel,,AI555477735052en-000101.pdf,1,Integrated pressure compensator in P channel,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,shock_suction_valves_ports_ab_cvb8_basic_module,option,,AI555477735052en-000101.pdf,1,Shock/suction valves for A and B ports.,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,ls_relief_valves_ports_ab_cvb8_basic_module,"option, individually adjustable for ports A and B",,AI555477735052en-000101.pdf,1,Ls pressure limiting valves individually adjustable for ports A and B.,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,actuation_options,"electrical proportional, electrical on/off",,AI555477735052en-000101.pdf,1,"12V Deutsch, prop. / On-off",ok,,feature
+cvg-8,Danfoss,CVG 8,valves,supply_voltage,12,V,AI555477735052en-000101.pdf,1,"12V Deutsch, prop. / On-off",ok,"Deutsch connector, prop. or on/off",spec
+cvg-8,Danfoss,CVG 8,valves,supply_voltage,24,V,AI555477735052en-000101.pdf,1,"24V Deutsch, prop. / On-off",ok,"Deutsch connector, prop. or on/off",spec
+cvg-8,Danfoss,CVG 8,valves,max_pressure_continuous_ab,350,bar,AI555477735052en-000101.pdf,2,Port P/A/B(continuous) 350 bar [5076 psi],ok,port P/A/B,spec
+cvg-8,Danfoss,CVG 8,valves,max_pressure_intermittent_ab,400,bar,AI555477735052en-000101.pdf,2,Port P/A/B(intermittent) 400 bar [5800 psi],ok,port P/A/B,spec
+cvg-8,Danfoss,CVG 8,valves,max_pressure_port_t,100,bar,AI555477735052en-000101.pdf,2,Port T 100 bar [1450 psi],ok,,spec
+cvg-8,Danfoss,CVG 8,valves,max_flow_port_p,60,l/min,AI555477735052en-000101.pdf,2,Max. rated flow Port P 60 l/min [15.8 gal],ok,,spec
+cvg-8,Danfoss,CVG 8,valves,max_flow_port_ab,40,l/min,AI555477735052en-000101.pdf,2,Max. rated flow Port A / B 40 l/min [10.6 gal],ok,,spec
+cvg-8,Danfoss,CVG 8,valves,spool_proportional_range,2.2,mm,AI555477735052en-000101.pdf,2,Spool travel Proportional range ±2.2 mm,ok,plus/minus,spec
+cvg-8,Danfoss,CVG 8,valves,spool_deadband,0.6,mm,AI555477735052en-000101.pdf,2,Dead band Standard ±0.6 mm,ok,plus/minus; standard,spec
+cvg-8,Danfoss,CVG 8,valves,max_internal_leakage_ab_t,45,cm3/min,AI555477735052en-000101.pdf,2,A/B to T without shock valve 45 cm3/min,ok,"A/B to T without shock valve, at 100 bar",spec
+cvg-8,Danfoss,CVG 8,valves,max_internal_leakage_ab_t,50,cm3/min,AI555477735052en-000101.pdf,2,A/B to T with shock valve 50 cm3/min,ok,"A/B to T with shock valve, at 100 bar",spec
+cvg-8,Danfoss,CVG 8,valves,oil_temperature_max,90,°C,AI555477735052en-000101.pdf,2,Maximum 90oC [194°F],ok,oil temperature at inlet,spec
+cvg-8,Danfoss,CVG 8,valves,oil_temperature_min,-20,°C,AI555477735052en-000101.pdf,2,Minimum -20oC [-4°F],ok,oil temperature at inlet,spec
+cvg-8,Danfoss,CVG 8,valves,ambient_temperature,-20 to 50,°C,AI555477735052en-000101.pdf,2,Recommend Ambient Temperature -20 to 50oC,ok,recommended,spec
+cvg-8,Danfoss,CVG 8,valves,oil_cleanliness_iso4406,20/18/10,,AI555477735052en-000101.pdf,2,Filtration Max. contamination (ISO 4406) 20/18/10,ok,maximum contamination,spec
+cvg-8,Danfoss,CVG 8,valves,oil_viscosity_operating_range,12 - 75,mm2/s,AI555477735052en-000101.pdf,2,Operating Range 12 - 75 mm2/s,ok,,spec
+cvg-8,Danfoss,CVG 8,valves,oil_viscosity_min,4,mm2/s,AI555477735052en-000101.pdf,2,Minimum 4 mm2/s [39 SUS],ok,,spec
+cvg-8,Danfoss,CVG 8,valves,oil_viscosity_max,460,mm2/s,AI555477735052en-000101.pdf,2,Maximum 460 mm2/s [2128 SUS],ok,,spec
+cvg-8,Danfoss,CVG 8,valves,pwm_frequency_electrical_proportional_actuator,140,Hz,AI555477735052en-000101.pdf,2,Voltage Type PWM 140 Hz (optional 80 Hz),ok,standard,spec
+cvg-8,Danfoss,CVG 8,valves,pwm_frequency_electrical_proportional_actuator,80,Hz,AI555477735052en-000101.pdf,2,Voltage Type PWM 140 Hz (optional 80 Hz),ok,optional,spec
+cvg-8,Danfoss,CVG 8,valves,voltage_tolerance_electrical_proportional_actuator,10,%,AI555477735052en-000101.pdf,2,Voltage Tolerance -10% +10% Rated Voltage,ok,plus/minus; of rated voltage,spec
+cvg-8,Danfoss,CVG 8,valves,insulation_class_electrical_proportional_actuator,H,,AI555477735052en-000101.pdf,2,Insulation Class H,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,connector_type_electrical_proportional_actuator,Deutsch,,AI555477735052en-000101.pdf,2,Connector Type Deu (IPX67),ok,,feature
+cvg-8,Danfoss,CVG 8,valves,protection_class_electrical_proportional_actuator,IPX67,,AI555477735052en-000101.pdf,2,Connector Type Deu (IPX67),ok,connector,feature
+cvg-8,Danfoss,CVG 8,valves,coil_wire_temperature_max_electrical_proportional_actuator,150,°C,AI555477735052en-000101.pdf,2,Coil Wire Temperature- Max (Recommended) 150oC,ok,recommended,spec
+cvg-8,Danfoss,CVG 8,valves,coil_ambient_temperature_electrical_proportional_actuator,-20 to 90,°C,AI555477735052en-000101.pdf,2,Anbiemt Temperature -20oC ~ 90oC,ok,,spec
+cvg-8,Danfoss,CVG 8,valves,max_current_electrical_proportional_actuator,1.76,A,AI555477735052en-000101.pdf,2,The Maximum Current Allowable for The Operating Current 1.76 A 900 mA,ok,12 V,spec
+cvg-8,Danfoss,CVG 8,valves,max_current_electrical_proportional_actuator,900,mA,AI555477735052en-000101.pdf,2,The Maximum Current Allowable for The Operating Current 1.76 A 900 mA,ok,24 V,spec
+cvg-8,Danfoss,CVG 8,valves,control_current_electrical_proportional_actuator,850 to 1600,mA,AI555477735052en-000101.pdf,2,Current Control Range at rated voltage (20oC) 850 mA ~ 1600 mA,ok,"12 V; at rated voltage, 20 °C",spec
+cvg-8,Danfoss,CVG 8,valves,control_current_electrical_proportional_actuator,425 to 800,mA,AI555477735052en-000101.pdf,2,425 mA ~ 800 mA,ok,"24 V; at rated voltage, 20 °C",spec
+cvg-8,Danfoss,CVG 8,valves,coil_resistance_electrical_proportional_actuator,3.7,Ω,AI555477735052en-000101.pdf,2,Coil Resistance (20oC) 3.7 Ω 14.2 Ω,ok,12 V; 20 °C,spec
+cvg-8,Danfoss,CVG 8,valves,coil_resistance_electrical_proportional_actuator,14.2,Ω,AI555477735052en-000101.pdf,2,Coil Resistance (20oC) 3.7 Ω 14.2 Ω,ok,24 V; 20 °C,spec
+cvg-8,Danfoss,CVG 8,valves,supply_voltage_electrical_on_off_actuator,12,V,AI555477735052en-000101.pdf,2,Rated voltage 12 V 24 V,ok,rated voltage,spec
+cvg-8,Danfoss,CVG 8,valves,supply_voltage_electrical_on_off_actuator,24,V,AI555477735052en-000101.pdf,2,Rated voltage 12 V 24 V,ok,rated voltage,spec
+cvg-8,Danfoss,CVG 8,valves,voltage_tolerance_electrical_on_off_actuator,10,%,AI555477735052en-000101.pdf,2,Voltage Tolerance -10% +10% Rated Voltage,ok,plus/minus; of rated voltage,spec
+cvg-8,Danfoss,CVG 8,valves,insulation_class_electrical_on_off_actuator,H,,AI555477735052en-000101.pdf,2,Insulation class H,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,protection_class_electrical_on_off_actuator,IPX67,,AI555477735052en-000101.pdf,2,Connector type Deu (IPX67),ok,connector,feature
+cvg-8,Danfoss,CVG 8,valves,coil_resistance_electrical_on_off_actuator,7.2,Ω,AI555477735052en-000101.pdf,2,Coil Resistance (20oC) 7.2 Ω 28.8 Ω,ok,12 V; 20 °C,spec
+cvg-8,Danfoss,CVG 8,valves,coil_resistance_electrical_on_off_actuator,28.8,Ω,AI555477735052en-000101.pdf,2,Coil Resistance (20oC) 7.2 Ω 28.8 Ω,ok,24 V; 20 °C,spec
+cvg-8,Danfoss,CVG 8,valves,optional_module,LS relief valve,,AI555477735052en-000101.pdf,3,Ls Relief Valve (Optional),ok,,feature
+cvg-8,Danfoss,CVG 8,valves,optional_module,PVPX electrical LS unloading valve,,AI555477735052en-000101.pdf,3,PVPX-Electrical LS Unloading Valve (Optional),ok,,feature
+cvg-8,Danfoss,CVG 8,valves,optional_module,PVLP shock and suction valve,,AI555477735052en-000101.pdf,3,PVLP-Shock and Suction Valve (Optional),ok,,feature
+cvg-8,Danfoss,CVG 8,valves,pressure_relief,relief valve with filter,,AI555477735052en-000101.pdf,3,Relief Valve with filter,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,manual_operator_options,handle type (CVM8-Z),,AI555477735052en-000101.pdf,4,"CVM8-Z, handle type",ok,,feature
+cvg-8,Danfoss,CVG 8,valves,manual_operator_options,knob type (CVM8-K),,AI555477735052en-000101.pdf,4,"CVM8-K, Knob type",ok,,feature
+cvg-8,Danfoss,CVG 8,valves,platform_compatibility,end plate CVS8 for assembly with PVG32,,AI555477735052en-000101.pdf,4,CVS8 for assembly with PVG32,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,shock_valve_setting_min,80,bar,AI555477735052en-000101.pdf,5,11329782 CVG SHOCK VALVE 80BAR,ok,PVLP/A shock/suction valve options,spec
+cvg-8,Danfoss,CVG 8,valves,shock_valve_setting_max,350,bar,AI555477735052en-000101.pdf,5,11329783 CVG SHOCK VALVE350BAR,ok,PVLP/A shock/suction valve options,spec
+cvg-8,Danfoss,CVG 8,valves,anti_cavitation_valve,option,,AI555477735052en-000101.pdf,5,CVG PLVA ANTI CAVITATION VALVE,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,platform_compatibility,same PVPX as PVG32,,AI555477735052en-000101.pdf,5,*Same PVPX with PVG32.,ok,,feature
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l1,134,mm,AI555477735052en-000101.pdf,6,L1 mm 134 158 206 255 279 328 376 400,unverified,1 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l2,93.5,mm,AI555477735052en-000101.pdf,6,L2 mm 93.5 133.5 173.5 213.5 253.5 293.5 333.5 373.5,unverified,1 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l1,158,mm,AI555477735052en-000101.pdf,6,L1 mm 134 158 206 255 279 328 376 400,unverified,2 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l2,133.5,mm,AI555477735052en-000101.pdf,6,L2 mm 93.5 133.5 173.5 213.5 253.5 293.5 333.5 373.5,unverified,2 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l1,206,mm,AI555477735052en-000101.pdf,6,L1 mm 134 158 206 255 279 328 376 400,unverified,3 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l2,173.5,mm,AI555477735052en-000101.pdf,6,L2 mm 93.5 133.5 173.5 213.5 253.5 293.5 333.5 373.5,unverified,3 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l1,255,mm,AI555477735052en-000101.pdf,6,L1 mm 134 158 206 255 279 328 376 400,unverified,4 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l2,213.5,mm,AI555477735052en-000101.pdf,6,L2 mm 93.5 133.5 173.5 213.5 253.5 293.5 333.5 373.5,unverified,4 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l1,279,mm,AI555477735052en-000101.pdf,6,L1 mm 134 158 206 255 279 328 376 400,unverified,5 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l2,253.5,mm,AI555477735052en-000101.pdf,6,L2 mm 93.5 133.5 173.5 213.5 253.5 293.5 333.5 373.5,unverified,5 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l1,328,mm,AI555477735052en-000101.pdf,6,L1 mm 134 158 206 255 279 328 376 400,unverified,6 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l2,293.5,mm,AI555477735052en-000101.pdf,6,L2 mm 93.5 133.5 173.5 213.5 253.5 293.5 333.5 373.5,unverified,6 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l1,376,mm,AI555477735052en-000101.pdf,6,L1 mm 134 158 206 255 279 328 376 400,unverified,7 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l2,333.5,mm,AI555477735052en-000101.pdf,6,L2 mm 93.5 133.5 173.5 213.5 253.5 293.5 333.5 373.5,unverified,7 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l1,400,mm,AI555477735052en-000101.pdf,6,L1 mm 134 158 206 255 279 328 376 400,unverified,8 CVB,dimension
+cvg-8,Danfoss,CVG 8,valves,assembly_dimension_l2,373.5,mm,AI555477735052en-000101.pdf,6,L2 mm 93.5 133.5 173.5 213.5 253.5 293.5 333.5 373.5,unverified,8 CVB,dimension
