@@ -235,12 +235,52 @@ table.cmp { border-collapse: collapse; width: 100%; font-size: 14px; }
 }
 
 /* ---------- print (Print / save as PDF on results) ---------- */
+/* The printout is the compact .print-sheet (built in app.js), not the interactive result: one landscape page. */
+.print-sheet { display: none; }
+.print-sheet.is-measuring { display: block; position: absolute; left: -100000px; top: 0; }
+@page { size: A4 landscape; margin: 8mm; }
 @media print {
-  .topbar .stepper, .modes, .top-actions, .composer, .brief, .msg:not(:last-child), .done-row, .actions, .more-facts { display: none !important; }
-  .cmp td, .cmp th { padding-top: 4px; padding-bottom: 4px; }
-  body, .layout, .chat-scroll { display: block; overflow: visible; height: auto; background: #fff; }
-  .bubble { border: 0; padding: 0; }
+  .topbar, .composer, .brief { display: none !important; }
+  #chat > :not(:has(.result)) { display: none !important; }   /* only the result: no answered steps, no chat */
+  .result > *:not(.print-sheet) { display: none !important; }
+  body, .layout, .chat, .chat-scroll { display: block; overflow: visible; height: auto; background: #fff; padding: 0; margin: 0; }
+  .msg, .bubble, .result { border: 0; padding: 0; margin: 0; box-shadow: none; max-width: none; width: auto; background: #fff; }
+  .print-sheet { display: block; }
 }
+.print-sheet { font-size: 8.5pt; line-height: 1.25; color: #111; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.print-sheet h3 { margin: 0; font-size: 13pt; }
+.print-sheet h5 { margin: 0 0 2px; font-size: 8.5pt; text-transform: uppercase; letter-spacing: .03em; color: #b00; }
+.print-sheet ul { margin: 0; padding-left: 12px; list-style: disc outside; }
+.print-sheet .p-block { overflow: visible; min-width: 0; }
+.p-sources ul, .print-sheet li.p-more { list-style: none; }
+.print-sheet sup { font-size: 6pt; color: #666; margin-left: 1px; }
+.p-head { display: flex; justify-content: space-between; gap: 16px; border-bottom: 2px solid #e2000f; padding-bottom: 4px; margin-bottom: 5px; }
+.p-brand { font-size: 7.5pt; color: #e2000f; font-weight: 700; }
+.p-sub, .p-meta { font-size: 7.5pt; color: #444; }
+.p-meta { text-align: right; max-width: 45%; }
+.p-warn { margin: 0 0 4px; font-weight: 600; color: #8a5a00; }
+.p-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 6px; }
+.p-table th, .p-table td { border-bottom: 1px solid #ddd; padding: 1.5px 4px; text-align: left; vertical-align: top; font-weight: 400; }
+.p-table thead th { font-weight: 700; border-bottom: 1.5px solid #333; }
+.p-table thead th span, .p-table tbody th span { display: block; font-weight: 400; color: #666; font-size: 7pt; }
+.p-table tbody th span { display: inline; }
+.p-table tbody th { width: 21%; font-weight: 600; }
+.p-table tr.p-must th { border-left: 3px solid #e2000f; }
+.p-table tr.p-nice th { border-left: 3px solid #f0a0a0; }
+.p-cut { margin: -4px 0 4px; }
+.p-cut:empty { display: none; }
+.p-table tr[hidden] { display: none; }
+.p-missing { color: #8a5a00; font-style: italic; }
+.p-muted, .p-more { color: #888; }
+.p-more { font-size: 7pt; }
+.p-flag { font-size: 6.5pt; font-weight: 700; color: #8a5a00; text-transform: uppercase; }
+.p-cols { padding-left: 8px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 4px 14px; margin-bottom: 5px; }
+.p-block, .p-table tr { break-inside: avoid; }
+.p-sources { font-size: 6.5pt; color: #444; border-top: 1px solid #ccc; padding-top: 3px; }
+.p-sources ul { list-style: none; padding: 0; column-count: 2; column-gap: 16px; }
+.p-sources li { break-inside: avoid; }
+.p-doc { color: #111; overflow-wrap: anywhere; }
+.p-foot { margin-top: 4px; font-size: 6.5pt; color: #666; }
 
 /* ---------- data management: add cards, upload dialog ---------- */
 .option-add { border-style: dashed; background: transparent; }

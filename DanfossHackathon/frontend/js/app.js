@@ -875,6 +875,107 @@
       `<li>${esc(it.text)}${(it.sources || []).map(ref).join("")}${it.sample ? ' <span class="badge badge-muted">Sample</span>' : ""}</li>`).join("")}</ul></section>`;
   }
 
+  // ---------- one-page print summary ("Print / save as PDF") ----------
+  // The interactive result is too long to print (all value variants, every quote, every note).
+  // The printout is this separate, compact sheet built from the same data: one headline value per
+  // cell with its footnote numbers, capped lists, and a source key (document + page) instead of quotes.
+  // Nothing is recalculated or invented here - it only shortens what the result already shows.
+  const PRINT = { cellChars: 36, differences: 4, benefits: 3, tradeoffs: 3, openPoints: 4, commercial: 3, textChars: 140 };
+  const clip = (s, n) => (s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s);
+
+  function printCell(v) {
+    if (v && v.value == null && v.status === "pending") return '<td class="p-muted">Pending</td>';
+    if (v && v.status === "na") return '<td class="p-muted">–</td>';
+    if (!v || v.value == null) return '<td class="p-missing">Not stated</td>';
+    const variants = String(v.value).split(" · ");          // the engine joins several stated values with " · "
+    const more = variants.length > 1 ? ` <span class="p-more">+${variants.length - 1}</span>` : "";
+    const refs = (v.sources || []).length ? `<sup>${v.sources.slice(0, 3).join(",")}${v.sources.length > 3 ? ",…" : ""}</sup>` : "";
+    const links = (v.links || []).map((l) => `p.${esc(l.page)}`).join(" ");
+    const st = CELL_STATUS[v.status];
+    const tag = st && v.status !== "converted" ? ` <span class="p-flag">${esc(st[0])}</span>` : "";
+    return `<td>${esc(clip(variants[0], PRINT.cellChars))}${more}${refs}${links ? ` <span class="p-more">${links}</span>` : ""}${tag}</td>`;
+  }
+
+  function printList(title, items, max) {
+    if (!items || !items.length) return "";
+    const shown = items.slice(0, max);
+    return `<div class="p-block"><h5>${esc(title)}</h5><ul>${shown.map((it) =>
+      `<li>${esc(clip(it.text, PRINT.textChars))}${(it.sources || []).length ? `<sup>${it.sources.join(",")}</sup>` : ""}</li>`).join("")}
+      ${items.length > max ? `<li class="p-more">+${items.length - max} more in the app</li>` : ""}</ul></div>`;
+  }
+
+  /** Source key: one line per document with its footnote numbers and pages, e.g. "datasheet.pdf: 1 p.7 · 3 p.54". */
+  function printSources(sources) {
+    if (!sources || !sources.length) return "";
+    const byDoc = new Map();
+    sources.forEach((s) => {
+      const k = s.title || "Unknown source";
+      if (!byDoc.has(k)) byDoc.set(k, []);
+      byDoc.get(k).push(`<b>${esc(s.id)}</b>${s.page ? " p." + esc(s.page) : ""}`);
+    });
+    return `<div class="p-sources"><h5>Sources (footnote number → document, page)</h5><ul>${[...byDoc].map(([doc, refs]) =>
+      `<li><span class="p-doc">${esc(doc)}</span>: ${refs.join(" · ")}</li>`).join("")}</ul></div>`;
+  }
+
+  function printSheetHtml(r, cols, rows) {
+    const flagText = (f) => `<li><b>${esc(FLAG_LABEL[f.level] || "Check")}:</b> ${esc(clip(f.text, PRINT.textChars))}</li>`;
+    const flags = r.flags || [];
+    const com = r.commercial || [];
+    const issues = issueSummary(r).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    return `<div class="print-sheet" aria-hidden="true">
+      <header class="p-head">
+        <div><div class="p-brand">Danfoss · Competitor Intelligence</div><h3>${esc(r.title)}</h3>
+          <div class="p-sub">Prepared for ${esc(state.buyer.company || "—")}${state.buyer.application ? " · " + esc(state.buyer.application) : ""} · ${esc(new Date().toLocaleDateString())}</div></div>
+        <div class="p-meta"><b>Confidence: ${esc(r.confidence?.level || "n/a")}</b><br>${esc(issues)}
+          ${r.grounding?.statements ? `<br>${esc(r.grounding.statements)} AI statements · ${esc(r.grounding.citations)} citations · numbers checked by code` : ""}</div>
+      </header>
+      ${r.isSample ? '<p class="p-warn">Prototype: competitor values are sample data.</p>' : ""}
+      ${rows.length ? `<table class="p-table"><thead><tr><th>Attribute</th>${cols.map((c) =>
+        `<th>${esc(c.name)}<span>${esc(c.manufacturer)}</span></th>`).join("")}</tr></thead>
+        <tbody>${rows.map((a) => `<tr${state.factors[a.factor] ? ` class="p-${state.factors[a.factor]}"` : ""}><th>${esc(a.label)}${a.unit ? ` <span>(${esc(a.unit)})</span>` : ""}</th>${cols.map((c) => printCell(a.values[c.key])).join("")}</tr>`).join("")}</tbody></table>`
+        : '<p class="p-sub">No attribute could be compared directly between these products.</p>'}
+      <p class="p-cut p-more"></p>
+      <div class="p-cols">
+        ${printList("Key differences", r.insights?.differences, PRINT.differences)}
+        ${printList(`Benefits for ${state.buyer.company || "the customer"}`, r.insights?.benefits, PRINT.benefits)}
+        ${printList("Switching trade-offs", r.insights?.tradeoffs, PRINT.tradeoffs)}
+        ${flags.length ? `<div class="p-block"><h5>Open points – check before quoting</h5><ul>${flags.slice(0, PRINT.openPoints).map(flagText).join("")}
+          ${flags.length > PRINT.openPoints ? `<li class="p-more">+${flags.length - PRINT.openPoints} more in the app</li>` : ""}</ul></div>` : ""}
+        ${com.length ? printList("Commercial (approved, internal)", com.map((n) => ({ text: `${KIND_LABEL[n.kind] || n.kind}: ${n.text}`, sources: n.sources })), PRINT.commercial) : ""}
+      </div>
+      ${printSources(r.sources)}
+      <footer class="p-foot">Superscript numbers = sources below · +N = more stated values in the app · "Not stated" = not in the datasheets, never guessed. Full values, quotes and all other facts: open this comparison in Dani.</footer>
+    </div>`;
+  }
+
+  /** Keeps the summary on one landscape A4 page: first shrink a little (never below 80 %, so it stays
+   *  readable), then leave out the lowest-priority table rows from the bottom and say how many. */
+  function fitPrintSheet() {
+    const PAGE_W = 1060, PAGE_H = 725;                       // A4 landscape minus 8 mm margins, in CSS px
+    const MIN_ZOOM = 0.8;
+    document.querySelectorAll(".print-sheet").forEach((sheet) => {
+      const rows = [...sheet.querySelectorAll(".p-table tbody tr")];
+      const note = sheet.querySelector(".p-cut");
+      rows.forEach((tr) => (tr.hidden = false));
+      note.textContent = "";
+      sheet.style.zoom = "";
+      sheet.classList.add("is-measuring");
+      // a zoomed sheet is laid out wider (PAGE_W / zoom), so measure at that width
+      const scaledHeight = (z) => { sheet.style.width = PAGE_W / z + "px"; return sheet.scrollHeight * z; };
+      let z = 1;
+      while (z > MIN_ZOOM && scaledHeight(z) > PAGE_H) z = Math.max(MIN_ZOOM, z - 0.02);
+      let cut = 0;
+      for (let i = rows.length - 1; i > 0 && scaledHeight(z) > PAGE_H; i--) {
+        if (rows[i].classList.contains("p-must") || rows[i].classList.contains("p-nice")) break;  // priorities stay
+        rows[i].hidden = true; cut++;
+        note.textContent = `+${cut} lower-priority attribute${cut > 1 ? "s" : ""} not printed – see the app.`;
+      }
+      sheet.classList.remove("is-measuring");
+      sheet.style.width = "";
+      sheet.style.zoom = z < 1 ? z.toFixed(2) : "";
+    });
+  }
+
   function resultWidget(r) {
     const cols = [r.anchor, ...r.matches];
     sourceById = Object.fromEntries((r.sources || []).map((s) => [s.id, s]));
@@ -919,7 +1020,8 @@
         ${aiCostText(r.aiCost)}
         <button class="btn btn-ghost" type="button" data-act="print">Print / save as PDF</button>
         <button class="btn btn-ghost" type="button" data-act="edit">Adjust priorities</button>
-      </div>`;
+      </div>
+      ${printSheetHtml(r, cols, rows)}`;
     card.querySelector('[data-act="print"]').addEventListener("click", () => window.print());
     card.querySelector('[data-act="suggest-note"]')?.addEventListener("click", () => {
       const box = card.querySelector(".suggest-note");
@@ -1235,7 +1337,7 @@
   $("#btn-match").addEventListener("click", () => catalog && openMatchDialog());
   $("#btn-system").addEventListener("click", () => catalog && openSystemDialog());
 
-  window.addEventListener("beforeprint", () => document.querySelectorAll("details.sources").forEach((d) => (d.open = true)));
+  window.addEventListener("beforeprint", fitPrintSheet);
 
   // ---------- demo login (viewer suggests, editor approves) ----------
   let currentUser = { id: localStorage.getItem("dani-user") || "senior", role: "editor", users: [] };
