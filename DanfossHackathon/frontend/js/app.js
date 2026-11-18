@@ -1052,7 +1052,7 @@
     const briefs = priorityBriefs(r);
     if (!briefs.length) return "";
     const refs = (list) => (list || []).map(ref).join("");
-    return `<div class="biz-block biz-prio"><div class="biz-label">Their must-haves and nice-to-haves</div>
+    return `<div class="biz-block biz-prio"><div class="biz-label">Specified requirements</div>
       ${briefs.map((b) => `<div class="prio-brief"><div class="prof-head"><span class="prio prio-${esc(b.level)}"></span>${esc(b.label)}
           <span class="hint">· ${b.level === "must" ? "must-have" : "nice-to-have"}</span></div>
         ${b.ai ? `<p>${esc(b.ai.text)}${refs(b.ai.sources)}</p>` : ""}
@@ -1244,7 +1244,7 @@
       ${group("Their stated priorities", pick(["priority"]), 5)}
       ${group("Hydraulics & controls", pick(["hydraulics"]), 4)}` : "";
     const com = group("Approved sales-guideline notes (internal)", notes.map((n) => li(`${KIND_LABEL[n.kind] || n.kind}: ${n.text}`, n.sources)), 5);
-    const prios = briefs.length ? `<h4 class="p-h4">Their must-haves and nice-to-haves</h4>${briefs.map((b) => `<div class="p-block p-prio p-${b.level}">
+    const prios = briefs.length ? `<h4 class="p-h4">Specified requirements</h4>${briefs.map((b) => `<div class="p-block p-prio p-${b.level}">
         <h5>${esc(b.label)} <span class="p-lvl">${b.level === "must" ? "must-have" : "nice-to-have"}</span></h5>
         ${b.ai ? `<p>${esc(b.ai.text)}${sup(b.ai.sources)}</p>` : ""}
         ${b.rows.map((row) => `<div class="p-vals"><b>${esc(row.label)}${row.unit ? " (" + esc(row.unit) + ")" : ""}:</b> ${row.values.map((v) => `${esc(v.name)} ${esc(v.value)}${sup(v.sources)}`).join(" · ")}</div>`).join("")}

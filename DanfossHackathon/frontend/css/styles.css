@@ -279,6 +279,7 @@ table.cmp { border-collapse: collapse; width: 100%; font-size: 14px; }
 .p-sources { font-size: 6.5pt; color: #444; border-top: 1px solid #ccc; padding-top: 3px; }
 .p-sources ul { list-style: none; padding: 0; column-count: 2; column-gap: 16px; }
 .p-sources li { break-inside: avoid; }
+.p-page2 .p-sources h5 { color: #666; font-weight: 600; text-transform: none; letter-spacing: 0; font-size: 7pt; }   /* present, not a section */
 .p-doc { color: #111; overflow-wrap: anywhere; }
 .p-foot { margin-top: 4px; font-size: 6.5pt; color: #666; }
 .p-page2 { break-before: page; page-break-before: always; }
