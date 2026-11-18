@@ -261,7 +261,15 @@ class TermsCheckTests(unittest.TestCase):
                                                b'[{"location": "/*", "tdm-reservation": 1}]'})
         self.assertIn('tdmrep', r['terms']['reason'])
         r = self.run_site(b'<p>ok</p>', robots=b'User-agent: ClaudeBot\nDisallow: /\n\nUser-agent: *\nAllow: /')
-        self.assertIn('ClaudeBot', r['terms']['reason'])
+        self.assertEqual(r['terms']['status'], 'no_reservation_found')               # AI-crawler block: noted
+        self.assertIn('ClaudeBot', r['terms']['notes'][0])
+        noai_home = self.HOME.replace(b'<title>', b'<meta name="robots" content="noai, noimageai"><title>')
+        r = self.run_site(b'<p>ok</p>', extra={'https://customer.example/': noai_home})
+        self.assertEqual(r['terms']['status'], 'no_reservation_found')
+        self.assertTrue(any('noai' in n for n in r['terms']['notes']))
+        r = self.run_site(b'<p>You may not use any content of this site to train artificial intelligence models.</p>')
+        self.assertEqual(r['terms']['status'], 'no_reservation_found')               # training-only clause: noted
+        self.assertTrue(any('train AI' in n for n in r['terms']['notes']))
         r = self.run_site(b'<p>ok</p>', robots=b'User-agent: GPTBot\nDisallow: /\n\nUser-agent: *\nAllow: /')
         self.assertEqual(r['terms']['status'], 'no_reservation_found')
         self.assertTrue(r['terms']['notes'])                                          # reported, not a stop
@@ -272,3 +280,5 @@ class TermsCheckTests(unittest.TestCase):
         self.assertTrue(find_reservation('Die Nutzung durch Crawler ist ohne Zustimmung untersagt.'))
         self.assertIsNone(find_reservation('Our robots weld frames with high precision in Brazil.'))
         self.assertIsNone(find_reservation('We do not use automated decision-making as defined in GDPR art. 22.'))
+        self.assertIsNone(find_reservation('Content may not be used to train AI or machine learning models.'))
+        self.assertTrue(find_reservation('Scraping, crawling or data mining, including for AI, is prohibited.'))

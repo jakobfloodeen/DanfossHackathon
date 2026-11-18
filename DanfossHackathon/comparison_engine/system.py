@@ -152,7 +152,7 @@ def compose_system(system_id: str, name: str, brand: str, fixed: dict[str, str |
 
 def compare_systems(anchor: System, other: System, user_question: str = "", customer_context: str = "",
                     ask=None, use_ai: bool = True, customer_facts=None, pool: str = "competitors",
-                    profile_facts=None) -> AnalysisResult:
+                    profile_facts=None, priorities=None) -> AnalysisResult:
     """One comparison of two systems with the normal engine (facts, one AI call, guardrails)."""
     from . import customer_profile
     data = build_system_data([anchor, other])
@@ -160,13 +160,15 @@ def compare_systems(anchor: System, other: System, user_question: str = "", cust
     component_ids = [pid for s in (anchor, other) for pid in s.components.values() if pid]
     terms, regions = customer_profile.terms_from(list(profile_facts or []), f"{customer_context} {user_question}")
     names = [pid.split("|", 1)[-1] for pid in component_ids]
-    shown, other_notes = commercial.relevant_notes("", component_ids, "system", names, terms, regions)
+    shown, other_notes = commercial.relevant_notes("", component_ids, "system", names, terms, regions,
+                                                   kinds=commercial.kinds_for(priorities))
     notes = commercial.facts(shown)
     for f, r in zip(notes, shown):
         f.condition = r["why"]
     result = interpret(anchor.id, candidates, user_question, customer_context, ask=ask, use_ai=use_ai,
                        data=data, pool="system" if pool == "competitors" else "system_reverse",
-                       customer_facts=customer_facts, commercial_notes=notes, profile_facts=profile_facts)
+                       customer_facts=customer_facts, commercial_notes=notes, profile_facts=profile_facts,
+                       priorities=priorities)
     result.meta["commercial_other"] = other_notes
     result.meta["systems"] = {s.id: {"name": s.name, "components": s.components, "notes": s.notes}
                               for s in (anchor, other)}

@@ -36,6 +36,9 @@ BUSINESS_KINDS = ["opportunity", "fit", "displace", "risk"]
 _business = {"type": "object", "additionalProperties": False, "required": ["kind", "text", "fact_ids"],
              "properties": {"kind": {"type": "string", "enum": BUSINESS_KINDS}, "text": {"type": "string"},
                             "fact_ids": {"type": "array", "items": {"type": "string"}}}}
+_priority = {"type": "object", "additionalProperties": False, "required": ["factor", "text", "fact_ids"],
+             "properties": {"factor": {"type": "string"}, "text": {"type": "string"},
+                            "fact_ids": {"type": "array", "items": {"type": "string"}}}}
 _product_choice = {"type": "object", "additionalProperties": False, "required": ["product_id", "why", "fact_ids"],
                    "properties": {"product_id": {"type": "string"}, "why": {"type": "string"},
                                   "fact_ids": {"type": "array", "items": {"type": "string"}}}}
@@ -44,7 +47,8 @@ _product_choice = {"type": "object", "additionalProperties": False, "required": 
 OUTPUT_SCHEMA = {
     "type": "object", "additionalProperties": False,
     "required": ["comparable", "not_comparable_reason", "best_match", "alternatives", "points",
-                 "application_fit", "talking_points", "tradeoffs", "business_fit", "verify", "overall_confidence"],
+                 "application_fit", "talking_points", "tradeoffs", "business_fit", "priority_fit", "verify",
+                 "overall_confidence"],
     "properties": {
         "comparable": {"type": "boolean"},
         "not_comparable_reason": {"anyOf": [{"type": "string"}, {"type": "null"}]},
@@ -67,6 +71,7 @@ OUTPUT_SCHEMA = {
         "talking_points": {"type": "array", "items": _cited},
         "tradeoffs": {"type": "array", "items": _cited},
         "business_fit": {"type": "array", "items": _business},
+        "priority_fit": {"type": "array", "items": _priority},
         "verify": {"type": "array", "items": {
             "type": "object", "additionalProperties": False, "required": ["fact_id", "reason"],
             "properties": {"fact_id": {"type": "string"}, "reason": {"type": "string"}}}},
@@ -179,7 +184,7 @@ def _statements(answer: dict) -> list[tuple[str, str, list[str], str | None]]:
     fit = answer.get("application_fit")
     if isinstance(fit, dict) and (fit.get("text") or "").strip():
         out.append(("application_fit", fit.get("text", ""), fit.get("fact_ids", []), None))
-    for key in ("talking_points", "tradeoffs", "business_fit"):
+    for key in ("talking_points", "tradeoffs", "business_fit", "priority_fit"):
         for i, t in enumerate(answer.get(key) or []):
             out.append((f"{key}[{i}]", t.get("text", ""), t.get("fact_ids", []), None))
     for i, v in enumerate(answer.get("verify") or []):
@@ -256,10 +261,10 @@ def check_interpretation(answer: dict, facts: list[Fact], diffs: list[Diff], tar
     return problems
 
 
-MAX_COUNT = {"talking_points": 3, "tradeoffs": 2, "points": 8, "business_fit": 6}
+MAX_COUNT = {"talking_points": 3, "tradeoffs": 2, "points": 8, "business_fit": 6, "priority_fit": 10}
 MAX_WORDS_BUSINESS = 75     # business points connect customer + product + what to say: room for detail
-BUSINESS_ROLES = ("customer", "commercial", "profile")
-OPTIONAL_IN_OLD_ANSWERS = ("business_fit",)               # answers cached before the field existed still pass    # facts ABOUT the customer / sales guidelines, not products
+BUSINESS_ROLES = ("customer", "commercial", "profile")    # facts ABOUT the customer / sales guidelines, not products
+OPTIONAL_IN_OLD_ANSWERS = ("business_fit", "priority_fit")   # answers cached before the fields existed still pass
 MAX_WORDS, MAX_WORDS_BEST_MATCH = 45, 55
 
 
@@ -268,7 +273,7 @@ def check_length(answer: dict) -> list[str]:
                 for key, limit in MAX_COUNT.items() if len(answer.get(key) or []) > limit]
     for where, text, _, _ in _statements(answer):
         limit = (MAX_WORDS_BEST_MATCH if where == "best_match.why" else
-                 MAX_WORDS_BUSINESS if where.startswith("business_fit") else MAX_WORDS)
+                 MAX_WORDS_BUSINESS if where.startswith(("business_fit", "priority_fit")) else MAX_WORDS)
         if len((text or "").split()) > limit:
             problems.append(f"{where}: {len(text.split())} words, keep it under {limit - 15}")
     return problems

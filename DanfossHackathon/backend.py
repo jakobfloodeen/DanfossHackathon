@@ -431,12 +431,21 @@ def doc_url(source_file: str, page):
     return None
 
 
+def priorities_of(payload: dict) -> list[dict]:
+    """The must-haves / nice-to-haves the user picked -> [{"id": "flow", "label": "Flow capacity", "level": "must"}]."""
+    labels = {f["id"]: f.get("label", f["id"]) for f in load_catalog().get("factors", [])}
+    out = [{"id": k, "label": labels.get(k, k), "level": v} for k, v in (payload.get("factors") or {}).items()
+           if v in ("must", "nice")]
+    out += [{"id": f"own:{c}", "label": c, "level": "nice"} for c in payload.get("customFactors") or [] if c]
+    return sorted(out, key=lambda p: p["level"] != "must")
+
+
 def brief_text(payload: dict) -> tuple[str, str]:
     """The website's brief -> (question, customer context) for the AI."""
     buyer = payload.get("buyer") or {}
-    factors = payload.get("factors") or {}
-    must = [k for k, v in factors.items() if v == "must"]
-    nice = [k for k, v in factors.items() if v == "nice"]
+    prios = priorities_of(payload)
+    must = [f"{p['label']} [{p['id']}]" for p in prios if p["level"] == "must"]
+    nice = [f"{p['label']} [{p['id']}]" for p in prios if p["level"] == "nice" and not p["id"].startswith("own:")]
     context = "; ".join(x for x in [
         f"customer: {buyer.get('company')}" if buyer.get("company") else "",
         f"application: {buyer.get('application')}" if buyer.get("application") else "",
@@ -545,7 +554,7 @@ def run_engine(target_id: str, candidates, pool: str, payload: dict, names: dict
     profile, profile_facts = customer_profile_facts(payload)
     with usage.collect() as calls:
         result = interpret(target_id, candidates, question, context, ask=ENGINE_ASK, use_ai=True, pool=pool,
-                           customer_facts=customer, profile_facts=profile_facts)
+                           customer_facts=customer, profile_facts=profile_facts, priorities=priorities_of(payload))
     note_profile(result, profile)
     for pid, info in names.items():                     # confirmed equivalent pairs from the uploads
         info["knownEquivalent"] = target_id in info.get("equivalentOf", []) or pid in names.get(
@@ -948,11 +957,48 @@ def list_products():
     out = []
     for pid, g in data.groupby("product_id"):
         brand = g["brand"].iloc[0]
-        out.append({"id": pid, "name": names.get(pid, {}).get("name") or g["product_name"].iloc[0],
+        out.append({"id": pid, "facts": int(len(g)), "name": names.get(pid, {}).get("name") or g["product_name"].iloc[0],
                     "brand": names.get(pid, {}).get("manufacturer") or brand, "family": g["family"].iloc[0],
                     "side": "danfoss" if brand.lower() == "danfoss" else "competitor",
                     "demo": bool("DEMO" in pid or g["source_file"].astype(str).str.contains("DEMO").any())})
     return {"products": sorted(out, key=lambda p: (p["family"], p["side"], p["name"]))}
+
+
+@app.get("/api/facts")
+def product_facts(product: str):
+    """EVERY extracted fact of one product, for browsing outside the comparison ("Browse data").
+    The comparison only shows the comparable rows; this is the full record with quote and source page."""
+    data = load_repository()
+    rows = data[data["product_id"] == product] if not data.empty else data
+    if rows.empty:
+        raise HTTPException(404, "No extracted facts for this product.")
+    from comparison_engine.website import label_for, factor_for
+    links: dict = {}
+
+    def link(file, page):
+        key = (file, page)
+        if key not in links:
+            found = doc_url(file, page)
+            links[key] = found.get("url") if isinstance(found, dict) else found
+        return links[key]
+
+    clean = lambda v: "" if v is None or (isinstance(v, float) and v != v) else v   # noqa: E731  (NaN -> "")
+    facts = []
+    for r in rows.to_dict("records"):
+        page = clean(r.get("page"))
+        page = int(page) if str(page).replace(".0", "").isdigit() else page
+        facts.append({"attribute": r["attribute"], "label": label_for(r.get("attribute_original") or r["attribute"]),
+                      "datasheetName": clean(r.get("attribute_original")), "factor": factor_for(r["attribute"]),
+                      "value": clean(r.get("value")), "unit": clean(r.get("unit")),
+                      "normalised": f"{clean(r.get('norm_value'))} {clean(r.get('norm_unit'))}".strip(),
+                      "condition": clean(r.get("condition")), "status": clean(r.get("status")),
+                      "note": clean(r.get("note")), "quote": clean(r.get("quote")),
+                      "source": clean(r.get("source_file")), "page": page, "url": link(r.get("source_file"), page)})
+    first = rows.iloc[0]
+    names = catalog_names(load_catalog())
+    return {"product": {"id": product, "name": names.get(product, {}).get("name") or first["product_name"],
+                        "brand": first["brand"], "family": first["family"]},
+            "facts": sorted(facts, key=lambda f: (f["label"].lower(), str(f["page"])))}
 
 
 # =====================================================================
@@ -988,7 +1034,7 @@ def compare_system_endpoint(payload: dict):
         result = compare_systems(anchor, other, question, context, ask=ENGINE_ASK,
                                  customer_facts=customer_passages(payload, question, context),
                                  pool="competitors" if start == "danfoss" else "danfoss",
-                                 profile_facts=profile_facts)
+                                 profile_facts=profile_facts, priorities=priorities_of(payload))
     note_profile(result, profile)
 
     def parts(system):

@@ -128,10 +128,25 @@ def _note_regions(text: str) -> set[str]:
         {"emea", "apa"} if "emea & apa" in low else set())
 
 
+PRIORITY_KINDS = {"price": ("pricing",), "availability": ("availability", "transition")}
+
+
+def kinds_for(priorities: list[dict] | None) -> dict[str, str]:
+    """Note kinds that answer a customer priority: {"pricing": "must", ...}."""
+    out = {}
+    for p in priorities or []:
+        for k in PRIORITY_KINDS.get(p["id"], ()):
+            out[k] = "must" if "must" in (p["level"], out.get(k)) else "nice"
+    return out
+
+
 def score_note(row: dict, target_id: str, involved_ids: list[str], involved_names: list[str],
-               terms: set[str], regions: set[str]) -> tuple[int, list[str]]:
+               terms: set[str], regions: set[str], kinds: dict | None = None) -> tuple[int, list[str]]:
     """How relevant one approved note is. -> (score, reasons). Code only, no AI."""
     score, why = 0, []
+    level = (kinds or {}).get(row.get("kind"))
+    if level:
+        score += 5 if level == "must" else 3; why.append(f"answers a {level}-have of the customer")
     text = row.get("text", "")
     if row.get("product_id") == target_id:
         score += 6; why.append("about the product being compared")
@@ -155,13 +170,14 @@ def score_note(row: dict, target_id: str, involved_ids: list[str], involved_name
 
 
 def relevant_notes(target_id: str, involved_ids: list[str], family: str, involved_names: list[str],
-                   terms: set[str], regions: set[str], max_shown: int = 5, threshold: int = 4) -> tuple[list, list]:
+                   terms: set[str], regions: set[str], max_shown: int = 5, threshold: int = 4,
+                   kinds: dict | None = None) -> tuple[list, list]:
     """Approved notes for the products in the comparison and their family, split into
     (shown: relevant to this comparison and customer, best first; other: the rest, kept for reference)."""
     rows = for_products([target_id, *involved_ids], family)
     scored = []
     for r in rows:
-        s, why = score_note(r, target_id, involved_ids, involved_names, terms, regions)
+        s, why = score_note(r, target_id, involved_ids, involved_names, terms, regions, kinds)
         scored.append({**r, "score": s, "why": "; ".join(why)})
     scored.sort(key=lambda r: (-r["score"], r["id"]))
     shown = [r for r in scored if r["score"] >= threshold][:max_shown]

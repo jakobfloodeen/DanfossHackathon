@@ -363,7 +363,10 @@ def _insights(result, by_id, sources, names, match_ids) -> dict:
         tradeoffs = [item(t["text"], t["fact_ids"]) for t in interp.get("tradeoffs", [])][:MAX_TRADEOFFS]
         business = [{**item(t["text"], t["fact_ids"]), "kind": t.get("kind", "fit")}
                     for t in interp.get("business_fit") or []][:MAX_BUSINESS]
-        return {"differences": differences, "benefits": benefits, "tradeoffs": tradeoffs, "business": business}
+        priorities = [{**item(t["text"], t["fact_ids"]), "factor": t.get("factor", "")}
+                      for t in interp.get("priority_fit") or []][:10]
+        return {"differences": differences, "benefits": benefits, "tradeoffs": tradeoffs, "business": business,
+                "priorities": priorities}
     # no AI: only differences that code computed itself
     first = match_ids[0] if match_ids else None
     differences = []
@@ -377,7 +380,8 @@ def _insights(result, by_id, sources, names, match_ids) -> dict:
                      f"{d.candidate_value_is})"),
             "sources": sources.refs([t, c], by_id)})
     differences.sort(key=lambda d: -abs(float(d["text"].rsplit("(", 1)[1].split("%")[0])))   # biggest first
-    return {"differences": differences[:MAX_DIFFERENCES], "benefits": [], "tradeoffs": [], "business": []}
+    return {"differences": differences[:MAX_DIFFERENCES], "benefits": [], "tradeoffs": [], "business": [],
+            "priorities": []}
 
 
 def _flags(result, by_id, names, pending) -> list[dict]:

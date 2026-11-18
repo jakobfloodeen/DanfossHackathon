@@ -142,10 +142,10 @@ not been validated in this workspace; validate your intended URLs locally.
 
 Before anything is kept, `research_customer(..., check_terms=True)` checks whether the site owner reserves the
 site against automated reading / text and data mining (EU DSM Directive art. 4(3); in Denmark ophavsretsloven
-§ 11 b): robots.txt rules naming AI agents that cover our use (anthropic-ai, ClaudeBot, "AI"), TDMRep
-(`/.well-known/tdmrep.json`, `<meta name="tdm-reservation" content="1">`), `<meta name="robots" content="noai">`,
-and the terms of use / legal notice / imprint / privacy pages linked from the start page (a sentence that combines
-scraping / data mining / automated access / AI with a prohibition). A match stops the crawl: no evidence is
-returned and `report["terms"]` names the page and the sentence. Blocks aimed only at other vendors' AI-training
-crawlers (GPTBot, CCBot ...) are reported in `report["terms"]["notes"]`, not treated as a stop. This is a careful
-reading in code that errs on the side of stopping - not legal advice.
+§ 11 b). What STOPS the read - it covers what this tool does: TDMRep (`/.well-known/tdmrep.json`,
+`<meta name="tdm-reservation" content="1">`), and a sentence on the terms of use / legal notice / imprint / privacy
+pages that forbids scraping, crawling, robots, automated access or data mining. The ordinary robots.txt rules for
+our own user agent are followed as before. What is only REPORTED (in `report["terms"]["notes"]`) - it is aimed at
+collecting AI training data, which this tool does not do: `<meta name="robots" content="noai">`, robots.txt blocks
+of AI crawlers (GPTBot, ClaudeBot, CCBot ...), and terms sentences that only forbid training AI on the content.
+A stop returns no evidence and `report["terms"]` names the page and the sentence. Not legal advice.

@@ -1020,6 +1020,50 @@
   const KIND_LABEL = { positioning: "Positioning", availability: "Availability", pricing: "Pricing",
                        selling_point: "Selling point", transition: "Transition", warning: "Warning" };
 
+  // ---------- the customer's must-haves / nice-to-haves, from the business side ----------
+  const FACTOR_TOPICS = { price: ["cost"], availability: ["service"], support: ["service", "uptime"],
+    lifetime: ["reliability", "uptime"], flow: ["productivity"], pressure: ["productivity"], size: ["compactness"],
+    electronics: ["automation", "connectivity", "precision_control", "electrification"],
+    environment: ["emissions", "noise", "energy_efficiency", "sustainability"] };
+  const FACTOR_NOTES = { price: ["pricing"], availability: ["availability", "transition"] };
+
+  /** One entry per priority the user picked: the AI's answer for it, the compared values (code, from the table),
+   *  what the customer's own website says about that topic, and the sales notes that answer it. */
+  function priorityBriefs(r) {
+    const picked = [...Object.entries(state.factors).filter(([, v]) => v === "must" || v === "nice")
+                      .map(([id, level]) => ({ id, label: factorLabel(id), level })),
+                    ...state.customFactors.map((c) => ({ id: "own:" + c, label: c, level: "nice" }))]
+      .sort((a, b) => (a.level === "must" ? 0 : 1) - (b.level === "must" ? 0 : 1));
+    const cols = [r.anchor, ...(r.matches || [])];
+    const headline = (v) => (v && v.value != null ? String(v.value).split(" · ")[0] : "–");
+    return picked.map((p) => {
+      const rows = (r.attributes || []).filter((a) => a.factor === p.id && a.core !== false).slice(0, 3).map((a) => ({
+        label: a.label, unit: a.unit,
+        values: cols.map((c) => ({ name: c.name, value: headline(a.values[c.key]), sources: a.values[c.key]?.sources || [] })) }));
+      const topics = FACTOR_TOPICS[p.id] || [];
+      return { ...p, rows,
+        ai: (r.insights?.priorities || []).find((x) => x.factor === p.id || x.factor === p.label),
+        profile: (r.customerProfile?.items || []).filter((it) => topics.includes((it.kind.split(": ")[1] || ""))),
+        notes: (r.commercial || []).filter((n) => (FACTOR_NOTES[p.id] || []).includes(n.kind)) };
+    });
+  }
+
+  function prioritiesHtml(r) {
+    const briefs = priorityBriefs(r);
+    if (!briefs.length) return "";
+    const refs = (list) => (list || []).map(ref).join("");
+    return `<div class="biz-block biz-prio"><div class="biz-label">Their must-haves and nice-to-haves</div>
+      ${briefs.map((b) => `<div class="prio-brief"><div class="prof-head"><span class="prio prio-${esc(b.level)}"></span>${esc(b.label)}
+          <span class="hint">· ${b.level === "must" ? "must-have" : "nice-to-have"}</span></div>
+        ${b.ai ? `<p>${esc(b.ai.text)}${refs(b.ai.sources)}</p>` : ""}
+        ${b.rows.length ? `<ul class="prio-values">${b.rows.map((row) => `<li><b>${esc(row.label)}${row.unit ? " (" + esc(row.unit) + ")" : ""}:</b>
+            ${row.values.map((v) => `${esc(v.name)} ${esc(v.value)}${refs(v.sources)}`).join(" · ")}</li>`).join("")}</ul>`
+          : !b.ai ? '<p class="hint">No datasheet value in this comparison covers this priority.</p>' : ""}
+        ${b.profile.length ? `<ul class="prio-values">${b.profile.map((it) => `<li>Their website: ${esc(it.text)}${refs(it.sources)}</li>`).join("")}</ul>` : ""}
+        ${b.notes.length ? `<ul class="prio-values">${b.notes.map((n) => `<li>${esc(KIND_LABEL[n.kind] || n.kind)} (approved): ${esc(n.text)}${refs(n.sources)}</li>`).join("")}</ul>` : ""}
+      </div>`).join("")}</div>`;
+  }
+
   /** Profile fact kinds (P1..) shown in the result -> section. The basics (markets, regions ...) are left out. */
   const FACT_SECTION = [["supplier mention", "used"], ["installed", "used"], ["news", "news"],
     ["priority", "priorities"], ["hydraulics", "hydraulics"], ["product", "products"]];
@@ -1033,7 +1077,8 @@
     const other = r.commercialOther || [];
     const business = r.insights?.business || [];
     const prof = r.customerProfile;
-    if (!approved.length && !pending.length && !other.length && !business.length && !prof) return "";
+    const prioHtml = prioritiesHtml(r);
+    if (!approved.length && !pending.length && !other.length && !business.length && !prof && !prioHtml) return "";
     const who = state.buyer.company || prof?.company || "the customer";
     const profileItem = (it) => {
       const [kind, sub] = it.kind.split(": ");
@@ -1065,7 +1110,7 @@
     const otherHtml = other.length ? `<details class="biz-other"><summary>${other.length} other approved note(s) not specific to this comparison or customer</summary>
         <ul>${other.map((n) => note({ ...n, product: n.product_id, source: n.source_file })).join("")}</ul></details>` : "";
     return `<section class="insight commercial"><h4>Business fit for ${esc(who)}</h4>
-      ${bizList}${snapshot}
+      ${prioHtml}${bizList}${snapshot}
       <div class="biz-label">Approved sales-guideline notes <span class="hint">(internal)</span></div>
       ${approved.length ? "" : '<p class="hint">No approved note matches this comparison and customer.</p>'}
       <ul>${approved.map((n) => note(n)).join("")}
@@ -1179,7 +1224,8 @@
     const business = r.insights?.business || [];
     const prof = r.customerProfile;
     const notes = r.commercial || [];
-    if (!business.length && !prof && !notes.length) return null;
+    const briefs = priorityBriefs(r);
+    if (!business.length && !prof && !notes.length && !briefs.length) return null;
     const who = state.buyer.company || prof?.company || "the customer";
     const ids = new Set();
     const sup = (list) => { (list || []).forEach((n) => ids.add(n)); return (list || []).length ? `<sup>${list.join(",")}</sup>` : ""; };
@@ -1198,6 +1244,14 @@
       ${group("Their stated priorities", pick(["priority"]), 5)}
       ${group("Hydraulics & controls", pick(["hydraulics"]), 4)}` : "";
     const com = group("Approved sales-guideline notes (internal)", notes.map((n) => li(`${KIND_LABEL[n.kind] || n.kind}: ${n.text}`, n.sources)), 5);
+    const prios = briefs.length ? `<h4 class="p-h4">Their must-haves and nice-to-haves</h4>${briefs.map((b) => `<div class="p-block p-prio p-${b.level}">
+        <h5>${esc(b.label)} <span class="p-lvl">${b.level === "must" ? "must-have" : "nice-to-have"}</span></h5>
+        ${b.ai ? `<p>${esc(b.ai.text)}${sup(b.ai.sources)}</p>` : ""}
+        ${b.rows.map((row) => `<div class="p-vals"><b>${esc(row.label)}${row.unit ? " (" + esc(row.unit) + ")" : ""}:</b> ${row.values.map((v) => `${esc(v.name)} ${esc(v.value)}${sup(v.sources)}`).join(" · ")}</div>`).join("")}
+        ${!b.ai && !b.rows.length ? '<p class="p-muted">No datasheet value in this comparison covers this priority.</p>' : ""}
+        ${b.profile.map((it) => `<div class="p-vals">Their website: ${esc(it.text)}${sup(it.sources)}</div>`).join("")}
+        ${b.notes.map((n) => `<div class="p-vals">${esc(KIND_LABEL[n.kind] || n.kind)} (approved): ${esc(n.text)}${sup(n.sources)}</div>`).join("")}
+      </div>`).join("")}` : "";
     const html = `<section class="p-page p-page2">
       <header class="p-head">
         <div><div class="p-brand">Danfoss · Competitor Intelligence · Business brief</div><h3>${esc(who)} — ${esc(r.title)}</h3>
@@ -1205,7 +1259,7 @@
         <div class="p-meta">Every statement cites its source: the customer's own web page, a datasheet page or an approved sales guideline.</div>
       </header>
       <div class="p-cols p-cols-2">
-        <div>${why ? `<h4 class="p-h4">Why it matters to ${esc(who)}</h4>${why}` : '<p class="p-sub">No customer-specific points (no customer profile or notes).</p>'}</div>
+        <div>${prios}${why ? `<h4 class="p-h4">Why it matters to ${esc(who)}</h4>${why}` : '<p class="p-sub">No customer-specific points (no customer profile or notes).</p>'}</div>
         <div>${site}${com}</div>
       </div>`;
     const sourcesHtml = printSources((r.sources || []).filter((s) => ids.has(s.id)));
@@ -1401,6 +1455,66 @@
 
   // ---------- main render ----------
   // ---------- reverse flow: competitor product -> closest Danfoss products ----------
+  // ---------- Browse data: every extracted fact of one product (outside the comparison) ----------
+  async function openFactsDialog(productId) {
+    const dlg = $("#facts-dialog");
+    dlg.innerHTML = `<div class="dialog-body"><div class="dialog-head"><h3>Browse extracted facts</h3>
+      <button class="link-btn" type="button" data-act="close">Close</button></div><p class="hint">Loading products…</p></div>`;
+    dlg.querySelector('[data-act="close"]').addEventListener("click", () => dlg.close());
+    if (!dlg.open) dlg.showModal();
+    let products = [];
+    try { products = (await Api.products()).products || []; } catch (err) { dlg.querySelector(".hint").textContent = err.message; return; }
+    const pick = productId || (selectedProduct() && products.find((p) => p.id === selectedProduct().id)?.id)
+      || products.find((p) => !p.demo && p.side === "danfoss")?.id || products[0]?.id;
+    const opt = (p) => `<option value="${esc(p.id)}" ${p.id === pick ? "selected" : ""}>${esc(p.brand)} ${esc(p.name)} · ${p.facts} facts${p.demo ? " (demo)" : ""}</option>`;
+    const body = dlg.querySelector(".dialog-body");
+    body.innerHTML = `<div class="dialog-head"><h3>Browse extracted facts</h3><button class="link-btn" type="button" data-act="close">Close</button></div>
+      <p class="hint">Everything extracted from the datasheets, with the exact quote and the page it came from. The comparison only shows the rows that can be compared.</p>
+      <div class="facts-tools">
+        <select name="product">${["danfoss", "competitor"].map((side) => `<optgroup label="${side === "danfoss" ? "Danfoss" : "Competitors"}">${products.filter((p) => p.side === side).map(opt).join("")}</optgroup>`).join("")}</select>
+        <input name="q" type="search" placeholder="Filter, e.g. pressure, ISO, CAN">
+        <select name="status"><option value="">All statuses</option><option value="ok">Quote verified</option><option value="unverified">Unverified</option><option value="conflict">Conflict</option></select>
+        <button class="btn btn-ghost btn-sm" type="button" data-act="csv">Download CSV</button>
+      </div>
+      <div class="facts-count hint"></div>
+      <div class="facts-wrap"><table class="facts-table"><thead><tr><th>Attribute</th><th>Value</th><th>Condition</th><th>Status</th><th>Source</th></tr></thead><tbody></tbody></table></div>`;
+    body.querySelector('[data-act="close"]').addEventListener("click", () => dlg.close());
+    let facts = [], product = null;
+    const tbody = body.querySelector("tbody"), count = body.querySelector(".facts-count");
+    const shown = () => {
+      const q = body.querySelector("[name=q]").value.trim().toLowerCase();
+      const st = body.querySelector("[name=status]").value;
+      return facts.filter((f) => (!st || String(f.status).startsWith(st)) &&
+        (!q || [f.label, f.datasheetName, f.value, f.unit, f.condition, f.quote, f.note].join(" ").toLowerCase().includes(q)));
+    };
+    const draw = () => {
+      const list = shown();
+      count.textContent = `${list.length} of ${facts.length} facts${product ? " · " + product.brand + " " + product.name : ""}`;
+      tbody.innerHTML = list.map((f) => `<tr>
+        <th scope="row">${esc(f.label)}${f.datasheetName && f.datasheetName !== f.attribute ? `<div class="hint">datasheet: ${esc(f.datasheetName)}</div>` : ""}</th>
+        <td>${esc(String(f.value))}${f.unit ? " " + esc(f.unit) : ""}${f.normalised && f.unit && !f.normalised.endsWith(" " + f.unit) ? `<div class="hint">= ${esc(f.normalised)}</div>` : ""}
+          ${f.quote ? `<div class="facts-quote">“${esc(f.quote)}”</div>` : ""}</td>
+        <td>${esc(f.condition || "")}${f.note ? `<div class="hint">${esc(f.note)}</div>` : ""}</td>
+        <td><span class="badge ${f.status === "ok" ? "badge-brand" : "badge-muted"}">${esc(f.status || "–")}</span></td>
+        <td>${f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.source)}${f.page ? ", p. " + esc(f.page) : ""}</a>` : esc(f.source) + (f.page ? ", p. " + esc(f.page) : "")}</td></tr>`).join("");
+    };
+    const load = async (id) => {
+      count.textContent = "Loading…"; tbody.innerHTML = "";
+      try { ({ product, facts } = await Api.facts(id)); draw(); } catch (err) { count.textContent = err.message; }
+    };
+    body.querySelector("[name=product]").addEventListener("change", (e) => load(e.target.value));
+    body.querySelector("[name=q]").addEventListener("input", draw);
+    body.querySelector("[name=status]").addEventListener("change", draw);
+    body.querySelector('[data-act="csv"]').addEventListener("click", () => {
+      const cols = ["label", "value", "unit", "normalised", "condition", "status", "quote", "source", "page", "url"];
+      const cell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+      const csv = [cols.join(","), ...shown().map((f) => cols.map((c) => cell(f[c])).join(","))].join("\n");
+      const a = el("a", { href: URL.createObjectURL(new Blob([csv], { type: "text/csv" })), download: `${product?.id || "facts"}.csv` });
+      a.click(); URL.revokeObjectURL(a.href);
+    });
+    if (pick) load(pick); else count.textContent = "No extracted facts yet.";
+  }
+
   function openMatchDialog() {
     const dlg = $("#match-dialog");
     const prods = catalog.competitorProducts || [];
@@ -1601,6 +1715,7 @@
 
   async function reloadCatalog() { catalog = await Api.getCatalog(); }
   $("#btn-upload").addEventListener("click", () => catalog && openUploadDialog());
+  $("#btn-facts").addEventListener("click", () => catalog && openFactsDialog());
   $("#btn-match").addEventListener("click", () => catalog && openMatchDialog());
   $("#btn-system").addEventListener("click", () => catalog && openSystemDialog());
 

@@ -245,3 +245,38 @@ def test_reserved_site_is_not_sent_to_the_ai():
 def test_product_names_written_apart_are_not_numbers_and_short_codes_do_not_eat_years():
     from comparison_engine.guardrails import numbers_in
     assert numbers_in("Offer PVG 32 or PVG-32 from 2026 on", ["pvg32", "6"]) == ["2026"]
+
+
+def test_must_haves_get_their_own_answer_and_pull_matching_notes(tmp_path):
+    commercial.add("valves", "pricing", "List price band B for PVG 32 in EMEA.", EDITOR)
+    commercial.add("valves", "selling_point", "Unrelated note about tractors.", EDITOR)
+    prios = [{"id": "price", "label": "Price", "level": "must"}, {"id": "flow", "label": "Flow capacity", "level": "nice"}]
+    seen = {}
+
+    def ai(system, prompt, schema=None):
+        seen["prompt"] = prompt
+        a = json.loads(_answer([]))
+        a["priority_fit"] = [{"factor": "price", "text": "Approved price band B applies (K1); no competitor price "
+                              "is known - quote it.", "fact_ids": ["K1"]},
+                             {"factor": "flow", "text": "Both handle the same pressure class.", "fact_ids": ["F1", "F2"]}]
+        return json.dumps(a)
+
+    r = interpret("pvg32", ["m4-12"], ask=ai, pool="competitors", data=_data(), use_cache=False, priorities=prios)
+    assert "price | Price | must-have" in seen["prompt"] and "flow | Flow capacity | nice-have" in seen["prompt"]
+    assert r.status == "ok" and not r.problems
+    assert "must-have" in next(f for f in r.facts if f.role == "commercial").condition    # why the note was picked
+    w = to_website(r)
+    assert [p["factor"] for p in w["insights"]["priorities"]] == ["price", "flow"]
+    assert w["insights"]["priorities"][0]["text"].endswith("quote it.")
+
+
+def test_browse_data_returns_every_fact_of_a_product():
+    from fastapi.testclient import TestClient
+    import backend
+    client = TestClient(backend.app)
+    products = client.get("/api/products").json()["products"]
+    pid = max(products, key=lambda p: p["facts"])["id"]
+    r = client.get("/api/facts", params={"product": pid}).json()
+    assert len(r["facts"]) == max(p["facts"] for p in products)               # all of them, not the comparison cut
+    assert {"label", "value", "quote", "source", "page", "status"} <= set(r["facts"][0])
+    assert client.get("/api/facts", params={"product": "nope"}).status_code == 404

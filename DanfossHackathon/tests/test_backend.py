@@ -124,7 +124,7 @@ def test_compare_with_checked_ai_answer(client, monkeypatch):
     monkeypatch.setattr(backend, "ENGINE_ASK", fake)
     r = client.post("/api/compare", json=brief(competitorProductIds=["rexroth-sb23"])).json()
     assert r["engine"]["status"] == "ok", r["engine"]["problems"]
-    assert "customer: AGCO" in calls[0] and "must-have topics: pressure" in calls[0]
+    assert "customer: AGCO" in calls[0] and "must-have topics: Pressure rating [pressure]" in calls[0]
     assert r["insights"]["benefits"][0]["text"] == "Up to 12 work sections in one group."
     assert r["insights"]["benefits"][0]["sources"]
     assert r["confidence"]["level"] == "medium"

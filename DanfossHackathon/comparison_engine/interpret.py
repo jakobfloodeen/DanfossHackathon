@@ -41,7 +41,7 @@ from .repository import load_repository
 from .results import STATUS_MESSAGES, AnalysisResult, comparison_rows, onepager_data
 from .shortlist import shortlist as make_shortlist
 
-PROMPT_VERSION = "9"            # change when the prompt text changes -> old cache entries are not reused
+PROMPT_VERSION = "10"            # change when the prompt text changes -> old cache entries are not reused
 _MEMORY_CACHE: dict = {}
 
 HARD_RULES = """HARD RULES (code checks every one of them; breaking one makes the answer fail):
@@ -83,9 +83,14 @@ HARD_RULES = """HARD RULES (code checks every one of them; breaking one makes th
     "risk"        = what could block the deal or must be checked first.
     Each point names the customer's specific fact, the product property that matters, and what to say or do.
     Up to 60 words each. Every point cites at least one P, C or K fact. No customer information -> [].
-16. Answer with ONE JSON object in the response format you are given (fields: comparable,
+16. priority_fit: one entry per CUSTOMER PRIORITY listed (must-haves first; [] when none). "factor" = its id. For
+    the salesperson: how the products compare on it (values from F facts, product named), what that means for
+    this customer's business (P / C facts, approved K notes - e.g. pricing or availability notes for price or
+    lead time), and what is NOT known from the data and must be checked or quoted. Up to 60 words. Cite every
+    fact used; when nothing in the facts covers the priority, say so plainly and cite the closest fact.
+17. Answer with ONE JSON object in the response format you are given (fields: comparable,
     not_comparable_reason, best_match, alternatives, points, application_fit, talking_points, tradeoffs,
-    business_fit, verify, overall_confidence), nothing else."""
+    business_fit, priority_fit, verify, overall_confidence), nothing else."""
 
 
 # ---------------------------------------------------------------- prompt
@@ -160,7 +165,8 @@ def build_prompts(target_id: str, short: list[dict], facts: list[Fact], diffs, l
                   user_question: str, customer_context: str, focus: list[str] | None,
                   pool: str = "danfoss", customer: list[Fact] | None = None,
                   commercial_notes: list[Fact] | None = None,
-                  profile: list[Fact] | None = None) -> tuple[str, str]:
+                  profile: list[Fact] | None = None,
+                  priorities: list[dict] | None = None) -> tuple[str, str]:
     target_role, cand_role, default_question = ROLES[pool]
     better = ", ".join(f"{a}: {d} is better" for a, d in logic.settings["better"].items()) or "none given"
     system = (f"You compare a TARGET ({target_role}) with CANDIDATES ({cand_role}) for a Danfoss "
@@ -195,6 +201,9 @@ def build_prompts(target_id: str, short: list[dict], facts: list[Fact], diffs, l
         *([f"{k.id} | {k.product_id} | {k.attribute}" + (f" | {k.note}" if k.note and k.note != "all" else "")
            + f' | "{k.value}" | {k.source_file}' + (f" slide {k.page}" if k.page else "") for k in commercial_notes or []]
           or ["- none approved"]),
+        "",
+        "CUSTOMER PRIORITIES picked by our salesperson (answer each in priority_fit; rule 16):",
+        *([f"{p['id']} | {p['label']} | {p['level']}-have" for p in priorities or []] or ["- none picked"]),
         "",
         "CUSTOMER PROFILE (from the customer's own website, verified - cite as P1, P2 ...; rule 14):",
         *([f"{f.id} | {f.attribute} | {f.value}" + (f" ({f.note})" if f.note else "") for f in profile or []]
@@ -307,7 +316,8 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
               use_cache: bool = True, pool: str = "danfoss",
               customer_facts: list[Fact] | None = None,
               commercial_notes: list[Fact] | None = None,
-              profile_facts: list[Fact] | None = None) -> AnalysisResult:
+              profile_facts: list[Fact] | None = None,
+              priorities: list[dict] | None = None) -> AnalysisResult:
     """Compare the target with candidates (ids, a shortlist DataFrame, or None = make the shortlist).
     pool = "danfoss": target is a competitor product, candidates are Danfoss products (default).
     pool = "competitors": target is a Danfoss product, candidates are competitor products.
@@ -329,7 +339,8 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
     if commercial_notes is None:                          # K1, K2 ... approved notes that fit THIS customer
         terms, regions = customer_profile.terms_from(profile, f"{customer_context} {user_question}")
         names = [first["product_name"]] + [c.get("product_name", "") for c in short]
-        shown, other_notes = commercial.relevant_notes(target_id, cand_ids, first["family"], names, terms, regions)
+        shown, other_notes = commercial.relevant_notes(target_id, cand_ids, first["family"], names, terms, regions,
+                                                       kinds=commercial.kinds_for(priorities))
         commercial_notes = commercial.facts(shown)
         for f, r in zip(commercial_notes, shown):
             f.condition = r["why"]                        # why this note was picked (shown on hover)
@@ -357,7 +368,7 @@ def interpret(target_id: str, candidates=None, user_question: str = "", customer
         result.meta["facts_sent"] = len(sent)
         system, prompt = build_prompts(target_id, short, sent, diffs, logic, user_question,
                                        customer_context, focus_attributes, pool, customer, commercial_notes,
-                                       profile)
+                                       profile, priorities)
         check = lambda a: check_interpretation(a, facts, diffs, target_id, cand_ids, logic,
                                                f"{user_question} {customer_context}")
         key = _cache_key(system, prompt)

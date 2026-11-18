@@ -75,6 +75,10 @@ const Api = (() => {
     async products() {
       return call("/products");
     },
+    /** Every extracted fact of one product (Browse data). */
+    async facts(productId) {
+      return call("/facts?product=" + encodeURIComponent(productId));
+    },
 
     /** System comparison: a set of components (pump + valve ...) against the other side's set. */
     async compareSystem(payload) {

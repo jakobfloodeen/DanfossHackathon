@@ -12,18 +12,24 @@ website, the crawler checks, in code:
 4. the site's terms of use / legal notice / imprint / privacy pages: a sentence that combines scraping / data
    mining / automated access / AI with a prohibition ("prohibited", "may not", "without our consent" ...)
 
-A match means: stop, read nothing more, tell the user which page says so (with the sentence). This is a careful
-reading in code, not legal advice: it errs on the side of stopping.
+What stops the read (it covers what this tool does - automated reading and extraction of the text):
+   TDMRep reservations, and terms / legal / privacy sentences that forbid scraping, crawling, robots, automated
+   access or (text and) data mining. The ordinary robots.txt rules for our crawler are respected in core.py.
+What is only reported (it is aimed at collecting data to TRAIN AI models, which this tool does not do):
+   <meta name="robots" content="noai">, robots.txt blocks of AI crawlers (GPTBot, ClaudeBot, CCBot ...), and
+   terms sentences that only forbid using the content to train AI / machine learning models.
+A stop means: read nothing more, tell the user which page says so (with the sentence). This is a careful reading
+in code, not legal advice.
 """
 import json
 import re
 from urllib.parse import urljoin, urlsplit
 from urllib.robotparser import RobotFileParser
 
-# robots.txt user agents whose block covers our use (we send the text to an AI from Anthropic) ...
-AI_AGENTS_RESERVED = ('anthropic-ai', 'ClaudeBot', 'Claude-User', 'AI', 'MachineLearning')
-# ... and AI-training crawlers of others: blocking them is reported, not treated as a reservation for us
-AI_AGENTS_NOTED = ('GPTBot', 'CCBot', 'Google-Extended', 'Applebot-Extended', 'Bytespider', 'meta-externalagent')
+# robots.txt agents of AI crawlers / AI-training data collectors: a block is reported, not a stop - this tool
+# is not one of them and identifies itself with its own user agent, whose robots rules are followed
+AI_AGENTS_NOTED = ('GPTBot', 'ClaudeBot', 'anthropic-ai', 'CCBot', 'Google-Extended', 'Applebot-Extended',
+                   'Bytespider', 'meta-externalagent', 'PerplexityBot', 'AI', 'MachineLearning')
 
 TERMS_LINK_WORDS = ('terms', 'conditions', 'legal', 'disclaimer', 'imprint', 'impressum', 'nutzungsbedingungen',
                     'vilkaar', 'vilkår', 'betingelser', 'mentions-legales', 'conditions-generales', 'note-legali',
@@ -31,13 +37,15 @@ TERMS_LINK_WORDS = ('terms', 'conditions', 'legal', 'disclaimer', 'imprint', 'im
                     'privatlivspolitik', 'datenschutz', 'copyright')
 MAX_TERMS_PAGES = 4
 
-MINING = re.compile(
+MINING = re.compile(     # what this tool does: automated reading and extraction
     r"\b(scrap(?:e|es|ed|ing|er|ers)|screen[- ]scraping|data[- ]mining|text and data mining|text- and data[- ]mining|"
     r"tdm|crawl(?:ing|er|ers)?|spider(?:s|ing)?|web ?robots?|robots?|bots?|harvest(?:ing)?|"
     r"automated (?:means|tools?|systems?|programs?|software|access|collection|extraction|quer(?:y|ies)|scripts?|"
     r"processes|devices?|methods?)|data extraction|extract(?:ing)? (?:data|content)|"
-    r"machine learning|artificial intelligence|ai (?:training|systems?|models?)|train(?:ing)? (?:an? )?(?:ai|models?)|"
-    r"large language models?|llms?|text- und data-mining|text und data mining)\b", re.I)
+    r"text- und data-mining|text und data mining)\b", re.I)
+AI_TRAINING = re.compile(  # what this tool does NOT do: building AI training data
+    r"\b(machine learning|artificial intelligence|ai (?:training|systems?|models?)|train(?:ing)? (?:an? )?(?:ai|models?|"
+    r"algorithms?)|large language models?|llms?|generative ai)\b", re.I)
 PROHIBIT = re.compile(
     r"\b(prohibit(?:ed|s)?|not (?:be )?(?:permitted|allowed|authori[sz]ed)|may not|must not|shall not|cannot be used|"
     r"forbidden|without (?:our |the |prior |express |explicit |written )*(?:consent|permission|approval|authori[sz]ation)|"
@@ -52,34 +60,55 @@ def _sentences(text: str) -> list[str]:
 
 
 def find_reservation(text: str) -> str | None:
-    """The first sentence that reserves the site against scraping / data mining / AI, or None."""
+    """The first sentence that forbids scraping / automated access / data mining, or None."""
     for s in _sentences(text):
         if NOT_ABOUT_US.search(s) and not re.search(r"scrap|crawl|data[- ]mining|robot", s, re.I):
             continue
-        if MINING.search(s) and (PROHIBIT.search(s) or LEGAL_REFERENCE.search(s)):
+        if not (PROHIBIT.search(s) or LEGAL_REFERENCE.search(s)):
+            continue
+        if AI_TRAINING.search(s) and not _beyond_training(s):
+            continue                       # only about training AI: reported by find_training_clause, not a stop
+        if MINING.search(s):
             return s[:400]
     return None
 
 
+def _beyond_training(sentence: str) -> bool:
+    """A sentence that names AI *and* forbids scraping/data mining in general still counts as a stop."""
+    without_ai = AI_TRAINING.sub(" ", sentence)
+    return bool(MINING.search(without_ai)) and not re.search(r"\b(?:to|for) (?:train|build|develop)\w*", sentence, re.I)
+
+
+def find_training_clause(text: str) -> str | None:
+    """A sentence that only forbids using the content to train AI (reported, not a stop)."""
+    for s in _sentences(text):
+        if AI_TRAINING.search(s) and PROHIBIT.search(s) and not find_reservation(s):
+            return s[:300]
+    return None
+
+
 def meta_reservation(meta: dict) -> str | None:
-    """<meta name="tdm-reservation" content="1"> or <meta name="robots" content="noai">."""
+    """<meta name="tdm-reservation" content="1"> (a text-and-data-mining reservation: stop)."""
     if str(meta.get('tdm-reservation', '')).strip() == '1':
         return 'tdm-reservation = 1 (TDMRep meta tag)'
+    return None
+
+
+def meta_note(meta: dict) -> str | None:
+    """<meta name="robots" content="noai"> - aimed at AI training datasets: reported only."""
     robots = str(meta.get('robots', '')).lower()
     if 'noai' in robots or 'noimageai' in robots:
-        return f'robots meta tag: "{robots}"'
+        return f'pages carry robots "{robots}" (no AI training) - reported; this tool does not train AI'
     return None
 
 
 def robots_ai_check(policy, url: str) -> tuple[str | None, list[str]]:
-    """-> (reservation text or None, notes about other AI crawlers being blocked)."""
+    """-> (None - AI-crawler blocks are never a stop for this tool, notes about which ones are blocked)."""
     if not isinstance(policy, RobotFileParser):
         return None, []
-    blocked = [a for a in AI_AGENTS_RESERVED if _blocks(policy, a, url)]
     noted = [a for a in AI_AGENTS_NOTED if _blocks(policy, a, url)]
-    reservation = f"robots.txt blocks AI agents: {', '.join(blocked)}" if blocked else None
-    return reservation, ([f"robots.txt blocks AI-training crawlers ({', '.join(noted)}); "
-                          "this tool is not a training crawler and still reads the public pages"] if noted else [])
+    return None, ([f"robots.txt blocks AI crawlers ({', '.join(noted)}) - reported; this tool is not one of them "
+                   "and follows the rules for its own user agent"] if noted else [])
 
 
 def _blocks(policy: RobotFileParser, agent: str, url: str) -> bool:

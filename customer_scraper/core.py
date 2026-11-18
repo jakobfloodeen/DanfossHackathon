@@ -228,6 +228,10 @@ def _check_site_terms(page_url, links, hosts, policies, warnings, terms):
             warnings.append(f'Could not read the terms page {url}: {exc}')
             continue
         terms['checked'].append(final)
+        training = tdm.find_training_clause(text)
+        if training:
+            terms['notes'].append(f'{final}: forbids using the content to train AI - reported; this tool does '
+                                  f'not train AI: "{training}"')
         sentence = tdm.find_reservation(text)
         if sentence:
             terms['quote'] = sentence
@@ -327,7 +331,11 @@ def research_customer(url: str, *, company_name: str = '', seed_urls=(), topic: 
                 warnings.append(f'Unsupported content: {final}')
                 continue
             if check_terms:
-                reason = tdm.meta_reservation(getattr(_html, 'last_meta', {}) if kind.startswith('html') else {})
+                meta = getattr(_html, 'last_meta', {}) if kind.startswith('html') else {}
+                note = tdm.meta_note(meta)
+                if note and note not in terms['notes']:
+                    terms['notes'].append(note)
+                reason = tdm.meta_reservation(meta)
                 where = final
                 origin_now = '{0.scheme}://{0.netloc}'.format(urlsplit(final))
                 if not reason and origin_now not in terms_checked:
