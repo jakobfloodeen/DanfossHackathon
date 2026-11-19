@@ -984,7 +984,8 @@
     const tag = st.key === "good" || v.status === "sample" ? "" : `<span class="st st-${st.key}" title="${esc([why, v.note].filter(Boolean).join(": "))}">${st.icon} ${st.label}</span>`;
     // short notes that change the meaning stay visible; the rest is a tooltip on the label
     const note = v.note && ["conflict", "converted", "inferred"].includes(v.status) ? `<div class="cell-note">${esc(v.note)}</div>` : "";
-    return `<td class="cell-${v.status || "ok"}">${esc(v.value)}${refs}${tag}${note}</td>`;
+    const build = v.build ? `<span class="st st-build" title="${esc(buildTitle(v))}">depends on build</span>` : "";
+    return `<td class="cell-${v.status || "ok"}">${esc(v.value)}${refs}${tag}${build}${note}</td>`;
   }
 
   /** "2 to check · 6 unknown" - only three kinds of status exist for the reader: Verified, Check, Unknown. */
@@ -1025,6 +1026,13 @@
     if (!c.calls) return `<span class="ai-cost">No AI used${c.reason ? ` (${esc(c.reason)})` : ""}</span>`;
     return `<span class="ai-cost" title="${esc(c.input)} tokens in, ${esc(c.output)} tokens out${c.factsSent ? `, ${esc(c.factsSent)} facts sent` : ""}">AI cost: $${c.usd < 0.01 ? c.usd.toFixed(4) : c.usd.toFixed(3)} · ${c.calls} call${c.calls > 1 ? "s" : ""}</span>`;
   }
+
+  // What level Dani compares at: the product as its datasheet describes it (everything any build can do), not the
+  // customer's exact build / order code. Said on screen and in print so nobody mistakes the one for the other.
+  const LEVEL_TEXT = "Compared at product level: the datasheet range across all builds, not the customer's exact build. " +
+    "Values marked “depends on build” hold for some configurations only (end plate, inlet, spools, coil …). " +
+    "Configure with application engineering before quoting.";
+  const buildTitle = (v) => `Depends on the build: ${v.build}. Confirm the customer's configuration before quoting.`;
 
   const KIND_LABEL = { positioning: "Positioning", availability: "Availability", pricing: "Pricing",
                        selling_point: "Selling point", transition: "Transition", warning: "Warning" };
@@ -1166,7 +1174,8 @@
     const st = SalesView.simpleStatus(v.status, true);
     const split = SalesView.splitValue(v.value);
     const unit = x.attr.unit ? `<span class="b-unit">${esc(x.attr.unit)}</span>` : "";
-    const cond = split.big && split.rest ? `<span class="b-cond" title="${esc(v.value)}">conditions</span>` : "";
+    const cond = v.build ? `<span class="b-build" title="${esc(buildTitle(v))}">depends on build</span>`
+      : split.big && split.rest ? `<span class="b-cond" title="${esc(v.value)}">conditions</span>` : "";
     const body = split.big
       ? `<div class="b-num">${esc(split.big)}${unit}</div>`
       : `<div class="b-text" title="${esc(v.value)}">${esc(SalesView.shorten(v.value, 55))}</div>`;
@@ -1204,6 +1213,7 @@
       <div class="b-foot"><span><span class="b-verdict v-win">▲ We lead</span> / <span class="b-verdict v-lose">▼ They lead</span> Danfoss compared with that competitor</span>
         <span><span class="b-prob">(probably)</span> conditions differ</span>
         <span><span class="b-check">check</span> confirm before quoting</span>
+        <span><span class="b-build">depends on build</span> holds for some configurations only</span>
         <span>— not stated</span>
         ${a.restCount ? `<button class="link-btn" type="button" data-act="open-details">Show ${a.restCount} more comparable point${a.restCount > 1 ? "s" : ""} in Details ↓</button>` : ""}</div>
     </section>`;
@@ -1265,7 +1275,8 @@
     const links = (v.links || []).map((l) => `p.${esc(l.page)}`).join(" ");
     const st = CELL_STATUS[v.status];
     const tag = st && v.status !== "converted" ? ` <span class="p-flag">${esc(st[0])}</span>` : "";
-    return `<td>${esc(clip(variants[0], PRINT.cellChars))}${more}${refs}${links ? ` <span class="p-more">${links}</span>` : ""}${tag}</td>`;
+    const build = v.build ? ' <span class="p-build" title="depends on build">build</span>' : "";
+    return `<td>${esc(clip(variants[0], PRINT.cellChars))}${more}${refs}${links ? ` <span class="p-more">${links}</span>` : ""}${tag}${build}</td>`;
   }
 
   function printList(title, items, max) {
@@ -1302,7 +1313,8 @@
     return `<div class="print-sheet" aria-hidden="true"><section class="p-page p-page1">
       <header class="p-head">
         <div><div class="p-brand">Danfoss · Competitor Intelligence</div><h3>${esc(r.title)}</h3>
-          <div class="p-sub">Prepared for ${esc(state.buyer.company || "—")}${state.buyer.application ? " · " + esc(state.buyer.application) : ""} · ${esc(new Date().toLocaleDateString())}</div></div>
+          <div class="p-sub">Prepared for ${esc(state.buyer.company || "—")}${state.buyer.application ? " · " + esc(state.buyer.application) : ""} · ${esc(new Date().toLocaleDateString())}</div>
+          <div class="p-level">Product-level comparison (datasheet range across all builds) – the customer's build may differ; configure with application engineering before quoting.</div></div>
         <div class="p-meta"><b>Confidence: ${esc(r.confidence?.level || "n/a")}</b><br>${esc(issues)}
           ${r.grounding?.statements ? `<br>${esc(r.grounding.statements)} AI statements · ${esc(r.grounding.citations)} citations · numbers checked by code` : ""}</div>
       </header>
@@ -1321,7 +1333,7 @@
         ${com.length && !page2 ? printList("Commercial (approved, internal)", com.map((n) => ({ text: `${KIND_LABEL[n.kind] || n.kind}: ${n.text}`, sources: n.sources })), PRINT.commercial) : ""}
       </div>
       ${printSources(page1Sources)}
-      <footer class="p-foot">Superscript numbers = sources below · +N = more stated values in the app · "Not stated" = not in the datasheets, never guessed. Full values, quotes and all other facts: open this comparison in Dani.${page2 ? " Business brief for the customer: page 2." : ""}</footer>
+      <footer class="p-foot">Superscript numbers = sources below · +N = more stated values in the app · <b>build</b> = value holds for some configurations only · "Not stated" = not in the datasheets, never guessed. Full values, quotes and all other facts: open this comparison in Dani.${page2 ? " Business brief for the customer: page 2." : ""}</footer>
     </section>${page2 ? page2.html : ""}</div>`;
   }
 
@@ -1430,6 +1442,7 @@
         <div>
           <h3>${esc(r.title)}</h3>
           <div class="hint">Prepared for ${esc(buyer)}${state.buyer.application ? " · " + esc(state.buyer.application) : ""}</div>
+          <div class="hint level-line">${esc(LEVEL_TEXT)}</div>
           ${r.grounding?.statements ? `<div class="hint trust-line">AI text checked by code: ${esc(r.grounding.statements)} statements · ${esc(r.grounding.citations)} citations${r.grounding.problems ? ` · ${esc(r.grounding.problems)} failed, see Check before you promise` : " · every number verified"}</div>` : ""}
         </div>
         <div class="head-right"><span class="confidence conf-${esc(r.confidence?.level)}" title="${esc(r.confidence?.reason)}">Data confidence: ${esc(r.confidence?.level || "n/a")}</span></div>

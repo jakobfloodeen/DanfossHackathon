@@ -280,3 +280,18 @@ def test_browse_data_returns_every_fact_of_a_product():
     assert len(r["facts"]) == max(p["facts"] for p in products)               # all of them, not the comparison cut
     assert {"label", "value", "quote", "source", "page", "status"} <= set(r["facts"][0])
     assert client.get("/api/facts", params={"product": "nope"}).status_code == 404
+
+
+def test_values_that_hold_for_some_builds_only_are_flagged():
+    from comparison_engine.website import BUILD_RE, _build_conditions
+    from comparison_engine.facts import Fact
+    build = ["port P, A/B; with PVS end plate", "inlet plate UL17", "12 V; 20 °C", "valve W", "5 working section(s)", "middle section with emergency handle", "working section LS6",
+             "compensator spring G (green)", "closed center", "Deutsch DT 04-2P connector"]
+    test = ["working sections", "at 20 °C", "maximum contamination", "plus/minus; of rated voltage", "static", "recommended",
+            "viscosity at which technical data were measured", "port A/B", "inlet temperature"]
+    assert all(BUILD_RE.search(c) for c in build), [c for c in build if not BUILD_RE.search(c)]
+    assert not [c for c in test + ["oil temperature at inlet"] if BUILD_RE.search(c)]
+    mk = lambda c: Fact(id="F1", product_id="p", role="target", attribute="a", value="1", unit=None,  # noqa: E731
+                        norm_value=None, norm_unit=None, source_file="x", page=1, quote="", status="ok",
+                        condition=c)
+    assert _build_conditions([mk("with PVSI end plate"), mk("at 20 °C")]) == ["with PVSI end plate"]

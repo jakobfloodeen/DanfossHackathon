@@ -556,6 +556,8 @@ details.pc-more[open] > summary { margin-bottom: 2px; }
 .p-sources li { break-inside: avoid; }
 .p-doc { color: #111; overflow-wrap: anywhere; }
 .p-foot { margin-top: 4px; font-size: 6.5pt; color: #666; }
+.p-level { font-size: 7pt; color: #555; font-style: italic; margin-top: 1px; }
+.p-build { font-size: 6pt; font-weight: 700; color: #555; border: 0.5px solid #999; border-radius: 2px; padding: 0 2px; margin-left: 2px; text-transform: uppercase; }
 .p-sources h5 { color: #666; font-weight: 600; text-transform: none; letter-spacing: 0; font-size: 7pt; }   /* both pages: present, not a section */
 .p-page2 { break-before: page; page-break-before: always; }
 .p-cols-2 { grid-template-columns: 1.15fr 1fr; gap: 6px 22px; padding-left: 0; }
@@ -568,3 +570,7 @@ details.pc-more[open] > summary { margin-bottom: 2px; }
 .p-vals { color: #333; }
 .p-page2 .print-sheet li, .p-page2 li { margin-bottom: 2px; }
 
+
+/* "depends on build": the value holds for some configurations of the product only */
+.b-build, .st-build { display: inline-block; font-size: 11px; font-weight: 600; color: var(--ink-2); border: 1px dashed var(--ink-3, #9aa0a6); border-radius: 4px; padding: 0 5px; margin-left: 4px; white-space: nowrap; cursor: help; }
+.level-line { font-size: 12px; margin-top: 2px; max-width: 70ch; }

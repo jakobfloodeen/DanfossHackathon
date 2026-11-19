@@ -119,6 +119,22 @@ def _value_text(f: Fact, row_unit: str) -> str:
     return f"{f.value} {f.unit or ''}".strip()
 
 
+# A condition that names a part of the BUILD (end plate, inlet, sections, spool, spring, coil voltage, connector,
+# ports, actuation ...): the value holds for some builds of the product only. Test conditions (temperature,
+# viscosity, tolerance, "at 100 bar") are not build. Shown as "depends on build" so the salesperson knows to
+# confirm the customer's configuration before quoting.
+BUILD_RE = re.compile(
+    r"end ?plate|(?<!at )inlet(?!\s*temperature)|\d+\s+working sections?|working section [a-z]+\d|middle sections?|edl section [a-z]|\bpv(?:b|bz|p|pm|pvm|px|s|si|lp|la|e)\b|\bcvb\b|spool|spring|compensat|"
+    r"connector|deutsch|\bamp\b|bspp|\bsae\b|port size|\b\d+\s?v(?:\s?dc)?\b|\bv ?dc\b|coil|solenoid|"
+    r"\bvalve [vwc]\b|option|operation|actuation|activation|on/off|proportional|electrohydraulic|"
+    r"open cent|closed cent|displacement pump|piston pump|version|configuration|turbo|balance valve|"
+    r"emergency handle|safety valve|shock valve|check valve|controller spring|control edge", re.I)
+
+
+def _build_conditions(facts: list[Fact]) -> list[str]:
+    return list(dict.fromkeys(f.condition for f in facts if f.condition and BUILD_RE.search(f.condition)))
+
+
 def _cell(facts: list[Fact], row_unit: str, by_id: dict[str, Fact], sources: _Sources) -> dict:
     """One table cell from all facts of one product + attribute."""
     stated = [f for f in facts if f.status != "missing"]
@@ -139,11 +155,16 @@ def _cell(facts: list[Fact], row_unit: str, by_id: dict[str, Fact], sources: _So
     if len({(f.condition, _value_text(f, row_unit)) for f in stated}) > 1:   # several values, each under its condition
         parts = [_cell([f], row_unit, by_id, sources) for f in stated]
         worst = next((c["status"] for c in parts if c["status"] in ("unverified", "inferred")), parts[0]["status"])
-        return {"value": " · ".join(dict.fromkeys(f"{c['value']}" + (f" ({f.condition})" if f.condition else "")
-                                                for c, f in zip(parts, stated))),
-                "status": worst, "sources": sorted({n for c in parts for n in c.get("sources", [])})}
+        multi = {"value": " · ".join(dict.fromkeys(f"{c['value']}" + (f" ({f.condition})" if f.condition else "")
+                                                 for c, f in zip(parts, stated))),
+                 "status": worst, "sources": sorted({n for c in parts for n in c.get("sources", [])})}
+        if _build_conditions(stated):
+            multi["build"] = " · ".join(_build_conditions(stated))
+        return multi
     f = stated[0]
     cell = {"value": _value_text(f, row_unit), "status": "ok", "sources": sources.refs([f], by_id)}
+    if _build_conditions([f]):
+        cell["build"] = f.condition
     if f.status == "calculated":
         cell.update(status="inferred", note=f"Calculated by code: {f.quote} (from {', '.join(f.based_on)})")
     elif f.status == "unverified":
