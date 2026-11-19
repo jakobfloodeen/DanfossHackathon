@@ -66,13 +66,7 @@ def ask_claude(system: str, prompt: str, schema: dict | None = None, model: str 
         try:
             response = client.beta.messages.create(betas=[FALLBACK_BETA], fallbacks="default", **request)
         except anthropic.BadRequestError:
-            try:
-                response = client.messages.create(**request)    # fallback option not accepted -> plain call
-            except anthropic.BadRequestError as e:
-                if "effort" not in str(e).lower():
-                    raise
-                request["output_config"].pop("effort")          # this model has no effort setting
-                response = client.messages.create(**request)
+            response = _plain_call(client, request, schema, prompt, anthropic)
     except anthropic.APITimeoutError as e:
         raise LLMUnavailable(f"the AI did not answer within {config.llm_timeout():.0f} s") from e
     except anthropic.AuthenticationError as e:
@@ -80,9 +74,9 @@ def ask_claude(system: str, prompt: str, schema: dict | None = None, model: str 
     except anthropic.RateLimitError as e:
         raise LLMUnavailable("rate limit reached - try again in a minute") from e
     except anthropic.APIStatusError as e:
-        detail = getattr(e, "message", "") or ""
+        detail = _error_text(e)
         hint = "the API key has no credit left" if "credit" in detail.lower() else ""
-        raise LLMUnavailable(hint or f"API error {e.status_code}") from e
+        raise LLMUnavailable(hint or f"API error {e.status_code}: {detail[:220]}") from e
     except anthropic.APIConnectionError as e:
         raise LLMUnavailable("no connection to the API") from e
 
@@ -96,6 +90,42 @@ def ask_claude(system: str, prompt: str, schema: dict | None = None, model: str 
     if not text.strip():
         raise LLMUnavailable("the model returned no text")
     return text
+
+
+def _error_text(e) -> str:
+    """The API's own explanation (e.g. 'compiled grammar is too large'), not just the status code."""
+    body = getattr(e, "body", None)
+    if isinstance(body, dict):
+        err = body.get("error") if isinstance(body.get("error"), dict) else body
+        if err.get("message"):
+            return str(err["message"])
+    return str(getattr(e, "message", "") or e)
+
+
+def _plain_call(client, request: dict, schema, prompt: str, anthropic):
+    """The call without the fallback option. A 400 is retried once without the setting it complains about:
+    - 'effort': this model has no effort setting
+    - the answer format (schema too complex for this model / 'grammar'): ask for the same JSON in the prompt
+      instead - the code checks the answer's shape anyway (guardrails.check_shape / customer_profile.verify)"""
+    for _ in range(3):
+        try:
+            return client.messages.create(**request)
+        except anthropic.BadRequestError as e:
+            text = _error_text(e).lower()
+            config_ = request["output_config"]
+            if "effort" in text and "effort" in config_:
+                config_.pop("effort")
+            elif schema and "format" in config_ and any(w in text for w in (
+                    "schema", "grammar", "output_config", "format", "json")):
+                config_.pop("format")
+                request["messages"] = [{"role": "user", "content": prompt + "\n\nAnswer with ONE JSON object only "
+                                        "(no text around it) that matches this JSON Schema exactly:\n"
+                                        + json.dumps(schema, separators=(",", ":"))}]
+            else:
+                raise
+            if not config_:
+                request.pop("output_config")
+    return client.messages.create(**request)
 
 
 def extract_json(text: str) -> dict:
