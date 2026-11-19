@@ -11,7 +11,7 @@
       "children": [
         {
           "id": "proportional",
-          "label": "Proportional valve groups (PVG)",
+          "label": "Proportional valve groups (PVG, CVG)",
           "desc": "Load-sensing proportional valve groups",
           "status": "active",
           "prompt": "Which Danfoss valve is the starting point?",
