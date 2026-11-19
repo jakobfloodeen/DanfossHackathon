@@ -1,18 +1,18 @@
-name,type,website,aliases
-AGCO,OEM,https://www.agcocorp.com/us/en/home.html,AGCO Corporation;AGCO Corp;Fendt;Massey Ferguson;Valtra
-Aker Solutions,OEM,https://www.akersolutions.com/,Aker
-BERENDSEN,Distributor,https://berendsen.com.au/,Berendsen Fluid Power
-Caterpillar,OEM,https://www.cat.com/en_GB.html,CAT;Caterpillar Inc
-Certified Power Inc.,Distributor,https://www.certifiedpower.com/,Certified Power
-FASSI,OEM,https://www.fassi.com/,Fassi Gru;Fassi Cranes
-Flodraulic Group,Distributor,https://flodraulic.com/,Flodraulic
-HAINZL,Distributor,https://www.hainzl.at/,Hainzl Industriesysteme
-HMF,OEM,https://dk.hmfcranes.com/,HMF Cranes;HMF Group
-Hydraquip,Distributor,https://www.hydraquip.com/,Hydraquip Hydraulics
-HydraSpecma,Distributor,https://www.hydraspecma.com/store/dk/en,Hydra Specma;Specma
-HYSTER-YALE,OEM,https://www.hyster-yale.com/,Hyster;Yale;Hyster Yale;Hyster-Yale Materials Handling
-JOHN DEERE,OEM,https://www.deere.dk/da-dk,Deere;Deere & Company;John Deer;JD;Wirtgen
-MANITOU,OEM,https://www.manitou.com/en-DK,Manitou Group;Gehl;Mustang
-PALFINGER,OEM,https://www.palfinger.com/europe/en.html,Palfinger AG
-SANDVIK,OEM,https://www.home.sandvik/en/,Sandvik Mining;Sandvik AB
-SUNSOURCE,Distributor,https://www.sun-source.com/,Sun Source;SunSource
+name,type,website,aliases,seeds
+AGCO,OEM,https://www.agcocorp.com/us/en/home.html,AGCO Corporation;AGCO Corp;Fendt;Massey Ferguson;Valtra,
+Aker Solutions,OEM,https://www.akersolutions.com/,Aker,
+BERENDSEN,Distributor,https://berendsen.com.au/,Berendsen Fluid Power,
+Caterpillar,OEM,https://www.cat.com/en_GB.html,CAT;Caterpillar Inc,
+Certified Power Inc.,Distributor,https://www.certifiedpower.com/,Certified Power,
+FASSI,OEM,https://www.fassi.com/,Fassi Gru;Fassi Cranes,
+Flodraulic Group,Distributor,https://flodraulic.com/,Flodraulic,
+HAINZL,Distributor,https://www.hainzl.at/,Hainzl Industriesysteme,
+HMF,OEM,https://dk.hmfcranes.com/,HMF Cranes;HMF Group,
+Hydraquip,Distributor,https://www.hydraquip.com/,Hydraquip Hydraulics,
+HydraSpecma,Distributor,https://www.hydraspecma.com/store/dk/en,Hydra Specma;Specma,
+HYSTER-YALE,OEM,https://www.hyster-yale.com/,Hyster;Yale;Hyster Yale;Hyster-Yale Materials Handling,
+JOHN DEERE,OEM,https://www.deere.dk/da-dk,Deere;Deere & Company;John Deer;JD;Wirtgen,
+MANITOU,OEM,https://www.manitou.com/en-DK,Manitou Group;Gehl;Mustang,
+PALFINGER,OEM,https://www.palfinger.com/europe/en.html,Palfinger AG;Palfinger Europe;Palfinger EMEA;Palfinger Marine;Palfiger;Palfinge,https://www.palfinger.com/worldwide/en/insights-news-and-events/news.html;https://www.palfinger.com/worldwide/en/about-palfinger/company.html;https://www.palfinger.com/worldwide/en/about-palfinger/sustainability.html;https://www.palfinger.com/worldwide/en/about-palfinger/investors.html
+SANDVIK,OEM,https://www.home.sandvik/en/,Sandvik Mining;Sandvik AB,
+SUNSOURCE,Distributor,https://www.sun-source.com/,Sun Source;SunSource,

@@ -576,3 +576,6 @@ details.pc-more[open] > summary { margin-bottom: 2px; }
 /* "depends on build": the value holds for some configurations of the product only */
 .b-build, .st-build { display: inline-block; font-size: 11px; font-weight: 600; color: var(--ink-2); border: 1px dashed var(--ink-3, #9aa0a6); border-radius: 4px; padding: 0 5px; margin-left: 4px; white-space: nowrap; cursor: help; }
 .level-line { font-size: 12px; margin-top: 2px; max-width: 70ch; }
+.prof-pages { margin-top: 6px; font-size: 13px; }
+.prof-pages summary { cursor: pointer; color: var(--ink-2); }
+.prof-pages ul { margin: 4px 0; padding-left: 18px; }

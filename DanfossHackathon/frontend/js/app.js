@@ -843,7 +843,10 @@
       ${sec("products", p.products)}${sec("machines", p.machines)}${sec("partners", p.partners)}
       ${!used.length ? '<p class="hint">No hydraulic supplier or component is named on the pages read.</p>' : ""}
       ${basics.length ? `<div class="hint"><b>Basics:</b> ${esc(basics.join(" · "))}</div>` : ""}
-      <div class="hint">${esc(p.message || "")} · ${(p.pages || []).length} page(s) visited${p.dropped?.length ? ` · ${p.dropped.length} AI statement(s) dropped because their quote was not on the page` : ""}${p.terms?.status === "no_reservation_found" ? " · terms checked: no reservation against automated reading" : ""}</div></div>`;
+      <div class="hint">${esc(p.message || "")} · ${(p.pages || []).length} page(s) visited${p.dropped?.length ? ` · ${p.dropped.length} AI statement(s) dropped because their quote was not on the page` : ""}${p.terms?.status === "no_reservation_found" ? " · terms checked: no reservation against automated reading" : ""}</div>
+      <details class="prof-pages"><summary>Pages read (${(p.pages || []).length})${(p.warnings || []).length ? ` · ${p.warnings.length} warning(s)` : ""}</summary>
+        <ul>${(p.pages || []).map((pg) => `<li><a href="${esc(pg.url)}" target="_blank" rel="noopener">${esc(pg.title || shortUrl(pg.url))}</a></li>`).join("")}</ul>
+        ${[...(p.warnings || []), ...(p.terms?.notes || [])].map((w) => `<div class="hint">${esc(w)}</div>`).join("")}</details></div>`;
   }
 
   function customerPanelHtml() {

@@ -319,3 +319,78 @@ def test_another_address_reads_again_even_with_a_saved_profile(monkeypatch):
     assert run(website="deere.dk/da-dk/")["status"] == "cached"                    # same site, written differently
     run(website="www.deere.com")
     assert crawled == ["https://www.deere.dk/da-dk", "https://www.deere.com"]
+
+
+def test_palfinger_like_site_reads_growth_news_before_product_pages(monkeypatch):
+    """Replica of palfinger.com's structure (nav, 30 product pages, news list, legal notice wording)."""
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    import customer_scraper.core as core
+    base = "https://www.palfinger.example"
+    W = base + "/worldwide/en"
+    nav = ('<a href="/worldwide/en/about-palfinger/company.html">Company</a>'
+           '<a href="/worldwide/en/our-products.html">Our Products</a>'
+           '<a href="/worldwide/en/insights-news-and-events.html">News &amp; Events</a>'
+           '<a href="/worldwide/en/dealer-search.html">Find a dealer</a><a href="/worldwide/en/career.html">Careers</a>'
+           '<a href="/worldwide/en/inventory.html">Inventory</a>'
+           '<footer><a href="/worldwide/en/terms-conditions.html">Terms and Conditions</a>'
+           '<a href="/worldwide/en/imprint.html">Imprint</a></footer>')
+    page = lambda title, text, extra="": f"<title>{title}</title><p>{text}</p>{extra}{nav}".encode()  # noqa: E731
+    articles = {
+        "2026/palfinger-marks-expansion-in-slovenia.html": "PALFINGER is investing in the future of its European "
+            "manufacturing network with a new production facility in Ormoz, Slovenia, with groundbreaking in 2026.",
+        "2026/palfinger-strengthens-india-presence.html": "PALFINGER is advancing its plans to establish a production "
+            "plant in India together with the TVS Mobility Group, in the region for the region.",
+        "2026/new-sales---service-hub-in-madrid.html": "The new Sales and Service hub in Madrid spans 22,000 square "
+            "meters with offices, installation and service centers and spare parts warehouses.",
+    }
+    pages = {base + "/europe/en.html": page("PALFINGER Europe", "PALFINGER is a leading provider of crane and "
+                                                "lifting solutions with loader cranes, aerial work platforms and more.")}
+    pages[W + "/insights-news-and-events/news.html"] = page("News", "Press releases from PALFINGER, the world market "
+        "leader of innovative crane and lifting solutions.", "".join(
+            f'<a href="/worldwide/en/insights-news-and-events/news/{k}">{k}</a>' for k in articles))
+    pages[W + "/insights-news-and-events.html"] = pages[W + "/insights-news-and-events/news.html"]
+    for k, text in articles.items():
+        pages[f"{W}/insights-news-and-events/news/{k}"] = page(k, text)
+    products = "".join(f'<a href="/worldwide/en/our-products/loader-cranes/pk-{i}.html">PK {i} TEC</a>' for i in range(30))
+    pages[W + "/our-products.html"] = page("Our products", "Loader cranes, timber cranes, marine cranes and aerial "
+                                                           "work platforms for every application.", products)
+    for i in range(30):
+        pages[f"{W}/our-products/loader-cranes/pk-{i}.html"] = page(f"PK {i}", f"The PK {i} TEC loader crane offers "
+                                                                     "high lifting capacity with low dead weight.")
+    pages[W + "/about-palfinger/company.html"] = page("Company", "PALFINGER has more than 30 production and assembly "
+                                                                 "sites worldwide and around 12,000 employees.")
+    pages[W + "/terms-conditions.html"] = page("Terms", "PALFINGER, hereby grant you permission to use PALFINGER's "
+        "websites by visiting these websites, printing these out or storing these electronically on a local drive. "
+        "Any other use shall require PALFINGER's express, prior written approval.")
+    pages[W + "/imprint.html"] = page("Imprint", "COPYRIGHT PALFINGER AG ALL RIGHTS RESERVED. This website uses "
+                                                 "Google Analytics, a web analysis service of Google Inc.")
+
+    def fetch(url, allowed_hosts=None):
+        if url.endswith("/robots.txt"):
+            return b"User-agent: *\nAllow: /", url, "text/plain", False
+        if url not in pages:
+            import httpx
+            req = httpx.Request("GET", url)
+            raise httpx.HTTPStatusError("404", request=req, response=httpx.Response(404, request=req))
+        return pages[url], url, "text/html", False
+
+    monkeypatch.setattr(core, "fetch", fetch)
+    monkeypatch.setattr(core, "validate_url", lambda u: u)
+    import scraper.core as product_scraper
+    monkeypatch.setattr(product_scraper, "browser_available", lambda: False)   # no real browser in tests
+    cp.remember("PALFINGER", base + "/europe/en.html", "OEM",
+                aliases=["Palfinger AG"])
+    rows = (cp.directory_file().read_text(encoding="utf-8").replace(
+        base + "/europe/en.html,Palfinger AG,", base + "/europe/en.html,Palfinger AG," +
+        W + "/insights-news-and-events/news.html;" + W + "/about-palfinger/company.html"))
+    cp.directory_file().write_text(rows, encoding="utf-8")
+    report = cp._default_crawl(base + "/europe/en.html", "PALFINGER")
+    read = [s["url"] for s in report["sources"]]
+    assert report["terms"]["status"] == "no_reservation_found"                 # the legal notice is not a stop
+    assert all(f"{W}/insights-news-and-events/news/{k}" in read for k in articles)
+    assert not [u for u in read if any(w in u for w in ("dealer-search", "career", "inventory"))]
+    assert len(read) <= 25
+    ex = cp.excerpts_from_report(report)
+    assert any("Ormoz" in e["text"] for e in ex) and any("India" in e["text"] for e in ex)

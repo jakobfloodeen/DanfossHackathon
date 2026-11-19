@@ -138,7 +138,7 @@ def save(profile: dict) -> Path:
 
 
 # ---------------------------------------------------------------- the customer directory (names, aliases, typos)
-_FIELDS = ["name", "type", "website", "aliases"]
+_FIELDS = ["name", "type", "website", "aliases", "seeds"]   # seeds: extra start pages (news, about), ";"-separated
 
 
 def _key(text: str) -> str:
@@ -161,7 +161,7 @@ def directory() -> list[dict]:
         except (OSError, ValueError):
             continue
         row = rows.setdefault(_key(p.get("company")), {"name": p.get("company", ""), "type": "", "website": "",
-                                                        "aliases": ""})
+                                                        "aliases": "", "seeds": ""})
         row["website"] = row["website"] or p.get("website", "")
         row["researched_at"] = p.get("researched_at", "")
         row["profile_status"] = p.get("status", "")
@@ -179,7 +179,7 @@ def remember(name: str, website: str = "", kind: str = "", aliases: list[str] | 
             rows = [{k: r.get(k, "") or "" for k in _FIELDS} for r in csv.DictReader(fh)]
     row = next((r for r in rows if _key(r["name"]) == _key(name)), None)
     if row is None:
-        row = {"name": name, "type": kind, "website": "", "aliases": ""}
+        row = {"name": name, "type": kind, "website": "", "aliases": "", "seeds": ""}
         rows.append(row)
     row["website"] = row["website"] or website
     row["type"] = row["type"] or kind
@@ -449,13 +449,19 @@ def _default_crawl(website: str, company: str) -> dict:
         sys.path.insert(0, root)
     from customer_scraper import research_customer
     from customer_scraper.core import PROFILE_LINK_TERMS
+    from urllib.parse import urlsplit
+    entry = next((e for e in directory() if _key(e["name"]) == _key(company)), {})
+    host = urlsplit(website).hostname
+    seeds = [u for u in (entry.get("seeds") or "").split(";")           # extra start pages from the directory,
+             if u.strip() and urlsplit(u.strip()).hostname == host]      # same site only
     render = None
     try:                                              # JavaScript sites: the product scraper's hidden browser
         from scraper.core import browser_available, render_page
         render = render_page if browser_available() else None
     except Exception:
         render = None
-    return research_customer(website, company_name=company, collect="all", link_terms=PROFILE_LINK_TERMS,
+    return research_customer(website, company_name=company, seed_urls=[u.strip() for u in seeds],
+                             collect="all", link_terms=PROFILE_LINK_TERMS,
                              max_pages=int(os.getenv("CUSTOMER_MAX_PAGES", "25")), max_depth=3,
                              max_seconds=int(os.getenv("CUSTOMER_MAX_SECONDS", "150")), max_evidence=400,
                              render=render)
