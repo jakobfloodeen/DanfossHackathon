@@ -812,6 +812,10 @@ def run_customer_research(job: dict) -> None:
         job["progress"] = f"Research failed: {str(e)[:240]}"
 
 
+def _site_key(url: str) -> str:
+    return re.sub(r"^https?://(www\.)?", "", url.strip().lower()).rstrip("/")
+
+
 @app.get("/api/customers/search")
 def search_customers(q: str = ""):
     files = list_customers()
@@ -844,9 +848,11 @@ def research_customer_site(payload: dict):
         raise HTTPException(400, "Enter the customer's name first.")
     entry = customer_profile.resolve(typed)
     company = entry["name"] if entry else typed
-    website = str(payload.get("website") or "").strip() or (entry or {}).get("website", "")
+    typed_site = str(payload.get("website") or "").strip()
+    website = typed_site or (entry or {}).get("website", "")
     saved = customer_profile.load(company)
-    if saved and not payload.get("refresh"):
+    same_site = not typed_site or _site_key(typed_site) == _site_key(saved.get("website", "") if saved else "")
+    if saved and not payload.get("refresh") and same_site:
         return {"status": "cached", "profile": _profile_view(saved)}
     if not website:
         raise HTTPException(400, f"Dani has no website for {company} yet - paste the address of their site.")

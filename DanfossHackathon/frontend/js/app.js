@@ -714,12 +714,16 @@
     const input = form.company, list = form.querySelector(".cust-suggest"), panel = form.querySelector(".cust-panel");
     const showPanel = () => { panel.innerHTML = customerPanelHtml(); wirePanel(); };
     function wirePanel() {
-      panel.querySelector('[data-act="read-site"]')?.addEventListener("click", () => {
+      panel.querySelectorAll('[data-act="read-site"]').forEach((btn) => btn.addEventListener("click", () => {
         const url = panel.querySelector("[name=custUrl]")?.value.trim() || state.customer?.entry?.website || "";
         startResearch(state.customer?.entry?.name || input.value.trim(), url, false, showPanel);
-      });
+      }));
       panel.querySelector('[data-act="reread-site"]')?.addEventListener("click", () =>
         startResearch(state.customer.entry?.name || input.value.trim(), state.customer.profile?.website || "", true, showPanel));
+      panel.querySelector('[data-act="other-url"]')?.addEventListener("click", (e) => {
+        e.target.hidden = true;
+        const box = panel.querySelector(".cust-url"); box.hidden = false; box.querySelector("input").focus();
+      });
       panel.querySelector("[name=custUrl]")?.addEventListener("keydown", (e) => {
         if (e.key === "Enter") { e.preventDefault(); panel.querySelector('[data-act="read-site"]').click(); }
       });
@@ -858,7 +862,10 @@
           · <span class="visited">website last read ${esc((p.researched_at || "").slice(0, 10))}</span></div>
         <div class="hint">${esc(p.summary?.text || p.message || "")}</div>
         <details><summary>View the full profile</summary>${profileHtml(p)}</details>
-        <button class="link-btn" type="button" data-act="reread-site">Read the website again</button></div>`;
+        <div class="cust-actions"><button class="link-btn" type="button" data-act="reread-site">Read the website again</button>
+        <button class="link-btn" type="button" data-act="other-url">Use another address</button>
+        <div class="cust-url" hidden><input name="custUrl" placeholder="e.g. www.deere.com">
+        <button class="btn btn-ghost btn-sm" type="button" data-act="read-site">Read this address</button></div></div></div>`;
     }
     if (c.profile && c.profile.status !== "ok") {                // terms reservation, or nothing readable
       const p = c.profile;
@@ -872,7 +879,10 @@
     if (known) return `<div class="cust-card">${err}
         <div>Dani has no profile of <strong>${esc(name)}</strong> yet. Website on file: ${esc(shortUrl(known))}</div>
         <div class="actions"><button class="btn btn-ghost btn-sm" type="button" data-act="read-site">Read their website</button>
-        <span class="hint">One AI call (well under 1 cent); saved for every later comparison with ${esc(name)}.</span></div></div>`;
+        <span class="hint">One AI call (well under 1 cent); saved for every later comparison with ${esc(name)}.</span></div>
+        <div class="cust-actions"><button class="link-btn" type="button" data-act="other-url">Use another address</button>
+        <div class="cust-url" hidden><input name="custUrl" placeholder="e.g. www.deere.com">
+        <button class="btn btn-ghost btn-sm" type="button" data-act="read-site">Read this address instead</button></div></div></div>`;
     return `<div class="cust-card">${err}
         <div>Dani has nothing on <strong>${esc(name)}</strong> yet. Paste their website to read it — they are then added to the customer list.</div>
         <div class="cust-url"><input name="custUrl" placeholder="e.g. www.${esc(name.toLowerCase().replace(/[^a-z0-9]+/g, ""))}.com">

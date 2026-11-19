@@ -282,3 +282,26 @@ class TermsCheckTests(unittest.TestCase):
         self.assertIsNone(find_reservation('We do not use automated decision-making as defined in GDPR art. 22.'))
         self.assertIsNone(find_reservation('Content may not be used to train AI or machine learning models.'))
         self.assertTrue(find_reservation('Scraping, crawling or data mining, including for AI, is prohibited.'))
+
+
+class LocalLanguageSiteTests(unittest.TestCase):
+    """Profile mode reads a Danish site: Danish link words count, and other own pages are read after them."""
+
+    def test_danish_links_and_unnamed_pages_are_followed(self):
+        home = (b'<title>Forside</title><p>Velkommen til Example Maskiner, vi bygger kompakte gummiged til landbrug '
+                b'og entreprenoerer i hele Norden.</p><a href="/da-dk/om-os">Om os</a>'
+                b'<a href="/da-dk/traktorer">Traktorer</a><a href="/da-dk/x-serie">X-serien</a>'
+                b'<a href="/da-dk/forhandler">Find forhandler</a>')
+        page = lambda t: (f'<title>{t}</title><p>{t}: Example Maskiner har fabrik i Horsens og leverer maskiner '  # noqa: E731
+                          f'med elektrohydraulisk styring siden 1962.</p>').encode()
+        pages = {'https://customer.example/': home, 'https://customer.example/da-dk/om-os': page('Om os'),
+                 'https://customer.example/da-dk/traktorer': page('Traktorer'),
+                 'https://customer.example/da-dk/x-serie': page('X-serien')}
+        with patch.object(c, 'fetch', side_effect=website(pages)):
+            r = research_customer('https://customer.example/', collect='all', link_terms=c.PROFILE_LINK_TERMS,
+                                  check_terms=False)
+        urls = [s['url'] for s in r['sources']]
+        self.assertEqual(urls[:3], ['https://customer.example/', 'https://customer.example/da-dk/om-os',
+                                    'https://customer.example/da-dk/traktorer'])        # named topics first
+        self.assertIn('https://customer.example/da-dk/x-serie', urls)                    # then the rest
+        self.assertNotIn('https://customer.example/da-dk/forhandler', urls)              # dealer locator skipped

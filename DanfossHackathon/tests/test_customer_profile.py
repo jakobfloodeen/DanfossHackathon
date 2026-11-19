@@ -295,3 +295,27 @@ def test_values_that_hold_for_some_builds_only_are_flagged():
                         norm_value=None, norm_unit=None, source_file="x", page=1, quote="", status="ok",
                         condition=c)
     assert _build_conditions([mk("with PVSI end plate"), mk("at 20 °C")]) == ["with PVSI end plate"]
+
+
+def test_another_address_reads_again_even_with_a_saved_profile(monkeypatch):
+    import time
+    from fastapi.testclient import TestClient
+    import backend
+    cp.remember("JOHN DEERE", "https://www.deere.dk/da-dk", "OEM")
+    crawled = []
+    monkeypatch.setattr(backend, "CUSTOMER_ASK", fake_profile_ai)
+    monkeypatch.setattr(backend, "CUSTOMER_CRAWL", lambda url, company: crawled.append(url) or REPORT)
+    client = TestClient(backend.app)
+
+    def run(**kw):
+        r = client.post("/api/customers/research", json={"company": "JOHN DEERE", **kw}).json()
+        for _ in range(50):
+            if "jobId" not in r or client.get(f"/api/jobs/{r['jobId']}").json()["status"] in ("done", "error"):
+                return r
+            time.sleep(0.05)
+
+    run()
+    assert run()["status"] == "cached"                                             # same site: no new read
+    assert run(website="deere.dk/da-dk/")["status"] == "cached"                    # same site, written differently
+    run(website="www.deere.com")
+    assert crawled == ["https://www.deere.dk/da-dk", "https://www.deere.com"]
