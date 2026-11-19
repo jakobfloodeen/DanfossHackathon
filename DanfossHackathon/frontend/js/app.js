@@ -17,7 +17,7 @@
   const BUYER_PROMPT = "Who is the comparison for?";
   const LEVELS = ["off", "nice", "must"];
 
-  // Every data issue the backend can report. Unknown levels still render (as "Check").
+  // Detailed status labels, used by the print sheet (the screen uses the three simple labels from sales-view.js).
   const CELL_STATUS = {
     conflict:   ["Conflict", "badge-conflict"],
     sample:     ["Sample", "badge-muted"],
@@ -979,24 +979,33 @@
     const refs = (v.sources || []).map(ref).join("") + (v.links || []).map((l) => l.url
       ? `<a href="${esc(l.url)}" target="_blank" rel="noopener" class="ref" title="${esc(l.title)}">p.${esc(l.page)}</a>`
       : `<span class="ref" title="${esc(l.title)}">p.${esc(l.page)}</span>`).join("");
-    const st = CELL_STATUS[v.status];
-    const tag = st ? `<span class="badge ${st[1]}" title="${esc(v.note || "")}">${st[0]}</span>` : "";
-    // short notes that change the meaning stay visible; the rest is a tooltip on the badge
+    const st = SalesView.simpleStatus(v.status, true);
+    const why = SalesView.STATUS_WHY[v.status] || "";
+    const tag = st.key === "good" || v.status === "sample" ? "" : `<span class="st st-${st.key}" title="${esc([why, v.note].filter(Boolean).join(": "))}">${st.icon} ${st.label}</span>`;
+    // short notes that change the meaning stay visible; the rest is a tooltip on the label
     const note = v.note && ["conflict", "converted", "inferred"].includes(v.status) ? `<div class="cell-note">${esc(v.note)}</div>` : "";
     return `<td class="cell-${v.status || "ok"}">${esc(v.value)}${refs}${tag}${note}</td>`;
   }
 
-  /** Count every flagged cell by type, e.g. "1 conflict · 6 missing · 1 outdated". */
+  /** "2 to check · 6 unknown" - only three kinds of status exist for the reader: Verified, Check, Unknown. */
   function issueSummary(r) {
-    const counts = {};
-    r.attributes.forEach((a) => Object.values(a.values).forEach((v) => {
-      const s = v?.status === "pending" || v?.status === "na" ? v.status : !v || v.value == null ? "missing" : v.status;
-      if (s && s !== "ok" && s !== "na") counts[s] = (counts[s] || 0) + 1;
+    let check = 0, unknown = 0;
+    r.attributes.filter((a) => a.core !== false).forEach((a) => Object.values(a.values).forEach((v) => {
+      if (v?.status === "na" || v?.status === "sample") return;
+      const k = SalesView.simpleStatus(v?.status, v && v.value != null).key;
+      if (k === "check") check++; else if (k === "unknown") unknown++;
     }));
-    (r.flags || []).forEach((f) => { if (!(f.level in counts) && f.level !== "missing") counts[f.level] = 1; });
-    const parts = Object.entries(counts).map(([k, n]) =>
-      `<span class="issue-chip flag-${esc(k)}">${n} ${esc((FLAG_LABEL[k] || k).toLowerCase())}</span>`);
-    return parts.length ? parts.join("") : '<span class="issue-chip flag-ok">No data issues found</span>';
+    const parts = [];
+    if (check) parts.push(`<span class="issue-chip flag-conflict">${check} to check</span>`);
+    if (unknown) parts.push(`<span class="issue-chip flag-missing">${unknown} unknown</span>`);
+    return parts.length ? parts.join("") : '<span class="issue-chip flag-ok">All shown values verified</span>';
+  }
+
+  /** Data issue in "Details": three labels (Verified / Check / Unknown), the specific kind in brackets. */
+  function resultFlagHtml(f) {
+    const st = SalesView.simpleStatus(f.level === "ok" ? "ok" : f.level, f.level !== "missing" && f.level !== "pending");
+    const kind = FLAG_LABEL[f.level] || f.level;
+    return `<div class="flag flag-${esc(FLAG_LABEL[f.level] ? f.level : "warning")}"><strong>${st.label}</strong> <span class="flag-kind">(${esc(kind.toLowerCase())})</span> ${esc(f.text)}</div>`;
   }
 
   /** "12 AI statements · 31 citations · every number checked by code" - the anti-hallucination meter. */
@@ -1056,9 +1065,7 @@
       ${briefs.map((b) => `<div class="prio-brief"><div class="prof-head"><span class="prio prio-${esc(b.level)}"></span>${esc(b.label)}
           <span class="hint">· ${b.level === "must" ? "must-have" : "nice-to-have"}</span></div>
         ${b.ai ? `<p>${esc(b.ai.text)}${refs(b.ai.sources)}</p>` : ""}
-        ${b.rows.length ? `<ul class="prio-values">${b.rows.map((row) => `<li><b>${esc(row.label)}${row.unit ? " (" + esc(row.unit) + ")" : ""}:</b>
-            ${row.values.map((v) => `${esc(v.name)} ${esc(v.value)}${refs(v.sources)}`).join(" · ")}</li>`).join("")}</ul>`
-          : !b.ai ? '<p class="hint">No datasheet value in this comparison covers this priority.</p>' : ""}
+        ${!b.ai ? `<p class="hint">${b.rows.length ? "Values: see “The points that matter” above." : "No datasheet value in this comparison covers this priority."}</p>` : ""}
         ${b.profile.length ? `<ul class="prio-values">${b.profile.map((it) => `<li>Their website: ${esc(it.text)}${refs(it.sources)}</li>`).join("")}</ul>` : ""}
         ${b.notes.length ? `<ul class="prio-values">${b.notes.map((n) => `<li>${esc(KIND_LABEL[n.kind] || n.kind)} (approved): ${esc(n.text)}${refs(n.sources)}</li>`).join("")}</ul>` : ""}
       </div>`).join("")}</div>`;
@@ -1104,8 +1111,8 @@
         }).join("")}</div>` : "";
     const note = (n, extra) => `<li class="com-note${extra ? " is-pending" : ""}"${n.why ? ` title="Picked because: ${esc(n.why)}"` : ""}>
       <span class="badge badge-${n.kind === "warning" || n.kind === "transition" ? "warn" : "brand"}">${esc(KIND_LABEL[n.kind] || n.kind)}</span>
-      ${esc(n.text)} <span class="hint">· ${esc(n.product)}${n.regions && n.regions !== "all" ? " · " + esc(n.regions) : ""}
-      · ${esc(n.source)}${n.page ? ", slide " + esc(n.page) : ""}</span>${(n.sources || []).map(ref).join("")}${extra || ""}</li>`;
+      <span class="com-text">${esc(n.text)}${(n.sources || []).map(ref).join("")}</span>
+      <span class="com-src">${esc(n.source)}${n.page ? ", slide " + esc(n.page) : ""}${n.regions && n.regions !== "all" ? " · " + esc(n.regions) : ""}</span>${extra || ""}</li>`;
     const canEdit = currentUser.role === "editor";
     const otherHtml = other.length ? `<details class="biz-other"><summary>${other.length} other approved note(s) not specific to this comparison or customer</summary>
         <ul>${other.map((n) => note({ ...n, product: n.product_id, source: n.source_file })).join("")}</ul></details>` : "";
@@ -1137,6 +1144,107 @@
     if (!items || !items.length) return "";
     return `<section class="insight"><h4>${esc(title)}</h4><ul>${items.map((it) =>
       `<li>${esc(it.text)}${(it.sources || []).map(ref).join("")}${it.sample ? ' <span class="badge badge-muted">Sample</span>' : ""}</li>`).join("")}</ul></section>`;
+  }
+
+  // ---------- sales view of a result ----------
+  // Order on screen: 1 bottom line · 2 scoreboard · 3 pitch cards · 4 sales notes · 5 details & proof (collapsed).
+  // All numbers and verdicts come from code (sales-view.js); the AI's own text is only used as extra lines.
+
+  /** Footnotes: the first two, then "+n" (all of them are in the source list and the full table). */
+  function refsShort(list) {
+    const l = list || [];
+    return l.slice(0, 2).map(ref).join("") + (l.length > 2 ? `<a href="#src-${l[2]}" class="ref ref-more" title="${l.length - 2} more source${l.length > 3 ? "s" : ""}: ${l.slice(2).map((n) => "[" + n + "]").join(" ")}">+${l.length - 2}</a>` : "");
+  }
+
+  /** One value on the scoreboard: the number, a quiet unit, and at most one short verdict line. */
+  function boardValue(x, col, verdict) {
+    const v = x.attr.values[col.key];
+    if (x.attr.placeholder || !v || v.value == null || v.status === "pending" || v.status === "na") {
+      const why = v?.status === "pending" ? "Waiting for data extraction" : (v?.note || "Not stated in the datasheet");
+      return `<div class="b-cell is-empty" title="${esc(why)}"><span class="b-none">${v?.status === "pending" ? "Awaiting data" : "—"}</span></div>`;
+    }
+    const st = SalesView.simpleStatus(v.status, true);
+    const split = SalesView.splitValue(v.value);
+    const unit = x.attr.unit ? `<span class="b-unit">${esc(x.attr.unit)}</span>` : "";
+    const cond = split.big && split.rest ? `<span class="b-cond" title="${esc(v.value)}">conditions</span>` : "";
+    const body = split.big
+      ? `<div class="b-num">${esc(split.big)}${unit}</div>`
+      : `<div class="b-text" title="${esc(v.value)}">${esc(SalesView.shorten(v.value, 55))}</div>`;
+    const why = [SalesView.STATUS_WHY[v.status], v.note].filter(Boolean).join(": ");
+    const check = st.key === "check" && v.status !== "sample" ? `<span class="b-check" title="${esc(why)}">check</span>` : "";
+    let line = "";
+    if (verdict && ["ahead", "behind", "level"].includes(verdict.kind)) {
+      const t = { ahead: ["▲", "We lead", "win"], behind: ["▼", "They lead", "lose"], level: ["≈", "Level", "level"] }[verdict.kind];
+      line = `<div class="b-verdict v-${t[2]}"${verdict.approx ? ' title="Compared on the main number only: the datasheets state different conditions. Check before quoting."' : ""}>${t[0]} ${t[1]}${verdict.approx ? ' <span class="b-prob">(probably)</span>' : ""}</div>`;
+    }
+    return `<div class="b-cell">${body}<div class="b-meta">${refsShort(v.sources)}${cond}${check}</div>${line}</div>`;
+  }
+
+  function scoreboardHtml(a, r) {
+    const cols = a.cols, n = cols.length;
+    const head = cols.map((c) => `<div class="b-head ${c._ours ? "is-ours" : ""}"><div class="col-name">${esc(c.name)}</div>
+        <div class="col-sub">${esc(c.manufacturer)}${c.knownEquivalent ? " · confirmed equivalent" : c.matchScore ? ` · match ${Math.round(c.matchScore * 100)}%` : ""}</div></div>`).join("");
+    const rowHtml = (x) => {
+      const pr = x.prio;
+      const winners = x.verdicts.map((v) => v.winner?.key).filter(Boolean);
+      const anchorWins = winners.length && winners.every((k) => k === r.anchor.key);
+      const cells = cols.map((c, i) => {
+        if (i === 0) return boardValue(x, c, null);
+        return boardValue(x, c, x.verdicts[i - 1]);
+      }).join("");
+      const plain = SalesView.plainFor(x.attr);
+      return `<div class="b-row${pr ? " is-" + pr : ""}">
+        <div class="b-label">${pr ? `<div class="prio-tag prio-tag-${pr}">${pr === "must" ? "Must-have" : "Nice-to-have"}</div>` : ""}<div class="b-name">${esc(SalesView.niceLabel(x.attr.label))}</div>
+        ${plain ? `<div class="b-plain">${esc(plain)}</div>` : ""}</div>${cells}</div>`;
+    };
+    if (!a.shown.length) return '<p class="hint">No point could be compared directly between these products. See the details below.</p>';
+    return `<section class="board" style="--cols:${n}" aria-label="Scoreboard">
+      <div class="b-row b-headrow"><div class="b-label"><h4>The points that matter</h4></div>${head}</div>
+      ${a.shown.map(rowHtml).join("")}
+      <div class="b-foot"><span><span class="b-verdict v-win">▲ We lead</span> / <span class="b-verdict v-lose">▼ They lead</span> Danfoss compared with that competitor</span>
+        <span><span class="b-prob">(probably)</span> conditions differ</span>
+        <span><span class="b-check">check</span> confirm before quoting</span>
+        <span>— not stated</span>
+        ${a.restCount ? `<button class="link-btn" type="button" data-act="open-details">Show ${a.restCount} more comparable point${a.restCount > 1 ? "s" : ""} in Details ↓</button>` : ""}</div>
+    </section>`;
+  }
+
+  function bottomLineHtml(r, a) {
+    const c = a.counts, total = c.ahead + c.level + c.behind + c.open;
+    const seg = (cls, n, label) => n ? `<i class="${cls}" style="flex:${n}" title="${n} ${label}"></i>` : "";
+    return `<section class="bottom-line fit-${a.fit}" aria-label="Bottom line">
+      <div class="bl-fit"><div class="bl-fit-label">${esc(a.fitLabel)}</div>
+        ${total ? `<div class="bl-bar" title="${esc(a.basis)}">${seg("w", c.ahead, "ahead")}${seg("l", c.level, "level")}${seg("b", c.behind, "behind")}${seg("o", c.open, "cannot be judged")}</div>
+        <div class="bl-bar-key"><span>${c.ahead} ahead</span><span>${c.level} level</span><span>${c.behind} behind</span><span>${c.open} unclear</span></div>` : ""}</div>
+      <div class="bl-text"><div class="bl-head">${esc(a.headline)}</div>
+        <div class="bl-detail">${esc(a.detail.join(" "))}</div>
+        ${a.others.length ? `<div class="bl-others">${a.others.map((o) => `<span><strong>${esc(o.name)}:</strong> ${o.counts.ahead} ahead · ${o.counts.level} level · ${o.counts.behind} behind · ${o.counts.open} unclear</span>`).join("")}</div>` : ""}
+        ${a.basis ? `<div class="hint">${esc(a.basis)}</div>` : ""}</div>
+    </section>`;
+  }
+
+  /** The three pitch cards. Each shows its first 4 lines; the rest open in place ("Show N more"), nothing is sent away. */
+  function pitchHtml(r, a) {
+    const SHOW = 4;
+    const li = (it) => `<li>${esc(it.text)}${(it.sources || []).map(ref).join("")}</li>`;
+    const ai = (list) => (list || []).map((it) => ({ text: SalesView.shorten(it.text, 170), sources: it.sources }));
+    // table-based lines first (they are what the scoreboard shows), then the AI's checked sentences
+    const wins = [...a.wins, ...ai(r.insights?.benefits)];
+    const losses = a.losses;
+    const checks = [...a.checks, ...ai(r.insights?.tradeoffs)];
+    const list = (items, empty) => {
+      if (!items.length) return `<ul><li class="pc-empty">${empty}</li></ul>`;
+      const rest = items.slice(SHOW);
+      return `<ul>${items.slice(0, SHOW).map(li).join("")}</ul>` + (rest.length
+        ? `<details class="pc-more"><summary>Show ${rest.length} more</summary><ul>${rest.map(li).join("")}</ul></details>` : "");
+    };
+    const openCount = a.counts.open;
+    return `<div class="pitch">
+      <section class="pcard pc-win"><h4>Where we win</h4>${list(wins, "No clear win in the data yet.")}</section>
+      <section class="pcard pc-lose"><h4>Where they win</h4>${list(losses,
+        `No point where they clearly beat us in the data we have${openCount ? ` (${openCount} point${openCount > 1 ? "s" : ""} still unclear)` : ""}.`)}</section>
+      <section class="pcard pc-check"><h4>Check before you promise</h4>${list(checks, "Nothing flagged.")}</section>
+    </div>`;
   }
 
   // ---------- one-page print summary ("Print / save as PDF") ----------
@@ -1300,50 +1408,67 @@
   function resultWidget(r) {
     const cols = [r.anchor, ...r.matches];
     sourceById = Object.fromEntries((r.sources || []).map((s) => [s.id, s]));
-    const sorted = [...r.attributes].sort((a, b) => priorityRank(a.factor) - priorityRank(b.factor));
-    // short table = rows comparable across products ("core"); everything else is collapsed and not printed
-    const rows = sorted.filter((a) => a.core !== false);
-    const more = sorted.filter((a) => a.core === false);
-    const rowHtml = (a) => {
-      const pr = state.factors[a.factor];
-      return `<tr class="${pr ? "is-" + pr : ""}${a.paired ? " is-paired" : ""}"><th scope="row">${pr ? `<span class="prio prio-${pr}" title="${pr === "must" ? "Must-have" : "Nice-to-have"}"></span>` : ""}${esc(a.label)}${a.unit ? ` <span class="unit">(${esc(a.unit)})</span>` : ""}${a.paired ? `<div class="cell-note" title="${esc(a.note || "")}">paired by AI</div>` : ""}</th>${cols.map((c) => cell(a.values[c.key])).join("")}</tr>`;
+    const a = SalesView.analyse(r, state.factors, state.buyer,
+      Object.fromEntries((catalog?.factors || []).map((f) => [f.id, f.label])));
+
+    // ---- full table (kept for the people who want every value) ----
+    const sorted = [...r.attributes].sort((x, y) => priorityRank(x.factor) - priorityRank(y.factor));
+    const rows = sorted.filter((x) => x.core !== false);
+    const more = sorted.filter((x) => x.core === false);
+    const rowHtml = (x) => {
+      const pr = state.factors[x.factor];
+      return `<tr class="${pr ? "is-" + pr : ""}${x.paired ? " is-paired" : ""}"><th scope="row">${pr ? `<span class="prio prio-${pr}" title="${pr === "must" ? "Must-have" : "Nice-to-have"}"></span>` : ""}${esc(x.label)}${x.unit ? ` <span class="unit">(${esc(x.unit)})</span>` : ""}${x.paired ? `<div class="cell-note" title="${esc(x.note || "")}">paired by AI</div>` : ""}</th>${cols.map((c) => cell(x.values[c.key])).join("")}</tr>`;
     };
     const head = `<thead><tr><th>Attribute</th>${cols.map((c) =>
           `<th><div class="col-name">${esc(c.name)}</div><div class="col-sub">${esc(c.manufacturer)}${c.knownEquivalent ? " · confirmed equivalent" : c.matchScore ? ` · match ${Math.round(c.matchScore * 100)}%` : ""}</div></th>`).join("")}</tr></thead>`;
+
+    const buyer = state.buyer.company || "—";
+    const today = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
     const card = el("div", { class: "result" });
     card.innerHTML = `
       <div class="result-head">
         <div>
           <h3>${esc(r.title)}</h3>
-          <div class="hint">Prepared for ${esc(state.buyer.company || "—")}${state.buyer.application ? " · " + esc(state.buyer.application) : ""}</div>
+          <div class="hint">Prepared for ${esc(buyer)}${state.buyer.application ? " · " + esc(state.buyer.application) : ""}</div>
+          ${r.grounding?.statements ? `<div class="hint trust-line">AI text checked by code: ${esc(r.grounding.statements)} statements · ${esc(r.grounding.citations)} citations${r.grounding.problems ? ` · ${esc(r.grounding.problems)} failed, see Check before you promise` : " · every number verified"}</div>` : ""}
         </div>
-        <div class="head-right"><span class="confidence conf-${esc(r.confidence?.level)}" title="${esc(r.confidence?.reason)}">Confidence: ${esc(r.confidence?.level || "n/a")}</span>${groundingText(r.grounding)}</div>
-      </div>
-      <div class="issue-summary">${issueSummary(r)}
+        <div class="head-right"><span class="confidence conf-${esc(r.confidence?.level)}" title="${esc(r.confidence?.reason)}">Data confidence: ${esc(r.confidence?.level || "n/a")}</span></div>
       </div>
       ${r.isSample ? '<div class="flag flag-sample">Prototype view: competitor values are sample data until the competitor dataset is loaded.</div>' : ""}
-      ${rows.length ? `<div class="table-wrap"><table class="cmp">${head}<tbody>${rows.map(rowHtml).join("")}</tbody></table></div>`
-        : '<p class="hint">No attribute could be compared directly between these products - see the notes below.</p>'}
-      ${more.length ? `<details class="more-facts"><summary>All other facts (${more.length})</summary>
-        <input type="search" class="more-filter" placeholder="Filter, e.g. pressure, PVE, weight">
-        <div class="table-wrap"><table class="cmp">${head}<tbody></tbody></table></div>
-        <p class="hint more-count"></p></details>` : ""}
-      <div class="insights">
-        ${insightList("Key differences", r.insights?.differences)}
-        ${insightList(`Benefits for ${state.buyer.company || "the customer"}`, r.insights?.benefits)}
-        ${insightList("Switching trade-offs", r.insights?.tradeoffs)}
-      </div>
-      ${r.flags?.length ? `<section class="insight"><h4>Open points</h4>${r.flags.map(flagHtml).join("")}</section>` : ""}
+      ${scoreboardHtml(a, r)}
+      ${pitchHtml(r, a)}
       ${commercialHtml(r)}
-      ${!r.sources.length ? "" : `<details class="sources"><summary>Sources (${r.sources.length})</summary><ol>${r.sources.map((s) =>
-        `<li id="src-${s.id}">${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title)}${s.page ? `, p. ${esc(s.page)}` : ""}${s.date ? ` <span class="hint">(${esc(s.date)})</span>` : ""}${s.url || s.kind === "customer" ? "" : ' <span class="hint">· no online link yet</span>'}${s.doc ? `<div class="hint">${esc(s.doc)}</div>` : ""}</li>`).join("")}</ol></details>`}
+      ${!r.sources.length ? "" : `<details class="sources-strip" aria-label="Sources"><summary><span class="src-title">Sources (${r.sources.length})</span> <span class="hint">· every [n] above links to its datasheet page</span></summary><ol>${r.sources.map((s) =>
+        `<li id="src-${s.id}" value="${s.id}"><span class="src-print">${esc(SalesView.shorten(s.title, 24))}${s.page ? ", p. " + esc(s.page) : ""}</span><span class="src-full">${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title)}${s.page ? `, p. ${esc(s.page)}` : ""}${s.date ? ` <span class="hint">(${esc(s.date)})</span>` : ""}${s.url || s.kind === "customer" ? "" : ' <span class="hint">· no online link yet</span>'}${s.doc ? `<span class="src-doc"> · ${esc(s.doc)}</span>` : ""}</span></li>`).join("")}</ol></details>`}
+
+      <details class="proof">
+        <summary><span class="proof-title">Details &amp; proof</span><span class="hint">full table, data checks, AI cost</span><span class="issue-summary">${issueSummary(r)}</span></summary>
+        <div class="proof-body">
+          <h4>Full comparison table</h4>
+          ${rows.length ? `<div class="table-wrap"><table class="cmp">${head}<tbody>${rows.map(rowHtml).join("")}</tbody></table></div>`
+            : '<p class="hint">No attribute could be compared directly between these products.</p>'}
+          ${more.length ? `<details class="more-facts"><summary>All other facts (${more.length})</summary>
+            <input type="search" class="more-filter" placeholder="Filter, e.g. pressure, PVE, weight">
+            <div class="table-wrap"><table class="cmp">${head}<tbody></tbody></table></div>
+            <p class="hint more-count"></p></details>` : ""}
+          ${r.flags?.length ? `<section class="insight"><h4>Data checks</h4>${r.flags.map(resultFlagHtml).join("")}</section>` : ""}
+          <div class="proof-meta">${groundingText(r.grounding)}${aiCostText(r.aiCost)}</div>
+        </div>
+      </details>
+
       <div class="actions">
-        ${aiCostText(r.aiCost)}
-        <button class="btn btn-ghost" type="button" data-act="print">Print / save as PDF</button>
+        <button class="btn btn-ghost" type="button" data-act="print" title="A one-page landscape summary for a meeting or to send on">Print / save as PDF</button>
         <button class="btn btn-ghost" type="button" data-act="edit">Adjust priorities</button>
       </div>
       ${printSheetHtml(r, cols, rows)}`;
+
+    // one-page print: only this result, without the proof section (see @media print)
     card.querySelector('[data-act="print"]').addEventListener("click", () => window.print());
+    card.querySelector('[data-act="open-details"]')?.addEventListener("click", () => {
+      const d = card.querySelector("details.proof");
+      d.open = true;
+      d.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
     card.querySelector('[data-act="suggest-note"]')?.addEventListener("click", () => {
       const box = card.querySelector(".suggest-note");
       box.hidden = !box.hidden;
@@ -1374,17 +1499,20 @@
       const count = moreBox.querySelector(".more-count");
       const draw = () => {
         const words = filter.value.toLowerCase().split(/\s+/).filter(Boolean);
-        const hits = more.filter((a) => words.every((w) => (a.label + " " + a.id).toLowerCase().includes(w)));
+        const hits = more.filter((x) => words.every((w) => (x.label + " " + x.id).toLowerCase().includes(w)));
         body.innerHTML = hits.slice(0, 150).map(rowHtml).join("");
         count.textContent = hits.length > 150 ? `Showing 150 of ${hits.length} - type to narrow it down.` : "";
       };
       moreBox.addEventListener("toggle", () => moreBox.open && !body.children.length && draw());
       filter.addEventListener("input", draw);
     }
-    // a footnote without an online link jumps to the source list: open it first
-    card.querySelectorAll('a.ref[href^="#src-"]').forEach((a) => a.addEventListener("click", () => {
-      const list = card.querySelector("details.sources");
-      if (list) list.open = true;
+    // a footnote without an online link jumps to the visible source list and highlights the entry
+    card.querySelectorAll('a.ref[href^="#src-"]').forEach((link) => link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const strip = card.querySelector("details.sources-strip");
+      if (strip) strip.open = true;
+      const li = card.querySelector(link.getAttribute("href"));
+      if (li) { li.scrollIntoView({ behavior: "smooth", block: "center" }); li.classList.add("is-hit"); setTimeout(() => li.classList.remove("is-hit"), 1800); }
     }));
     if (state.mode !== "compare") card.querySelector('[data-act="edit"]').remove();
     else card.querySelector('[data-act="edit"]').addEventListener("click", () => {

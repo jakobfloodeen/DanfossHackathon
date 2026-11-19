@@ -248,6 +248,11 @@ def to_website(result: AnalysisResult, names: dict[str, dict] | None = None,
         return {"value": None, "status": "na", "note": "No matching value for this product"}
 
     paired, used = _paired_rows(result, keys, by_id, sources, empty)
+    # who is better per row and candidate, decided by CODE (rules/*.md `better:`): "target" | "candidate" | "similar" | None.
+    # The website's scoreboard and "bottom line" are built from this, never from the AI's wording.
+    better: dict[str, dict] = {}
+    for d in result.differences:
+        better.setdefault(d.attribute, {})[d.candidate] = d.better
     attributes = []
     for attr in dict.fromkeys(f.attribute for f in facts if f.product_id in keys and not f.attribute.startswith(NOISE)):
         row_facts = [f for f in facts if f.attribute == attr and f.product_id in keys
@@ -260,7 +265,7 @@ def to_website(result: AnalysisResult, names: dict[str, dict] | None = None,
             mine = [f for f in row_facts if f.product_id == pid]
             values[pid] = _cell(mine, unit, by_id, sources) if mine else empty(pid)
         attributes.append({"id": attr, "factor": factor_for(attr), "label": label_for(attr), "unit": unit,
-                           "values": values,
+                           "values": values, "better": better.get(attr, {}),
                            "core": attr.startswith("system__")      # system values: the point of a system comparison
                                    or (bool(target) and values[target]["status"] in SHOWN
                                        and any(values[m]["status"] in SHOWN for m in match_ids))})
